@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "health-tracker-temp",
-    "slug": "health-tracker-temp",
+    "name": "Trackr",
+    "slug": "trackr",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "healthtrackertemp",
+    "scheme": "trackr",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
