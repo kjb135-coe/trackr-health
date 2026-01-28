@@ -65,3 +65,28 @@ npm run web        # Run in web browser
 Tables: `habits`, `habit_completions`, `sleep_entries`, `exercise_sessions`, `meals`, `food_items`, `journal_entries`
 
 All dates stored as ISO strings (YYYY-MM-DD for dates, full ISO for timestamps).
+
+## Project Structure
+
+```
+trackr/
+├── app/(tabs)/           # Tab screens
+│   ├── index.tsx         # Dashboard
+│   ├── habits.tsx        # Habit tracking
+│   ├── sleep.tsx         # Sleep logging
+│   ├── exercise.tsx      # Exercise logging
+│   ├── nutrition.tsx     # Nutrition with AI food recognition
+│   └── journal.tsx       # Journal with OCR
+├── src/
+│   ├── components/ui/    # Button, Card, Input
+│   ├── database/         # SQLite + repositories
+│   ├── services/claude/  # AI integrations
+│   ├── store/            # Zustand stores
+│   ├── theme/            # Design tokens
+│   ├── types/            # TypeScript interfaces
+│   └── utils/            # Helpers
+```
+
+## API Key Setup
+
+The Claude API key is stored securely using `expo-secure-store`. To use AI features (food recognition, journal scanning), add your API key through the app settings or call `setApiKey()` from `src/services/claude/client.ts`.
