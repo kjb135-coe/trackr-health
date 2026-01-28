@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen } from 'lucide-react-native';
 import { colors, spacing, typography, borderRadius } from '@/src/theme';
-import { Card } from '@/src/components/ui';
+import { Card, Button } from '@/src/components/ui';
 import { useHabitStore, useSleepStore, useExerciseStore, useNutritionStore, useJournalStore } from '@/src/store';
 import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { getDatabase } from '@/src/database';
+import { populateDemoData } from '@/src/utils/demoData';
 
 export default function DashboardScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [dbReady, setDbReady] = useState(false);
+  const [loadingDemo, setLoadingDemo] = useState(false);
 
   const { habits, todayCompletions, loadHabits, loadTodayCompletions } = useHabitStore();
   const { entries: sleepEntries, loadEntries: loadSleep } = useSleepStore();
@@ -45,6 +47,19 @@ export default function DashboardScreen() {
     setRefreshing(true);
     await loadAll();
     setRefreshing(false);
+  };
+
+  const handleLoadDemo = async () => {
+    setLoadingDemo(true);
+    try {
+      await populateDemoData();
+      await loadAll();
+      Alert.alert('Success', 'Demo data has been loaded!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to load demo data');
+      console.error(error);
+    }
+    setLoadingDemo(false);
   };
 
   const completedHabits = habits.filter((h) => todayCompletions.get(h.id)?.completed).length;
@@ -138,6 +153,19 @@ export default function DashboardScreen() {
           </Text>
         </Card>
       </View>
+
+      {/* Demo Data Button */}
+      {habits.length === 0 && (
+        <View style={styles.demoSection}>
+          <Text style={styles.demoText}>New here? Load some sample data to explore the app.</Text>
+          <Button
+            title="Load Demo Data"
+            onPress={handleLoadDemo}
+            loading={loadingDemo}
+            variant="secondary"
+          />
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -205,5 +233,18 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     borderRadius: 2,
+  },
+  demoSection: {
+    marginTop: spacing.xl,
+    padding: spacing.md,
+    backgroundColor: colors.surfaceSecondary,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+  },
+  demoText: {
+    ...typography.body,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.md,
   },
 });
