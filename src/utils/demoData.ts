@@ -2,8 +2,7 @@ import { habitRepository, sleepRepository, exerciseRepository, nutritionReposito
 import { getDateString } from './date';
 import { subDays, format } from 'date-fns';
 
-export async function populateDemoData() {
-  console.log('Populating demo data...');
+export async function populateDemoData(): Promise<void> {
 
   // Create habits
   const habits = [
@@ -152,5 +151,4 @@ export async function populateDemoData() {
     });
   }
 
-  console.log('Demo data populated successfully!');
 }

@@ -22,9 +22,14 @@ export async function getClaudeClient(): Promise<Anthropic> {
 
 export async function getApiKey(): Promise<string | null> {
   try {
+    // First check environment variable (for development)
+    const envKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY;
+    if (envKey && envKey.length > 0 && envKey !== 'your_claude_api_key_here') {
+      return envKey;
+    }
+    // Fall back to secure storage (user-entered key)
     return await SecureStore.getItemAsync(API_KEY_STORAGE_KEY);
-  } catch (error) {
-    console.error('Error reading API key:', error);
+  } catch {
     return null;
   }
 }

@@ -13,15 +13,19 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Plus, Camera, X, BookOpen, Edit3 } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
-import { Card, Button } from '@/src/components/ui';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { spacing, borderRadius } from '@/src/theme';
+import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 
 export default function JournalScreen() {
+  const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [mode, setMode] = useState<'text' | 'scan'>('text');
@@ -138,59 +142,62 @@ export default function JournalScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        showsVerticalScrollIndicator={false}
       >
         {entries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
-            <Text style={styles.emptyText}>No journal entries yet</Text>
-            <Text style={styles.emptySubtext}>Start writing or scan a handwritten entry</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No journal entries yet</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Start writing or scan a handwritten entry</Text>
           </View>
         ) : (
-          entries.map((entry) => (
-            <Card key={entry.id} style={styles.entryCard}>
-              <View style={styles.entryHeader}>
-                <Text style={styles.entryDate}>{getRelativeDateLabel(entry.date)}</Text>
-                {entry.mood && (
-                  <View style={styles.moodBadge}>
-                    <Text style={styles.moodText}>{MOOD_LABELS[entry.mood]}</Text>
+          entries.map((entry, index) => (
+            <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
+              <AnimatedCard style={styles.entryCard} delay={index * 50}>
+                <View style={styles.entryHeader}>
+                  <Text style={[styles.entryDate, { color: colors.textSecondary }]}>{getRelativeDateLabel(entry.date)}</Text>
+                  {entry.mood && (
+                    <View style={[styles.moodBadge, { backgroundColor: colors.journal + '20' }]}>
+                      <Text style={[styles.moodText, { color: colors.journal }]}>{MOOD_LABELS[entry.mood]}</Text>
+                    </View>
+                  )}
+                </View>
+                {entry.title && <Text style={[styles.entryTitle, { color: colors.textPrimary }]}>{entry.title}</Text>}
+                <Text style={[styles.entryContent, { color: colors.textSecondary }]} numberOfLines={3}>
+                  {entry.content}
+                </Text>
+                {entry.isScanned && (
+                  <View style={styles.scannedBadge}>
+                    <Camera color={colors.textTertiary} size={12} />
+                    <Text style={[styles.scannedText, { color: colors.textTertiary }]}>Scanned</Text>
                   </View>
                 )}
-              </View>
-              {entry.title && <Text style={styles.entryTitle}>{entry.title}</Text>}
-              <Text style={styles.entryContent} numberOfLines={3}>
-                {entry.content}
-              </Text>
-              {entry.isScanned && (
-                <View style={styles.scannedBadge}>
-                  <Camera color={colors.textTertiary} size={12} />
-                  <Text style={styles.scannedText}>Scanned</Text>
-                </View>
-              )}
-            </Card>
+              </AnimatedCard>
+            </Animated.View>
           ))
         )}
       </ScrollView>
 
       {/* FABs */}
       <View style={styles.fabContainer}>
-        <TouchableOpacity style={[styles.fab, styles.fabSecondary]} onPress={() => openModal('scan')}>
+        <TouchableOpacity style={[styles.fab, styles.fabSecondary, { backgroundColor: colors.surface, borderColor: colors.journal }]} onPress={() => openModal('scan')}>
           <Camera color={colors.journal} size={20} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.fab} onPress={() => openModal('text')}>
-          <Plus color={colors.white} size={24} />
+        <TouchableOpacity style={[styles.fab, { backgroundColor: colors.journal }]} onPress={() => openModal('text')}>
+          <Plus color="#FFFFFF" size={24} />
         </TouchableOpacity>
       </View>
 
       {/* Create Entry Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
                 {mode === 'scan' ? 'Scan Journal' : 'New Entry'}
               </Text>
               <TouchableOpacity onPress={resetModal}>
@@ -199,22 +206,28 @@ export default function JournalScreen() {
             </View>
 
             {/* Mode Toggle */}
-            <View style={styles.modeToggle}>
+            <View style={[styles.modeToggle, { backgroundColor: colors.surfaceSecondary }]}>
               <TouchableOpacity
-                style={[styles.modeOption, mode === 'text' && styles.modeSelected]}
-                onPress={() => setMode('text')}
+                style={[styles.modeOption, mode === 'text' && { backgroundColor: colors.journal }]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setMode('text');
+                }}
               >
-                <Edit3 color={mode === 'text' ? colors.white : colors.textSecondary} size={16} />
-                <Text style={[styles.modeText, mode === 'text' && styles.modeTextSelected]}>
+                <Edit3 color={mode === 'text' ? '#FFFFFF' : colors.textSecondary} size={16} />
+                <Text style={[styles.modeText, { color: colors.textSecondary }, mode === 'text' && { color: '#FFFFFF', fontWeight: '600' }]}>
                   Type
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modeOption, mode === 'scan' && styles.modeSelected]}
-                onPress={() => setMode('scan')}
+                style={[styles.modeOption, mode === 'scan' && { backgroundColor: colors.journal }]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setMode('scan');
+                }}
               >
-                <Camera color={mode === 'scan' ? colors.white : colors.textSecondary} size={16} />
-                <Text style={[styles.modeText, mode === 'scan' && styles.modeTextSelected]}>
+                <Camera color={mode === 'scan' ? '#FFFFFF' : colors.textSecondary} size={16} />
+                <Text style={[styles.modeText, { color: colors.textSecondary }, mode === 'scan' && { color: '#FFFFFF', fontWeight: '600' }]}>
                   Scan
                 </Text>
               </TouchableOpacity>
@@ -223,13 +236,13 @@ export default function JournalScreen() {
             {mode === 'scan' && (
               <>
                 <View style={styles.cameraRow}>
-                  <Button
+                  <AnimatedButton
                     title="Take Photo"
                     variant="secondary"
                     onPress={handleTakePhoto}
                     style={{ flex: 1, marginRight: spacing.sm }}
                   />
-                  <Button
+                  <AnimatedButton
                     title="Gallery"
                     variant="secondary"
                     onPress={handlePickImage}
@@ -240,7 +253,7 @@ export default function JournalScreen() {
                 {isScanning && (
                   <View style={styles.scanningContainer}>
                     <ActivityIndicator color={colors.primary} />
-                    <Text style={styles.scanningText}>Reading handwriting...</Text>
+                    <Text style={[styles.scanningText, { color: colors.textSecondary }]}>Reading handwriting...</Text>
                   </View>
                 )}
 
@@ -250,18 +263,18 @@ export default function JournalScreen() {
               </>
             )}
 
-            <Text style={styles.inputLabel}>Title (optional)</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Title (optional)</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
               value={title}
               onChangeText={setTitle}
               placeholder="Give your entry a title"
               placeholderTextColor={colors.textTertiary}
             />
 
-            <Text style={styles.inputLabel}>Content</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Content</Text>
             <TextInput
-              style={[styles.input, styles.contentInput]}
+              style={[styles.input, styles.contentInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
               value={content}
               onChangeText={setContent}
               placeholder="Write your thoughts..."
@@ -270,26 +283,34 @@ export default function JournalScreen() {
               textAlignVertical="top"
             />
 
-            <Text style={styles.inputLabel}>How are you feeling?</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>How are you feeling?</Text>
             <View style={styles.moodRow}>
               {([1, 2, 3, 4, 5] as const).map((m) => (
                 <TouchableOpacity
                   key={m}
-                  style={[styles.moodOption, mood === m && styles.moodOptionSelected]}
-                  onPress={() => setMood(mood === m ? null : m)}
+                  style={[
+                    styles.moodOption,
+                    { backgroundColor: colors.surfaceSecondary },
+                    mood === m && { backgroundColor: colors.journal + '30', borderWidth: 2, borderColor: colors.journal },
+                  ]}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setMood(mood === m ? null : m);
+                  }}
                 >
                   <Text style={styles.moodEmoji}>{getMoodEmoji(m)}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
-            <Button
+            <AnimatedButton
               title="Save Entry"
               onPress={handleSaveEntry}
               loading={isLoading}
               disabled={!content.trim()}
+              fullWidth
             />
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -316,7 +337,6 @@ function getMoodEmoji(mood: number): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
     padding: spacing.md,
@@ -327,13 +347,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxl,
   },
   emptyText: {
-    ...typography.h4,
-    color: colors.textSecondary,
+    fontSize: 16,
+    fontWeight: '600',
     marginTop: spacing.md,
   },
   emptySubtext: {
-    ...typography.body,
-    color: colors.textTertiary,
+    fontSize: 14,
     marginTop: spacing.xs,
     textAlign: 'center',
   },
@@ -348,28 +367,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   entryDate: {
-    ...typography.caption,
-    color: colors.textSecondary,
+    fontSize: 12,
   },
   moodBadge: {
-    backgroundColor: colors.journal + '20',
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
     borderRadius: borderRadius.sm,
   },
   moodText: {
-    ...typography.caption,
-    color: colors.journal,
+    fontSize: 12,
     fontWeight: '500',
   },
   entryTitle: {
-    ...typography.h4,
-    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: spacing.xs,
   },
   entryContent: {
-    ...typography.body,
-    color: colors.textSecondary,
+    fontSize: 14,
     lineHeight: 22,
   },
   scannedBadge: {
@@ -378,8 +393,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   scannedText: {
-    ...typography.caption,
-    color: colors.textTertiary,
+    fontSize: 12,
     marginLeft: 4,
   },
   fabContainer: {
@@ -392,10 +406,9 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.journal,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.black,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -405,9 +418,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: colors.journal,
     marginBottom: spacing.sm,
   },
   modalOverlay: {
@@ -416,7 +427,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: colors.white,
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
     padding: spacing.lg,
@@ -430,12 +440,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   modalTitle: {
-    ...typography.h3,
-    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '600',
   },
   modeToggle: {
     flexDirection: 'row',
-    backgroundColor: colors.gray100,
     borderRadius: borderRadius.md,
     padding: 4,
     marginBottom: spacing.lg,
@@ -448,17 +457,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md - 2,
   },
-  modeSelected: {
-    backgroundColor: colors.journal,
-  },
   modeText: {
-    ...typography.bodySmall,
-    color: colors.textSecondary,
+    fontSize: 14,
     marginLeft: spacing.xs,
-  },
-  modeTextSelected: {
-    color: colors.white,
-    fontWeight: '600',
   },
   cameraRow: {
     flexDirection: 'row',
@@ -471,8 +472,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   scanningText: {
-    ...typography.body,
-    color: colors.textSecondary,
+    fontSize: 16,
     marginLeft: spacing.sm,
   },
   previewImage: {
@@ -482,17 +482,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   inputLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
+    fontSize: 12,
     fontWeight: '500',
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: colors.gray100,
     borderRadius: borderRadius.md,
     padding: spacing.md,
     fontSize: 16,
-    color: colors.textPrimary,
     marginBottom: spacing.md,
   },
   contentInput: {
@@ -507,14 +504,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: colors.gray100,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  moodOptionSelected: {
-    backgroundColor: colors.journal + '30',
-    borderWidth: 2,
-    borderColor: colors.journal,
   },
   moodEmoji: {
     fontSize: 24,

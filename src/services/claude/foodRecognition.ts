@@ -1,7 +1,8 @@
 import { getClaudeClient } from './client';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { DetectedFood, AIFoodAnalysis } from '@/src/types';
 import { z } from 'zod';
+import { AI_MODEL, AI_MAX_TOKENS } from '@/src/utils/constants';
 
 const FoodAnalysisSchema = z.object({
   foods: z.array(
@@ -19,23 +20,33 @@ const FoodAnalysisSchema = z.object({
   notes: z.string().optional(),
 });
 
+function parseJsonFromResponse(text: string): unknown {
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('Could not find JSON in response');
+  }
+  try {
+    return JSON.parse(jsonMatch[0]);
+  } catch {
+    throw new Error('Invalid JSON in response');
+  }
+}
+
+function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
+  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
+}
+
 export async function analyzeFoodImage(imageUri: string): Promise<AIFoodAnalysis> {
   const startTime = Date.now();
   const client = await getClaudeClient();
 
-  // Read image and convert to base64
   const base64Image = await FileSystem.readAsStringAsync(imageUri, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
 
-  // Determine media type from URI
-  const mediaType = imageUri.toLowerCase().includes('.png')
-    ? 'image/png'
-    : 'image/jpeg';
-
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1024,
+    model: AI_MODEL,
+    max_tokens: AI_MAX_TOKENS,
     messages: [
       {
         role: 'user',
@@ -44,7 +55,7 @@ export async function analyzeFoodImage(imageUri: string): Promise<AIFoodAnalysis
             type: 'image',
             source: {
               type: 'base64',
-              media_type: mediaType,
+              media_type: getMediaType(imageUri),
               data: base64Image,
             },
           },
@@ -83,13 +94,7 @@ Return ONLY the JSON object, no other text.`,
     throw new Error('No text response from Claude');
   }
 
-  // Extract JSON from response
-  const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new Error('Could not parse JSON from response');
-  }
-
-  const parsedData = JSON.parse(jsonMatch[0]);
+  const parsedData = parseJsonFromResponse(textContent.text);
   const validated = FoodAnalysisSchema.parse(parsedData);
 
   const detectedFoods: DetectedFood[] = validated.foods.map((food) => ({
@@ -111,6 +116,6 @@ Return ONLY the JSON object, no other text.`,
     rawResponse: textContent.text,
     detectedFoods,
     processingTimeMs: Date.now() - startTime,
-    modelUsed: 'claude-sonnet-4-20250514',
+    modelUsed: AI_MODEL,
   };
 }

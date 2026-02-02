@@ -13,9 +13,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Plus, Camera, X, UtensilsCrossed } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
-import { Card, Button } from '@/src/components/ui';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { spacing, borderRadius } from '@/src/theme';
+import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -25,6 +28,7 @@ import { hasApiKey } from '@/src/services/claude';
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
 export default function NutritionScreen() {
+  const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
@@ -183,99 +187,111 @@ export default function NutritionScreen() {
   const todayMeals = meals.filter((m) => m.date === today);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        showsVerticalScrollIndicator={false}
       >
         {/* Daily Summary */}
-        <Card style={styles.summaryCard}>
-          <Text style={styles.summaryTitle}>Today's Nutrition</Text>
-          <View style={styles.calorieRow}>
-            <Text style={styles.calorieValue}>{dailyTotals.calories}</Text>
-            <Text style={styles.calorieLabel}>/ {DEFAULT_CALORIE_GOAL} cal</Text>
-          </View>
-          <View style={styles.progressBar}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${calorieProgress * 100}%` },
-                calorieProgress > 1 && { backgroundColor: colors.warning },
-              ]}
-            />
-          </View>
-          <View style={styles.macroRow}>
-            <View style={styles.macro}>
-              <Text style={styles.macroValue}>{Math.round(dailyTotals.protein)}g</Text>
-              <Text style={styles.macroLabel}>Protein</Text>
+        <Animated.View entering={FadeInDown.duration(400)}>
+          <AnimatedCard style={styles.summaryCard}>
+            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>Today's Nutrition</Text>
+            <View style={styles.calorieRow}>
+              <Text style={[styles.calorieValue, { color: colors.nutrition }]}>{dailyTotals.calories}</Text>
+              <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>/ {DEFAULT_CALORIE_GOAL} cal</Text>
             </View>
-            <View style={styles.macro}>
-              <Text style={styles.macroValue}>{Math.round(dailyTotals.carbs)}g</Text>
-              <Text style={styles.macroLabel}>Carbs</Text>
+            <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${calorieProgress * 100}%`, backgroundColor: colors.nutrition },
+                  calorieProgress > 1 && { backgroundColor: colors.warning },
+                ]}
+              />
             </View>
-            <View style={styles.macro}>
-              <Text style={styles.macroValue}>{Math.round(dailyTotals.fat)}g</Text>
-              <Text style={styles.macroLabel}>Fat</Text>
+            <View style={styles.macroRow}>
+              <View style={styles.macro}>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.protein)}g</Text>
+                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
+              </View>
+              <View style={styles.macro}>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.carbs)}g</Text>
+                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
+              </View>
+              <View style={styles.macro}>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.fat)}g</Text>
+                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
+              </View>
             </View>
-          </View>
-        </Card>
+          </AnimatedCard>
+        </Animated.View>
 
-        <Text style={styles.sectionTitle}>Today's Meals</Text>
+        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Today's Meals</Text>
+        </Animated.View>
 
         {todayMeals.length === 0 ? (
           <View style={styles.emptyState}>
             <UtensilsCrossed color={colors.nutrition} size={48} />
-            <Text style={styles.emptyText}>No meals logged yet</Text>
-            <Text style={styles.emptySubtext}>Tap + to log your food</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No meals logged yet</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Tap + to log your food</Text>
           </View>
         ) : (
-          todayMeals.map((meal) => (
-            <Card key={meal.id} style={styles.mealCard}>
-              <View style={styles.mealHeader}>
-                <Text style={styles.mealType}>{MEAL_TYPE_LABELS[meal.mealType]}</Text>
-                <Text style={styles.mealCalories}>{meal.totalCalories} cal</Text>
-              </View>
-              {meal.foods.map((food, idx) => (
-                <Text key={idx} style={styles.foodItem}>
-                  {food.name} - {food.calories} cal
-                </Text>
-              ))}
-            </Card>
+          todayMeals.map((meal, index) => (
+            <Animated.View key={meal.id} entering={FadeInDown.duration(400).delay(150 + index * 50)}>
+              <AnimatedCard style={styles.mealCard} delay={index * 50}>
+                <View style={styles.mealHeader}>
+                  <Text style={[styles.mealType, { color: colors.textPrimary }]}>{MEAL_TYPE_LABELS[meal.mealType]}</Text>
+                  <Text style={[styles.mealCalories, { color: colors.nutrition }]}>{meal.totalCalories} cal</Text>
+                </View>
+                {meal.foods.map((food, idx) => (
+                  <Text key={idx} style={[styles.foodItem, { color: colors.textSecondary }]}>
+                    {food.name} - {food.calories} cal
+                  </Text>
+                ))}
+              </AnimatedCard>
+            </Animated.View>
           ))
         )}
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
-        <Plus color={colors.white} size={24} />
+      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.nutrition }]} onPress={() => setModalVisible(true)}>
+        <Plus color="#FFFFFF" size={24} />
       </TouchableOpacity>
 
       {/* Log Meal Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Log Meal</Text>
+              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Meal</Text>
               <TouchableOpacity onPress={resetModal}>
                 <X color={colors.textPrimary} size={24} />
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.inputLabel}>Meal Type</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Meal Type</Text>
             <View style={styles.mealTypeRow}>
               {MEAL_TYPES.map((type) => (
                 <TouchableOpacity
                   key={type}
                   style={[
                     styles.mealTypeOption,
-                    selectedMealType === type && styles.mealTypeSelected,
+                    { backgroundColor: colors.surfaceSecondary },
+                    selectedMealType === type && { backgroundColor: colors.nutrition },
                   ]}
-                  onPress={() => setSelectedMealType(type)}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setSelectedMealType(type);
+                  }}
                 >
                   <Text
                     style={[
                       styles.mealTypeText,
-                      selectedMealType === type && styles.mealTypeTextSelected,
+                      { color: colors.textSecondary },
+                      selectedMealType === type && { color: '#FFFFFF', fontWeight: '600' },
                     ]}
                   >
                     {MEAL_TYPE_LABELS[type]}
@@ -286,14 +302,14 @@ export default function NutritionScreen() {
 
             {/* Camera Options */}
             <View style={styles.cameraRow}>
-              <Button
+              <AnimatedButton
                 title="Take Photo"
                 variant="secondary"
                 onPress={handleTakePhoto}
                 icon={<Camera color={colors.textPrimary} size={18} />}
                 style={{ flex: 1, marginRight: spacing.sm }}
               />
-              <Button
+              <AnimatedButton
                 title="Gallery"
                 variant="secondary"
                 onPress={handlePickImage}
@@ -304,7 +320,7 @@ export default function NutritionScreen() {
             {isAnalyzing && (
               <View style={styles.analyzingContainer}>
                 <ActivityIndicator color={colors.primary} />
-                <Text style={styles.analyzingText}>Analyzing food...</Text>
+                <Text style={[styles.analyzingText, { color: colors.textSecondary }]}>Analyzing food...</Text>
               </View>
             )}
 
@@ -314,11 +330,11 @@ export default function NutritionScreen() {
 
             {detectedFoods.length > 0 && (
               <View style={styles.detectedFoods}>
-                <Text style={styles.inputLabel}>Detected Foods</Text>
+                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Detected Foods</Text>
                 {detectedFoods.map((food, idx) => (
-                  <View key={idx} style={styles.detectedItem}>
-                    <Text style={styles.detectedName}>{food.name}</Text>
-                    <Text style={styles.detectedCalories}>{food.calorieEstimate} cal</Text>
+                  <View key={idx} style={[styles.detectedItem, { borderBottomColor: colors.border }]}>
+                    <Text style={[styles.detectedName, { color: colors.textPrimary }]}>{food.name}</Text>
+                    <Text style={[styles.detectedCalories, { color: colors.nutrition }]}>{food.calorieEstimate} cal</Text>
                   </View>
                 ))}
               </View>
@@ -326,16 +342,16 @@ export default function NutritionScreen() {
 
             {!capturedImage && (
               <>
-                <Text style={[styles.inputLabel, { marginTop: spacing.md }]}>Or add manually</Text>
+                <Text style={[styles.inputLabel, { color: colors.textSecondary, marginTop: spacing.md }]}>Or add manually</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
                   value={manualName}
                   onChangeText={setManualName}
                   placeholder="Food name"
                   placeholderTextColor={colors.textTertiary}
                 />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
                   value={manualCalories}
                   onChangeText={setManualCalories}
                   placeholder="Calories"
@@ -345,13 +361,14 @@ export default function NutritionScreen() {
               </>
             )}
 
-            <Button
+            <AnimatedButton
               title="Save Meal"
               onPress={handleSaveMeal}
               loading={isLoading}
               disabled={detectedFoods.length === 0 && (!manualName || !manualCalories)}
+              fullWidth
             />
-          </View>
+          </Animated.View>
         </View>
       </Modal>
     </View>
@@ -361,7 +378,6 @@ export default function NutritionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
     padding: spacing.md,
@@ -372,8 +388,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   summaryTitle: {
-    ...typography.h4,
-    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: spacing.sm,
   },
   calorieRow: {
@@ -382,24 +398,21 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   calorieValue: {
-    ...typography.h1,
-    color: colors.nutrition,
+    fontSize: 36,
+    fontWeight: '700',
   },
   calorieLabel: {
-    ...typography.body,
-    color: colors.textSecondary,
+    fontSize: 16,
     marginLeft: spacing.xs,
   },
   progressBar: {
     height: 8,
-    backgroundColor: colors.gray200,
     borderRadius: 4,
     marginBottom: spacing.md,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: colors.nutrition,
     borderRadius: 4,
   },
   macroRow: {
@@ -410,16 +423,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   macroValue: {
-    ...typography.h4,
-    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '600',
   },
   macroLabel: {
-    ...typography.caption,
-    color: colors.textTertiary,
+    fontSize: 12,
   },
   sectionTitle: {
-    ...typography.h3,
-    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: spacing.md,
   },
   emptyState: {
@@ -427,13 +439,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxl,
   },
   emptyText: {
-    ...typography.h4,
-    color: colors.textSecondary,
+    fontSize: 16,
+    fontWeight: '600',
     marginTop: spacing.md,
   },
   emptySubtext: {
-    ...typography.body,
-    color: colors.textTertiary,
+    fontSize: 14,
     marginTop: spacing.xs,
   },
   mealCard: {
@@ -446,18 +457,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   mealType: {
-    ...typography.body,
-    color: colors.textPrimary,
+    fontSize: 16,
     fontWeight: '600',
   },
   mealCalories: {
-    ...typography.body,
-    color: colors.nutrition,
+    fontSize: 16,
     fontWeight: '600',
   },
   foodItem: {
-    ...typography.bodySmall,
-    color: colors.textSecondary,
+    fontSize: 14,
     marginTop: 2,
   },
   fab: {
@@ -467,10 +475,9 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.nutrition,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.black,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -482,7 +489,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: colors.white,
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
     padding: spacing.lg,
@@ -496,21 +502,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   modalTitle: {
-    ...typography.h3,
-    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '600',
   },
   inputLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
+    fontSize: 12,
     fontWeight: '500',
+    marginBottom: spacing.sm,
   },
   input: {
-    backgroundColor: colors.gray100,
     borderRadius: borderRadius.md,
     padding: spacing.md,
     fontSize: 16,
-    color: colors.textPrimary,
     marginBottom: spacing.md,
   },
   mealTypeRow: {
@@ -521,21 +524,12 @@ const styles = StyleSheet.create({
   mealTypeOption: {
     flex: 1,
     paddingVertical: spacing.sm,
-    backgroundColor: colors.gray100,
     borderRadius: borderRadius.md,
     marginHorizontal: 2,
     alignItems: 'center',
   },
-  mealTypeSelected: {
-    backgroundColor: colors.nutrition,
-  },
   mealTypeText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  mealTypeTextSelected: {
-    color: colors.white,
-    fontWeight: '600',
+    fontSize: 12,
   },
   cameraRow: {
     flexDirection: 'row',
@@ -548,8 +542,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   analyzingText: {
-    ...typography.body,
-    color: colors.textSecondary,
+    fontSize: 16,
     marginLeft: spacing.sm,
   },
   previewImage: {
@@ -566,15 +559,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
   },
   detectedName: {
-    ...typography.body,
-    color: colors.textPrimary,
+    fontSize: 16,
   },
   detectedCalories: {
-    ...typography.body,
-    color: colors.nutrition,
+    fontSize: 16,
     fontWeight: '600',
   },
 });

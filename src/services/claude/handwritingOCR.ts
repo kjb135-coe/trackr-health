@@ -1,21 +1,35 @@
 import { getClaudeClient } from './client';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { OCRResult } from '@/src/types';
+import { AI_MODEL, OCR_CONFIDENCE } from '@/src/utils/constants';
+
+function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
+  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
+}
+
+function parseConfidenceLevel(level: string): number {
+  switch (level.toLowerCase()) {
+    case 'high':
+      return OCR_CONFIDENCE.HIGH;
+    case 'medium':
+      return OCR_CONFIDENCE.MEDIUM;
+    case 'low':
+      return OCR_CONFIDENCE.LOW;
+    default:
+      return OCR_CONFIDENCE.MEDIUM;
+  }
+}
 
 export async function scanHandwrittenJournal(imageUri: string): Promise<OCRResult> {
   const startTime = Date.now();
   const client = await getClaudeClient();
 
   const base64Image = await FileSystem.readAsStringAsync(imageUri, {
-    encoding: FileSystem.EncodingType.Base64,
+    encoding: 'base64',
   });
 
-  const mediaType = imageUri.toLowerCase().includes('.png')
-    ? 'image/png'
-    : 'image/jpeg';
-
   const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
+    model: AI_MODEL,
     max_tokens: 4096,
     messages: [
       {
@@ -25,7 +39,7 @@ export async function scanHandwrittenJournal(imageUri: string): Promise<OCRResul
             type: 'image',
             source: {
               type: 'base64',
-              media_type: mediaType,
+              media_type: getMediaType(imageUri),
               data: base64Image,
             },
           },
@@ -54,18 +68,16 @@ Confidence: [high/medium/low]`,
     throw new Error('No text response from Claude');
   }
 
-  // Parse confidence from response
   const responseText = textContent.text;
   let text = responseText;
-  let confidence = 0.8; // default medium-high
+  let confidence = OCR_CONFIDENCE.MEDIUM;
 
   const confidenceMatch = responseText.match(
     /---\s*Confidence:\s*(high|medium|low)/i
   );
   if (confidenceMatch) {
     text = responseText.substring(0, confidenceMatch.index).trim();
-    const level = confidenceMatch[1].toLowerCase();
-    confidence = level === 'high' ? 0.95 : level === 'medium' ? 0.75 : 0.5;
+    confidence = parseConfidenceLevel(confidenceMatch[1]);
   }
 
   return {

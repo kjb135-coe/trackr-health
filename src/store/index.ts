@@ -3,3 +3,6 @@ export { useSleepStore } from './sleepStore';
 export { useExerciseStore } from './exerciseStore';
 export { useNutritionStore } from './nutritionStore';
 export { useJournalStore } from './journalStore';
+export { useAuthStore } from './authStore';
+export { useGoalsStore } from './goalsStore';
+export { useAIInsightsStore } from './aiInsightsStore';

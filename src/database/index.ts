@@ -29,13 +29,11 @@ async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
   // Run pending migrations
   for (const migration of migrations) {
     if (!appliedSet.has(migration.name)) {
-      console.log(`Running migration: ${migration.name}`);
       await database.execAsync(migration.sql);
       await database.runAsync(
         'INSERT INTO migrations (name) VALUES (?)',
         migration.name
       );
-      console.log(`Migration ${migration.name} completed`);
     }
   }
 }

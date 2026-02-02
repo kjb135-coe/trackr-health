@@ -2,16 +2,39 @@ import { getDatabase } from '../index';
 import { Habit, HabitCompletion } from '@/src/types';
 import { generateId, getDateString } from '@/src/utils/date';
 
+// Database row types for type-safe SQL queries
+interface HabitRow {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  color: string;
+  frequency: 'daily' | 'weekly' | 'custom';
+  target_days_per_week: number | null;
+  reminder_time: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface HabitCompletionRow {
+  id: string;
+  habit_id: string;
+  date: string;
+  completed: number;
+  completed_at: string | null;
+  notes: string | null;
+}
+
 export const habitRepository = {
   async getAll(): Promise<Habit[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM habits ORDER BY created_at DESC');
+    const rows = await db.getAllAsync<HabitRow>('SELECT * FROM habits ORDER BY created_at DESC');
     return rows.map(mapRowToHabit);
   },
 
   async getById(id: string): Promise<Habit | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM habits WHERE id = ?', id);
+    const row = await db.getFirstAsync<HabitRow>('SELECT * FROM habits WHERE id = ?', id);
     return row ? mapRowToHabit(row) : null;
   },
 
@@ -43,7 +66,7 @@ export const habitRepository = {
     const now = new Date().toISOString();
 
     const fields: string[] = [];
-    const values: any[] = [];
+    const values: (string | number | null)[] = [];
 
     if (updates.name !== undefined) {
       fields.push('name = ?');
@@ -89,9 +112,17 @@ export const habitRepository = {
     await db.runAsync('DELETE FROM habits WHERE id = ?', id);
   },
 
+  async getAllCompletions(): Promise<HabitCompletion[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<HabitCompletionRow>(
+      'SELECT * FROM habit_completions ORDER BY date DESC'
+    );
+    return rows.map(mapRowToCompletion);
+  },
+
   async getCompletionsForDate(date: string): Promise<HabitCompletion[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<HabitCompletionRow>(
       'SELECT * FROM habit_completions WHERE date = ?',
       date
     );
@@ -100,7 +131,7 @@ export const habitRepository = {
 
   async getCompletionsForHabit(habitId: string, startDate: string, endDate: string): Promise<HabitCompletion[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<HabitCompletionRow>(
       'SELECT * FROM habit_completions WHERE habit_id = ? AND date >= ? AND date <= ? ORDER BY date',
       habitId,
       startDate,
@@ -146,7 +177,7 @@ export const habitRepository = {
 
     while (true) {
       const dateStr = getDateString(currentDate);
-      const completion = await db.getFirstAsync<any>(
+      const completion = await db.getFirstAsync<{ completed: number }>(
         'SELECT completed FROM habit_completions WHERE habit_id = ? AND date = ?',
         habitId,
         dateStr
@@ -164,28 +195,28 @@ export const habitRepository = {
   },
 };
 
-function mapRowToHabit(row: any): Habit {
+function mapRowToHabit(row: HabitRow): Habit {
   return {
     id: row.id,
     name: row.name,
-    description: row.description,
-    icon: row.icon,
+    description: row.description ?? undefined,
+    icon: row.icon ?? undefined,
     color: row.color,
     frequency: row.frequency,
-    targetDaysPerWeek: row.target_days_per_week,
-    reminderTime: row.reminder_time,
+    targetDaysPerWeek: row.target_days_per_week ?? undefined,
+    reminderTime: row.reminder_time ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
 
-function mapRowToCompletion(row: any): HabitCompletion {
+function mapRowToCompletion(row: HabitCompletionRow): HabitCompletion {
   return {
     id: row.id,
     habitId: row.habit_id,
     date: row.date,
     completed: Boolean(row.completed),
-    completedAt: row.completed_at,
-    notes: row.notes,
+    completedAt: row.completed_at ?? undefined,
+    notes: row.notes ?? undefined,
   };
 }

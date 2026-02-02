@@ -68,3 +68,24 @@ export const HABIT_COLORS = [
   '#A9E34B',
   '#4ECDC4',
 ];
+
+// AI Configuration
+export const AI_MODEL = 'claude-sonnet-4-20250514';
+export const AI_MAX_TOKENS = 1024;
+export const AI_TIMEOUT_MS = 30000;
+
+// Storage keys
+export const STORAGE_KEYS = {
+  CLAUDE_API_KEY: 'CLAUDE_API_KEY',
+  THEME_MODE: '@trackr_theme_mode',
+  GOALS: 'trackr_goals',
+  AUTH_USER: 'trackr_auth_user',
+  ONBOARDING_COMPLETE: '@trackr_onboarding_complete',
+} as const;
+
+// OCR confidence thresholds
+export const OCR_CONFIDENCE: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
+  HIGH: 0.95,
+  MEDIUM: 0.75,
+  LOW: 0.5,
+};

@@ -1,0 +1,451 @@
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import { X, Camera, RotateCcw, Image as ImageIcon, Check, Utensils } from 'lucide-react-native';
+import Animated, { FadeInUp } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { spacing, borderRadius } from '@/src/theme';
+import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
+import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
+import { useNutritionStore } from '@/src/store';
+import { AIFoodAnalysis } from '@/src/types';
+import { getDateString } from '@/src/utils/date';
+
+export default function NutritionCameraScreen() {
+  const router = useRouter();
+  const { colors } = useTheme();
+  const cameraRef = useRef<any>(null);
+  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AIFoodAnalysis | null>(null);
+  const { createMeal } = useNutritionStore();
+
+  const handleTakePhoto = async () => {
+    if (cameraRef.current) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const photo = await cameraRef.current.takePictureAsync();
+      setCapturedPhoto(photo.uri);
+      analyzePhoto(photo.uri);
+    }
+  };
+
+  const handlePickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setCapturedPhoto(result.assets[0].uri);
+      analyzePhoto(result.assets[0].uri);
+    }
+  };
+
+  const analyzePhoto = async (imageUri: string) => {
+    const hasKey = await hasApiKey();
+    if (!hasKey) {
+      Alert.alert(
+        'API Key Required',
+        'Please add your Claude API key in Settings to use AI food recognition.',
+        [
+          { text: 'Cancel', onPress: () => setCapturedPhoto(null) },
+          { text: 'Go to Settings', onPress: () => router.push('/settings') },
+        ]
+      );
+      return;
+    }
+
+    setAnalyzing(true);
+    try {
+      const result = await analyzeFoodImage(imageUri);
+      setAnalysisResult(result);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error: any) {
+      Alert.alert('Analysis Failed', error.message || 'Could not analyze the image');
+      setCapturedPhoto(null);
+    }
+    setAnalyzing(false);
+  };
+
+  const handleRetake = () => {
+    setCapturedPhoto(null);
+    setAnalysisResult(null);
+  };
+
+  const getTotalCalories = () => {
+    if (!analysisResult) return 0;
+    return analysisResult.detectedFoods.reduce((sum, f) => sum + f.calorieEstimate, 0);
+  };
+
+  const handleSaveMeal = async () => {
+    if (!analysisResult) return;
+
+    const foods = analysisResult.detectedFoods;
+    const totalCalories = foods.reduce((sum, f) => sum + f.calorieEstimate, 0);
+    const totalProtein = foods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0);
+    const totalCarbs = foods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0);
+    const totalFat = foods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
+
+    try {
+      await createMeal(
+        {
+          date: getDateString(),
+          mealType: 'snack',
+          name: foods.map((f) => f.name).join(', '),
+          totalCalories,
+          totalProtein,
+          totalCarbs,
+          totalFat,
+          photoUri: capturedPhoto || undefined,
+          aiAnalysis: analysisResult,
+        },
+        foods.map((f) => ({
+          name: f.name,
+          quantity: 1,
+          unit: f.portionEstimate,
+          calories: f.calorieEstimate,
+          protein: f.macroEstimates?.protein || 0,
+          carbs: f.macroEstimates?.carbs || 0,
+          fat: f.macroEstimates?.fat || 0,
+          isAIGenerated: true,
+          confidence: f.confidence,
+        }))
+      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      router.back();
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save meal');
+    }
+  };
+
+  if (!permission) {
+    return <View style={styles.container} />;
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={[styles.permissionContainer, { backgroundColor: colors.background }]}>
+        <Camera color={colors.textSecondary} size={64} />
+        <Text style={[styles.permissionTitle, { color: colors.textPrimary }]}>Camera Access Required</Text>
+        <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
+          We need camera access to take photos of your food for AI analysis.
+        </Text>
+        <AnimatedButton title="Grant Permission" onPress={requestPermission} />
+        <AnimatedButton
+          title="Cancel"
+          variant="ghost"
+          onPress={() => router.back()}
+          style={{ marginTop: spacing.sm }}
+        />
+      </View>
+    );
+  }
+
+  if (capturedPhoto) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+            <X color="#FFFFFF" size={24} />
+          </TouchableOpacity>
+        </View>
+
+        <Image source={{ uri: capturedPhoto }} style={styles.previewImage} />
+
+        {analyzing ? (
+          <View style={styles.analyzingOverlay}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.analyzingText}>Analyzing your food...</Text>
+          </View>
+        ) : analysisResult ? (
+          <Animated.View entering={FadeInUp.duration(400)} style={styles.resultsContainer}>
+            <AnimatedCard style={styles.resultsCard}>
+              <View style={styles.resultsHeader}>
+                <Utensils color={colors.nutrition} size={24} />
+                <Text style={[styles.resultsTitle, { color: colors.textPrimary }]}>Food Detected</Text>
+              </View>
+
+              <View style={[styles.caloriesBadge, { backgroundColor: colors.nutrition + '20' }]}>
+                <Text style={[styles.caloriesValue, { color: colors.nutrition }]}>{getTotalCalories()}</Text>
+                <Text style={[styles.caloriesLabel, { color: colors.textSecondary }]}>calories</Text>
+              </View>
+
+              <View style={styles.foodList}>
+                {analysisResult.detectedFoods.map((food, index) => (
+                  <View key={index} style={[styles.foodItem, { borderBottomColor: colors.border }]}>
+                    <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name}</Text>
+                    <Text style={[styles.foodCalories, { color: colors.textSecondary }]}>{food.calorieEstimate} cal</Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={[styles.macros, { borderTopColor: colors.border }]}>
+                <View style={styles.macroItem}>
+                  <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0)}g
+                  </Text>
+                  <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
+                </View>
+                <View style={styles.macroItem}>
+                  <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0)}g
+                  </Text>
+                  <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
+                </View>
+                <View style={styles.macroItem}>
+                  <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0)}g
+                  </Text>
+                  <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
+                </View>
+              </View>
+
+              <View style={styles.actionButtons}>
+                <AnimatedButton
+                  title="Retake"
+                  variant="secondary"
+                  onPress={handleRetake}
+                  style={styles.actionButton}
+                />
+                <AnimatedButton
+                  title="Save Meal"
+                  onPress={handleSaveMeal}
+                  style={styles.actionButton}
+                />
+              </View>
+            </AnimatedCard>
+          </Animated.View>
+        ) : null}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+            <X color={colors.white} size={24} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.overlay}>
+          <View style={styles.framingGuide} />
+        </View>
+
+        <View style={styles.controls}>
+          <TouchableOpacity style={styles.sideButton} onPress={handlePickImage}>
+            <ImageIcon color={colors.white} size={28} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.captureButton} onPress={handleTakePhoto}>
+            <View style={styles.captureButtonInner} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.sideButton}
+            onPress={() => setFacing((f) => (f === 'back' ? 'front' : 'back'))}
+          >
+            <RotateCcw color={colors.white} size={28} />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.hint}>Take a photo of your food</Text>
+      </CameraView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+  camera: {
+    flex: 1,
+  },
+  header: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    right: 0,
+    paddingHorizontal: spacing.md,
+    zIndex: 10,
+  },
+  closeButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  overlay: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  framingGuide: {
+    width: 280,
+    height: 280,
+    borderRadius: borderRadius.lg,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.5)',
+    borderStyle: 'dashed',
+  },
+  controls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 60,
+    gap: 40,
+  },
+  sideButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  captureButtonInner: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FFFFFF',
+  },
+  hint: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: spacing.md,
+  },
+  permissionContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.xl,
+  },
+  permissionTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  permissionText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: spacing.xl,
+  },
+  previewImage: {
+    flex: 1,
+    width: '100%',
+  },
+  analyzingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  analyzingText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginTop: spacing.md,
+  },
+  resultsContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.md,
+    paddingBottom: spacing.xxl,
+  },
+  resultsCard: {
+    padding: spacing.md,
+  },
+  resultsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  resultsTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  caloriesBadge: {
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  caloriesValue: {
+    fontSize: 36,
+    fontWeight: '700',
+  },
+  caloriesLabel: {
+    fontSize: 12,
+  },
+  foodList: {
+    marginBottom: spacing.md,
+  },
+  foodItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.xs,
+    borderBottomWidth: 1,
+  },
+  foodName: {
+    fontSize: 16,
+  },
+  foodCalories: {
+    fontSize: 16,
+  },
+  macros: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: spacing.md,
+    borderTopWidth: 1,
+    marginBottom: spacing.md,
+  },
+  macroItem: {
+    alignItems: 'center',
+  },
+  macroValue: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  macroLabel: {
+    fontSize: 12,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  actionButton: {
+    flex: 1,
+  },
+});

@@ -42,8 +42,8 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       const completionMap = new Map<string, HabitCompletion>();
       completions.forEach((c) => completionMap.set(c.habitId, c));
       set({ todayCompletions: completionMap });
-    } catch (error) {
-      console.error('Error loading completions:', error);
+    } catch {
+      // Silent fail - completions will be empty
     }
   },
 
@@ -108,8 +108,8 @@ export const useHabitStore = create<HabitState>((set, get) => ({
           return { todayCompletions: newMap };
         });
       }
-    } catch (error) {
-      console.error('Error toggling completion:', error);
+    } catch {
+      // Silent fail - UI will show stale state
     }
   },
 

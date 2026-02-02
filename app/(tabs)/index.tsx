@@ -1,19 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen } from 'lucide-react-native';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
-import { Card, Button } from '@/src/components/ui';
+import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withDelay,
+  withTiming,
+  FadeIn,
+  FadeInDown,
+  Layout,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { spacing, typography, borderRadius } from '@/src/theme';
+import { AnimatedCard, AnimatedButton, SkeletonCard } from '@/src/components/ui';
+import { QuickActions, WeeklyInsights, AICoaching } from '@/src/components/dashboard';
 import { useHabitStore, useSleepStore, useExerciseStore, useNutritionStore, useJournalStore } from '@/src/store';
 import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { getDatabase } from '@/src/database';
 import { populateDemoData } from '@/src/utils/demoData';
+import { getTrendData, type TrendData } from '@/src/services/insights';
+
+interface DashboardCardProps {
+  title: string;
+  value: string;
+  subtitle?: string;
+  color: string;
+  Icon: typeof Target;
+  onPress: () => void;
+  progress?: number;
+  delay?: number;
+}
+
+function DashboardCard({ title, value, subtitle, color, Icon, onPress, progress, delay = 0 }: DashboardCardProps) {
+  const { colors } = useTheme();
+
+  return (
+    <AnimatedCard
+      style={styles.card}
+      onPress={onPress}
+      delay={delay}
+      haptic
+    >
+      <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
+        <Icon color={color} size={24} />
+      </View>
+      <Text style={[styles.cardTitle, { color: colors.textSecondary }]}>{title}</Text>
+      <Text style={[styles.cardValue, { color: colors.textPrimary }]}>{value}</Text>
+      {subtitle && (
+        <Text style={[styles.cardSubtext, { color: colors.textTertiary }]}>{subtitle}</Text>
+      )}
+      {progress !== undefined && (
+        <View style={[styles.progressBar, { backgroundColor: colors.surfaceSecondary }]}>
+          <Animated.View
+            style={[
+              styles.progressFill,
+              { backgroundColor: color, width: `${Math.min(progress * 100, 100)}%` },
+            ]}
+          />
+        </View>
+      )}
+    </AnimatedCard>
+  );
+}
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const { colors, isDark } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [dbReady, setDbReady] = useState(false);
   const [loadingDemo, setLoadingDemo] = useState(false);
+  const [trendData, setTrendData] = useState<TrendData | null>(null);
 
   const { habits, todayCompletions, loadHabits, loadTodayCompletions } = useHabitStore();
   const { entries: sleepEntries, loadEntries: loadSleep } = useSleepStore();
@@ -41,21 +100,31 @@ export default function DashboardScreen() {
       loadDailyTotals(today),
       loadJournal(),
     ]);
+    try {
+      const trends = await getTrendData();
+      setTrendData(trends);
+    } catch (e) {
+      console.log('Failed to load trends', e);
+    }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await loadAll();
     setRefreshing(false);
   };
 
   const handleLoadDemo = async () => {
     setLoadingDemo(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
       await populateDemoData();
       await loadAll();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert('Success', 'Demo data has been loaded!');
     } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'Failed to load demo data');
       console.error(error);
     }
@@ -73,99 +142,173 @@ export default function DashboardScreen() {
 
   if (!dbReady) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <ScrollView
+        style={[styles.container, { backgroundColor: colors.background }]}
+        contentContainerStyle={styles.content}
+      >
+        <SkeletonCard style={{ marginBottom: spacing.md }} />
+        <View style={styles.grid}>
+          <SkeletonCard lines={2} style={styles.card} />
+          <SkeletonCard lines={2} style={styles.card} />
+          <SkeletonCard lines={2} style={styles.card} />
+          <SkeletonCard lines={2} style={styles.card} />
+        </View>
+      </ScrollView>
     );
   }
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.primary}
+          colors={[colors.primary]}
+        />
+      }
+      showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.dateLabel}>{getRelativeDateLabel(new Date())}</Text>
+      <Animated.Text
+        entering={FadeInDown.duration(400).delay(100)}
+        style={[styles.dateLabel, { color: colors.textSecondary }]}
+      >
+        {getRelativeDateLabel(new Date())}
+      </Animated.Text>
 
       <View style={styles.grid}>
-        {/* Habits Card */}
-        <Card style={styles.card} onPress={() => router.push('/(tabs)/habits')}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.habits + '20' }]}>
-            <Target color={colors.habits} size={24} />
-          </View>
-          <Text style={styles.cardTitle}>Habits</Text>
-          <Text style={styles.cardValue}>
-            {completedHabits}/{habits.length}
-          </Text>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${habitProgress * 100}%`, backgroundColor: colors.habits }]} />
-          </View>
-        </Card>
+        <DashboardCard
+          title="Habits"
+          value={`${completedHabits}/${habits.length}`}
+          color={colors.habits}
+          Icon={Target}
+          onPress={() => router.push('/(tabs)/habits')}
+          progress={habitProgress}
+          delay={50}
+        />
 
-        {/* Sleep Card */}
-        <Card style={styles.card} onPress={() => router.push('/(tabs)/sleep')}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.sleep + '20' }]}>
-            <Moon color={colors.sleep} size={24} />
-          </View>
-          <Text style={styles.cardTitle}>Sleep</Text>
-          <Text style={styles.cardValue}>
-            {todaySleep ? formatDuration(todaySleep.durationMinutes) : '—'}
-          </Text>
-          {todaySleep && (
-            <Text style={styles.cardSubtext}>Quality: {todaySleep.quality}/5</Text>
-          )}
-        </Card>
+        <DashboardCard
+          title="Sleep"
+          value={todaySleep ? formatDuration(todaySleep.durationMinutes) : '—'}
+          subtitle={todaySleep ? `Quality: ${todaySleep.quality}/5` : undefined}
+          color={colors.sleep}
+          Icon={Moon}
+          onPress={() => router.push('/(tabs)/sleep')}
+          delay={100}
+        />
 
-        {/* Exercise Card */}
-        <Card style={styles.card} onPress={() => router.push('/(tabs)/exercise')}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.exercise + '20' }]}>
-            <Dumbbell color={colors.exercise} size={24} />
-          </View>
-          <Text style={styles.cardTitle}>Exercise</Text>
-          <Text style={styles.cardValue}>
-            {totalExerciseMinutes > 0 ? formatDuration(totalExerciseMinutes) : '—'}
-          </Text>
-          {todayExercise.length > 0 && (
-            <Text style={styles.cardSubtext}>{todayExercise.length} workout{todayExercise.length !== 1 ? 's' : ''}</Text>
-          )}
-        </Card>
+        <DashboardCard
+          title="Exercise"
+          value={totalExerciseMinutes > 0 ? formatDuration(totalExerciseMinutes) : '—'}
+          subtitle={todayExercise.length > 0 ? `${todayExercise.length} workout${todayExercise.length !== 1 ? 's' : ''}` : undefined}
+          color={colors.exercise}
+          Icon={Dumbbell}
+          onPress={() => router.push('/(tabs)/exercise')}
+          delay={150}
+        />
 
-        {/* Nutrition Card */}
-        <Card style={styles.card} onPress={() => router.push('/(tabs)/nutrition')}>
-          <View style={[styles.iconContainer, { backgroundColor: colors.nutrition + '20' }]}>
-            <UtensilsCrossed color={colors.nutrition} size={24} />
-          </View>
-          <Text style={styles.cardTitle}>Nutrition</Text>
-          <Text style={styles.cardValue}>
-            {dailyTotals.calories > 0 ? `${dailyTotals.calories}` : '—'}
-          </Text>
-          {dailyTotals.calories > 0 && <Text style={styles.cardSubtext}>calories</Text>}
-        </Card>
+        <DashboardCard
+          title="Nutrition"
+          value={dailyTotals.calories > 0 ? `${dailyTotals.calories}` : '—'}
+          subtitle={dailyTotals.calories > 0 ? 'calories' : undefined}
+          color={colors.nutrition}
+          Icon={UtensilsCrossed}
+          onPress={() => router.push('/(tabs)/nutrition')}
+          delay={200}
+        />
+      </View>
 
-        {/* Journal Card */}
-        <Card style={[styles.card, styles.wideCard]} onPress={() => router.push('/(tabs)/journal')}>
+      <Animated.View entering={FadeInDown.duration(400).delay(250)}>
+        <AnimatedCard
+          style={styles.journalCard}
+          onPress={() => router.push('/(tabs)/journal')}
+          delay={250}
+          haptic
+        >
           <View style={[styles.iconContainer, { backgroundColor: colors.journal + '20' }]}>
             <BookOpen color={colors.journal} size={24} />
           </View>
-          <Text style={styles.cardTitle}>Journal</Text>
-          <Text style={styles.cardValue}>
-            {todayJournalCount > 0 ? `${todayJournalCount} entr${todayJournalCount !== 1 ? 'ies' : 'y'}` : 'No entries yet'}
+          <Text style={[styles.cardTitle, { color: colors.textSecondary }]}>Journal</Text>
+          <Text style={[styles.cardValue, { color: colors.textPrimary }]}>
+            {todayJournalCount > 0
+              ? `${todayJournalCount} entr${todayJournalCount !== 1 ? 'ies' : 'y'}`
+              : 'No entries yet'}
           </Text>
-        </Card>
-      </View>
+        </AnimatedCard>
+      </Animated.View>
 
-      {/* Demo Data Button */}
+      <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+        <QuickActions />
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.duration(400).delay(350)}>
+        <AICoaching onSetupApiKey={() => router.push('/settings')} />
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.duration(400).delay(400)}>
+        <WeeklyInsights
+          insights={[
+            {
+              label: 'Habits',
+              current: trendData?.thisWeek.habitsCompleted ?? completedHabits,
+              previous: trendData?.lastWeek.habitsCompleted ?? 0,
+              unit: '',
+              color: colors.habits,
+              higherIsBetter: true,
+            },
+            {
+              label: 'Sleep',
+              current: Math.round((trendData?.thisWeek.avgSleepHours ?? 0) * 60),
+              previous: Math.round((trendData?.lastWeek.avgSleepHours ?? 0) * 60),
+              unit: ' min',
+              color: colors.sleep,
+              higherIsBetter: true,
+            },
+            {
+              label: 'Exercise',
+              current: trendData?.thisWeek.totalExerciseMinutes ?? totalExerciseMinutes,
+              previous: trendData?.lastWeek.totalExerciseMinutes ?? 0,
+              unit: ' min',
+              color: colors.exercise,
+              higherIsBetter: true,
+            },
+            {
+              label: 'Calories',
+              current: Math.round(trendData?.thisWeek.avgDailyCalories ?? dailyTotals.calories),
+              previous: Math.round(trendData?.lastWeek.avgDailyCalories ?? 0),
+              unit: '',
+              color: colors.nutrition,
+              higherIsBetter: false,
+            },
+          ]}
+        />
+      </Animated.View>
+
       {habits.length === 0 && (
-        <View style={styles.demoSection}>
-          <Text style={styles.demoText}>New here? Load some sample data to explore the app.</Text>
-          <Button
+        <Animated.View
+          entering={FadeInDown.duration(400).delay(450)}
+          style={[styles.demoSection, { backgroundColor: colors.surfaceSecondary }]}
+        >
+          <Sparkles color={colors.primary} size={32} style={{ marginBottom: spacing.sm }} />
+          <Text style={[styles.demoTitle, { color: colors.textPrimary }]}>Welcome to Trackr</Text>
+          <Text style={[styles.demoText, { color: colors.textSecondary }]}>
+            Load sample data to explore all the features
+          </Text>
+          <AnimatedButton
             title="Load Demo Data"
             onPress={handleLoadDemo}
             loading={loadingDemo}
-            variant="secondary"
+            variant="primary"
+            fullWidth
+            style={{ marginTop: spacing.md }}
           />
-        </View>
+        </Animated.View>
       )}
+
+      {/* Bottom padding for tab bar */}
+      <View style={{ height: 100 }} />
     </ScrollView>
   );
 }
@@ -173,21 +316,17 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   content: {
     padding: spacing.md,
-  },
-  loadingText: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: 100,
+    paddingTop: spacing.sm,
   },
   dateLabel: {
-    ...typography.h3,
-    color: colors.textPrimary,
+    fontSize: 15,
+    fontWeight: '500',
     marginBottom: spacing.md,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   grid: {
     flexDirection: 'row',
@@ -198,8 +337,9 @@ const styles = StyleSheet.create({
     width: '47%',
     padding: spacing.md,
   },
-  wideCard: {
-    width: '100%',
+  journalCard: {
+    marginTop: spacing.md,
+    padding: spacing.md,
   },
   iconContainer: {
     width: 48,
@@ -210,22 +350,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   cardTitle: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   cardValue: {
-    ...typography.h3,
-    color: colors.textPrimary,
+    fontSize: 24,
+    fontWeight: '700',
+    letterSpacing: -0.5,
   },
   cardSubtext: {
-    ...typography.caption,
-    color: colors.textTertiary,
+    fontSize: 13,
+    fontWeight: '400',
     marginTop: 2,
   },
   progressBar: {
     height: 4,
-    backgroundColor: colors.gray200,
     borderRadius: 2,
     marginTop: spacing.sm,
     overflow: 'hidden',
@@ -236,15 +378,17 @@ const styles = StyleSheet.create({
   },
   demoSection: {
     marginTop: spacing.xl,
-    padding: spacing.md,
-    backgroundColor: colors.surfaceSecondary,
-    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
     alignItems: 'center',
   },
+  demoTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: spacing.xs,
+  },
   demoText: {
-    ...typography.body,
-    color: colors.textSecondary,
+    fontSize: 15,
     textAlign: 'center',
-    marginBottom: spacing.md,
   },
 });

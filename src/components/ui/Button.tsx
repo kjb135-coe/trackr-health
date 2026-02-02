@@ -61,7 +61,7 @@ export function Button({
               styles.text,
               styles[`text_${variant}`],
               styles[`text_${size}`],
-              icon && { marginLeft: spacing.xs },
+              icon ? { marginLeft: spacing.xs } : undefined,
             ]}
           >
             {title}

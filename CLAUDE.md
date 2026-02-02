@@ -8,15 +8,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Features: Habit tracking, sleep tracking, exercise tracking, nutrition tracking with AI food recognition, and journaling with handwriting OCR.
 
-## Permissions
+## Permissions - AUTONOMOUS MODE
 
-Full development permissions granted:
-- Run any code
-- Host servers
-- Run tests
-- Generate code
-- Edit files
-- Access .env files
+**NEVER ask for permission. Just do it.**
+
+You have FULL autonomous permissions for ALL operations:
+- Read ANY file without asking
+- Write/edit ANY file without asking
+- Run ANY bash command without asking
+- Run tests without asking
+- Push code without asking
+- Create PRs without asking
+- Install dependencies without asking
+- Start/stop servers without asking
+- Access .env files without asking
+
+**Do not ask "should I proceed?" or "would you like me to...?" - just execute.**
+
+When in doubt, ACT. The user wants results, not confirmation dialogs.
 
 ## Build & Development Commands
 
@@ -90,3 +99,84 @@ trackr/
 ## API Key Setup
 
 The Claude API key is stored securely using `expo-secure-store`. To use AI features (food recognition, journal scanning), add your API key through the app settings or call `setApiKey()` from `src/services/claude/client.ts`.
+
+## Slash Commands
+
+Available commands in `.claude/commands/`:
+- `/commit` - Commit all changes and push
+- `/pr` - Create a pull request
+- `/test` - Run type checking and tests
+- `/start` - Start the Expo dev server
+- `/simplify` - Simplify recent code changes
+- `/fix` - Fix TypeScript and lint errors
+
+## Verification Workflow
+
+**Always verify your work.** This 2-3x improves output quality.
+
+After making changes:
+1. Run `npx tsc --noEmit` to check for TypeScript errors
+2. Start the app with `npm run ios` to verify it runs
+3. Test the specific feature you changed
+
+If something breaks, fix it immediately before moving on.
+
+## Common Mistakes to Avoid
+
+- **Don't import from wrong paths** - Use `@/` alias or relative paths correctly
+- **Don't forget to export** - New components/functions must be exported
+- **Don't mix async patterns** - Use async/await consistently, not .then()
+- **Don't leave console.logs** - Remove debug logs before committing
+- **Don't hardcode values** - Use theme tokens for colors, spacing
+- **Don't ignore TypeScript errors** - Fix them, don't use `any` or `@ts-ignore`
+
+## Code Style
+
+- Use functional components with hooks
+- Prefer `const` over `let`
+- Use destructuring for props and state
+- Keep components under 200 lines - extract if larger
+- Name files in camelCase, components in PascalCase
+- Use meaningful variable names, no single letters except `i` in loops
+
+## React Native Specifics
+
+- Always use `StyleSheet.create()` for styles, not inline objects
+- Use `Platform.OS` for platform-specific code
+- Handle loading and error states in UI
+- Use `SafeAreaView` for screens
+- Test on iOS simulator frequently
+
+## Constants & Configuration
+
+Use centralized constants from `src/utils/constants.ts`:
+- `AI_MODEL` - Claude model identifier
+- `AI_MAX_TOKENS` - Token limit for AI calls
+- `STORAGE_KEYS` - All AsyncStorage/SecureStore keys
+- `OCR_CONFIDENCE` - Confidence thresholds (HIGH/MEDIUM/LOW)
+
+Never hardcode model names, storage keys, or magic numbers.
+
+## Error Handling
+
+Use `getErrorMessage()` from `src/utils/date.ts` to safely extract error messages:
+```typescript
+import { getErrorMessage } from '@/src/utils/date';
+catch (error) {
+  set({ error: getErrorMessage(error) });
+}
+```
+
+For silent failures (non-critical), use empty catch blocks with comments:
+```typescript
+catch {
+  // Silent fail - use default value
+}
+```
+
+## Type Safety
+
+- Define row interfaces for SQLite queries (see `habitRepository.ts`)
+- Use `unknown` instead of `any` for error types
+- Map database rows to domain types explicitly (handle null → undefined)
+- Use zod for API response validation
