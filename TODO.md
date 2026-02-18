@@ -170,3 +170,4 @@ Do whatever you think is right.
 - [x] Fixed all 74 ESLint warnings: 54 unused vars removed, 19 exhaustive-deps resolved — 0 errors, 0 warnings (TODO #19)
 - [x] Expanded test coverage: habitStore (19 tests), Card (3 tests), Input (5 tests) — 41 total tests (TODO #20)
 - [x] Fixed catch (err: any) patterns in auth screens with proper unknown type narrowing (TODO #21)
+- [x] Deep linking already configured: scheme "trackr" in app.json + Expo Router auto-handles routes (TODO #15)
