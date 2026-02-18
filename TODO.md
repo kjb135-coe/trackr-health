@@ -115,6 +115,10 @@ Do whatever you think is right.
 - Key untested areas: Zustand stores, database repositories, navigation flows, AI service mocks
 - **Effort:** ~4-6h for meaningful coverage
 
+### 22. Add sleep, nutrition, and exercise store tests
+- Only habitStore has tests. sleepStore, nutritionStore, and exerciseStore follow the same pattern and should be tested.
+- **Effort:** ~2h (using habitStore test as template)
+
 ### 21. Several `catch (err: any)` patterns remain in auth screens
 - `app/auth/login.tsx` and `app/auth/signup.tsx` still use `catch (err: any)` with `err.code` access
 - These should use `unknown` type + proper type narrowing per CLAUDE.md guidelines
@@ -164,3 +168,4 @@ Do whatever you think is right.
 - [x] StreakBadge & StreakCelebration integrated into habits screen with milestone celebrations (TODO #5)
 - [x] Audited colors imports - no direct `colors` imports from theme remain, all use `useTheme()` (TODO #9)
 - [x] Fixed all 74 ESLint warnings: 54 unused vars removed, 19 exhaustive-deps resolved — 0 errors, 0 warnings (TODO #19)
+- [x] Expanded test coverage: habitStore (19 tests), Card (3 tests), Input (5 tests) — 41 total tests (TODO #20)
