@@ -104,6 +104,17 @@ Do whatever you think is right.
 
 ## P3 - Future / Low Priority
 
+### 19. Fix 74 ESLint warnings (unused imports, missing useEffect deps)
+- ~40 `@typescript-eslint/no-unused-vars` warnings across the codebase (unused imports, destructured vars)
+- ~15 `react-hooks/exhaustive-deps` warnings (missing dependencies in useEffect)
+- Cleaning these up improves code quality and prevents bugs from stale closures
+- **Effort:** ~1-2h
+
+### 20. Expand test coverage beyond initial smoke tests
+- Only 2 test files exist: `date.test.ts` (4 tests) and `Button.test.tsx` (4 tests)
+- Key untested areas: Zustand stores, database repositories, navigation flows, AI service mocks
+- **Effort:** ~4-6h for meaningful coverage
+
 ### 13. No data migration strategy
 - SQLite schema changes will break existing data without migrations.
 - Currently relies on `CREATE TABLE IF NOT EXISTS`.
@@ -143,3 +154,4 @@ Do whatever you think is right.
 - [x] Set up ESLint (expo config + prettier), Prettier, Husky + lint-staged pre-commit hook (TODO #2)
 - [x] Set up GitHub Actions CI pipeline with type-check + lint + test (TODO #8)
 - [x] Added `/vibe` and `/merge` slash commands
+- [x] Fixed all 14 ESLint errors across codebase - unescaped JSX entities + firebase import suppression (TODO #18)
