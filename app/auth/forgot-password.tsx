@@ -33,8 +33,9 @@ export default function ForgotPasswordScreen() {
     try {
       await sendPasswordReset(email.trim());
       setSent(true);
-    } catch (err: any) {
-      Alert.alert('Error', getErrorMessage(err.code));
+    } catch (err: unknown) {
+      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
+      Alert.alert('Error', getErrorMessage(code));
     }
   };
 

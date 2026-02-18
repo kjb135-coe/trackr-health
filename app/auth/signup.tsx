@@ -55,8 +55,9 @@ export default function SignUpScreen() {
         'Please check your email and click the verification link to complete your registration.',
         [{ text: 'OK', onPress: () => router.push('/auth/verify-email') }],
       );
-    } catch (err: any) {
-      Alert.alert('Sign Up Failed', getErrorMessage(err.code));
+    } catch (err: unknown) {
+      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
+      Alert.alert('Sign Up Failed', getErrorMessage(code));
     }
   };
 

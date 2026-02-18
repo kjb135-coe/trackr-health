@@ -43,16 +43,17 @@ export default function LoginScreen() {
 
     try {
       await signIn(email.trim(), password);
-    } catch (err: any) {
-      Alert.alert('Login Failed', getErrorMessage(err.code));
+    } catch (err: unknown) {
+      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
+      Alert.alert('Login Failed', getErrorMessage(code));
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await promptAsync();
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
+    } catch (err: unknown) {
+      Alert.alert('Error', err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
