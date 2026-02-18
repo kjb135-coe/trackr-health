@@ -115,6 +115,11 @@ Do whatever you think is right.
 - Key untested areas: Zustand stores, database repositories, navigation flows, AI service mocks
 - **Effort:** ~4-6h for meaningful coverage
 
+### 21. Several `catch (err: any)` patterns remain in auth screens
+- `app/auth/login.tsx` and `app/auth/signup.tsx` still use `catch (err: any)` with `err.code` access
+- These should use `unknown` type + proper type narrowing per CLAUDE.md guidelines
+- **Effort:** ~15min
+
 ### 13. No data migration strategy
 - SQLite schema changes will break existing data without migrations.
 - Currently relies on `CREATE TABLE IF NOT EXISTS`.
@@ -158,3 +163,4 @@ Do whatever you think is right.
 - [x] Dark mode fixed on all screens - auth, onboarding, goals all use useTheme() + createStyles(colors) (TODO #4)
 - [x] StreakBadge & StreakCelebration integrated into habits screen with milestone celebrations (TODO #5)
 - [x] Audited colors imports - no direct `colors` imports from theme remain, all use `useTheme()` (TODO #9)
+- [x] Fixed all 74 ESLint warnings: 54 unused vars removed, 19 exhaustive-deps resolved — 0 errors, 0 warnings (TODO #19)
