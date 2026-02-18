@@ -156,3 +156,4 @@ Do whatever you think is right.
 - [x] Added `/vibe` and `/merge` slash commands
 - [x] Fixed all 14 ESLint errors across codebase - unescaped JSX entities + firebase import suppression (TODO #18)
 - [x] Dark mode fixed on all screens - auth, onboarding, goals all use useTheme() + createStyles(colors) (TODO #4)
+- [x] StreakBadge & StreakCelebration integrated into habits screen with milestone celebrations (TODO #5)
