@@ -1,6 +1,16 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Sparkles, ChevronRight, AlertCircle, TrendingUp, Moon, Dumbbell, Apple, BookOpen, RefreshCw } from 'lucide-react-native';
+import {
+  Sparkles,
+  ChevronRight,
+  AlertCircle,
+  TrendingUp,
+  Moon,
+  Dumbbell,
+  Apple,
+  BookOpen,
+  RefreshCw,
+} from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -17,12 +27,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
   const { colors } = useTheme();
   const [hasKey, setHasKey] = React.useState(false);
 
-  const {
-    dailyCoaching,
-    isLoadingCoaching,
-    error,
-    fetchDailyCoaching,
-  } = useAIInsightsStore();
+  const { dailyCoaching, isLoadingCoaching, error, fetchDailyCoaching } = useAIInsightsStore();
 
   useEffect(() => {
     checkApiKey();
@@ -200,7 +205,12 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
               <Text style={[styles.insightTitle, { color: colors.textPrimary }]}>
                 {insight.title}
               </Text>
-              <View style={[styles.priorityDot, { backgroundColor: getPriorityColor(insight.priority) }]} />
+              <View
+                style={[
+                  styles.priorityDot,
+                  { backgroundColor: getPriorityColor(insight.priority) },
+                ]}
+              />
             </View>
             <Text style={[styles.insightText, { color: colors.textSecondary }]}>
               {insight.insight}
@@ -213,7 +223,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
 
         {/* Daily Tip */}
         <View style={[styles.tipContainer, { backgroundColor: colors.primary + '10' }]}>
-          <Text style={[styles.tipLabel, { color: colors.primary }]}>Today's Tip</Text>
+          <Text style={[styles.tipLabel, { color: colors.primary }]}>{"Today's Tip"}</Text>
           <Text style={[styles.tipText, { color: colors.textPrimary }]}>
             {dailyCoaching.dailyTip}
           </Text>

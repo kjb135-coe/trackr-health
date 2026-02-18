@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Modal, Animated, Pressable } from 'react-native';
 import { Flame, Award, Crown, Zap, X, PartyPopper } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 
 interface StreakCelebrationProps {
@@ -15,6 +15,8 @@ interface StreakCelebrationProps {
 const MILESTONES = [7, 14, 21, 30, 60, 90, 100, 180, 365];
 
 export function StreakCelebration({ visible, streak, habitName, onClose }: StreakCelebrationProps) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -45,7 +47,7 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
               duration: 1000,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
       ]).start();
     } else {
@@ -55,10 +57,29 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
   }, [visible]);
 
   const getStreakInfo = () => {
-    if (streak >= 365) return { icon: Crown, color: colors.warning, title: 'LEGENDARY!', message: 'A full year of dedication!' };
-    if (streak >= 100) return { icon: Award, color: colors.primary, title: 'INCREDIBLE!', message: '100 days strong!' };
-    if (streak >= 30) return { icon: Zap, color: colors.success, title: 'ON FIRE!', message: '30 days of consistency!' };
-    if (streak >= 7) return { icon: Flame, color: colors.error, title: 'AMAZING!', message: 'One week streak!' };
+    if (streak >= 365)
+      return {
+        icon: Crown,
+        color: colors.warning,
+        title: 'LEGENDARY!',
+        message: 'A full year of dedication!',
+      };
+    if (streak >= 100)
+      return {
+        icon: Award,
+        color: colors.primary,
+        title: 'INCREDIBLE!',
+        message: '100 days strong!',
+      };
+    if (streak >= 30)
+      return {
+        icon: Zap,
+        color: colors.success,
+        title: 'ON FIRE!',
+        message: '30 days of consistency!',
+      };
+    if (streak >= 7)
+      return { icon: Flame, color: colors.error, title: 'AMAZING!', message: 'One week streak!' };
     return { icon: PartyPopper, color: colors.primary, title: 'NICE!', message: 'Keep it going!' };
   };
 
@@ -103,7 +124,7 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
               <Text style={styles.streakLabel}>day streak</Text>
             </View>
 
-            <Text style={styles.habitName}>"{habitName}"</Text>
+            <Text style={styles.habitName}>{`"${habitName}"`}</Text>
 
             <Button title="Keep Going!" onPress={onClose} style={styles.button} />
           </Pressable>
@@ -113,70 +134,71 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  container: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    alignItems: 'center',
-    width: '100%',
-    maxWidth: 320,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: -spacing.md,
-    right: -spacing.md,
-  },
-  iconCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  message: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  streakContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  streakNumber: {
-    fontSize: 48,
-    fontWeight: '800',
-  },
-  streakLabel: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  habitName: {
-    ...typography.bodySmall,
-    color: colors.textTertiary,
-    fontStyle: 'italic',
-    marginBottom: spacing.lg,
-  },
-  button: {
-    width: '100%',
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: spacing.lg,
+    },
+    container: {
+      backgroundColor: colors.surface,
+      borderRadius: borderRadius.xl,
+      padding: spacing.xl,
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: 320,
+    },
+    closeButton: {
+      position: 'absolute',
+      top: -spacing.md,
+      right: -spacing.md,
+    },
+    iconCircle: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: spacing.lg,
+    },
+    title: {
+      ...typography.h1,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.xs,
+    },
+    message: {
+      ...typography.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: spacing.lg,
+    },
+    streakContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    streakNumber: {
+      fontSize: 48,
+      fontWeight: '800',
+    },
+    streakLabel: {
+      ...typography.body,
+      color: colors.textSecondary,
+    },
+    habitName: {
+      ...typography.bodySmall,
+      color: colors.textTertiary,
+      fontStyle: 'italic',
+      marginBottom: spacing.lg,
+    },
+    button: {
+      width: '100%',
+    },
+  });
 
 export { MILESTONES };

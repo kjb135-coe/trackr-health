@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { colors, spacing, borderRadius } from '@/src/theme';
+import { spacing, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 
 type CardVariant = 'elevated' | 'outlined' | 'filled';
 type CardPadding = 'none' | 'sm' | 'md' | 'lg';
@@ -20,12 +20,10 @@ export function Card({
   onPress,
   style,
 }: CardProps) {
-  const cardStyle = [
-    styles.base,
-    styles[variant],
-    styles[`padding_${padding}`],
-    style,
-  ];
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
+  const cardStyle = [styles.base, styles[variant], styles[`padding_${padding}`], style];
 
   if (onPress) {
     return (
@@ -38,37 +36,38 @@ export function Card({
   return <View style={cardStyle}>{children}</View>;
 }
 
-const styles = StyleSheet.create({
-  base: {
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-  },
-  elevated: {
-    backgroundColor: colors.surface,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  outlined: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-  },
-  filled: {
-    backgroundColor: colors.surfaceSecondary,
-  },
-  padding_none: {
-    padding: 0,
-  },
-  padding_sm: {
-    padding: spacing.sm,
-  },
-  padding_md: {
-    padding: spacing.md,
-  },
-  padding_lg: {
-    padding: spacing.lg,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    base: {
+      borderRadius: borderRadius.lg,
+      overflow: 'hidden',
+    },
+    elevated: {
+      backgroundColor: colors.surface,
+      shadowColor: colors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 3,
+    },
+    outlined: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    filled: {
+      backgroundColor: colors.surfaceSecondary,
+    },
+    padding_none: {
+      padding: 0,
+    },
+    padding_sm: {
+      padding: spacing.sm,
+    },
+    padding_md: {
+      padding: spacing.md,
+    },
+    padding_lg: {
+      padding: spacing.lg,
+    },
+  });

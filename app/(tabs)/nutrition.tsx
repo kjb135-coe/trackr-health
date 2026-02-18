@@ -38,8 +38,16 @@ export default function NutritionScreen() {
   const [detectedFoods, setDetectedFoods] = useState<DetectedFood[]>([]);
   const [apiKeyExists, setApiKeyExists] = useState(false);
 
-  const { meals, dailyTotals, isLoading, isAnalyzing, loadMealsForDate, loadDailyTotals, createMeal, analyzeImage } =
-    useNutritionStore();
+  const {
+    meals,
+    dailyTotals,
+    isLoading,
+    isAnalyzing,
+    loadMealsForDate,
+    loadDailyTotals,
+    createMeal,
+    analyzeImage,
+  } = useNutritionStore();
 
   const today = getDateString();
 
@@ -67,7 +75,10 @@ export default function NutritionScreen() {
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant camera permission to take photos of your food.');
+      Alert.alert(
+        'Permission needed',
+        'Please grant camera permission to take photos of your food.',
+      );
       return;
     }
 
@@ -86,7 +97,10 @@ export default function NutritionScreen() {
           const analysis = await analyzeImage(result.assets[0].uri);
           setDetectedFoods(analysis.detectedFoods);
         } catch (error) {
-          Alert.alert('Analysis failed', 'Could not analyze the food image. You can add items manually.');
+          Alert.alert(
+            'Analysis failed',
+            'Could not analyze the food image. You can add items manually.',
+          );
         }
       }
     }
@@ -114,7 +128,10 @@ export default function NutritionScreen() {
           const analysis = await analyzeImage(result.assets[0].uri);
           setDetectedFoods(analysis.detectedFoods);
         } catch (error) {
-          Alert.alert('Analysis failed', 'Could not analyze the food image. You can add items manually.');
+          Alert.alert(
+            'Analysis failed',
+            'Could not analyze the food image. You can add items manually.',
+          );
         }
       }
     }
@@ -169,7 +186,7 @@ export default function NutritionScreen() {
         totalFat: totalFat || undefined,
         photoUri: capturedImage || undefined,
       },
-      foods
+      foods,
     );
 
     resetModal();
@@ -190,16 +207,28 @@ export default function NutritionScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         {/* Daily Summary */}
         <Animated.View entering={FadeInDown.duration(400)}>
           <AnimatedCard style={styles.summaryCard}>
-            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>Today's Nutrition</Text>
+            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
+              {"Today's Nutrition"}
+            </Text>
             <View style={styles.calorieRow}>
-              <Text style={[styles.calorieValue, { color: colors.nutrition }]}>{dailyTotals.calories}</Text>
-              <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>/ {DEFAULT_CALORIE_GOAL} cal</Text>
+              <Text style={[styles.calorieValue, { color: colors.nutrition }]}>
+                {dailyTotals.calories}
+              </Text>
+              <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>
+                / {DEFAULT_CALORIE_GOAL} cal
+              </Text>
             </View>
             <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
               <View
@@ -212,15 +241,21 @@ export default function NutritionScreen() {
             </View>
             <View style={styles.macroRow}>
               <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.protein)}g</Text>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                  {Math.round(dailyTotals.protein)}g
+                </Text>
                 <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
               </View>
               <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.carbs)}g</Text>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                  {Math.round(dailyTotals.carbs)}g
+                </Text>
                 <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
               </View>
               <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>{Math.round(dailyTotals.fat)}g</Text>
+                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                  {Math.round(dailyTotals.fat)}g
+                </Text>
                 <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
               </View>
             </View>
@@ -228,22 +263,35 @@ export default function NutritionScreen() {
         </Animated.View>
 
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Today's Meals</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+            {"Today's Meals"}
+          </Text>
         </Animated.View>
 
         {todayMeals.length === 0 ? (
           <View style={styles.emptyState}>
             <UtensilsCrossed color={colors.nutrition} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No meals logged yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Tap + to log your food</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              No meals logged yet
+            </Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+              Tap + to log your food
+            </Text>
           </View>
         ) : (
           todayMeals.map((meal, index) => (
-            <Animated.View key={meal.id} entering={FadeInDown.duration(400).delay(150 + index * 50)}>
+            <Animated.View
+              key={meal.id}
+              entering={FadeInDown.duration(400).delay(150 + index * 50)}
+            >
               <AnimatedCard style={styles.mealCard} delay={index * 50}>
                 <View style={styles.mealHeader}>
-                  <Text style={[styles.mealType, { color: colors.textPrimary }]}>{MEAL_TYPE_LABELS[meal.mealType]}</Text>
-                  <Text style={[styles.mealCalories, { color: colors.nutrition }]}>{meal.totalCalories} cal</Text>
+                  <Text style={[styles.mealType, { color: colors.textPrimary }]}>
+                    {MEAL_TYPE_LABELS[meal.mealType]}
+                  </Text>
+                  <Text style={[styles.mealCalories, { color: colors.nutrition }]}>
+                    {meal.totalCalories} cal
+                  </Text>
                 </View>
                 {meal.foods.map((food, idx) => (
                   <Text key={idx} style={[styles.foodItem, { color: colors.textSecondary }]}>
@@ -257,14 +305,20 @@ export default function NutritionScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.nutrition }]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.nutrition }]}
+        onPress={() => setModalVisible(true)}
+      >
         <Plus color="#FFFFFF" size={24} />
       </TouchableOpacity>
 
       {/* Log Meal Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Meal</Text>
               <TouchableOpacity onPress={resetModal}>
@@ -320,21 +374,30 @@ export default function NutritionScreen() {
             {isAnalyzing && (
               <View style={styles.analyzingContainer}>
                 <ActivityIndicator color={colors.primary} />
-                <Text style={[styles.analyzingText, { color: colors.textSecondary }]}>Analyzing food...</Text>
+                <Text style={[styles.analyzingText, { color: colors.textSecondary }]}>
+                  Analyzing food...
+                </Text>
               </View>
             )}
 
-            {capturedImage && (
-              <Image source={{ uri: capturedImage }} style={styles.previewImage} />
-            )}
+            {capturedImage && <Image source={{ uri: capturedImage }} style={styles.previewImage} />}
 
             {detectedFoods.length > 0 && (
               <View style={styles.detectedFoods}>
-                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Detected Foods</Text>
+                <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+                  Detected Foods
+                </Text>
                 {detectedFoods.map((food, idx) => (
-                  <View key={idx} style={[styles.detectedItem, { borderBottomColor: colors.border }]}>
-                    <Text style={[styles.detectedName, { color: colors.textPrimary }]}>{food.name}</Text>
-                    <Text style={[styles.detectedCalories, { color: colors.nutrition }]}>{food.calorieEstimate} cal</Text>
+                  <View
+                    key={idx}
+                    style={[styles.detectedItem, { borderBottomColor: colors.border }]}
+                  >
+                    <Text style={[styles.detectedName, { color: colors.textPrimary }]}>
+                      {food.name}
+                    </Text>
+                    <Text style={[styles.detectedCalories, { color: colors.nutrition }]}>
+                      {food.calorieEstimate} cal
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -342,16 +405,29 @@ export default function NutritionScreen() {
 
             {!capturedImage && (
               <>
-                <Text style={[styles.inputLabel, { color: colors.textSecondary, marginTop: spacing.md }]}>Or add manually</Text>
+                <Text
+                  style={[
+                    styles.inputLabel,
+                    { color: colors.textSecondary, marginTop: spacing.md },
+                  ]}
+                >
+                  Or add manually
+                </Text>
                 <TextInput
-                  style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                  style={[
+                    styles.input,
+                    { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                  ]}
                   value={manualName}
                   onChangeText={setManualName}
                   placeholder="Food name"
                   placeholderTextColor={colors.textTertiary}
                 />
                 <TextInput
-                  style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                  style={[
+                    styles.input,
+                    { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                  ]}
                   value={manualCalories}
                   onChangeText={setManualCalories}
                   placeholder="Calories"

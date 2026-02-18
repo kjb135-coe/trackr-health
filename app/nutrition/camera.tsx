@@ -20,7 +20,7 @@ import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
 import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
 import { useNutritionStore } from '@/src/store';
 import { AIFoodAnalysis } from '@/src/types';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 export default function NutritionCameraScreen() {
   const router = useRouter();
@@ -65,7 +65,7 @@ export default function NutritionCameraScreen() {
         [
           { text: 'Cancel', onPress: () => setCapturedPhoto(null) },
           { text: 'Go to Settings', onPress: () => router.push('/settings') },
-        ]
+        ],
       );
       return;
     }
@@ -75,8 +75,8 @@ export default function NutritionCameraScreen() {
       const result = await analyzeFoodImage(imageUri);
       setAnalysisResult(result);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error: any) {
-      Alert.alert('Analysis Failed', error.message || 'Could not analyze the image');
+    } catch (error: unknown) {
+      Alert.alert('Analysis Failed', getErrorMessage(error));
       setCapturedPhoto(null);
     }
     setAnalyzing(false);
@@ -124,7 +124,7 @@ export default function NutritionCameraScreen() {
           fat: f.macroEstimates?.fat || 0,
           isAIGenerated: true,
           confidence: f.confidence,
-        }))
+        })),
       );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
@@ -141,7 +141,9 @@ export default function NutritionCameraScreen() {
     return (
       <View style={[styles.permissionContainer, { backgroundColor: colors.background }]}>
         <Camera color={colors.textSecondary} size={64} />
-        <Text style={[styles.permissionTitle, { color: colors.textPrimary }]}>Camera Access Required</Text>
+        <Text style={[styles.permissionTitle, { color: colors.textPrimary }]}>
+          Camera Access Required
+        </Text>
         <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
           We need camera access to take photos of your food for AI analysis.
         </Text>
@@ -177,19 +179,29 @@ export default function NutritionCameraScreen() {
             <AnimatedCard style={styles.resultsCard}>
               <View style={styles.resultsHeader}>
                 <Utensils color={colors.nutrition} size={24} />
-                <Text style={[styles.resultsTitle, { color: colors.textPrimary }]}>Food Detected</Text>
+                <Text style={[styles.resultsTitle, { color: colors.textPrimary }]}>
+                  Food Detected
+                </Text>
               </View>
 
               <View style={[styles.caloriesBadge, { backgroundColor: colors.nutrition + '20' }]}>
-                <Text style={[styles.caloriesValue, { color: colors.nutrition }]}>{getTotalCalories()}</Text>
-                <Text style={[styles.caloriesLabel, { color: colors.textSecondary }]}>calories</Text>
+                <Text style={[styles.caloriesValue, { color: colors.nutrition }]}>
+                  {getTotalCalories()}
+                </Text>
+                <Text style={[styles.caloriesLabel, { color: colors.textSecondary }]}>
+                  calories
+                </Text>
               </View>
 
               <View style={styles.foodList}>
                 {analysisResult.detectedFoods.map((food, index) => (
                   <View key={index} style={[styles.foodItem, { borderBottomColor: colors.border }]}>
-                    <Text style={[styles.foodName, { color: colors.textPrimary }]}>{food.name}</Text>
-                    <Text style={[styles.foodCalories, { color: colors.textSecondary }]}>{food.calorieEstimate} cal</Text>
+                    <Text style={[styles.foodName, { color: colors.textPrimary }]}>
+                      {food.name}
+                    </Text>
+                    <Text style={[styles.foodCalories, { color: colors.textSecondary }]}>
+                      {food.calorieEstimate} cal
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -197,19 +209,31 @@ export default function NutritionCameraScreen() {
               <View style={[styles.macros, { borderTopColor: colors.border }]}>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0)}g
+                    {analysisResult.detectedFoods.reduce(
+                      (sum, f) => sum + (f.macroEstimates?.protein || 0),
+                      0,
+                    )}
+                    g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
                 </View>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0)}g
+                    {analysisResult.detectedFoods.reduce(
+                      (sum, f) => sum + (f.macroEstimates?.carbs || 0),
+                      0,
+                    )}
+                    g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
                 </View>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0)}g
+                    {analysisResult.detectedFoods.reduce(
+                      (sum, f) => sum + (f.macroEstimates?.fat || 0),
+                      0,
+                    )}
+                    g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
                 </View>

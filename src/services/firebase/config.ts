@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { initializeAuth, getAuth } from 'firebase/auth';
 // @ts-ignore - getReactNativePersistence is available in react-native environment
+// eslint-disable-next-line import/no-unresolved
 import { getReactNativePersistence } from '@firebase/auth/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

@@ -12,63 +12,68 @@ import { useRouter } from 'expo-router';
 import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 
 const { width } = Dimensions.get('window');
 
 const ONBOARDING_KEY = 'hasCompletedOnboarding';
 
-const slides = [
-  {
-    id: '1',
-    title: 'Track Your Habits',
-    description: 'Build positive routines with streak tracking and daily reminders. Never miss a day again.',
-    Icon: Target,
-    color: colors.primary,
-  },
-  {
-    id: '2',
-    title: 'Sleep Better',
-    description: 'Log your sleep patterns and discover insights to improve your rest and energy levels.',
-    Icon: Moon,
-    color: colors.sleep,
-  },
-  {
-    id: '3',
-    title: 'Stay Active',
-    description: 'Track workouts, monitor your progress, and reach your fitness goals.',
-    Icon: Dumbbell,
-    color: colors.exercise,
-  },
-  {
-    id: '4',
-    title: 'Smart Nutrition',
-    description: 'Take a photo of your food and let AI identify calories and macros instantly.',
-    Icon: UtensilsCrossed,
-    color: colors.nutrition,
-  },
-  {
-    id: '5',
-    title: 'Journal Your Journey',
-    description: 'Write or scan handwritten entries. AI helps digitize your thoughts.',
-    Icon: BookOpen,
-    color: colors.journal,
-  },
-  {
-    id: '6',
-    title: 'Ready to Start?',
-    description: 'Your complete health companion is ready. Track everything in one beautiful app.',
-    Icon: Sparkles,
-    color: colors.success,
-  },
-];
-
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
+
+  const slides = [
+    {
+      id: '1',
+      title: 'Track Your Habits',
+      description:
+        'Build positive routines with streak tracking and daily reminders. Never miss a day again.',
+      Icon: Target,
+      color: colors.primary,
+    },
+    {
+      id: '2',
+      title: 'Sleep Better',
+      description:
+        'Log your sleep patterns and discover insights to improve your rest and energy levels.',
+      Icon: Moon,
+      color: colors.sleep,
+    },
+    {
+      id: '3',
+      title: 'Stay Active',
+      description: 'Track workouts, monitor your progress, and reach your fitness goals.',
+      Icon: Dumbbell,
+      color: colors.exercise,
+    },
+    {
+      id: '4',
+      title: 'Smart Nutrition',
+      description: 'Take a photo of your food and let AI identify calories and macros instantly.',
+      Icon: UtensilsCrossed,
+      color: colors.nutrition,
+    },
+    {
+      id: '5',
+      title: 'Journal Your Journey',
+      description: 'Write or scan handwritten entries. AI helps digitize your thoughts.',
+      Icon: BookOpen,
+      color: colors.journal,
+    },
+    {
+      id: '6',
+      title: 'Ready to Start?',
+      description:
+        'Your complete health companion is ready. Track everything in one beautiful app.',
+      Icon: Sparkles,
+      color: colors.success,
+    },
+  ];
 
   const handleNext = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -89,7 +94,7 @@ export default function OnboardingScreen() {
     router.replace('/(tabs)');
   };
 
-  const renderSlide = ({ item }: { item: typeof slides[0] }) => {
+  const renderSlide = ({ item }: { item: (typeof slides)[0] }) => {
     const Icon = item.Icon;
     return (
       <View style={styles.slide}>
@@ -117,12 +122,7 @@ export default function OnboardingScreen() {
             outputRange: [0.3, 1, 0.3],
             extrapolate: 'clamp',
           });
-          return (
-            <Animated.View
-              key={index}
-              style={[styles.dot, { width: dotWidth, opacity }]}
-            />
-          );
+          return <Animated.View key={index} style={[styles.dot, { width: dotWidth, opacity }]} />;
         })}
       </View>
     );
@@ -152,10 +152,9 @@ export default function OnboardingScreen() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
-        )}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+          useNativeDriver: false,
+        })}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
@@ -164,7 +163,7 @@ export default function OnboardingScreen() {
 
       <View style={styles.footer}>
         <Button
-          title={currentIndex === slides.length - 1 ? "Get Started" : "Next"}
+          title={currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
           onPress={handleNext}
           style={styles.button}
         />
@@ -173,69 +172,70 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  skipButton: {
-    position: 'absolute',
-    top: 60,
-    right: spacing.lg,
-    zIndex: 10,
-    padding: spacing.sm,
-  },
-  skipText: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  slide: {
-    width,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  iconContainer: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  description: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    paddingHorizontal: spacing.lg,
-    lineHeight: 24,
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: spacing.xl,
-  },
-  dot: {
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-    marginHorizontal: 4,
-  },
-  footer: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  button: {
-    marginBottom: spacing.md,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    skipButton: {
+      position: 'absolute',
+      top: 60,
+      right: spacing.lg,
+      zIndex: 10,
+      padding: spacing.sm,
+    },
+    skipText: {
+      ...typography.body,
+      color: colors.textSecondary,
+    },
+    slide: {
+      width,
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: spacing.xl,
+    },
+    iconContainer: {
+      width: 160,
+      height: 160,
+      borderRadius: 80,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: spacing.xl,
+    },
+    title: {
+      ...typography.h1,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.md,
+    },
+    description: {
+      ...typography.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      paddingHorizontal: spacing.lg,
+      lineHeight: 24,
+    },
+    dotsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: spacing.xl,
+    },
+    dot: {
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.primary,
+      marginHorizontal: 4,
+    },
+    footer: {
+      paddingHorizontal: spacing.lg,
+      paddingBottom: spacing.xxl,
+    },
+    button: {
+      marginBottom: spacing.md,
+    },
+  });
 
 export { ONBOARDING_KEY };

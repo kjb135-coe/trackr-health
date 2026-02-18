@@ -10,13 +10,11 @@ export default function NotFoundScreen() {
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>
-          This screen doesn't exist.
+          {"This screen doesn't exist."}
         </Text>
 
         <Link href="/" style={styles.link}>
-          <Text style={[styles.linkText, { color: colors.primary }]}>
-            Go to home screen!
-          </Text>
+          <Text style={[styles.linkText, { color: colors.primary }]}>Go to home screen!</Text>
         </Link>
       </View>
     </>

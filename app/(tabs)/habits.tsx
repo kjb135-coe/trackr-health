@@ -18,6 +18,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
+import { StreakBadge, StreakCelebration, MILESTONES } from '@/src/components/habits';
 import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { Habit } from '@/src/types';
@@ -32,6 +33,9 @@ export default function HabitsScreen() {
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
   const [streaks, setStreaks] = useState<Map<string, number>>(new Map());
   const [apiKeyExists, setApiKeyExists] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationStreak, setCelebrationStreak] = useState(0);
+  const [celebrationHabitName, setCelebrationHabitName] = useState('');
 
   const {
     habits,
@@ -110,27 +114,46 @@ export default function HabitsScreen() {
 
   const handleToggle = async (habitId: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const wasCompleted = todayCompletions.get(habitId)?.completed;
     await toggleCompletion(habitId, today);
-    // Reload streaks after toggle
     const streak = await getStreak(habitId);
     setStreaks((prev) => new Map(prev).set(habitId, streak));
+
+    if (!wasCompleted && MILESTONES.includes(streak)) {
+      const habit = habits.find((h) => h.id === habitId);
+      if (habit) {
+        setCelebrationStreak(streak);
+        setCelebrationHabitName(habit.name);
+        setShowCelebration(true);
+      }
+    }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         <Animated.View entering={FadeInDown.duration(400)}>
-          <Text style={[styles.dateLabel, { color: colors.textPrimary }]}>{getRelativeDateLabel(new Date())}</Text>
+          <Text style={[styles.dateLabel, { color: colors.textPrimary }]}>
+            {getRelativeDateLabel(new Date())}
+          </Text>
         </Animated.View>
 
         {habits.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No habits yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Tap + to create your first habit</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+              Tap + to create your first habit
+            </Text>
           </View>
         ) : (
           habits.map((habit, index) => {
@@ -152,12 +175,19 @@ export default function HabitsScreen() {
                   </TouchableOpacity>
 
                   <View style={styles.habitInfo}>
-                    <Text style={[styles.habitName, { color: colors.textPrimary }, isCompleted && { textDecorationLine: 'line-through', color: colors.textTertiary }]}>
+                    <Text
+                      style={[
+                        styles.habitName,
+                        { color: colors.textPrimary },
+                        isCompleted && {
+                          textDecorationLine: 'line-through',
+                          color: colors.textTertiary,
+                        },
+                      ]}
+                    >
                       {habit.name}
                     </Text>
-                    {streak > 0 && (
-                      <Text style={[styles.streakText, { color: colors.textSecondary }]}>{streak} day streak</Text>
-                    )}
+                    {streak > 0 && <StreakBadge streak={streak} size="sm" />}
                   </View>
 
                   <TouchableOpacity
@@ -196,14 +226,20 @@ export default function HabitsScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.habits }]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.habits }]}
+        onPress={() => setModalVisible(true)}
+      >
         <Plus color="#FFFFFF" size={24} />
       </TouchableOpacity>
 
       {/* Create Habit Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>New Habit</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -212,7 +248,10 @@ export default function HabitsScreen() {
             </View>
 
             <TextInput
-              style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+              ]}
               placeholder="Habit name"
               value={newHabitName}
               onChangeText={setNewHabitName}
@@ -248,14 +287,27 @@ export default function HabitsScreen() {
         </View>
       </Modal>
 
+      {/* Streak Celebration */}
+      <StreakCelebration
+        visible={showCelebration}
+        streak={celebrationStreak}
+        habitName={celebrationHabitName}
+        onClose={() => setShowCelebration(false)}
+      />
+
       {/* AI Suggestions Modal */}
       <Modal visible={suggestionsVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Sparkles color={colors.primary} size={20} />
-                <Text style={[styles.modalTitle, { color: colors.textPrimary, marginLeft: spacing.sm }]}>
+                <Text
+                  style={[styles.modalTitle, { color: colors.textPrimary, marginLeft: spacing.sm }]}
+                >
                   AI Suggestions
                 </Text>
               </View>
@@ -296,7 +348,10 @@ export default function HabitsScreen() {
                             color: HABIT_COLORS[index % HABIT_COLORS.length],
                             frequency: suggestion.frequency,
                           });
-                          Alert.alert('Success', `"${suggestion.name}" has been added to your habits!`);
+                          Alert.alert(
+                            'Success',
+                            `"${suggestion.name}" has been added to your habits!`,
+                          );
                         }}
                         style={{ marginTop: spacing.sm }}
                       />
@@ -372,10 +427,6 @@ const styles = StyleSheet.create({
   },
   habitName: {
     fontSize: 16,
-  },
-  streakText: {
-    fontSize: 12,
-    marginTop: 2,
   },
   deleteButton: {
     padding: spacing.xs,

@@ -12,6 +12,7 @@ import {
   Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 import {
   User,
   Key,
@@ -30,7 +31,12 @@ import {
   Download,
   Check,
 } from 'lucide-react-native';
-import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme, type ThemeMode } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -40,6 +46,7 @@ import { hasApiKey, setApiKey, deleteApiKey } from '@/src/services/claude';
 import { shareExportedData, shareCSVExport } from '@/src/services/export';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface SettingRowProps {
   icon: React.ReactNode;
@@ -92,22 +99,19 @@ function SettingRow({
       disabled={!onPress && !rightElement}
     >
       <Animated.View style={[styles.settingRow, animatedStyle]}>
-        <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
-          {icon}
-        </View>
+        <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>{icon}</View>
         <View style={styles.settingInfo}>
-          <Text style={[styles.settingTitle, { color: danger ? colors.error : colors.textPrimary }]}>
+          <Text
+            style={[styles.settingTitle, { color: danger ? colors.error : colors.textPrimary }]}
+          >
             {title}
           </Text>
           {subtitle && (
-            <Text style={[styles.settingSubtitle, { color: colors.textTertiary }]}>
-              {subtitle}
-            </Text>
+            <Text style={[styles.settingSubtitle, { color: colors.textTertiary }]}>{subtitle}</Text>
           )}
         </View>
-        {rightElement || (showChevron && onPress && (
-          <ChevronRight color={colors.textTertiary} size={20} />
-        ))}
+        {rightElement ||
+          (showChevron && onPress && <ChevronRight color={colors.textTertiary} size={20} />)}
       </Animated.View>
     </Pressable>
   );
@@ -142,10 +146,7 @@ function ThemePicker() {
               },
             ]}
           >
-            <Icon
-              size={18}
-              color={isSelected ? colors.white : colors.textSecondary}
-            />
+            <Icon size={18} color={isSelected ? colors.white : colors.textSecondary} />
             <Text
               style={[
                 styles.themeLabel,
@@ -212,7 +213,7 @@ export default function SettingsScreen() {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           },
         },
-      ]
+      ],
     );
   };
 
@@ -236,7 +237,7 @@ export default function SettingsScreen() {
       if (!granted) {
         Alert.alert(
           'Permissions Required',
-          'Please enable notifications in your device settings to receive habit reminders.'
+          'Please enable notifications in your device settings to receive habit reminders.',
         );
         return;
       }
@@ -249,8 +250,8 @@ export default function SettingsScreen() {
     try {
       await shareExportedData();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error: any) {
-      Alert.alert('Export Failed', error.message || 'Could not export data');
+    } catch (error: unknown) {
+      Alert.alert('Export Failed', getErrorMessage(error));
     }
   };
 
@@ -268,8 +269,8 @@ export default function SettingsScreen() {
     try {
       await shareCSVExport(type);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error: any) {
-      Alert.alert('Export Failed', error.message || 'Could not export data');
+    } catch (error: unknown) {
+      Alert.alert('Export Failed', getErrorMessage(error));
     }
   };
 
@@ -301,7 +302,7 @@ export default function SettingsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -319,7 +320,9 @@ export default function SettingsScreen() {
             <TouchableOpacity style={styles.profileRow}>
               <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
                 <Text style={[styles.avatarText, { color: colors.white }]}>
-                  {user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U'}
+                  {user.displayName?.charAt(0).toUpperCase() ||
+                    user.email?.charAt(0).toUpperCase() ||
+                    'U'}
                 </Text>
               </View>
               <View style={styles.profileInfo}>
@@ -367,7 +370,10 @@ export default function SettingsScreen() {
           {showApiInput && !hasKey && (
             <View style={styles.apiKeyInput}>
               <TextInput
-                style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                style={[
+                  styles.input,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
                 value={apiKeyInput}
                 onChangeText={setApiKeyInput}
                 placeholder="sk-ant-api..."
@@ -517,7 +523,9 @@ export default function SettingsScreen() {
       {/* Sign Out */}
       {user && (
         <Animated.View entering={FadeInDown.duration(400).delay(350)}>
-          <View style={[styles.section, styles.signOutSection, { backgroundColor: colors.surface }]}>
+          <View
+            style={[styles.section, styles.signOutSection, { backgroundColor: colors.surface }]}
+          >
             <SettingRow
               icon={<LogOut color={colors.error} size={20} />}
               iconBg={colors.error + '20'}
@@ -532,7 +540,7 @@ export default function SettingsScreen() {
 
       {/* App Version */}
       <Text style={[styles.version, { color: colors.textTertiary }]}>
-        Trackr v1.5.0
+        Trackr v{Constants.expoConfig?.version ?? '1.0.0'}
       </Text>
 
       <View style={{ height: 50 }} />

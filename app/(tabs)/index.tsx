@@ -17,7 +17,13 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, typography, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton, SkeletonCard } from '@/src/components/ui';
 import { QuickActions, WeeklyInsights, AICoaching } from '@/src/components/dashboard';
-import { useHabitStore, useSleepStore, useExerciseStore, useNutritionStore, useJournalStore } from '@/src/store';
+import {
+  useHabitStore,
+  useSleepStore,
+  useExerciseStore,
+  useNutritionStore,
+  useJournalStore,
+} from '@/src/store';
 import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { getDatabase } from '@/src/database';
 import { populateDemoData } from '@/src/utils/demoData';
@@ -34,16 +40,20 @@ interface DashboardCardProps {
   delay?: number;
 }
 
-function DashboardCard({ title, value, subtitle, color, Icon, onPress, progress, delay = 0 }: DashboardCardProps) {
+function DashboardCard({
+  title,
+  value,
+  subtitle,
+  color,
+  Icon,
+  onPress,
+  progress,
+  delay = 0,
+}: DashboardCardProps) {
   const { colors } = useTheme();
 
   return (
-    <AnimatedCard
-      style={styles.card}
-      onPress={onPress}
-      delay={delay}
-      haptic
-    >
+    <AnimatedCard style={styles.card} onPress={onPress} delay={delay} haptic>
       <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
         <Icon color={color} size={24} />
       </View>
@@ -103,8 +113,8 @@ export default function DashboardScreen() {
     try {
       const trends = await getTrendData();
       setTrendData(trends);
-    } catch (e) {
-      console.log('Failed to load trends', e);
+    } catch {
+      // Silent fail - trends are supplementary
     }
   };
 
@@ -126,7 +136,6 @@ export default function DashboardScreen() {
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'Failed to load demo data');
-      console.error(error);
     }
     setLoadingDemo(false);
   };
@@ -202,7 +211,11 @@ export default function DashboardScreen() {
         <DashboardCard
           title="Exercise"
           value={totalExerciseMinutes > 0 ? formatDuration(totalExerciseMinutes) : '—'}
-          subtitle={todayExercise.length > 0 ? `${todayExercise.length} workout${todayExercise.length !== 1 ? 's' : ''}` : undefined}
+          subtitle={
+            todayExercise.length > 0
+              ? `${todayExercise.length} workout${todayExercise.length !== 1 ? 's' : ''}`
+              : undefined
+          }
           color={colors.exercise}
           Icon={Dumbbell}
           onPress={() => router.push('/(tabs)/exercise')}

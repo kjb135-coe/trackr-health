@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import Slider from '@react-native-community/slider';
 import { X, Moon, Dumbbell, UtensilsCrossed, Target, BookOpen } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Card, Button } from '@/src/components/ui';
 import { useGoalsStore } from '@/src/store';
 
 export default function GoalsScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { goals, loadGoals, updateGoals, isLoading } = useGoalsStore();
   const [localGoals, setLocalGoals] = useState(goals);
 
@@ -70,7 +66,7 @@ export default function GoalsScreen() {
           value={localGoals.sleepHours}
           onValueChange={(val) => updateLocalGoal('sleepHours', val)}
           minimumTrackTintColor={colors.sleep}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.sleep}
         />
         <View style={styles.sliderLabels}>
@@ -98,7 +94,7 @@ export default function GoalsScreen() {
           value={localGoals.exerciseMinutesPerWeek}
           onValueChange={(val) => updateLocalGoal('exerciseMinutesPerWeek', val)}
           minimumTrackTintColor={colors.exercise}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.exercise}
         />
         <View style={styles.sliderLabels}>
@@ -126,7 +122,7 @@ export default function GoalsScreen() {
           value={localGoals.dailyCalories}
           onValueChange={(val) => updateLocalGoal('dailyCalories', val)}
           minimumTrackTintColor={colors.nutrition}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.nutrition}
         />
         <View style={styles.sliderLabels}>
@@ -154,7 +150,7 @@ export default function GoalsScreen() {
           value={localGoals.dailyProtein}
           onValueChange={(val) => updateLocalGoal('dailyProtein', val)}
           minimumTrackTintColor={colors.success}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.success}
         />
         <View style={styles.sliderLabels}>
@@ -182,7 +178,7 @@ export default function GoalsScreen() {
           value={localGoals.habitsPerDay}
           onValueChange={(val) => updateLocalGoal('habitsPerDay', val)}
           minimumTrackTintColor={colors.habits}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.habits}
         />
         <View style={styles.sliderLabels}>
@@ -210,7 +206,7 @@ export default function GoalsScreen() {
           value={localGoals.journalEntriesPerWeek}
           onValueChange={(val) => updateLocalGoal('journalEntriesPerWeek', val)}
           minimumTrackTintColor={colors.journal}
-          maximumTrackTintColor={colors.gray200}
+          maximumTrackTintColor={colors.borderLight}
           thumbTintColor={colors.journal}
         />
         <View style={styles.sliderLabels}>
@@ -229,79 +225,80 @@ export default function GoalsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    padding: spacing.md,
-    paddingBottom: spacing.xxl,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  closeButton: {
-    padding: spacing.xs,
-  },
-  title: {
-    ...typography.h2,
-    color: colors.textPrimary,
-  },
-  placeholder: {
-    width: 32,
-  },
-  description: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.lg,
-  },
-  goalCard: {
-    marginBottom: spacing.md,
-    padding: spacing.md,
-  },
-  goalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  goalInfo: {
-    flex: 1,
-  },
-  goalTitle: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  goalValue: {
-    ...typography.h3,
-    color: colors.primary,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  sliderLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xs,
-  },
-  sliderLabel: {
-    ...typography.caption,
-    color: colors.textTertiary,
-  },
-  saveButton: {
-    marginTop: spacing.lg,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: spacing.md,
+      paddingBottom: spacing.xxl,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: spacing.md,
+    },
+    closeButton: {
+      padding: spacing.xs,
+    },
+    title: {
+      ...typography.h2,
+      color: colors.textPrimary,
+    },
+    placeholder: {
+      width: 32,
+    },
+    description: {
+      ...typography.body,
+      color: colors.textSecondary,
+      marginBottom: spacing.lg,
+    },
+    goalCard: {
+      marginBottom: spacing.md,
+      padding: spacing.md,
+    },
+    goalHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: spacing.sm,
+    },
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: borderRadius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: spacing.md,
+    },
+    goalInfo: {
+      flex: 1,
+    },
+    goalTitle: {
+      ...typography.body,
+      color: colors.textPrimary,
+      fontWeight: '600',
+    },
+    goalValue: {
+      ...typography.h3,
+      color: colors.primary,
+    },
+    slider: {
+      width: '100%',
+      height: 40,
+    },
+    sliderLabels: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: spacing.xs,
+    },
+    sliderLabel: {
+      ...typography.caption,
+      color: colors.textTertiary,
+    },
+    saveButton: {
+      marginTop: spacing.lg,
+    },
+  });

@@ -47,7 +47,8 @@ export default function ExerciseScreen() {
   const [showRecommendation, setShowRecommendation] = useState(false);
 
   const { sessions, isLoading, loadSessions, createSession } = useExerciseStore();
-  const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } = useAIInsightsStore();
+  const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } =
+    useAIInsightsStore();
 
   useEffect(() => {
     loadSessions();
@@ -94,7 +95,13 @@ export default function ExerciseScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         <Animated.View entering={FadeInDown.duration(400)}>
@@ -105,7 +112,9 @@ export default function ExerciseScreen() {
           <View style={styles.emptyState}>
             <Dumbbell color={colors.exercise} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No workouts yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Tap + to log your exercise</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+              Tap + to log your exercise
+            </Text>
           </View>
         ) : (
           recentSessions.map((session, index) => (
@@ -115,22 +124,34 @@ export default function ExerciseScreen() {
                   <Text style={[styles.sessionType, { color: colors.textPrimary }]}>
                     {EXERCISE_TYPE_LABELS[session.type] || session.type}
                   </Text>
-                  <Text style={[styles.sessionDate, { color: colors.textSecondary }]}>{getRelativeDateLabel(session.date)}</Text>
+                  <Text style={[styles.sessionDate, { color: colors.textSecondary }]}>
+                    {getRelativeDateLabel(session.date)}
+                  </Text>
                 </View>
 
                 <View style={styles.sessionStats}>
                   <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.exercise }]}>{formatDuration(session.durationMinutes)}</Text>
+                    <Text style={[styles.statValue, { color: colors.exercise }]}>
+                      {formatDuration(session.durationMinutes)}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
                   </View>
                   <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.exercise }]}>{INTENSITY_LABELS[session.intensity]}</Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Intensity</Text>
+                    <Text style={[styles.statValue, { color: colors.exercise }]}>
+                      {INTENSITY_LABELS[session.intensity]}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>
+                      Intensity
+                    </Text>
                   </View>
                   {session.caloriesBurned && (
                     <View style={styles.stat}>
-                      <Text style={[styles.statValue, { color: colors.exercise }]}>{session.caloriesBurned}</Text>
-                      <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Calories</Text>
+                      <Text style={[styles.statValue, { color: colors.exercise }]}>
+                        {session.caloriesBurned}
+                      </Text>
+                      <Text style={[styles.statLabel, { color: colors.textTertiary }]}>
+                        Calories
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -157,7 +178,7 @@ export default function ExerciseScreen() {
                 <View style={styles.recHeader}>
                   <Sparkles color={colors.exercise} size={20} />
                   <Text style={[styles.recTitle, { color: colors.textPrimary }]}>
-                    Today's Workout
+                    {"Today's Workout"}
                   </Text>
                 </View>
 
@@ -184,7 +205,8 @@ export default function ExerciseScreen() {
                       <View style={[styles.recStat, { backgroundColor: colors.exercise + '10' }]}>
                         <Zap color={colors.exercise} size={16} />
                         <Text style={[styles.recStatValue, { color: colors.textPrimary }]}>
-                          {exerciseRecommendation.intensity.charAt(0).toUpperCase() + exerciseRecommendation.intensity.slice(1)}
+                          {exerciseRecommendation.intensity.charAt(0).toUpperCase() +
+                            exerciseRecommendation.intensity.slice(1)}
                         </Text>
                       </View>
                       <View style={[styles.recStat, { backgroundColor: colors.exercise + '10' }]}>
@@ -212,7 +234,9 @@ export default function ExerciseScreen() {
                             medium: 'moderate',
                             high: 'high',
                           };
-                          setIntensity(intensityMap[exerciseRecommendation.intensity] || 'moderate');
+                          setIntensity(
+                            intensityMap[exerciseRecommendation.intensity] || 'moderate',
+                          );
                           setModalVisible(true);
                         }}
                         style={{ flex: 1, marginRight: spacing.sm }}
@@ -234,14 +258,20 @@ export default function ExerciseScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.exercise }]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.exercise }]}
+        onPress={() => setModalVisible(true)}
+      >
         <Plus color="#FFFFFF" size={24} />
       </TouchableOpacity>
 
       {/* Log Exercise Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Exercise</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -277,9 +307,14 @@ export default function ExerciseScreen() {
               ))}
             </ScrollView>
 
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Duration (minutes)</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+              Duration (minutes)
+            </Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+              ]}
               value={duration}
               onChangeText={setDuration}
               keyboardType="number-pad"
@@ -315,9 +350,14 @@ export default function ExerciseScreen() {
               ))}
             </View>
 
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Calories Burned (optional)</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+              Calories Burned (optional)
+            </Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+              ]}
               value={calories}
               onChangeText={setCalories}
               keyboardType="number-pad"

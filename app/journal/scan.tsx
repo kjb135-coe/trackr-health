@@ -13,16 +13,23 @@ import {
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { X, Camera, RotateCcw, Image as ImageIcon, Check, Edit3, FileText } from 'lucide-react-native';
+import {
+  X,
+  Camera,
+  RotateCcw,
+  Image as ImageIcon,
+  Check,
+  Edit3,
+  FileText,
+} from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
-import { scanHandwrittenJournal } from '@/src/services/claude';
-import { hasApiKey } from '@/src/services/claude';
+import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 export default function JournalScanScreen() {
   const router = useRouter();
@@ -69,7 +76,7 @@ export default function JournalScanScreen() {
         [
           { text: 'Cancel', onPress: () => setCapturedPhoto(null) },
           { text: 'Go to Settings', onPress: () => router.push('/settings') },
-        ]
+        ],
       );
       return;
     }
@@ -80,8 +87,8 @@ export default function JournalScanScreen() {
       setTranscribedText(result.text);
       setEditedText(result.text);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error: any) {
-      Alert.alert('Transcription Failed', error.message || 'Could not read the handwriting');
+    } catch (error: unknown) {
+      Alert.alert('Transcription Failed', getErrorMessage(error));
       setCapturedPhoto(null);
     }
     setAnalyzing(false);
@@ -129,7 +136,9 @@ export default function JournalScanScreen() {
     return (
       <View style={[styles.permissionContainer, { backgroundColor: colors.background }]}>
         <Camera color={colors.textSecondary} size={64} />
-        <Text style={[styles.permissionTitle, { color: colors.textPrimary }]}>Camera Access Required</Text>
+        <Text style={[styles.permissionTitle, { color: colors.textPrimary }]}>
+          Camera Access Required
+        </Text>
         <Text style={[styles.permissionText, { color: colors.textSecondary }]}>
           We need camera access to scan your handwritten journal entries.
         </Text>
@@ -158,7 +167,9 @@ export default function JournalScanScreen() {
             <Image source={{ uri: capturedPhoto }} style={styles.previewImageSmall} />
             <View style={styles.analyzingContent}>
               <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={[styles.analyzingText, { color: colors.textSecondary }]}>Reading your handwriting...</Text>
+              <Text style={[styles.analyzingText, { color: colors.textSecondary }]}>
+                Reading your handwriting...
+              </Text>
             </View>
           </View>
         ) : transcribedText ? (
@@ -168,18 +179,24 @@ export default function JournalScanScreen() {
             <Animated.View entering={FadeInDown.duration(400)} style={styles.resultContent}>
               <View style={styles.resultHeader}>
                 <FileText color={colors.journal} size={24} />
-                <Text style={[styles.resultTitle, { color: colors.textPrimary }]}>Transcribed Text</Text>
-                <TouchableOpacity
-                  onPress={() => setEditMode(!editMode)}
-                  style={styles.editButton}
-                >
+                <Text style={[styles.resultTitle, { color: colors.textPrimary }]}>
+                  Transcribed Text
+                </Text>
+                <TouchableOpacity onPress={() => setEditMode(!editMode)} style={styles.editButton}>
                   <Edit3 color={editMode ? colors.primary : colors.textSecondary} size={20} />
                 </TouchableOpacity>
               </View>
 
               {editMode ? (
                 <TextInput
-                  style={[styles.editInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary, borderColor: colors.primary }]}
+                  style={[
+                    styles.editInput,
+                    {
+                      backgroundColor: colors.surfaceSecondary,
+                      color: colors.textPrimary,
+                      borderColor: colors.primary,
+                    },
+                  ]}
                   value={editedText}
                   onChangeText={setEditedText}
                   multiline
@@ -187,7 +204,14 @@ export default function JournalScanScreen() {
                   autoFocus
                 />
               ) : (
-                <Text style={[styles.transcribedText, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}>{transcribedText}</Text>
+                <Text
+                  style={[
+                    styles.transcribedText,
+                    { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                  ]}
+                >
+                  {transcribedText}
+                </Text>
               )}
 
               <View style={styles.actionButtons}>

@@ -1,5 +1,9 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider as NavigationThemeProvider,
+} from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -13,9 +17,7 @@ import { useAuthStore } from '@/src/store';
 import { getDatabase } from '@/src/database';
 import { ONBOARDING_KEY } from './onboarding';
 
-export {
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
@@ -235,7 +237,6 @@ function RootLayoutNav() {
             animation: 'slide_from_bottom',
           }}
         />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack>
     </NavigationThemeProvider>
   );

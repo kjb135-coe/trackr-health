@@ -69,6 +69,18 @@ npm run web        # Run in web browser
 - **expo-secure-store** for API key storage
 - **zod** for API response validation
 
+### Theme / Colors
+
+- **Always use `useTheme()`** in components to get colors that respond to dark mode.
+- **Never import `colors` directly** from `@/src/theme` - that gives static light-mode-only values.
+- `lightColors` / `darkColors` are only used in `_layout.tsx` for navigation theme setup.
+
+### Auth Status
+
+- Auth is currently **mocked** (`src/store/authStore.ts`). Firebase is listed as a dependency but all real auth code is commented out.
+- The mock instantly "signs in" a fake user. No real backend auth exists yet.
+- See `TODO.md` item #3 for the decision on auth direction.
+
 ## Database Schema
 
 Tables: `habits`, `habit_completions`, `sleep_entries`, `exercise_sessions`, `meals`, `food_items`, `journal_entries`
@@ -105,10 +117,12 @@ The Claude API key is stored securely using `expo-secure-store`. To use AI featu
 Available commands in `.claude/commands/`:
 - `/commit` - Commit all changes and push
 - `/pr` - Create a pull request
+- `/merge` - Autonomous commit → push → PR → squash merge → cleanup (full cycle)
 - `/test` - Run type checking and tests
 - `/start` - Start the Expo dev server
 - `/simplify` - Simplify recent code changes
 - `/fix` - Fix TypeScript and lint errors
+- `/vibe` - Infinite autonomous loop: pick TODO item → implement → verify → commit → generate new TODOs → repeat (Ctrl+C to stop)
 
 ## Verification Workflow
 
@@ -127,6 +141,7 @@ If something breaks, fix it immediately before moving on.
 - **Don't forget to export** - New components/functions must be exported
 - **Don't mix async patterns** - Use async/await consistently, not .then()
 - **Don't leave console.logs** - Remove debug logs before committing
+- **Don't import `colors` directly** - Use `useTheme()` hook for dark mode support
 - **Don't hardcode values** - Use theme tokens for colors, spacing
 - **Don't ignore TypeScript errors** - Fix them, don't use `any` or `@ts-ignore`
 

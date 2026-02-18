@@ -11,12 +11,14 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -51,7 +53,7 @@ export default function SignUpScreen() {
       Alert.alert(
         'Verification Email Sent',
         'Please check your email and click the verification link to complete your registration.',
-        [{ text: 'OK', onPress: () => router.push('/auth/verify-email') }]
+        [{ text: 'OK', onPress: () => router.push('/auth/verify-email') }],
       );
     } catch (err: any) {
       Alert.alert('Sign Up Failed', getErrorMessage(err.code));
@@ -110,9 +112,7 @@ export default function SignUpScreen() {
               autoComplete="new-password"
             />
 
-            <Text style={styles.passwordHint}>
-              Password must be at least 6 characters
-            </Text>
+            <Text style={styles.passwordHint}>Password must be at least 6 characters</Text>
 
             <Button
               title="Create Account"
@@ -147,63 +147,64 @@ function getErrorMessage(code: string): string {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: 'center',
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  form: {
-    marginBottom: spacing.xl,
-  },
-  input: {
-    backgroundColor: colors.gray100,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: 16,
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-  },
-  passwordHint: {
-    ...typography.caption,
-    color: colors.textTertiary,
-    marginBottom: spacing.lg,
-  },
-  button: {
-    marginTop: spacing.sm,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  footerText: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  footerLink: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
+    content: {
+      flex: 1,
+      padding: spacing.lg,
+      justifyContent: 'center',
+    },
+    title: {
+      ...typography.h1,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.xs,
+    },
+    subtitle: {
+      ...typography.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: spacing.xl,
+    },
+    form: {
+      marginBottom: spacing.xl,
+    },
+    input: {
+      backgroundColor: colors.surfaceSecondary,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      fontSize: 16,
+      color: colors.textPrimary,
+      marginBottom: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    passwordHint: {
+      ...typography.caption,
+      color: colors.textTertiary,
+      marginBottom: spacing.lg,
+    },
+    button: {
+      marginTop: spacing.sm,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    footerText: {
+      ...typography.body,
+      color: colors.textSecondary,
+    },
+    footerLink: {
+      ...typography.body,
+      color: colors.primary,
+      fontWeight: '600',
+    },
+  });

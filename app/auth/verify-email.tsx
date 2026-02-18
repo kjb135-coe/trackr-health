@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Mail, RefreshCw } from 'lucide-react-native';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 
 export default function VerifyEmailScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [checking, setChecking] = useState(false);
 
   const { user, sendVerificationEmail, reloadUser, signOut, isLoading } = useAuthStore();
 
-  // Check verification status periodically
   useEffect(() => {
     const interval = setInterval(async () => {
       await reloadUser();
@@ -21,7 +22,6 @@ export default function VerifyEmailScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Navigate to app when verified
   useEffect(() => {
     if (user?.emailVerified) {
       router.replace('/(tabs)');
@@ -61,12 +61,15 @@ export default function VerifyEmailScreen() {
 
         <Text style={styles.title}>Verify Your Email</Text>
         <Text style={styles.subtitle}>
-          We've sent a verification email to{'\n'}
+          {"We've sent a verification email to"}
+          {'\n'}
           <Text style={styles.email}>{user?.email}</Text>
         </Text>
 
         <Text style={styles.instructions}>
-          Please click the link in the email to verify your account. If you don't see the email, check your spam folder.
+          {
+            "Please click the link in the email to verify your account. If you don't see the email, check your spam folder."
+          }
         </Text>
 
         <View style={styles.buttons}>
@@ -85,65 +88,61 @@ export default function VerifyEmailScreen() {
             style={styles.button}
           />
 
-          <Button
-            title="Sign Out"
-            onPress={handleSignOut}
-            variant="ghost"
-            style={styles.button}
-          />
+          <Button title="Sign Out" onPress={handleSignOut} variant="ghost" style={styles.button} />
         </View>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: colors.primary + '15',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.xl,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  email: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  instructions: {
-    ...typography.bodySmall,
-    color: colors.textTertiary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    paddingHorizontal: spacing.md,
-  },
-  buttons: {
-    width: '100%',
-  },
-  button: {
-    marginBottom: spacing.md,
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      flex: 1,
+      padding: spacing.lg,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    iconContainer: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: colors.primary + '15',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: spacing.xl,
+    },
+    title: {
+      ...typography.h1,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.sm,
+    },
+    subtitle: {
+      ...typography.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: spacing.md,
+    },
+    email: {
+      color: colors.primary,
+      fontWeight: '600',
+    },
+    instructions: {
+      ...typography.bodySmall,
+      color: colors.textTertiary,
+      textAlign: 'center',
+      marginBottom: spacing.xl,
+      paddingHorizontal: spacing.md,
+    },
+    buttons: {
+      width: '100%',
+    },
+    button: {
+      marginBottom: spacing.md,
+    },
+  });

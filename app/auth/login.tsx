@@ -11,13 +11,15 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors, spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 import { useGoogleAuth } from '@/src/services/auth';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -41,7 +43,6 @@ export default function LoginScreen() {
 
     try {
       await signIn(email.trim(), password);
-      // Navigation will be handled by auth state change in root layout
     } catch (err: any) {
       Alert.alert('Login Failed', getErrorMessage(err.code));
     }
@@ -93,12 +94,7 @@ export default function LoginScreen() {
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          <Button
-            title="Sign In"
-            onPress={handleLogin}
-            loading={isLoading}
-            style={styles.button}
-          />
+          <Button title="Sign In" onPress={handleLogin} loading={isLoading} style={styles.button} />
 
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
@@ -116,7 +112,7 @@ export default function LoginScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
+          <Text style={styles.footerText}>{"Don't have an account? "}</Text>
           <TouchableOpacity onPress={() => router.push('/auth/signup')}>
             <Text style={styles.footerLink}>Sign Up</Text>
           </TouchableOpacity>
@@ -143,91 +139,92 @@ function getErrorMessage(code: string): string {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: 'center',
-  },
-  title: {
-    ...typography.h1,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  form: {
-    marginBottom: spacing.xl,
-  },
-  input: {
-    backgroundColor: colors.gray100,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: 16,
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: spacing.lg,
-  },
-  forgotPasswordText: {
-    ...typography.bodySmall,
-    color: colors.primary,
-  },
-  button: {
-    marginBottom: spacing.md,
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: spacing.lg,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.gray200,
-  },
-  dividerText: {
-    ...typography.caption,
-    color: colors.textTertiary,
-    marginHorizontal: spacing.md,
-  },
-  googleButton: {
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.gray200,
-  },
-  googleButtonText: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  footerText: {
-    ...typography.body,
-    color: colors.textSecondary,
-  },
-  footerLink: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      flex: 1,
+      padding: spacing.lg,
+      justifyContent: 'center',
+    },
+    title: {
+      ...typography.h1,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.xs,
+    },
+    subtitle: {
+      ...typography.body,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginBottom: spacing.xl,
+    },
+    form: {
+      marginBottom: spacing.xl,
+    },
+    input: {
+      backgroundColor: colors.surfaceSecondary,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      fontSize: 16,
+      color: colors.textPrimary,
+      marginBottom: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    forgotPassword: {
+      alignSelf: 'flex-end',
+      marginBottom: spacing.lg,
+    },
+    forgotPasswordText: {
+      ...typography.bodySmall,
+      color: colors.primary,
+    },
+    button: {
+      marginBottom: spacing.md,
+    },
+    divider: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: spacing.lg,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.borderLight,
+    },
+    dividerText: {
+      ...typography.caption,
+      color: colors.textTertiary,
+      marginHorizontal: spacing.md,
+    },
+    googleButton: {
+      backgroundColor: colors.surface,
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    googleButtonText: {
+      ...typography.body,
+      color: colors.textPrimary,
+      fontWeight: '600',
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    footerText: {
+      ...typography.body,
+      color: colors.textSecondary,
+    },
+    footerLink: {
+      ...typography.body,
+      color: colors.primary,
+      fontWeight: '600',
+    },
+  });
