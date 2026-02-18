@@ -20,7 +20,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
-import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
+import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
 import { MealType, FoodItem, DetectedFood } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
@@ -54,6 +54,7 @@ export default function NutritionScreen() {
   useEffect(() => {
     loadData();
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadData = async () => {
@@ -96,7 +97,7 @@ export default function NutritionScreen() {
         try {
           const analysis = await analyzeImage(result.assets[0].uri);
           setDetectedFoods(analysis.detectedFoods);
-        } catch (error) {
+        } catch {
           Alert.alert(
             'Analysis failed',
             'Could not analyze the food image. You can add items manually.',
@@ -127,7 +128,7 @@ export default function NutritionScreen() {
         try {
           const analysis = await analyzeImage(result.assets[0].uri);
           setDetectedFoods(analysis.detectedFoods);
-        } catch (error) {
+        } catch {
           Alert.alert(
             'Analysis failed',
             'Could not analyze the food image. You can add items manually.',

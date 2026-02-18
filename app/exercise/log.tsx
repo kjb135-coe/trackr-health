@@ -10,9 +10,14 @@ import {
   Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Dumbbell, X, Clock, Flame, Zap } from 'lucide-react-native';
+import { X, Clock, Flame, Zap } from 'lucide-react-native';
 import Slider from '@react-native-community/slider';
-import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -44,7 +49,13 @@ const INTENSITY_LABELS = ['Light', 'Moderate', 'Intense', 'Very Intense', 'Maxim
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-function ExerciseTypeButton({ type, selected, onPress, color, surfaceColor }: {
+function ExerciseTypeButton({
+  type,
+  selected,
+  onPress,
+  color,
+  surfaceColor,
+}: {
   type: { id: ExerciseType; name: string; icon: string };
   selected: boolean;
   onPress: () => void;
@@ -75,7 +86,12 @@ function ExerciseTypeButton({ type, selected, onPress, color, surfaceColor }: {
       ]}
     >
       <Text style={styles.typeIcon}>{type.icon}</Text>
-      <Text style={[styles.typeName, { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' }]}>
+      <Text
+        style={[
+          styles.typeName,
+          { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' },
+        ]}
+      >
         {type.name}
       </Text>
     </AnimatedPressable>
@@ -84,7 +100,7 @@ function ExerciseTypeButton({ type, selected, onPress, color, surfaceColor }: {
 
 export default function LogExerciseScreen() {
   const router = useRouter();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const { createSession } = useExerciseStore();
 
   const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
@@ -128,7 +144,7 @@ export default function LogExerciseScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save exercise');
     }
     setSaving(false);
@@ -174,7 +190,9 @@ export default function LogExerciseScreen() {
         <AnimatedCard style={styles.durationCard} delay={50}>
           <View style={styles.durationHeader}>
             <Clock color={colors.exercise} size={20} />
-            <Text style={[styles.durationValue, { color: colors.textPrimary }]}>{duration} min</Text>
+            <Text style={[styles.durationValue, { color: colors.textPrimary }]}>
+              {duration} min
+            </Text>
           </View>
           <Slider
             style={styles.slider}
@@ -200,7 +218,9 @@ export default function LogExerciseScreen() {
         <AnimatedCard style={styles.intensityCard} delay={100}>
           <View style={styles.intensityHeader}>
             <Zap color={colors.warning} size={20} />
-            <Text style={[styles.intensityValue, { color: colors.textPrimary }]}>{INTENSITY_LABELS[intensity - 1]}</Text>
+            <Text style={[styles.intensityValue, { color: colors.textPrimary }]}>
+              {INTENSITY_LABELS[intensity - 1]}
+            </Text>
           </View>
           <View style={styles.intensityButtons}>
             {[1, 2, 3, 4, 5].map((level) => (
@@ -234,11 +254,18 @@ export default function LogExerciseScreen() {
       {/* Estimated Calories */}
       {selectedType && (
         <Animated.View entering={FadeInDown.duration(400).delay(250)}>
-          <AnimatedCard style={[styles.caloriesCard, { backgroundColor: colors.error + '10' }]} delay={150}>
+          <AnimatedCard
+            style={[styles.caloriesCard, { backgroundColor: colors.error + '10' }]}
+            delay={150}
+          >
             <Flame color={colors.error} size={24} />
             <View style={styles.caloriesInfo}>
-              <Text style={[styles.caloriesValue, { color: colors.error }]}>{estimateCalories()}</Text>
-              <Text style={[styles.caloriesLabel, { color: colors.textTertiary }]}>estimated calories</Text>
+              <Text style={[styles.caloriesValue, { color: colors.error }]}>
+                {estimateCalories()}
+              </Text>
+              <Text style={[styles.caloriesLabel, { color: colors.textTertiary }]}>
+                estimated calories
+              </Text>
             </View>
           </AnimatedCard>
         </Animated.View>
@@ -248,7 +275,10 @@ export default function LogExerciseScreen() {
       <Animated.View entering={FadeInDown.duration(400).delay(300)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>
         <TextInput
-          style={[styles.notesInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+          style={[
+            styles.notesInput,
+            { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+          ]}
           value={notes}
           onChangeText={setNotes}
           placeholder="How was your workout?"

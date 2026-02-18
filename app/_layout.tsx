@@ -58,7 +58,7 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const { initialize, isInitialized, user } = useAuthStore();
+  const { initialize, isInitialized } = useAuthStore();
 
   useEffect(() => {
     // Initialize database
@@ -67,6 +67,7 @@ export default function RootLayout() {
     // Initialize auth listener
     const unsubscribe = initialize();
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -129,6 +130,7 @@ function RootLayoutNav() {
       // User is signed in and verified, redirect to app
       router.replace('/(tabs)');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, hasCompletedOnboarding]);
 
   return (

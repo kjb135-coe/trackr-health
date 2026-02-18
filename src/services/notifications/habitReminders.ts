@@ -1,5 +1,4 @@
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
 import { Habit } from '@/src/types';
 
 // Configure notification behavior
@@ -77,27 +76,21 @@ export async function cancelAllHabitReminders(): Promise<void> {
 
 export async function getScheduledReminders(): Promise<Notifications.NotificationRequest[]> {
   const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
-  return scheduledNotifications.filter(
-    (n) => n.content.data?.type === 'habit_reminder'
-  );
+  return scheduledNotifications.filter((n) => n.content.data?.type === 'habit_reminder');
 }
 
 // Setup notification listeners
 export function setupNotificationListeners(
   onNotificationReceived?: (notification: Notifications.Notification) => void,
-  onNotificationResponse?: (response: Notifications.NotificationResponse) => void
+  onNotificationResponse?: (response: Notifications.NotificationResponse) => void,
 ): () => void {
-  const receivedSubscription = Notifications.addNotificationReceivedListener(
-    (notification) => {
-      onNotificationReceived?.(notification);
-    }
-  );
+  const receivedSubscription = Notifications.addNotificationReceivedListener((notification) => {
+    onNotificationReceived?.(notification);
+  });
 
-  const responseSubscription = Notifications.addNotificationResponseReceivedListener(
-    (response) => {
-      onNotificationResponse?.(response);
-    }
-  );
+  const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+    onNotificationResponse?.(response);
+  });
 
   return () => {
     receivedSubscription.remove();

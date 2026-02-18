@@ -5,7 +5,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withSequence,
-  withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -65,7 +64,7 @@ export function AnimatedButton({
     // Bounce animation on press
     scale.value = withSequence(
       withSpring(0.92, { damping: 15, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 300 })
+      withSpring(1, { damping: 10, stiffness: 300 }),
     );
 
     onPress();

@@ -31,6 +31,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
 
   useEffect(() => {
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkApiKey = async () => {

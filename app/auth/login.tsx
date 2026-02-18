@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
@@ -23,7 +22,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { signIn, signInWithGoogle, isLoading, error, clearError } = useAuthStore();
+  const { signIn, signInWithGoogle, isLoading } = useAuthStore();
   const { request, response, promptAsync } = useGoogleAuth();
 
   useEffect(() => {
@@ -33,6 +32,7 @@ export default function LoginScreen() {
         Alert.alert('Error', err.message);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
 
   const handleLogin = async () => {

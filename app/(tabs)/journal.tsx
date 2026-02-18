@@ -40,6 +40,7 @@ export default function JournalScreen() {
   useEffect(() => {
     loadEntries();
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkApiKey = async () => {
@@ -72,11 +73,17 @@ export default function JournalScreen() {
         try {
           const ocrResult = await scanImage(result.assets[0].uri);
           setContent(ocrResult.text);
-        } catch (error) {
-          Alert.alert('Scan failed', 'Could not read the handwriting. Please try again or type manually.');
+        } catch {
+          Alert.alert(
+            'Scan failed',
+            'Could not read the handwriting. Please try again or type manually.',
+          );
         }
       } else {
-        Alert.alert('API key needed', 'Add your Claude API key in settings to enable handwriting recognition.');
+        Alert.alert(
+          'API key needed',
+          'Add your Claude API key in settings to enable handwriting recognition.',
+        );
       }
     }
   };
@@ -100,11 +107,17 @@ export default function JournalScreen() {
         try {
           const ocrResult = await scanImage(result.assets[0].uri);
           setContent(ocrResult.text);
-        } catch (error) {
-          Alert.alert('Scan failed', 'Could not read the handwriting. Please try again or type manually.');
+        } catch {
+          Alert.alert(
+            'Scan failed',
+            'Could not read the handwriting. Please try again or type manually.',
+          );
         }
       } else {
-        Alert.alert('API key needed', 'Add your Claude API key in settings to enable handwriting recognition.');
+        Alert.alert(
+          'API key needed',
+          'Add your Claude API key in settings to enable handwriting recognition.',
+        );
       }
     }
   };
@@ -145,35 +158,58 @@ export default function JournalScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         {entries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No journal entries yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Start writing or scan a handwritten entry</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              No journal entries yet
+            </Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+              Start writing or scan a handwritten entry
+            </Text>
           </View>
         ) : (
           entries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
               <AnimatedCard style={styles.entryCard} delay={index * 50}>
                 <View style={styles.entryHeader}>
-                  <Text style={[styles.entryDate, { color: colors.textSecondary }]}>{getRelativeDateLabel(entry.date)}</Text>
+                  <Text style={[styles.entryDate, { color: colors.textSecondary }]}>
+                    {getRelativeDateLabel(entry.date)}
+                  </Text>
                   {entry.mood && (
                     <View style={[styles.moodBadge, { backgroundColor: colors.journal + '20' }]}>
-                      <Text style={[styles.moodText, { color: colors.journal }]}>{MOOD_LABELS[entry.mood]}</Text>
+                      <Text style={[styles.moodText, { color: colors.journal }]}>
+                        {MOOD_LABELS[entry.mood]}
+                      </Text>
                     </View>
                   )}
                 </View>
-                {entry.title && <Text style={[styles.entryTitle, { color: colors.textPrimary }]}>{entry.title}</Text>}
-                <Text style={[styles.entryContent, { color: colors.textSecondary }]} numberOfLines={3}>
+                {entry.title && (
+                  <Text style={[styles.entryTitle, { color: colors.textPrimary }]}>
+                    {entry.title}
+                  </Text>
+                )}
+                <Text
+                  style={[styles.entryContent, { color: colors.textSecondary }]}
+                  numberOfLines={3}
+                >
                   {entry.content}
                 </Text>
                 {entry.isScanned && (
                   <View style={styles.scannedBadge}>
                     <Camera color={colors.textTertiary} size={12} />
-                    <Text style={[styles.scannedText, { color: colors.textTertiary }]}>Scanned</Text>
+                    <Text style={[styles.scannedText, { color: colors.textTertiary }]}>
+                      Scanned
+                    </Text>
                   </View>
                 )}
               </AnimatedCard>
@@ -184,10 +220,20 @@ export default function JournalScreen() {
 
       {/* FABs */}
       <View style={styles.fabContainer}>
-        <TouchableOpacity style={[styles.fab, styles.fabSecondary, { backgroundColor: colors.surface, borderColor: colors.journal }]} onPress={() => openModal('scan')}>
+        <TouchableOpacity
+          style={[
+            styles.fab,
+            styles.fabSecondary,
+            { backgroundColor: colors.surface, borderColor: colors.journal },
+          ]}
+          onPress={() => openModal('scan')}
+        >
           <Camera color={colors.journal} size={20} />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.fab, { backgroundColor: colors.journal }]} onPress={() => openModal('text')}>
+        <TouchableOpacity
+          style={[styles.fab, { backgroundColor: colors.journal }]}
+          onPress={() => openModal('text')}
+        >
           <Plus color="#FFFFFF" size={24} />
         </TouchableOpacity>
       </View>
@@ -195,7 +241,10 @@ export default function JournalScreen() {
       {/* Create Entry Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
                 {mode === 'scan' ? 'Scan Journal' : 'New Entry'}
@@ -215,7 +264,13 @@ export default function JournalScreen() {
                 }}
               >
                 <Edit3 color={mode === 'text' ? '#FFFFFF' : colors.textSecondary} size={16} />
-                <Text style={[styles.modeText, { color: colors.textSecondary }, mode === 'text' && { color: '#FFFFFF', fontWeight: '600' }]}>
+                <Text
+                  style={[
+                    styles.modeText,
+                    { color: colors.textSecondary },
+                    mode === 'text' && { color: '#FFFFFF', fontWeight: '600' },
+                  ]}
+                >
                   Type
                 </Text>
               </TouchableOpacity>
@@ -227,7 +282,13 @@ export default function JournalScreen() {
                 }}
               >
                 <Camera color={mode === 'scan' ? '#FFFFFF' : colors.textSecondary} size={16} />
-                <Text style={[styles.modeText, { color: colors.textSecondary }, mode === 'scan' && { color: '#FFFFFF', fontWeight: '600' }]}>
+                <Text
+                  style={[
+                    styles.modeText,
+                    { color: colors.textSecondary },
+                    mode === 'scan' && { color: '#FFFFFF', fontWeight: '600' },
+                  ]}
+                >
                   Scan
                 </Text>
               </TouchableOpacity>
@@ -253,7 +314,9 @@ export default function JournalScreen() {
                 {isScanning && (
                   <View style={styles.scanningContainer}>
                     <ActivityIndicator color={colors.primary} />
-                    <Text style={[styles.scanningText, { color: colors.textSecondary }]}>Reading handwriting...</Text>
+                    <Text style={[styles.scanningText, { color: colors.textSecondary }]}>
+                      Reading handwriting...
+                    </Text>
                   </View>
                 )}
 
@@ -263,9 +326,14 @@ export default function JournalScreen() {
               </>
             )}
 
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Title (optional)</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+              Title (optional)
+            </Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+              ]}
               value={title}
               onChangeText={setTitle}
               placeholder="Give your entry a title"
@@ -274,7 +342,11 @@ export default function JournalScreen() {
 
             <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Content</Text>
             <TextInput
-              style={[styles.input, styles.contentInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+              style={[
+                styles.input,
+                styles.contentInput,
+                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+              ]}
               value={content}
               onChangeText={setContent}
               placeholder="Write your thoughts..."
@@ -283,7 +355,9 @@ export default function JournalScreen() {
               textAlignVertical="top"
             />
 
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>How are you feeling?</Text>
+            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+              How are you feeling?
+            </Text>
             <View style={styles.moodRow}>
               {([1, 2, 3, 4, 5] as const).map((m) => (
                 <TouchableOpacity
@@ -291,7 +365,11 @@ export default function JournalScreen() {
                   style={[
                     styles.moodOption,
                     { backgroundColor: colors.surfaceSecondary },
-                    mood === m && { backgroundColor: colors.journal + '30', borderWidth: 2, borderColor: colors.journal },
+                    mood === m && {
+                      backgroundColor: colors.journal + '30',
+                      borderWidth: 2,
+                      borderColor: colors.journal,
+                    },
                   ]}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

@@ -40,7 +40,6 @@ export default function HabitsScreen() {
   const {
     habits,
     todayCompletions,
-    isLoading,
     loadHabits,
     loadTodayCompletions,
     createHabit,
@@ -56,6 +55,7 @@ export default function HabitsScreen() {
   useEffect(() => {
     loadData();
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkApiKey = async () => {
@@ -65,6 +65,7 @@ export default function HabitsScreen() {
 
   useEffect(() => {
     loadStreaks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [habits]);
 
   const loadData = async () => {

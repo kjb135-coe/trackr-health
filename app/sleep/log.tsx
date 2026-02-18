@@ -12,7 +12,12 @@ import {
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Moon, Star, X } from 'lucide-react-native';
-import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -24,7 +29,17 @@ const SLEEP_FACTORS = ['Caffeine', 'Alcohol', 'Exercise', 'Screen time', 'Stress
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-function FactorChip({ label, selected, onPress, color }: { label: string; selected: boolean; onPress: () => void; color: string }) {
+function FactorChip({
+  label,
+  selected,
+  onPress,
+  color,
+}: {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  color: string;
+}) {
   const { colors } = useTheme();
   const scale = useSharedValue(1);
 
@@ -47,7 +62,12 @@ function FactorChip({ label, selected, onPress, color }: { label: string; select
         { backgroundColor: selected ? color + '20' : colors.surfaceSecondary },
       ]}
     >
-      <Text style={[styles.factorText, { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' }]}>
+      <Text
+        style={[
+          styles.factorText,
+          { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' },
+        ]}
+      >
         {label}
       </Text>
     </AnimatedPressable>
@@ -81,7 +101,7 @@ export default function LogSleepScreen() {
   const toggleFactor = (factor: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedFactors((prev) =>
-      prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor]
+      prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor],
     );
   };
 
@@ -100,7 +120,7 @@ export default function LogSleepScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (error) {
+    } catch {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'Failed to save sleep entry');
     }
@@ -124,7 +144,9 @@ export default function LogSleepScreen() {
       <Animated.View entering={FadeInDown.duration(400).delay(100)}>
         <AnimatedCard style={styles.durationCard} delay={0}>
           <Moon color={colors.sleep} size={32} />
-          <Text style={[styles.durationText, { color: colors.sleep }]}>{formatDuration(calculateDuration())}</Text>
+          <Text style={[styles.durationText, { color: colors.sleep }]}>
+            {formatDuration(calculateDuration())}
+          </Text>
           <Text style={[styles.durationLabel, { color: colors.textTertiary }]}>Total Sleep</Text>
         </AnimatedCard>
       </Animated.View>
@@ -185,7 +207,9 @@ export default function LogSleepScreen() {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.duration(400).delay(250)}>
-        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Factors Affecting Sleep</Text>
+        <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          Factors Affecting Sleep
+        </Text>
         <View style={styles.factorsGrid}>
           {SLEEP_FACTORS.map((factor) => (
             <FactorChip
@@ -202,7 +226,10 @@ export default function LogSleepScreen() {
       <Animated.View entering={FadeInDown.duration(400).delay(300)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>
         <TextInput
-          style={[styles.notesInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+          style={[
+            styles.notesInput,
+            { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+          ]}
           value={notes}
           onChangeText={setNotes}
           placeholder="How did you sleep? Any dreams?"

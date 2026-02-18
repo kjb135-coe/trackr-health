@@ -29,7 +29,6 @@ import {
   Mail,
   Target,
   Download,
-  Check,
 } from 'lucide-react-native';
 import Animated, {
   FadeInDown,
@@ -118,7 +117,7 @@ function SettingRow({
 }
 
 function ThemePicker() {
-  const { colors, mode, setMode, isDark } = useTheme();
+  const { colors, mode, setMode } = useTheme();
 
   const options: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
     { value: 'light', label: 'Light', icon: Sun },
@@ -193,7 +192,7 @@ export default function SettingsScreen() {
       setApiKeyInput('');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert('Success', 'API key saved successfully');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save API key');
     }
   };
@@ -297,7 +296,7 @@ export default function SettingsScreen() {
               `);
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert('Done', 'All data has been cleared.');
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to clear data');
             }
           },

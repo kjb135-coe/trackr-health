@@ -5,7 +5,6 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
-  interpolate,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -46,7 +45,7 @@ export function AnimatedCard({
       translateY.value = withSpring(0, { damping: 20, stiffness: 90 });
     }, delay);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [delay, opacity, translateY]);
 
   const handlePressIn = () => {
     scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
@@ -121,9 +120,5 @@ export function AnimatedCard({
     );
   }
 
-  return (
-    <Animated.View style={[cardStyle, animatedStyle, style]}>
-      {children}
-    </Animated.View>
-  );
+  return <Animated.View style={[cardStyle, animatedStyle, style]}>{children}</Animated.View>;
 }

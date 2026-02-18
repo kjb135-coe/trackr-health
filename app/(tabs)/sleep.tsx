@@ -10,16 +10,30 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import { Plus, Moon, X, Sparkles, TrendingUp, TrendingDown, Minus, Clock } from 'lucide-react-native';
+import {
+  Plus,
+  Moon,
+  X,
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Clock,
+} from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
-import { getDateString, formatDuration, formatTime, getRelativeDateLabel, getDurationMinutes } from '@/src/utils/date';
+import {
+  getDateString,
+  formatDuration,
+  formatTime,
+  getRelativeDateLabel,
+  getDurationMinutes,
+} from '@/src/utils/date';
 import { QUALITY_LABELS } from '@/src/utils/constants';
-import { SleepEntry } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
 
 export default function SleepScreen() {
@@ -34,23 +48,30 @@ export default function SleepScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
 
-  const { entries, isLoading, loadEntries, createEntry } = useSleepStore();
+  const { entries, loadEntries, createEntry } = useSleepStore();
   const { sleepAnalysis, isLoadingSleep, fetchSleepAnalysis } = useAIInsightsStore();
 
   const getQualityColor = (q: number): string => {
     switch (q) {
-      case 1: return colors.error;
-      case 2: return colors.warning;
-      case 3: return colors.info;
-      case 4: return colors.success;
-      case 5: return colors.sleep;
-      default: return colors.textTertiary;
+      case 1:
+        return colors.error;
+      case 2:
+        return colors.warning;
+      case 3:
+        return colors.info;
+      case 4:
+        return colors.success;
+      case 5:
+        return colors.sleep;
+      default:
+        return colors.textTertiary;
     }
   };
 
   useEffect(() => {
     loadEntries();
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkApiKey = async () => {
@@ -106,7 +127,13 @@ export default function SleepScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         <Animated.View entering={FadeInDown.duration(400)}>
@@ -116,31 +143,48 @@ export default function SleepScreen() {
         {recentEntries.length === 0 ? (
           <View style={styles.emptyState}>
             <Moon color={colors.sleep} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No sleep data yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Tap + to log your sleep</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+              No sleep data yet
+            </Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
+              Tap + to log your sleep
+            </Text>
           </View>
         ) : (
           recentEntries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
               <AnimatedCard style={styles.entryCard} delay={index * 50}>
                 <View style={styles.entryHeader}>
-                  <Text style={[styles.entryDate, { color: colors.textPrimary }]}>{getRelativeDateLabel(entry.date)}</Text>
-                  <View style={[styles.qualityBadge, { backgroundColor: getQualityColor(entry.quality) }]}>
+                  <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
+                    {getRelativeDateLabel(entry.date)}
+                  </Text>
+                  <View
+                    style={[
+                      styles.qualityBadge,
+                      { backgroundColor: getQualityColor(entry.quality) },
+                    ]}
+                  >
                     <Text style={styles.qualityText}>{QUALITY_LABELS[entry.quality]}</Text>
                   </View>
                 </View>
 
                 <View style={styles.entryStats}>
                   <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formatDuration(entry.durationMinutes)}</Text>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {formatDuration(entry.durationMinutes)}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
                   </View>
                   <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formatTime(entry.bedtime)}</Text>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {formatTime(entry.bedtime)}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Bedtime</Text>
                   </View>
                   <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>{formatTime(entry.wakeTime)}</Text>
+                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                      {formatTime(entry.wakeTime)}
+                    </Text>
                     <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Wake</Text>
                   </View>
                 </View>
@@ -188,16 +232,19 @@ export default function SleepScreen() {
                       <Text style={[styles.trendLabel, { color: colors.textSecondary }]}>
                         Quality Trend:
                       </Text>
-                      <View style={[
-                        styles.trendBadge,
-                        {
-                          backgroundColor: sleepAnalysis.qualityTrend === 'improving'
-                            ? colors.success + '20'
-                            : sleepAnalysis.qualityTrend === 'declining'
-                            ? colors.error + '20'
-                            : colors.info + '20'
-                        }
-                      ]}>
+                      <View
+                        style={[
+                          styles.trendBadge,
+                          {
+                            backgroundColor:
+                              sleepAnalysis.qualityTrend === 'improving'
+                                ? colors.success + '20'
+                                : sleepAnalysis.qualityTrend === 'declining'
+                                  ? colors.error + '20'
+                                  : colors.info + '20',
+                          },
+                        ]}
+                      >
                         {sleepAnalysis.qualityTrend === 'improving' && (
                           <TrendingUp color={colors.success} size={14} />
                         )}
@@ -207,17 +254,21 @@ export default function SleepScreen() {
                         {sleepAnalysis.qualityTrend === 'stable' && (
                           <Minus color={colors.info} size={14} />
                         )}
-                        <Text style={[
-                          styles.trendText,
-                          {
-                            color: sleepAnalysis.qualityTrend === 'improving'
-                              ? colors.success
-                              : sleepAnalysis.qualityTrend === 'declining'
-                              ? colors.error
-                              : colors.info
-                          }
-                        ]}>
-                          {sleepAnalysis.qualityTrend.charAt(0).toUpperCase() + sleepAnalysis.qualityTrend.slice(1)}
+                        <Text
+                          style={[
+                            styles.trendText,
+                            {
+                              color:
+                                sleepAnalysis.qualityTrend === 'improving'
+                                  ? colors.success
+                                  : sleepAnalysis.qualityTrend === 'declining'
+                                    ? colors.error
+                                    : colors.info,
+                            },
+                          ]}
+                        >
+                          {sleepAnalysis.qualityTrend.charAt(0).toUpperCase() +
+                            sleepAnalysis.qualityTrend.slice(1)}
                         </Text>
                       </View>
                     </View>
@@ -235,9 +286,7 @@ export default function SleepScreen() {
                     {sleepAnalysis.recommendations.map((rec, index) => (
                       <View key={index} style={styles.recItem}>
                         <Text style={[styles.recBullet, { color: colors.sleep }]}>•</Text>
-                        <Text style={[styles.recText, { color: colors.textSecondary }]}>
-                          {rec}
-                        </Text>
+                        <Text style={[styles.recText, { color: colors.textSecondary }]}>{rec}</Text>
                       </View>
                     ))}
 
@@ -257,14 +306,20 @@ export default function SleepScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={[styles.fab, { backgroundColor: colors.sleep }]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: colors.sleep }]}
+        onPress={() => setModalVisible(true)}
+      >
         <Plus color="#FFFFFF" size={24} />
       </TouchableOpacity>
 
       {/* Log Sleep Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <Animated.View entering={FadeInDown.duration(300)} style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+          <Animated.View
+            entering={FadeInDown.duration(300)}
+            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Sleep</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -275,7 +330,10 @@ export default function SleepScreen() {
             <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Bedtime</Text>
             <View style={styles.timeRow}>
               <TextInput
-                style={[styles.timeInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
                 value={bedtimeHour}
                 onChangeText={setBedtimeHour}
                 keyboardType="number-pad"
@@ -283,7 +341,10 @@ export default function SleepScreen() {
               />
               <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
               <TextInput
-                style={[styles.timeInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
                 value={bedtimeMin}
                 onChangeText={setBedtimeMin}
                 keyboardType="number-pad"
@@ -294,7 +355,10 @@ export default function SleepScreen() {
             <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Wake Time</Text>
             <View style={styles.timeRow}>
               <TextInput
-                style={[styles.timeInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
                 value={wakeHour}
                 onChangeText={setWakeHour}
                 keyboardType="number-pad"
@@ -302,7 +366,10 @@ export default function SleepScreen() {
               />
               <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
               <TextInput
-                style={[styles.timeInput, { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary }]}
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
                 value={wakeMin}
                 onChangeText={setWakeMin}
                 keyboardType="number-pad"

@@ -32,16 +32,12 @@ export function Skeleton({
     shimmerProgress.value = withRepeat(
       withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
       -1,
-      false
+      false,
     );
-  }, []);
+  }, [shimmerProgress]);
 
   const shimmerStyle = useAnimatedStyle(() => {
-    const translateX = interpolate(
-      shimmerProgress.value,
-      [0, 1],
-      [-200, 200]
-    );
+    const translateX = interpolate(shimmerProgress.value, [0, 1], [-200, 200]);
     return {
       transform: [{ translateX }],
     };
@@ -97,11 +93,7 @@ export function SkeletonCard({ lines = 3, style }: SkeletonCardProps) {
     >
       <Skeleton width="40%" height={20} />
       {Array.from({ length: lines }).map((_, i) => (
-        <Skeleton
-          key={i}
-          width={i === lines - 1 ? '60%' : '100%'}
-          height={16}
-        />
+        <Skeleton key={i} width={i === lines - 1 ? '60%' : '100%'} height={16} />
       ))}
     </Animated.View>
   );

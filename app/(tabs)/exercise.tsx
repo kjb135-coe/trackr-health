@@ -46,13 +46,14 @@ export default function ExerciseScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
 
-  const { sessions, isLoading, loadSessions, createSession } = useExerciseStore();
+  const { sessions, loadSessions, createSession } = useExerciseStore();
   const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } =
     useAIInsightsStore();
 
   useEffect(() => {
     loadSessions();
     checkApiKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkApiKey = async () => {

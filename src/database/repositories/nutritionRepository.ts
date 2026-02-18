@@ -1,11 +1,13 @@
 import { getDatabase } from '../index';
-import { Meal, FoodItem, AIFoodAnalysis } from '@/src/types';
+import { Meal, FoodItem } from '@/src/types';
 import { generateId } from '@/src/utils/date';
 
 export const nutritionRepository = {
   async getAllMeals(): Promise<Meal[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM meals ORDER BY date DESC, created_at DESC');
+    const rows = await db.getAllAsync<any>(
+      'SELECT * FROM meals ORDER BY date DESC, created_at DESC',
+    );
     const meals = rows.map(mapRowToMeal);
 
     // Load food items for each meal
@@ -30,7 +32,7 @@ export const nutritionRepository = {
     const db = await getDatabase();
     const rows = await db.getAllAsync<any>(
       'SELECT * FROM meals WHERE date = ? ORDER BY created_at',
-      date
+      date,
     );
     const meals = rows.map(mapRowToMeal);
 
@@ -43,14 +45,14 @@ export const nutritionRepository = {
 
   async getFoodItemsForMeal(mealId: string): Promise<FoodItem[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
-      'SELECT * FROM food_items WHERE meal_id = ?',
-      mealId
-    );
+    const rows = await db.getAllAsync<any>('SELECT * FROM food_items WHERE meal_id = ?', mealId);
     return rows.map(mapRowToFoodItem);
   },
 
-  async createMeal(meal: Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>, foods: Omit<FoodItem, 'id' | 'mealId'>[]): Promise<Meal> {
+  async createMeal(
+    meal: Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>,
+    foods: Omit<FoodItem, 'id' | 'mealId'>[],
+  ): Promise<Meal> {
     const db = await getDatabase();
     const now = new Date().toISOString();
     const mealId = generateId();
@@ -70,7 +72,7 @@ export const nutritionRepository = {
       meal.photoUri ?? null,
       meal.aiAnalysis ? JSON.stringify(meal.aiAnalysis) : null,
       now,
-      now
+      now,
     );
 
     // Insert food items
@@ -90,7 +92,7 @@ export const nutritionRepository = {
         food.carbs ?? null,
         food.fat ?? null,
         food.isAIGenerated ? 1 : 0,
-        food.confidence ?? null
+        food.confidence ?? null,
       );
       createdFoods.push({ ...food, id: foodId, mealId });
     }
@@ -104,32 +106,62 @@ export const nutritionRepository = {
     };
   },
 
-  async updateMeal(id: string, updates: Partial<Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+  async updateMeal(
+    id: string,
+    updates: Partial<Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>>,
+  ): Promise<void> {
     const db = await getDatabase();
     const now = new Date().toISOString();
 
     const fields: string[] = [];
     const values: any[] = [];
 
-    if (updates.date !== undefined) { fields.push('date = ?'); values.push(updates.date); }
-    if (updates.mealType !== undefined) { fields.push('meal_type = ?'); values.push(updates.mealType); }
-    if (updates.name !== undefined) { fields.push('name = ?'); values.push(updates.name); }
-    if (updates.totalCalories !== undefined) { fields.push('total_calories = ?'); values.push(updates.totalCalories); }
-    if (updates.totalProtein !== undefined) { fields.push('total_protein = ?'); values.push(updates.totalProtein); }
-    if (updates.totalCarbs !== undefined) { fields.push('total_carbs = ?'); values.push(updates.totalCarbs); }
-    if (updates.totalFat !== undefined) { fields.push('total_fat = ?'); values.push(updates.totalFat); }
-    if (updates.totalFiber !== undefined) { fields.push('total_fiber = ?'); values.push(updates.totalFiber); }
-    if (updates.photoUri !== undefined) { fields.push('photo_uri = ?'); values.push(updates.photoUri); }
-    if (updates.aiAnalysis !== undefined) { fields.push('ai_analysis = ?'); values.push(JSON.stringify(updates.aiAnalysis)); }
+    if (updates.date !== undefined) {
+      fields.push('date = ?');
+      values.push(updates.date);
+    }
+    if (updates.mealType !== undefined) {
+      fields.push('meal_type = ?');
+      values.push(updates.mealType);
+    }
+    if (updates.name !== undefined) {
+      fields.push('name = ?');
+      values.push(updates.name);
+    }
+    if (updates.totalCalories !== undefined) {
+      fields.push('total_calories = ?');
+      values.push(updates.totalCalories);
+    }
+    if (updates.totalProtein !== undefined) {
+      fields.push('total_protein = ?');
+      values.push(updates.totalProtein);
+    }
+    if (updates.totalCarbs !== undefined) {
+      fields.push('total_carbs = ?');
+      values.push(updates.totalCarbs);
+    }
+    if (updates.totalFat !== undefined) {
+      fields.push('total_fat = ?');
+      values.push(updates.totalFat);
+    }
+    if (updates.totalFiber !== undefined) {
+      fields.push('total_fiber = ?');
+      values.push(updates.totalFiber);
+    }
+    if (updates.photoUri !== undefined) {
+      fields.push('photo_uri = ?');
+      values.push(updates.photoUri);
+    }
+    if (updates.aiAnalysis !== undefined) {
+      fields.push('ai_analysis = ?');
+      values.push(JSON.stringify(updates.aiAnalysis));
+    }
 
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);
 
-    await db.runAsync(
-      `UPDATE meals SET ${fields.join(', ')} WHERE id = ?`,
-      ...values
-    );
+    await db.runAsync(`UPDATE meals SET ${fields.join(', ')} WHERE id = ?`, ...values);
   },
 
   async deleteMeal(id: string): Promise<void> {
@@ -154,7 +186,7 @@ export const nutritionRepository = {
       food.carbs ?? null,
       food.fat ?? null,
       food.isAIGenerated ? 1 : 0,
-      food.confidence ?? null
+      food.confidence ?? null,
     );
 
     // Update meal totals
@@ -178,7 +210,7 @@ export const nutritionRepository = {
         SUM(carbs) as total_carbs,
         SUM(fat) as total_fat
        FROM food_items WHERE meal_id = ?`,
-      mealId
+      mealId,
     );
 
     await db.runAsync(
@@ -188,11 +220,13 @@ export const nutritionRepository = {
       result?.total_carbs ?? null,
       result?.total_fat ?? null,
       new Date().toISOString(),
-      mealId
+      mealId,
     );
   },
 
-  async getDailyTotals(date: string): Promise<{ calories: number; protein: number; carbs: number; fat: number }> {
+  async getDailyTotals(
+    date: string,
+  ): Promise<{ calories: number; protein: number; carbs: number; fat: number }> {
     const db = await getDatabase();
     const result = await db.getFirstAsync<any>(
       `SELECT
@@ -201,7 +235,7 @@ export const nutritionRepository = {
         COALESCE(SUM(total_carbs), 0) as carbs,
         COALESCE(SUM(total_fat), 0) as fat
        FROM meals WHERE date = ?`,
-      date
+      date,
     );
     return {
       calories: result?.calories ?? 0,

@@ -54,7 +54,7 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
       scaleAnim.setValue(0);
       rotateAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, scaleAnim, rotateAnim]);
 
   const getStreakInfo = () => {
     if (streak >= 365)

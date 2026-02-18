@@ -1,12 +1,19 @@
 import React from 'react';
-import { TouchableOpacity, View, Platform } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
-import { Home, Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Settings } from 'lucide-react-native';
+import {
+  Home,
+  Target,
+  Moon,
+  Dumbbell,
+  UtensilsCrossed,
+  BookOpen,
+  Settings,
+} from 'lucide-react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
-import { spacing, borderRadius } from '@/src/theme';
-import { BlurView } from 'expo-blur';
+import { spacing } from '@/src/theme';
 
 function SettingsButton() {
   const router = useRouter();
@@ -53,11 +60,10 @@ interface TabIconProps {
 
 function AnimatedTabIcon({ color, size, focused, Icon }: TabIconProps) {
   const scale = useSharedValue(focused ? 1 : 0.9);
-  const { colors } = useTheme();
 
   React.useEffect(() => {
     scale.value = withSpring(focused ? 1.1 : 1, { damping: 15, stiffness: 300 });
-  }, [focused]);
+  }, [focused, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

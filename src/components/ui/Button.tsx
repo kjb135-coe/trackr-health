@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
-import { spacing, borderRadius, typography, useTheme, type ThemeColors } from '@/src/theme';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import { spacing, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Mail, RefreshCw } from 'lucide-react-native';
-import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
+import { Mail } from 'lucide-react-native';
+import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 
@@ -20,19 +20,21 @@ export default function VerifyEmailScreen() {
     }, 5000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (user?.emailVerified) {
       router.replace('/(tabs)');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.emailVerified]);
 
   const handleResend = async () => {
     try {
       await sendVerificationEmail();
       Alert.alert('Email Sent', 'A new verification email has been sent.');
-    } catch (err: any) {
+    } catch {
       Alert.alert('Error', 'Could not send verification email. Please try again later.');
     }
   };

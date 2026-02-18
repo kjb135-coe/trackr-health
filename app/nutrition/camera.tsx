@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { X, Camera, RotateCcw, Image as ImageIcon, Check, Utensils } from 'lucide-react-native';
+import { X, Camera, RotateCcw, Image as ImageIcon, Utensils } from 'lucide-react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -128,7 +128,7 @@ export default function NutritionCameraScreen() {
       );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save meal');
     }
   };

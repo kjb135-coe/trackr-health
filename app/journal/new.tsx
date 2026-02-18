@@ -13,7 +13,12 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { X, Smile, Meh, Frown, Camera } from 'lucide-react-native';
-import Animated, { FadeInDown, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -24,11 +29,31 @@ import { getDateString } from '@/src/utils/date';
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const QUICK_TAGS = [
-  'Work', 'Health', 'Family', 'Friends', 'Exercise', 'Travel',
-  'Learning', 'Creativity', 'Gratitude', 'Goals', 'Reflection', 'Ideas'
+  'Work',
+  'Health',
+  'Family',
+  'Friends',
+  'Exercise',
+  'Travel',
+  'Learning',
+  'Creativity',
+  'Gratitude',
+  'Goals',
+  'Reflection',
+  'Ideas',
 ];
 
-function TagChip({ label, selected, onPress, color }: { label: string; selected: boolean; onPress: () => void; color: string }) {
+function TagChip({
+  label,
+  selected,
+  onPress,
+  color,
+}: {
+  label: string;
+  selected: boolean;
+  onPress: () => void;
+  color: string;
+}) {
   const { colors } = useTheme();
   const scale = useSharedValue(1);
 
@@ -51,7 +76,12 @@ function TagChip({ label, selected, onPress, color }: { label: string; selected:
         { backgroundColor: selected ? color + '20' : colors.surfaceSecondary },
       ]}
     >
-      <Text style={[styles.tagText, { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' }]}>
+      <Text
+        style={[
+          styles.tagText,
+          { color: selected ? color : colors.textSecondary, fontWeight: selected ? '600' : '400' },
+        ]}
+      >
         {label}
       </Text>
     </AnimatedPressable>
@@ -80,7 +110,7 @@ export default function NewJournalEntryScreen() {
   const toggleTag = (tag: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   };
 
@@ -104,7 +134,7 @@ export default function NewJournalEntryScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save journal entry');
     }
     setSaving(false);
@@ -129,7 +159,11 @@ export default function NewJournalEntryScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Title */}
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
           <TextInput
@@ -157,7 +191,9 @@ export default function NewJournalEntryScreen() {
 
         {/* Mood Selector */}
         <Animated.View entering={FadeInDown.duration(400).delay(200)}>
-          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>How are you feeling?</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+            How are you feeling?
+          </Text>
           <View style={styles.moodContainer}>
             {MOOD_OPTIONS.map((option) => {
               const Icon = option.Icon;

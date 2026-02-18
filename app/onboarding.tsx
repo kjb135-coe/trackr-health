@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router';
 import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
+import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 
 const { width } = Dimensions.get('window');

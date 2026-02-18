@@ -13,20 +13,12 @@ import {
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import {
-  X,
-  Camera,
-  RotateCcw,
-  Image as ImageIcon,
-  Check,
-  Edit3,
-  FileText,
-} from 'lucide-react-native';
+import { X, Camera, RotateCcw, Image as ImageIcon, Edit3, FileText } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
+import { AnimatedButton } from '@/src/components/ui';
 import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
@@ -122,7 +114,7 @@ export default function JournalScanScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save journal entry');
     }
     setSaving(false);

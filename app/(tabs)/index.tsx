@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withDelay,
-  withTiming,
-  FadeIn,
-  FadeInDown,
-  Layout,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
-import { spacing, typography, borderRadius } from '@/src/theme';
+import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton, SkeletonCard } from '@/src/components/ui';
 import { QuickActions, WeeklyInsights, AICoaching } from '@/src/components/dashboard';
 import {
@@ -78,7 +69,7 @@ function DashboardCard({
 
 export default function DashboardScreen() {
   const router = useRouter();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [dbReady, setDbReady] = useState(false);
   const [loadingDemo, setLoadingDemo] = useState(false);
@@ -99,6 +90,7 @@ export default function DashboardScreen() {
       await loadAll();
     }
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadAll = async () => {
@@ -133,7 +125,7 @@ export default function DashboardScreen() {
       await loadAll();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert('Success', 'Demo data has been loaded!');
-    } catch (error) {
+    } catch {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', 'Failed to load demo data');
     }
