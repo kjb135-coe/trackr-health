@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { Plus, UtensilsCrossed } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
-import { spacing, borderRadius } from '@/src/theme';
+import { spacing } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
 import { AnimatedCard, DateNavigator, FAB, SkeletonCard, ErrorBanner } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
