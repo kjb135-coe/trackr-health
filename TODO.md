@@ -1080,3 +1080,7 @@ Yes
 ### ~~210. Add accessibility labels to modal form inputs~~ ✅
 - TextInput fields in `CreateHabitModal`, `SleepLogModal`, `NutritionLogModal`, `ExerciseLogModal`, `JournalEntryModal` all lack `accessibilityLabel`. Screen readers can't describe field purpose.
 - **Status:** Done — Added accessibilityLabel to all 13 raw TextInput fields across 5 modals: habit name/reminder time (3), bedtime/wake time (4), food name/calories (2), duration/calories burned (2), title/content (2).
+
+### 211. Add accessibility support to AnimatedCard component
+- `AnimatedCard` is used throughout the app as an interactive card (onPress). Its internal `AnimatedPressable` lacks `accessibilityRole` and `accessibilityLabel`. Screen readers can't identify these as interactive elements. Add an optional `accessibilityLabel` prop and set `accessibilityRole="button"` when `onPress` is provided.
+- **Effort:** ~10min
