@@ -267,6 +267,14 @@ Do whatever you think is right.
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
 
+### 84. ~~DRY up nutritionRepository food-loading duplication~~ ✅
+- `getAllMeals`, `getMealsByDate`, `getMealsByDateRange` had identical 8-line food-loading blocks.
+- **Status:** Done — extracted `attachFoodsToMeals()` helper. 3 methods now each call the shared helper.
+
+### 85. ~~Add nutritionRepository tests~~ ✅
+- Only repository without dedicated tests (habit, sleep, exercise, journal all covered).
+- **Status:** Done — 20 tests covering getAllMeals, getMealById, getMealsByDate, getMealsByDateRange, createMeal, updateMeal, deleteMeal, getDailyTotals, recalculateMealTotals, food item CRUD, null→undefined mapping, AI analysis JSON serialization. 257 total tests.
+
 ### 81. ~~Add repository tests for sleep, exercise, and journal repos~~ ✅
 - Only `habitRepository` had tests. Other 3 repositories were untested.
 - **Status:** Done — sleepRepository (14 tests), exerciseRepository (14 tests), journalRepository (15 tests). Covers CRUD, date range queries, aggregates, search, tag deduplication. 215 total tests passing.
@@ -485,3 +493,6 @@ Do whatever you think is right.
 - [x] Removed false positive #76 — useEffect correctly fires on object reference change
 - [x] Added aiInsightsStore tests (12 tests): caching, errors, all fetch methods (TODO #82)
 - [x] Added data export service tests (10 tests): JSON/CSV export, sharing (TODO #83)
+- [x] Replaced hardcoded #FFFFFF with colors.white in journal scan screen close button
+- [x] DRY'd nutritionRepository — extracted attachFoodsToMeals() helper for 3 methods (TODO #84)
+- [x] Added nutritionRepository tests (20 tests): CRUD, totals, food items, JSON serialization — 257 total tests (TODO #85)
