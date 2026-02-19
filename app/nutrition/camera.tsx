@@ -21,6 +21,7 @@ import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
 import { useNutritionStore } from '@/src/store';
 import { AIFoodAnalysis } from '@/src/types';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { persistImage } from '@/src/utils/imagePersist';
 
 export default function NutritionCameraScreen() {
   const router = useRouter();
@@ -102,6 +103,7 @@ export default function NutritionCameraScreen() {
     const totalFat = foods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
 
     try {
+      const persistedUri = capturedPhoto ? await persistImage(capturedPhoto) : undefined;
       await createMeal(
         {
           date: getDateString(),
@@ -111,7 +113,7 @@ export default function NutritionCameraScreen() {
           totalProtein,
           totalCarbs,
           totalFat,
-          photoUri: capturedPhoto || undefined,
+          photoUri: persistedUri,
           aiAnalysis: analysisResult,
         },
         foods.map((f) => ({

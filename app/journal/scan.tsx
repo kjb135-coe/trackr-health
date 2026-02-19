@@ -22,6 +22,7 @@ import { AnimatedButton } from '@/src/components/ui';
 import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { persistImage } from '@/src/utils/imagePersist';
 
 export default function JournalScanScreen() {
   const router = useRouter();
@@ -102,6 +103,7 @@ export default function JournalScanScreen() {
 
     setSaving(true);
     try {
+      const persistedUri = capturedPhoto ? await persistImage(capturedPhoto) : undefined;
       await createEntry({
         date: getDateString(),
         title: `Scanned Entry - ${new Date().toLocaleDateString()}`,
@@ -109,7 +111,7 @@ export default function JournalScanScreen() {
         mood: 3 as 1 | 2 | 3 | 4 | 5,
         tags: ['Scanned'],
         isScanned: true,
-        originalImageUri: capturedPhoto || undefined,
+        originalImageUri: persistedUri,
         ocrConfidence: 0.85,
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

@@ -124,10 +124,9 @@ Do whatever you think is right.
 - These should use `unknown` type + proper type narrowing per CLAUDE.md guidelines
 - **Effort:** ~15min
 
-### 13. No data migration strategy
-- SQLite schema changes will break existing data without migrations.
-- Currently relies on `CREATE TABLE IF NOT EXISTS`.
-- **Effort:** ~2h for migration framework
+### 13. ~~No data migration strategy~~ ✅
+- ~~SQLite schema changes will break existing data without migrations.~~
+- **Status:** Already implemented — `migrations` table + `runMigrations()` system exists in `src/database/index.ts`. Uses named migrations (e.g. `001_initial_schema`) with idempotent application tracking. New migrations just need to be appended to the migrations array.
 
 ### 14. No offline-first sync strategy
 - All data is local SQLite only. No cloud backup/sync.
@@ -137,9 +136,9 @@ Do whatever you think is right.
 - Expo Router supports it but no scheme is configured.
 - **Effort:** ~30min
 
-### 16. Image caching for food photos
-- Food recognition camera captures photos but doesn't persist them to a gallery.
-- **Effort:** ~1-2h
+### 16. ~~Image caching for food photos~~ ✅
+- ~~Food recognition camera captures photos but doesn't persist them to a gallery.~~
+- **Status:** Done — added `persistImage()` utility that copies photos from temp to `documentDirectory/images/`. Integrated into nutrition camera and journal scan screens.
 
 ### 17. No analytics or crash reporting
 - No Sentry, Crashlytics, or similar.
@@ -183,3 +182,5 @@ Do whatever you think is right.
 - [x] Deep linking already configured: scheme "trackr" in app.json + Expo Router auto-handles routes (TODO #15)
 - [x] Added sleep, nutrition, and exercise store tests: sleepStore (12), exerciseStore (12), nutritionStore (16) — 83 total tests (TODO #22)
 - [x] Replaced 28 `(error as Error).message` with centralized `getErrorMessage()` across all 5 stores (TODO #23)
+- [x] Migration system already exists: `migrations` table + `runMigrations()` in `src/database/index.ts` (TODO #13)
+- [x] Added image persistence: `persistImage()` copies photos to permanent `documentDirectory/images/` before saving meals/journal entries (TODO #16)
