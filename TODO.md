@@ -251,6 +251,16 @@ Do whatever you think is right.
 - ExerciseLogModal, NutritionLogModal, and SleepLogModal all hardcoded `getDateString()` (today) when creating new entries.
 - **Status:** Done — added `date` prop to all 3 modals. Parent screens pass `selectedDate`. Modals fall back to `getDateString()` when no date prop is provided.
 
+### 79. ~~Nutrition camera hardcodes meal type as 'snack'~~ ✅
+- `app/nutrition/camera.tsx` always set `mealType: 'snack'` with no way to change it.
+- **Status:** Done — added meal type selector (breakfast/lunch/dinner/snack) to the results card. Defaults to lunch. Uses `MEAL_TYPE_LABELS` for consistency.
+
+### 80. Stores load all records instead of date-ranged queries
+- `exerciseStore.loadSessions()`, `sleepStore.loadEntries()`, and `journalStore.loadEntries()` all call `getAll()` which fetches every record from the database.
+- Tab screens then filter in JS. This becomes slow as the database grows.
+- Should add date-ranged loading (e.g., last 90 days) or load on-demand per date.
+- **Effort:** ~2h
+
 ### 77. ~~Sleep modal date is always "today" when editing past entries~~ ✅
 - `SleepLogModal` reconstructed bedtime/wakeTime using today's date even when editing past entries.
 - **Status:** Done — uses `parseISO(editEntry.date)` as reference when editing, preserving the original entry's date context.
@@ -458,3 +468,4 @@ Do whatever you think is right.
 - [x] Added edit functionality to sleep and exercise — tap card opens pre-filled modal (TODO #73)
 - [x] Fixed sleep modal date reconstruction when editing past entries (TODO #77)
 - [x] Log modals now use selectedDate from DateNavigator instead of hardcoding today (TODO #78)
+- [x] Added meal type selector to nutrition camera — no longer hardcodes 'snack' (TODO #79)

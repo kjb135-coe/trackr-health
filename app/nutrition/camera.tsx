@@ -19,9 +19,12 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
 import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
 import { useNutritionStore } from '@/src/store';
-import { AIFoodAnalysis } from '@/src/types';
+import { AIFoodAnalysis, MealType } from '@/src/types';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
 import { persistImage } from '@/src/utils/imagePersist';
+
+const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
 export default function NutritionCameraScreen() {
   const router = useRouter();
@@ -33,6 +36,7 @@ export default function NutritionCameraScreen() {
   const [analyzing, setAnalyzing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AIFoodAnalysis | null>(null);
+  const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
   const { createMeal } = useNutritionStore();
 
   const handleTakePhoto = async () => {
@@ -109,7 +113,7 @@ export default function NutritionCameraScreen() {
       await createMeal(
         {
           date: getDateString(),
-          mealType: 'snack',
+          mealType: selectedMealType,
           name: foods.map((f) => f.name).join(', '),
           totalCalories,
           totalProtein,
@@ -242,6 +246,33 @@ export default function NutritionCameraScreen() {
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
                 </View>
+              </View>
+
+              <View style={styles.mealTypeRow}>
+                {MEAL_TYPES.map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      styles.mealTypeOption,
+                      { backgroundColor: colors.surfaceSecondary },
+                      selectedMealType === type && { backgroundColor: colors.nutrition },
+                    ]}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setSelectedMealType(type);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.mealTypeText,
+                        { color: colors.textSecondary },
+                        selectedMealType === type && { color: colors.white, fontWeight: '600' },
+                      ]}
+                    >
+                      {MEAL_TYPE_LABELS[type]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
 
               <View style={styles.actionButtons}>
@@ -469,6 +500,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   macroLabel: {
+    fontSize: 12,
+  },
+  mealTypeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+  },
+  mealTypeOption: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    marginHorizontal: 2,
+    alignItems: 'center',
+  },
+  mealTypeText: {
     fontSize: 12,
   },
   actionButtons: {
