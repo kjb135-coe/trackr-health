@@ -53,22 +53,7 @@ export const nutritionRepository = {
     const rows = await db.getAllAsync<MealRow>(
       'SELECT * FROM meals ORDER BY date DESC, created_at DESC',
     );
-    const meals = rows.map(mapRowToMeal);
-
-    if (meals.length > 0) {
-      const mealIds = meals.map((m) => m.id);
-      const placeholders = mealIds.map(() => '?').join(',');
-      const foodRows = await db.getAllAsync<FoodItemRow>(
-        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
-        ...mealIds,
-      );
-      const foodsByMeal = groupFoodsByMealId(foodRows);
-      for (const meal of meals) {
-        meal.foods = foodsByMeal.get(meal.id) ?? [];
-      }
-    }
-
-    return meals;
+    return attachFoodsToMeals(db, rows.map(mapRowToMeal));
   },
 
   async getMealById(id: string): Promise<Meal | null> {
@@ -87,22 +72,7 @@ export const nutritionRepository = {
       'SELECT * FROM meals WHERE date = ? ORDER BY created_at',
       date,
     );
-    const meals = rows.map(mapRowToMeal);
-
-    if (meals.length > 0) {
-      const mealIds = meals.map((m) => m.id);
-      const placeholders = mealIds.map(() => '?').join(',');
-      const foodRows = await db.getAllAsync<FoodItemRow>(
-        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
-        ...mealIds,
-      );
-      const foodsByMeal = groupFoodsByMealId(foodRows);
-      for (const meal of meals) {
-        meal.foods = foodsByMeal.get(meal.id) ?? [];
-      }
-    }
-
-    return meals;
+    return attachFoodsToMeals(db, rows.map(mapRowToMeal));
   },
 
   async getMealsByDateRange(startDate: string, endDate: string): Promise<Meal[]> {
@@ -112,22 +82,7 @@ export const nutritionRepository = {
       startDate,
       endDate,
     );
-    const meals = rows.map(mapRowToMeal);
-
-    if (meals.length > 0) {
-      const mealIds = meals.map((m) => m.id);
-      const placeholders = mealIds.map(() => '?').join(',');
-      const foodRows = await db.getAllAsync<FoodItemRow>(
-        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
-        ...mealIds,
-      );
-      const foodsByMeal = groupFoodsByMealId(foodRows);
-      for (const meal of meals) {
-        meal.foods = foodsByMeal.get(meal.id) ?? [];
-      }
-    }
-
-    return meals;
+    return attachFoodsToMeals(db, rows.map(mapRowToMeal));
   },
 
   async getFoodItemsForMeal(mealId: string): Promise<FoodItem[]> {
@@ -335,6 +290,25 @@ export const nutritionRepository = {
     };
   },
 };
+
+async function attachFoodsToMeals(
+  db: Awaited<ReturnType<typeof getDatabase>>,
+  meals: Meal[],
+): Promise<Meal[]> {
+  if (meals.length === 0) return meals;
+
+  const mealIds = meals.map((m) => m.id);
+  const placeholders = mealIds.map(() => '?').join(',');
+  const foodRows = await db.getAllAsync<FoodItemRow>(
+    `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
+    ...mealIds,
+  );
+  const foodsByMeal = groupFoodsByMealId(foodRows);
+  for (const meal of meals) {
+    meal.foods = foodsByMeal.get(meal.id) ?? [];
+  }
+  return meals;
+}
 
 function mapRowToMeal(row: MealRow): Meal {
   return {
