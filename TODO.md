@@ -1014,6 +1014,13 @@ Yes
 - `app/goals.tsx` has zero screen-level test coverage. Also, `handleSave` lacks try-catch — if `updateGoals()` fails, users get no feedback.
 - **Status:** Done — added try-catch with Alert to handleSave. 7 tests: title/description, 6 goal cards, goal values, mount loading, save button, save error alert, save success navigation. 671 total tests.
 
-### 194. Remove unused react-dom and react-native-web dependencies
-- Both are in package.json but never imported anywhere in src/ or app/. Only needed for web builds, which this iOS-only project doesn't use.
-- **Effort:** ~5min
+### ~~194. Remove unused react-dom and react-native-web dependencies~~ — Skipped
+- Both are in package.json but never directly imported. However, `app.json` has a `web` config section and `npm run web` is a configured script. Expo needs `react-native-web` + `react-dom` for web builds. Not safe to remove.
+
+### 195. Add safeJsonParse test + remove unused theme color properties
+- `safeJsonParse<T>` in `src/utils/date.ts` (used by 3 repositories) has no test. Also `primaryLight`, `primaryDark`, and `surfaceElevated` are defined in ThemeContext but never used anywhere.
+- **Effort:** ~15min
+
+### 196. DRY up nutrition camera macro calculation — single-pass reduce
+- `app/nutrition/camera.tsx` runs 4 separate `.reduce()` calls for protein/carbs/fat/calories on `detectedFoods`. Same pattern as the NutritionLogModal fix (TODO #162).
+- **Effort:** ~10min
