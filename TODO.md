@@ -469,6 +469,14 @@ Do whatever you think is right.
 - `src/components/habits/HabitSuggestionsModal.tsx` shows AI-generated habit suggestions with loading/error states. Zero test coverage.
 - **Status:** Done — 6 tests: modal title, loading state, empty state, suggestion cards, create habit, fetch suggestions. 371 total tests.
 
+### 105. ~~Add AICoaching component tests~~ ✅
+- `src/components/dashboard/AICoaching.tsx` (356 lines) — complex component with 4 render states: no API key, loading, error, coaching data. Zero test coverage.
+- **Status:** Done — 7 tests: API key setup prompt, setup button callback, loading state, error state, coaching data with insights, daily tip/motivation, auto-fetch on mount. 378 total tests.
+
+### 106. ~~Replace hardcoded `#FFFFFF` in AICoaching setupButtonText style~~ ✅
+- `src/components/dashboard/AICoaching.tsx` line 351: `color: '#FFFFFF'` in static StyleSheet.
+- **Status:** Not needed — static `StyleSheet.create()` can't reference dynamic theme colors. White text on `colors.primary` button is correct regardless of theme.
+
 ---
 
 ## Completed in This Audit
