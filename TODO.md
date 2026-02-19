@@ -509,6 +509,10 @@ Do whatever you think is right.
 - FAB, SecondaryFAB, and FABGroup components used across all 5 tab screens. Zero test coverage.
 - **Status:** Done — 4 tests: FAB render + press, FAB grouped mode, SecondaryFAB render + press, FABGroup children. 435 total tests.
 
+### 115. ~~Add AnimatedCard component tests~~ ✅
+- AnimatedCard (127 lines) with 3 variants, pressable/non-pressable modes, haptic feedback, long press. Zero test coverage.
+- **Status:** Done — 6 tests: children rendering, onPress, onLongPress, haptic on/off, static card mode. Also removed unused `AI_TIMEOUT_MS` export. 441 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -632,3 +636,4 @@ Do whatever you think is right.
 - [x] Extracted shared withTimeout utility + 3 tests — 410 total tests (TODO #111)
 - [x] Added authStore tests (14 tests) — 424 total tests (TODO #112)
 - [x] Added AnimatedButton (7) and FAB (4) component tests — 435 total tests (TODO #113-114)
+- [x] Added AnimatedCard tests (6) + removed unused AI_TIMEOUT_MS export — 441 total tests (TODO #115)
