@@ -1006,6 +1006,6 @@ Yes
 - `app/(tabs)/exercise.tsx` has zero screen-level test coverage. Contains workout cards, summary stats, AI recommendation section, date navigation.
 - **Status:** Done — 7 tests: empty state, workout card with type/stats, multiple workouts, 7-day summary, error banner, mount loading, skeleton loading. 654 total tests.
 
-### 192. Add journal screen tests
+### ~~192. Add journal screen tests~~ ✅
 - `app/(tabs)/journal.tsx` has zero screen-level test coverage. Contains search, tag filtering, entry cards, mood analysis section.
-- **Effort:** ~30min
+- **Status:** Done — 10 tests: empty state, entry card, multiple entries, mood badge, search bar, tag filter pills, error banner, mount loading, skeleton loading, scanned badge. 664 total tests.
