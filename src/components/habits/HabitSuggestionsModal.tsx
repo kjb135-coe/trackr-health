@@ -71,7 +71,10 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
           ) : habitSuggestions.length > 0 ? (
             <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
               {habitSuggestions.map((suggestion, index) => (
-                <Animated.View key={index} entering={FadeInDown.duration(300).delay(index * 100)}>
+                <Animated.View
+                  key={suggestion.name}
+                  entering={FadeInDown.duration(300).delay(index * 100)}
+                >
                   <AnimatedCard style={styles.suggestionCard} delay={index * 50}>
                     <Text style={[styles.suggestionName, { color: colors.textPrimary }]}>
                       {suggestion.name}

@@ -98,9 +98,9 @@ export function QuickActions() {
     <View style={styles.container}>
       <Text style={[styles.title, { color: colors.textPrimary }]}>Quick Actions</Text>
       <View style={[styles.actionsContainer, { backgroundColor: colors.surface }]}>
-        {actions.map((action, index) => (
+        {actions.map((action) => (
           <QuickActionButton
-            key={index}
+            key={action.route}
             label={action.label}
             Icon={action.Icon}
             color={action.color}

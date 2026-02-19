@@ -63,10 +63,13 @@ export function WeeklyInsights({ insights }: WeeklyInsightsProps) {
           const isLast = index === insights.length - 1;
           return (
             <View
-              key={index}
+              key={insight.label}
               style={[
                 styles.insightItem,
-                !isLast && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
+                !isLast && {
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                  borderBottomColor: colors.border,
+                },
               ]}
             >
               <View style={[styles.colorDot, { backgroundColor: insight.color }]} />
@@ -76,17 +79,21 @@ export function WeeklyInsights({ insights }: WeeklyInsightsProps) {
                 </Text>
                 <View style={styles.insightValue}>
                   <Text style={[styles.valueText, { color: colors.textPrimary }]}>
-                    {insight.current}{insight.unit}
+                    {insight.current}
+                    {insight.unit}
                   </Text>
                   <View style={styles.trendContainer}>
                     <TrendIcon type={trend.type} />
-                    <Text style={[
-                      styles.trendText,
-                      { color: colors.textTertiary },
-                      trend.type === 'positive' && { color: colors.success },
-                      trend.type === 'negative' && { color: colors.error },
-                    ]}>
-                      {trend.percent > 0 ? '+' : ''}{trend.percent}%
+                    <Text
+                      style={[
+                        styles.trendText,
+                        { color: colors.textTertiary },
+                        trend.type === 'positive' && { color: colors.success },
+                        trend.type === 'negative' && { color: colors.error },
+                      ]}
+                    >
+                      {trend.percent > 0 ? '+' : ''}
+                      {trend.percent}%
                     </Text>
                   </View>
                 </View>

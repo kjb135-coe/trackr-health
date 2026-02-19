@@ -445,6 +445,36 @@ Do whatever you think is right.
 - ~~`src/services/insights/healthInsights.ts` getWeeklyStats() loops over all habits calling `getCompletionsForHabit()` once per habit~~
 - **Status:** Done — replaced N+1 loop with batch `getCompletionsForDateRange()` + parallel `Promise.all()` for all 5 data sources. Added `getMealsByDateRange()` to nutritionRepository and `getCompletionsForDateRange()` to habitRepository.
 
+### 99. Fix index-based keys in dynamic lists
+- 5 components use `key={index}` for dynamic lists where items could change order: AICoaching, QuickActions, WeeklyInsights, HabitSuggestionsModal, Skeleton.
+- Should use stable unique keys (e.g., `insight.category`, `action.route`, `suggestion.name`).
+- **Effort:** ~30min
+
+### 100. Add QuickActions component tests
+- `src/components/dashboard/QuickActions.tsx` renders 6 navigation action cards with spring animations. Zero test coverage.
+- Test rendering of all action labels, navigation on press.
+- **Effort:** ~30min
+
+### 101. Add WeeklyInsights component tests
+- `src/components/dashboard/WeeklyInsights.tsx` calculates trend direction (positive/negative/neutral) with 5% threshold. Zero test coverage.
+- Test trend icon rendering, label display, empty state.
+- **Effort:** ~30min
+
+### 102. Add StreakBadge component tests
+- `src/components/habits/StreakBadge.tsx` returns null when streak=0, maps 4 milestone thresholds to icons/labels. Zero test coverage.
+- Test null rendering, milestone labels (7/30/100/365 days).
+- **Effort:** ~20min
+
+### 103. Add StreakCelebration component tests
+- `src/components/habits/StreakCelebration.tsx` only renders on milestone numbers (7,14,21,30,60,90,100,180,365). Zero test coverage.
+- Test milestone detection, non-milestone returns null.
+- **Effort:** ~20min
+
+### 104. Add HabitSuggestionsModal component tests
+- `src/components/habits/HabitSuggestionsModal.tsx` shows AI-generated habit suggestions with loading/error states. Zero test coverage.
+- Test modal rendering, loading state, suggestion list display, create habit flow.
+- **Effort:** ~30min
+
 ---
 
 ## Completed in This Audit

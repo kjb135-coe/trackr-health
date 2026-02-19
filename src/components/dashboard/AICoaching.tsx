@@ -181,9 +181,9 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
         </Text>
 
         {/* Insights */}
-        {dailyCoaching.insights.slice(0, 3).map((insight, index) => (
+        {dailyCoaching.insights.slice(0, 3).map((insight) => (
           <View
-            key={index}
+            key={`${insight.category}-${insight.title}`}
             style={[
               styles.insightRow,
               { borderLeftColor: categoryColors[insight.category] ?? colors.primary },
