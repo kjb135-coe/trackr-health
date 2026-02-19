@@ -83,6 +83,38 @@ describe('AnimatedCard', () => {
     expect(Haptics.impactAsync).not.toHaveBeenCalled();
   });
 
+  it('renders with outlined variant', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedCard variant="outlined" onPress={jest.fn()}>
+        <Text>Outlined card</Text>
+      </AnimatedCard>,
+    );
+    expect(await findByText('Outlined card')).toBeTruthy();
+  });
+
+  it('renders with filled variant', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedCard variant="filled" onPress={jest.fn()}>
+        <Text>Filled card</Text>
+      </AnimatedCard>,
+    );
+    expect(await findByText('Filled card')).toBeTruthy();
+  });
+
+  it('handles pressIn and pressOut events', async () => {
+    const onPress = jest.fn();
+    const { findByText } = renderWithTheme(
+      <AnimatedCard onPress={onPress}>
+        <Text>Press events</Text>
+      </AnimatedCard>,
+    );
+    const card = await findByText('Press events');
+    fireEvent(card, 'onPressIn');
+    fireEvent(card, 'onPressOut');
+    fireEvent.press(card);
+    expect(onPress).toHaveBeenCalled();
+  });
+
   it('renders as non-pressable View when no onPress or onLongPress', async () => {
     const { findByText } = renderWithTheme(
       <AnimatedCard>

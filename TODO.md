@@ -563,6 +563,18 @@ Yes
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~148. Improve JournalEntryModal coverage — gallery OCR flow + mode toggle + mood~~ ✅
+- `JournalEntryModal.tsx` at 76.62% — missing gallery image OCR path, mode toggle press handlers, mood selection press handlers.
+- **Status:** Done — 5 new tests (gallery OCR success, gallery OCR failure, gallery no API key, mode toggle switch, mood selection). 21 total tests.
+
+### ~~149. Improve NutritionLogModal coverage — gallery analysis + meal type~~ ✅
+- `NutritionLogModal.tsx` at 84.88% — missing gallery image analysis path, meal type selection press handler.
+- **Status:** Done — 3 new tests (gallery analysis success, gallery analysis failure, meal type switch). 19 total tests.
+
+### ~~150. Improve AnimatedCard coverage — variant styles + press events~~ ✅
+- `AnimatedCard.tsx` at 84.37% — missing outlined/filled variant styles, pressIn/pressOut handlers.
+- **Status:** Done — 3 new tests (outlined variant, filled variant, pressIn/pressOut). 9 total tests.
+
 ### ~~147. Add SleepLogModal edit mode and error tests~~ ✅
 - `SleepLogModal.tsx` at 82.75% — missing tests for edit mode pre-fill, updateEntry path, save error handling, date reconstruction.
 - **Effort:** ~20min
@@ -786,3 +798,6 @@ Yes
 - [x] Improved ExerciseLogModal coverage from 78% to ~90% — 4 new tests (invalid calories, edit mode pre-fill, updateSession, save error) — 536 total tests (TODO #145)
 - [x] Improved CreateHabitModal coverage from 76% to ~90% — 3 new tests (edit mode pre-fill, updateHabit, save error) — 539 total tests (TODO #146)
 - [x] Improved SleepLogModal coverage from 82% to ~90% — 4 new tests (invalid wake time, edit mode pre-fill, updateEntry, save error) — 543 total tests (TODO #147)
+- [x] Improved JournalEntryModal coverage from 76% to ~90% — 5 new tests (gallery OCR success/failure/no-api-key, mode toggle, mood selection) — 548 total tests (TODO #148)
+- [x] Improved NutritionLogModal coverage from 84% to ~90% — 3 new tests (gallery analysis success/failure, meal type switch) — 551 total tests (TODO #149)
+- [x] Improved AnimatedCard coverage from 84% to ~90% — 3 new tests (outlined/filled variants, pressIn/pressOut events) — 554 total tests (TODO #150)

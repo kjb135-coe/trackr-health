@@ -352,6 +352,137 @@ describe('JournalEntryModal', () => {
     });
   });
 
+  it('scans gallery photo and populates content with OCR text', async () => {
+    ImagePicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://gallery.jpg' }],
+    });
+    mockScanImage.mockResolvedValueOnce({ text: 'Gallery OCR text' });
+
+    const { findByText, findByDisplayValue } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Gallery'));
+
+    await waitFor(() => {
+      expect(mockScanImage).toHaveBeenCalledWith('file://gallery.jpg');
+    });
+    expect(await findByDisplayValue('Gallery OCR text')).toBeTruthy();
+  });
+
+  it('shows scan failed alert when gallery OCR throws', async () => {
+    ImagePicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://gallery.jpg' }],
+    });
+    mockScanImage.mockRejectedValueOnce(new Error('OCR error'));
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Gallery'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Scan failed',
+        'Could not read the handwriting. Please try again or type manually.',
+      );
+    });
+  });
+
+  it('shows API key needed alert when gallery scanning without API key', async () => {
+    ImagePicker.launchImageLibraryAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://gallery.jpg' }],
+    });
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={false}
+      />,
+    );
+
+    fireEvent.press(await findByText('Gallery'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'API key needed',
+        'Add your Claude API key in settings to enable handwriting recognition.',
+      );
+    });
+  });
+
+  it('switches mode when toggle is pressed', async () => {
+    const { findByText, queryByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="text"
+        onClose={() => {}}
+        apiKeyExists={false}
+      />,
+    );
+
+    // Initially in text mode — no camera buttons
+    expect(queryByText('Take Photo')).toBeNull();
+
+    // Switch to scan mode
+    fireEvent.press(await findByText('Scan'));
+    expect(await findByText('Take Photo')).toBeTruthy();
+
+    // Switch back to text mode
+    fireEvent.press(await findByText('Type'));
+    await waitFor(() => {
+      expect(queryByText('Take Photo')).toBeNull();
+    });
+  });
+
+  it('selects and deselects mood', async () => {
+    mockCreateEntry.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const { findByText, findByPlaceholderText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="text"
+        onClose={onClose}
+        apiKeyExists={false}
+        date="2026-02-18"
+      />,
+    );
+
+    // Enter content so save works
+    fireEvent.changeText(await findByPlaceholderText('Write your thoughts...'), 'Mood test');
+
+    // Select mood 5 (happy emoji)
+    fireEvent.press(await findByText('😄'));
+
+    fireEvent.press(await findByText('Save Entry'));
+
+    await waitFor(() => {
+      expect(mockCreateEntry).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: 'Mood test',
+          mood: 5,
+        }),
+      );
+    });
+  });
+
   it('calls updateEntry when saving in edit mode', async () => {
     mockUpdateEntry.mockResolvedValue(undefined);
     const onClose = jest.fn();
