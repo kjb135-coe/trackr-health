@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,7 +23,7 @@ import { AnimatedButton } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
-import { MealType, FoodItem, DetectedFood } from '@/src/types';
+import { Meal, MealType, FoodItem, DetectedFood } from '@/src/types';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -32,6 +32,7 @@ interface NutritionLogModalProps {
   onClose: () => void;
   apiKeyExists: boolean;
   date?: string;
+  editMeal?: Meal;
 }
 
 export function NutritionLogModal({
@@ -39,6 +40,7 @@ export function NutritionLogModal({
   onClose,
   apiKeyExists,
   date,
+  editMeal,
 }: NutritionLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -48,9 +50,17 @@ export function NutritionLogModal({
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [detectedFoods, setDetectedFoods] = useState<DetectedFood[]>([]);
 
-  const { isLoading, isAnalyzing, createMeal, analyzeImage } = useNutritionStore();
+  const { isLoading, isAnalyzing, createMeal, updateMeal, analyzeImage } = useNutritionStore();
 
   const today = date || getDateString();
+
+  useEffect(() => {
+    if (editMeal) {
+      setSelectedMealType(editMeal.mealType);
+      setManualName(editMeal.name || '');
+      setManualCalories(String(editMeal.totalCalories));
+    }
+  }, [editMeal]);
 
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -161,18 +171,29 @@ export function NutritionLogModal({
       return;
     }
 
-    await createMeal(
-      {
-        date: today,
+    if (editMeal) {
+      await updateMeal(editMeal.id, {
         mealType: selectedMealType,
+        name: foods.length === 1 ? foods[0].name : foods.map((f) => f.name).join(', '),
         totalCalories,
         totalProtein: totalProtein || undefined,
         totalCarbs: totalCarbs || undefined,
         totalFat: totalFat || undefined,
-        photoUri: capturedImage || undefined,
-      },
-      foods,
-    );
+      });
+    } else {
+      await createMeal(
+        {
+          date: today,
+          mealType: selectedMealType,
+          totalCalories,
+          totalProtein: totalProtein || undefined,
+          totalCarbs: totalCarbs || undefined,
+          totalFat: totalFat || undefined,
+          photoUri: capturedImage || undefined,
+        },
+        foods,
+      );
+    }
 
     resetAndClose();
   };
@@ -202,7 +223,9 @@ export function NutritionLogModal({
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Meal</Text>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {editMeal ? 'Edit Meal' : 'Log Meal'}
+            </Text>
             <TouchableOpacity onPress={resetAndClose}>
               <X color={colors.textPrimary} size={24} />
             </TouchableOpacity>
@@ -314,7 +337,7 @@ export function NutritionLogModal({
           )}
 
           <AnimatedButton
-            title="Save Meal"
+            title={editMeal ? 'Update Meal' : 'Save Meal'}
             onPress={handleSaveMeal}
             loading={isLoading}
             disabled={detectedFoods.length === 0 && (!manualName || !manualCalories)}

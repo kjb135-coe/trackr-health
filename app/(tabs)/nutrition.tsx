@@ -12,6 +12,7 @@ import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
+import { Meal } from '@/src/types';
 
 export default function NutritionScreen() {
   const { colors } = useTheme();
@@ -19,6 +20,7 @@ export default function NutritionScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
+  const [editMeal, setEditMeal] = useState<Meal | undefined>();
 
   const {
     meals,
@@ -173,6 +175,10 @@ export default function NutritionScreen() {
               <AnimatedCard
                 style={styles.mealCard}
                 delay={index * 50}
+                onPress={() => {
+                  setEditMeal(meal);
+                  setModalVisible(true);
+                }}
                 onLongPress={() =>
                   handleDeleteMeal(meal.id, MEAL_TYPE_LABELS[meal.mealType] || meal.mealType)
                 }
@@ -204,9 +210,13 @@ export default function NutritionScreen() {
 
       <NutritionLogModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setEditMeal(undefined);
+        }}
         apiKeyExists={apiKeyExists}
         date={selectedDate}
+        editMeal={editMeal}
       />
     </View>
   );

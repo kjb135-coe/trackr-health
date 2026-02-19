@@ -38,6 +38,7 @@ export default function JournalScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [editEntry, setEditEntry] = useState<JournalEntry | undefined>();
 
   const { entries, isLoading, error, loadEntries, deleteEntry, search, clearError } =
     useJournalStore();
@@ -193,6 +194,11 @@ export default function JournalScreen() {
               <AnimatedCard
                 style={styles.entryCard}
                 delay={index * 50}
+                onPress={() => {
+                  setEditEntry(entry);
+                  setModalMode('text');
+                  setModalVisible(true);
+                }}
                 onLongPress={() => handleDeleteEntry(entry.id, entry.title ?? '')}
               >
                 <View style={styles.entryHeader}>
@@ -262,8 +268,12 @@ export default function JournalScreen() {
       <JournalEntryModal
         visible={modalVisible}
         initialMode={modalMode}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setEditEntry(undefined);
+        }}
         apiKeyExists={apiKeyExists}
+        editEntry={editEntry}
       />
     </View>
   );

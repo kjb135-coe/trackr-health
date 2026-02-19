@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -22,12 +22,15 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
+import { JournalEntry } from '@/src/types';
 
 interface JournalEntryModalProps {
   visible: boolean;
   initialMode: 'text' | 'scan';
   onClose: () => void;
   apiKeyExists: boolean;
+  editEntry?: JournalEntry;
+  date?: string;
 }
 
 function getMoodEmoji(mood: number): string {
@@ -52,6 +55,8 @@ export function JournalEntryModal({
   initialMode,
   onClose,
   apiKeyExists,
+  editEntry,
+  date,
 }: JournalEntryModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -61,14 +66,22 @@ export function JournalEntryModal({
   const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [scannedImage, setScannedImage] = useState<string | null>(null);
 
-  const { isLoading, isScanning, createEntry, scanImage } = useJournalStore();
+  const { isLoading, isScanning, createEntry, updateEntry, scanImage } = useJournalStore();
 
   // Sync mode when modal opens with a different initialMode
-  React.useEffect(() => {
+  useEffect(() => {
     if (visible) {
       setMode(initialMode);
     }
   }, [visible, initialMode]);
+
+  useEffect(() => {
+    if (editEntry) {
+      setTitle(editEntry.title || '');
+      setContent(editEntry.content);
+      setMood((editEntry.mood as 1 | 2 | 3 | 4 | 5) || null);
+    }
+  }, [editEntry]);
 
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -144,14 +157,22 @@ export function JournalEntryModal({
       return;
     }
 
-    await createEntry({
-      date: getDateString(),
-      title: title.trim() || undefined,
-      content: content.trim(),
-      mood: mood || undefined,
-      isScanned: mode === 'scan' && !!scannedImage,
-      originalImageUri: scannedImage || undefined,
-    });
+    if (editEntry) {
+      await updateEntry(editEntry.id, {
+        title: title.trim() || undefined,
+        content: content.trim(),
+        mood: mood || undefined,
+      });
+    } else {
+      await createEntry({
+        date: date || getDateString(),
+        title: title.trim() || undefined,
+        content: content.trim(),
+        mood: mood || undefined,
+        isScanned: mode === 'scan' && !!scannedImage,
+        originalImageUri: scannedImage || undefined,
+      });
+    }
 
     resetAndClose();
   };
@@ -183,7 +204,7 @@ export function JournalEntryModal({
         >
           <View style={styles.modalHeader}>
             <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {mode === 'scan' ? 'Scan Journal' : 'New Entry'}
+              {editEntry ? 'Edit Entry' : mode === 'scan' ? 'Scan Journal' : 'New Entry'}
             </Text>
             <TouchableOpacity onPress={resetAndClose}>
               <X color={colors.textPrimary} size={24} />
@@ -314,7 +335,7 @@ export function JournalEntryModal({
           </View>
 
           <AnimatedButton
-            title="Save Entry"
+            title={editEntry ? 'Update Entry' : 'Save Entry'}
             onPress={handleSaveEntry}
             loading={isLoading}
             disabled={!content.trim()}
