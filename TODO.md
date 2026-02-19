@@ -207,6 +207,21 @@ Do whatever you think is right.
 - ~~Only 4 of 8 stores have tests. `journalStore` and `goalsStore` are untested.~~
 - **Status:** Done — journalStore (17 tests): CRUD, search, scanning, tags, error handling. goalsStore (10 tests): AsyncStorage load/save, defaults, partial updates, error resilience. 158 total tests passing.
 
+### 64. Extract reusable ErrorBanner component ✅
+- All 5 tab screens had duplicate inline error banner implementations (TouchableOpacity + X icon + identical styles).
+- **Status:** Done — created `ErrorBanner` component in `src/components/ui/`. Updated all 5 screens to use it. Removed ~50 lines of duplicate styles and unused `X` imports.
+
+### 65. Clean up unused imports after ErrorBanner and style extraction
+- After extracting ErrorBanner and removing duplicate styles, some screens may have unused imports (`borderRadius` from theme, etc.).
+- Run a lint pass and remove any leftover unused imports across tab screens.
+- **Effort:** ~15min
+
+### 66. Add error handling to dashboard screen
+- Dashboard loads data from 4+ stores (habits, sleep, exercise, nutrition) but doesn't display errors from any of them.
+- If any store fails to load, the dashboard silently shows empty/stale data with no indication of failure.
+- Should aggregate errors from sub-stores and show an ErrorBanner.
+- **Effort:** ~30min
+
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
 - For large datasets, should re-fetch only the relevant date range on date change instead of loading everything upfront.
@@ -389,3 +404,4 @@ Do whatever you think is right.
 - [x] Added dismissable error banners to habits, sleep, and exercise screens (TODO #61)
 - [x] Added skeleton loading states (SkeletonCard) to all 5 data tab screens (TODO #62)
 - [x] Added journalStore (17 tests) and goalsStore (10 tests) — 158 total tests (TODO #63)
+- [x] Extracted reusable ErrorBanner component — replaced inline banners in all 5 tab screens (TODO #64)
