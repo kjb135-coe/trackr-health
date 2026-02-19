@@ -992,3 +992,4 @@ Yes
 - [x] Fixed unsafe cast in login, dedup AICoaching hasKey, memoized onboarding slides + journal entries (TODO #185)
 - [x] Added onboarding screen tests (6): slide rendering, Skip/Next, navigation, all 6 slide titles — 624 total (TODO #186)
 - [x] Fixed 3 unawaited async calls: nutrition fetchAdvice, journal fetchMoodAnalysis, habits deleteHabit + added success haptic (TODO #187)
+- [x] Added habits screen tests (8): empty state, habit rendering, error banner, mount loading, skeleton loading, streaks — 632 total (TODO #188)
