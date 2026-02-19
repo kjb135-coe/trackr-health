@@ -184,9 +184,18 @@ Do whatever you think is right.
 - ~~`loadStreaks()` in `habits.tsx` loops over all habits calling `getStreak(habitId)` one at a time (N queries).~~
 - **Status:** Done — added `getAllStreaks(habitIds)` to habitRepository that fetches all completions in a single query. Streaks computed in JS. Wired through store's `getAllStreaks()` method.
 
-### 57. Add date navigation to sleep screen
-- Nutrition and habits screens have `DateNavigator` for browsing past dates, but sleep screen still only shows all entries in a flat list.
-- Adding date-based browsing to sleep would let users view/edit sleep logs for specific dates.
+### 57. ~~Add date navigation to sleep screen~~ ✅
+- ~~Nutrition and habits screens have `DateNavigator` for browsing past dates, but sleep screen still only shows all entries in a flat list.~~
+- **Status:** Done — added `DateNavigator` to sleep screen. Shows single sleep entry for selected date or empty state. 7-day summary card adapts to the selected date window.
+
+### 58. Add date navigation to exercise screen
+- Exercise is the only tab screen without `DateNavigator`. Habits, nutrition, and sleep all have date browsing.
+- Should filter sessions by selected date and adapt summary card to the date window.
+- **Effort:** ~30min
+
+### 59. Extract reusable FAB component
+- All 5 tab screens (habits, sleep, exercise, nutrition, journal) define identical FAB styles (position, size, shadow, borderRadius).
+- Extract to a shared `FAB` component in `src/components/ui/` to eliminate ~20 lines of duplicate styles per screen.
 - **Effort:** ~30min
 
 ### 32. Refactor large tab screen components (500+ lines)
@@ -360,3 +369,4 @@ Do whatever you think is right.
 - [x] Added tag filter pills to journal screen — toggle filtering by tag (TODO #54)
 - [x] Added weekly completion dots (7-day visual) to habit cards with batch loading (TODO #55)
 - [x] Batch streak loading: single getAllStreaks() query replaces N sequential getStreak() calls (TODO #56)
+- [x] Added date navigation to sleep screen with per-date view + 7-day summary (TODO #57)
