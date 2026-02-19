@@ -1093,6 +1093,6 @@ Yes
 - `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` all have identical button animation: `withSpring(0.9, { damping: 15, stiffness: 400 })` and `setTimeout(..., 100)`. These should use `SCALE.quickActionPressIn`, `SPRING_CONFIG.pressIn`, and a named constant for the 100ms delay.
 - **Status:** Done — Added `ANIMATION_DURATION.pressRelease` constant (100ms). Replaced hardcoded scale/spring/timeout values with `SCALE.quickActionPressIn`, `SPRING_CONFIG.pressIn/pressOut`, and `ANIMATION_DURATION.pressRelease` in all 3 files.
 
-### 214. Add animations.ts pressRelease constant to test file
+### ~~214. Add animations.ts pressRelease constant to test file~~ ✅
 - Added `ANIMATION_DURATION.pressRelease` constant but the existing `__tests__/utils/animations.test.ts` only checks the 6 original duration keys. Update the test to verify pressRelease exists and is positive.
-- **Effort:** ~2min
+- **Status:** Done — Added pressRelease to the shape check in animations.test.ts.

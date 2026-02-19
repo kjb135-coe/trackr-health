@@ -16,6 +16,7 @@ describe('ANIMATION_DURATION', () => {
         screenTransition: expect.any(Number),
         modalTransition: expect.any(Number),
         fadeTransition: expect.any(Number),
+        pressRelease: expect.any(Number),
       }),
     );
   });
