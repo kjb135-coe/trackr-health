@@ -96,4 +96,35 @@ describe('AnimatedButton', () => {
     );
     expect(await findByText('Delete')).toBeTruthy();
   });
+
+  it('handles pressIn and pressOut events', async () => {
+    const onPress = jest.fn();
+    const { findByText } = renderWithTheme(<AnimatedButton title="PressMe" onPress={onPress} />);
+    const button = await findByText('PressMe');
+    fireEvent(button, 'onPressIn');
+    fireEvent(button, 'onPressOut');
+    fireEvent.press(button);
+    expect(onPress).toHaveBeenCalled();
+  });
+
+  it('renders secondary variant', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedButton title="Secondary" onPress={jest.fn()} variant="secondary" />,
+    );
+    expect(await findByText('Secondary')).toBeTruthy();
+  });
+
+  it('renders with sm size', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedButton title="Small" onPress={jest.fn()} size="sm" />,
+    );
+    expect(await findByText('Small')).toBeTruthy();
+  });
+
+  it('renders with lg size', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedButton title="Large" onPress={jest.fn()} size="lg" />,
+    );
+    expect(await findByText('Large')).toBeTruthy();
+  });
 });
