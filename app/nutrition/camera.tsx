@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -93,20 +93,26 @@ export default function NutritionCameraScreen() {
     setAnalysisResult(null);
   };
 
-  const getTotalCalories = () => {
-    if (!analysisResult) return 0;
-    return analysisResult.detectedFoods.reduce((sum, f) => sum + f.calorieEstimate, 0);
-  };
+  const macroTotals = useMemo(() => {
+    if (!analysisResult) return { calories: 0, protein: 0, carbs: 0, fat: 0 };
+    let calories = 0,
+      protein = 0,
+      carbs = 0,
+      fat = 0;
+    for (const f of analysisResult.detectedFoods) {
+      calories += f.calorieEstimate;
+      protein += f.macroEstimates?.protein || 0;
+      carbs += f.macroEstimates?.carbs || 0;
+      fat += f.macroEstimates?.fat || 0;
+    }
+    return { calories, protein, carbs, fat };
+  }, [analysisResult]);
 
   const handleSaveMeal = async () => {
     if (!analysisResult || saving) return;
 
     setSaving(true);
     const foods = analysisResult.detectedFoods;
-    const totalCalories = foods.reduce((sum, f) => sum + f.calorieEstimate, 0);
-    const totalProtein = foods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0);
-    const totalCarbs = foods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0);
-    const totalFat = foods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
 
     try {
       const persistedUri = capturedPhoto ? await persistImage(capturedPhoto) : undefined;
@@ -115,10 +121,10 @@ export default function NutritionCameraScreen() {
           date: getDateString(),
           mealType: selectedMealType,
           name: foods.map((f) => f.name).join(', '),
-          totalCalories,
-          totalProtein,
-          totalCarbs,
-          totalFat,
+          totalCalories: macroTotals.calories,
+          totalProtein: macroTotals.protein,
+          totalCarbs: macroTotals.carbs,
+          totalFat: macroTotals.fat,
           photoUri: persistedUri,
           aiAnalysis: analysisResult,
         },
@@ -195,7 +201,7 @@ export default function NutritionCameraScreen() {
 
               <View style={[styles.caloriesBadge, { backgroundColor: colors.nutrition + '20' }]}>
                 <Text style={[styles.caloriesValue, { color: colors.nutrition }]}>
-                  {getTotalCalories()}
+                  {macroTotals.calories}
                 </Text>
                 <Text style={[styles.caloriesLabel, { color: colors.textSecondary }]}>
                   calories
@@ -221,31 +227,19 @@ export default function NutritionCameraScreen() {
               <View style={[styles.macros, { borderTopColor: colors.border }]}>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce(
-                      (sum, f) => sum + (f.macroEstimates?.protein || 0),
-                      0,
-                    )}
-                    g
+                    {macroTotals.protein}g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
                 </View>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce(
-                      (sum, f) => sum + (f.macroEstimates?.carbs || 0),
-                      0,
-                    )}
-                    g
+                    {macroTotals.carbs}g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
                 </View>
                 <View style={styles.macroItem}>
                   <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                    {analysisResult.detectedFoods.reduce(
-                      (sum, f) => sum + (f.macroEstimates?.fat || 0),
-                      0,
-                    )}
-                    g
+                    {macroTotals.fat}g
                   </Text>
                   <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
                 </View>

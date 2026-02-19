@@ -1021,6 +1021,6 @@ Yes
 - `safeJsonParse<T>` in `src/utils/date.ts` (used by 3 repositories) has no test. Also `primaryLight`, `primaryDark`, and `surfaceElevated` are defined in ThemeContext but never used anywhere.
 - **Status:** Done — 4 tests for safeJsonParse (valid JSON, null, empty string, invalid JSON). Removed 3 unused color properties from ThemeColors interface, lightColors, darkColors, and colors.ts. 675 total tests.
 
-### 196. DRY up nutrition camera macro calculation — single-pass reduce
+### ~~196. DRY up nutrition camera macro calculation — single-pass reduce~~ ✅
 - `app/nutrition/camera.tsx` runs 4 separate `.reduce()` calls for protein/carbs/fat/calories on `detectedFoods`. Same pattern as the NutritionLogModal fix (TODO #162).
-- **Effort:** ~10min
+- **Status:** Done — replaced 7 separate reduce calls (4 in handleSaveMeal, 3 in display JSX) with single memoized `macroTotals` computed via `for...of` loop. 1 pass instead of 7.
