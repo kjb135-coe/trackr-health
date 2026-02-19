@@ -16,6 +16,7 @@ import { ThemeProvider, useTheme, lightColors, darkColors } from '@/src/theme';
 import { useAuthStore } from '@/src/store';
 import { getDatabase } from '@/src/database';
 import { ONBOARDING_KEY } from './onboarding';
+import { ErrorBoundary as AppErrorBoundary } from '@/src/components/ui';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -85,9 +86,11 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <RootLayoutNav />
-    </ThemeProvider>
+    <AppErrorBoundary>
+      <ThemeProvider>
+        <RootLayoutNav />
+      </ThemeProvider>
+    </AppErrorBoundary>
   );
 }
 

@@ -43,9 +43,11 @@ export const authService = {
   onAuthStateChange(callback: (user: AuthUser | null) => void): () => void {
     authStateCallback = callback;
     // Load stored user and notify
-    loadStoredUser().then((user) => {
+    const initUser = async () => {
+      const user = await loadStoredUser();
       callback(user);
-    });
+    };
+    initUser();
     return () => {
       authStateCallback = null;
     };

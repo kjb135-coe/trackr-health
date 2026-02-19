@@ -6,6 +6,14 @@ import {
   nutritionRepository,
   journalRepository,
 } from '@/src/database/repositories';
+import { AI_MODEL, AI_TIMEOUT_MS } from '@/src/utils/constants';
+
+function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error(message)), AI_TIMEOUT_MS),
+  );
+  return Promise.race([promise, timeout]);
+}
 
 export interface AIInsight {
   category: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal' | 'overall';
@@ -139,11 +147,14 @@ Respond with ONLY valid JSON in this exact format:
 
 Generate 3-5 insights focusing on the most important patterns. Be supportive but honest. If data is limited, acknowledge it and encourage tracking.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 1024,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Daily coaching request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {
@@ -202,11 +213,14 @@ Respond with ONLY valid JSON array:
 
 Suggest habits that fill gaps in their routine. Be specific and practical.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 512,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Habit suggestions request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {
@@ -255,11 +269,14 @@ Respond with ONLY valid JSON:
 
 Be specific and reference their actual data.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 512,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Sleep analysis request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {
@@ -300,11 +317,14 @@ Respond with ONLY valid JSON:
 
 Consider their recent activity level and suggest variety. If they're tired (low sleep quality), suggest lighter exercise.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 256,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 256,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Exercise recommendation request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {
@@ -352,11 +372,14 @@ Respond with ONLY valid JSON:
 
 Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 512,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Mood analysis request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {
@@ -410,11 +433,14 @@ Respond with ONLY valid JSON:
 
 Be practical and encouraging.`;
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-20250514',
-    max_tokens: 256,
-    messages: [{ role: 'user', content: prompt }],
-  });
+  const response = await withTimeout(
+    client.messages.create({
+      model: AI_MODEL,
+      max_tokens: 256,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    'Nutrition advice request timed out. Please try again.',
+  );
 
   const content = response.content[0];
   if (content.type !== 'text') {

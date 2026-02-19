@@ -2,7 +2,7 @@ import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { DetectedFood, AIFoodAnalysis } from '@/src/types';
 import { z } from 'zod';
-import { AI_MODEL, AI_MAX_TOKENS } from '@/src/utils/constants';
+import { AI_MODEL, AI_MAX_TOKENS, AI_TIMEOUT_MS } from '@/src/utils/constants';
 
 const FoodAnalysisSchema = z.object({
   foods: z.array(
@@ -14,7 +14,7 @@ const FoodAnalysisSchema = z.object({
       carbs: z.number().optional(),
       fat: z.number().optional(),
       confidence: z.number().min(0).max(1),
-    })
+    }),
   ),
   totalCalories: z.number(),
   notes: z.string().optional(),
@@ -44,7 +44,7 @@ export async function analyzeFoodImage(imageUri: string): Promise<AIFoodAnalysis
     encoding: 'base64',
   });
 
-  const response = await client.messages.create({
+  const apiCall = client.messages.create({
     model: AI_MODEL,
     max_tokens: AI_MAX_TOKENS,
     messages: [
@@ -88,6 +88,15 @@ Return ONLY the JSON object, no other text.`,
       },
     ],
   });
+
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error('Food analysis timed out. Please try again.')),
+      AI_TIMEOUT_MS,
+    ),
+  );
+
+  const response = await Promise.race([apiCall, timeout]);
 
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {

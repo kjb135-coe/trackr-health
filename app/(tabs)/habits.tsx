@@ -7,32 +7,30 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
-  TextInput,
-  Modal,
-  ActivityIndicator,
 } from 'react-native';
-import { Plus, Check, Trash2, X, Sparkles, ChevronRight } from 'lucide-react-native';
+import { Plus, Check, Trash2, Sparkles, ChevronRight } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
+import { AnimatedCard } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
-import { StreakBadge, StreakCelebration, MILESTONES } from '@/src/components/habits';
+import {
+  StreakBadge,
+  StreakCelebration,
+  MILESTONES,
+  CreateHabitModal,
+  HabitSuggestionsModal,
+} from '@/src/components/habits';
 import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
-import { HABIT_COLORS } from '@/src/utils/constants';
 import { Habit } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
 
 export default function HabitsScreen() {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [suggestionsVisible, setSuggestionsVisible] = useState(false);
-  const [newHabitName, setNewHabitName] = useState('');
-  const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
   const [streaks, setStreaks] = useState<Map<string, number>>(new Map());
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
@@ -44,13 +42,12 @@ export default function HabitsScreen() {
     todayCompletions,
     loadHabits,
     loadTodayCompletions,
-    createHabit,
     deleteHabit,
     toggleCompletion,
     getStreak,
   } = useHabitStore();
 
-  const { habitSuggestions, isLoadingHabits, fetchHabitSuggestions } = useAIInsightsStore();
+  const { habitSuggestions, fetchHabitSuggestions } = useAIInsightsStore();
 
   const today = getDateString();
 
@@ -88,20 +85,6 @@ export default function HabitsScreen() {
     setRefreshing(true);
     await loadData();
     setRefreshing(false);
-  };
-
-  const handleCreateHabit = async () => {
-    if (!newHabitName.trim()) return;
-
-    await createHabit({
-      name: newHabitName.trim(),
-      color: selectedColor,
-      frequency: 'daily',
-    });
-
-    setNewHabitName('');
-    setSelectedColor(HABIT_COLORS[0]);
-    setModalVisible(false);
   };
 
   const handleDeleteHabit = (habit: Habit) => {
@@ -174,7 +157,7 @@ export default function HabitsScreen() {
                     ]}
                     onPress={() => handleToggle(habit.id)}
                   >
-                    {isCompleted && <Check color="#FFFFFF" size={16} />}
+                    {isCompleted && <Check color={colors.white} size={16} />}
                   </TouchableOpacity>
 
                   <View style={styles.habitInfo}>
@@ -233,70 +216,11 @@ export default function HabitsScreen() {
         style={[styles.fab, { backgroundColor: colors.habits }]}
         onPress={() => setModalVisible(true)}
       >
-        <Plus color="#FFFFFF" size={24} />
+        <Plus color={colors.white} size={24} />
       </TouchableOpacity>
 
-      {/* Create Habit Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <Animated.View
-            entering={FadeInDown.duration(300)}
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.surface,
-                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
-              },
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>New Habit</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <X color={colors.textPrimary} size={24} />
-              </TouchableOpacity>
-            </View>
+      <CreateHabitModal visible={modalVisible} onClose={() => setModalVisible(false)} />
 
-            <TextInput
-              style={[
-                styles.input,
-                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
-              ]}
-              placeholder="Habit name"
-              value={newHabitName}
-              onChangeText={setNewHabitName}
-              placeholderTextColor={colors.textTertiary}
-              autoFocus
-            />
-
-            <Text style={[styles.colorLabel, { color: colors.textSecondary }]}>Color</Text>
-            <View style={styles.colorGrid}>
-              {HABIT_COLORS.map((color) => (
-                <TouchableOpacity
-                  key={color}
-                  style={[
-                    styles.colorOption,
-                    { backgroundColor: color },
-                    selectedColor === color && { borderWidth: 3, borderColor: colors.textPrimary },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setSelectedColor(color);
-                  }}
-                />
-              ))}
-            </View>
-
-            <AnimatedButton
-              title="Create Habit"
-              onPress={handleCreateHabit}
-              disabled={!newHabitName.trim()}
-              fullWidth
-            />
-          </Animated.View>
-        </View>
-      </Modal>
-
-      {/* Streak Celebration */}
       <StreakCelebration
         visible={showCelebration}
         streak={celebrationStreak}
@@ -304,95 +228,10 @@ export default function HabitsScreen() {
         onClose={() => setShowCelebration(false)}
       />
 
-      {/* AI Suggestions Modal */}
-      <Modal visible={suggestionsVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <Animated.View
-            entering={FadeInDown.duration(300)}
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.surface,
-                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
-              },
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Sparkles color={colors.primary} size={20} />
-                <Text
-                  style={[styles.modalTitle, { color: colors.textPrimary, marginLeft: spacing.sm }]}
-                >
-                  AI Suggestions
-                </Text>
-              </View>
-              <TouchableOpacity onPress={() => setSuggestionsVisible(false)}>
-                <X color={colors.textPrimary} size={24} />
-              </TouchableOpacity>
-            </View>
-
-            {isLoadingHabits ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator color={colors.primary} />
-                <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-                  Analyzing your routine...
-                </Text>
-              </View>
-            ) : habitSuggestions.length > 0 ? (
-              <ScrollView showsVerticalScrollIndicator={false} style={{ maxHeight: 400 }}>
-                {habitSuggestions.map((suggestion, index) => (
-                  <Animated.View key={index} entering={FadeInDown.duration(300).delay(index * 100)}>
-                    <AnimatedCard style={styles.suggestionCard} delay={index * 50}>
-                      <Text style={[styles.suggestionName, { color: colors.textPrimary }]}>
-                        {suggestion.name}
-                      </Text>
-                      <Text style={[styles.suggestionDesc, { color: colors.textSecondary }]}>
-                        {suggestion.description}
-                      </Text>
-                      <Text style={[styles.suggestionReason, { color: colors.primary }]}>
-                        💡 {suggestion.reason}
-                      </Text>
-                      <AnimatedButton
-                        title="Add This Habit"
-                        variant="secondary"
-                        onPress={async () => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                          await createHabit({
-                            name: suggestion.name,
-                            description: suggestion.description,
-                            color: HABIT_COLORS[index % HABIT_COLORS.length],
-                            frequency: suggestion.frequency,
-                          });
-                          Alert.alert(
-                            'Success',
-                            `"${suggestion.name}" has been added to your habits!`,
-                          );
-                        }}
-                        style={{ marginTop: spacing.sm }}
-                      />
-                    </AnimatedCard>
-                  </Animated.View>
-                ))}
-              </ScrollView>
-            ) : (
-              <Text style={[styles.noSuggestions, { color: colors.textSecondary }]}>
-                No suggestions available. Try refreshing.
-              </Text>
-            )}
-
-            <AnimatedButton
-              title="Get New Suggestions"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                fetchHabitSuggestions();
-              }}
-              loading={isLoadingHabits}
-              fullWidth
-              style={{ marginTop: spacing.md }}
-            />
-          </Animated.View>
-        </View>
-      </Modal>
+      <HabitSuggestionsModal
+        visible={suggestionsVisible}
+        onClose={() => setSuggestionsVisible(false)}
+      />
     </View>
   );
 }
@@ -461,49 +300,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: borderRadius.xl,
-    borderTopRightRadius: borderRadius.xl,
-    padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  input: {
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: 16,
-    marginBottom: spacing.lg,
-  },
-  colorLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: spacing.sm,
-  },
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginBottom: spacing.lg,
-  },
-  colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
   aiSection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -516,35 +312,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '500',
     marginLeft: spacing.sm,
-  },
-  loadingContainer: {
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  loadingText: {
-    marginTop: spacing.sm,
-    fontSize: 14,
-  },
-  suggestionCard: {
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  suggestionName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  suggestionDesc: {
-    fontSize: 14,
-    marginBottom: spacing.xs,
-  },
-  suggestionReason: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  noSuggestions: {
-    textAlign: 'center',
-    padding: spacing.lg,
-    fontSize: 14,
   },
 });

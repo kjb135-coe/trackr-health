@@ -1,7 +1,7 @@
 import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { OCRResult } from '@/src/types';
-import { AI_MODEL, OCR_CONFIDENCE } from '@/src/utils/constants';
+import { AI_MODEL, AI_OCR_MAX_TOKENS, AI_TIMEOUT_MS, OCR_CONFIDENCE } from '@/src/utils/constants';
 
 function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
   return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
@@ -28,9 +28,9 @@ export async function scanHandwrittenJournal(imageUri: string): Promise<OCRResul
     encoding: 'base64',
   });
 
-  const response = await client.messages.create({
+  const apiCall = client.messages.create({
     model: AI_MODEL,
-    max_tokens: 4096,
+    max_tokens: AI_OCR_MAX_TOKENS,
     messages: [
       {
         role: 'user',
@@ -63,6 +63,15 @@ Confidence: [high/medium/low]`,
     ],
   });
 
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error('Handwriting scan timed out. Please try again.')),
+      AI_TIMEOUT_MS,
+    ),
+  );
+
+  const response = await Promise.race([apiCall, timeout]);
+
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {
     throw new Error('No text response from Claude');
@@ -72,9 +81,7 @@ Confidence: [high/medium/low]`,
   let text = responseText;
   let confidence = OCR_CONFIDENCE.MEDIUM;
 
-  const confidenceMatch = responseText.match(
-    /---\s*Confidence:\s*(high|medium|low)/i
-  );
+  const confidenceMatch = responseText.match(/---\s*Confidence:\s*(high|medium|low)/i);
   if (confidenceMatch) {
     text = responseText.substring(0, confidenceMatch.index).trim();
     confidence = parseConfidenceLevel(confidenceMatch[1]);
