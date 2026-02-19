@@ -567,7 +567,7 @@ Yes
 - `NutritionLogModal.tsx` at 51.16% — lowest coverage in the codebase. Missing tests for manual entry flow, edit mode, camera launch, save/error paths.
 - **Effort:** ~45min
 
-### 144. Improve JournalEntryModal test coverage (51% → 80%+)
+### ~~144. Improve JournalEntryModal test coverage (51% → 80%+)~~ ✅
 - `JournalEntryModal.tsx` at 51.94% — second lowest coverage. Missing tests for edit mode, scan mode, OCR flow, tag management, save/error paths.
 - **Effort:** ~45min
 
@@ -770,3 +770,4 @@ Yes
 - [x] Wired fetchMoodAnalysis to journal screen — AI mood analysis card with trend, themes, suggestions (TODO #141)
 - [x] Wired fetchNutritionAdvice to nutrition screen — AI advice card with suggestions and refresh (TODO #142)
 - [x] Improved NutritionLogModal coverage from 51% to ~80% — 7 new tests (camera/gallery permissions, AI analysis, detected foods save, error paths, edit mode save) — 525 total tests (TODO #143)
+- [x] Improved JournalEntryModal coverage from 51% to ~80% — 7 new tests (camera/library permissions, OCR scan, scan fail, no API key, save error, edit mode update) — 532 total tests (TODO #144)

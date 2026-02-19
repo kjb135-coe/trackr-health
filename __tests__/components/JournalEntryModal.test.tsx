@@ -20,15 +20,19 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true })),
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ImagePicker = require('expo-image-picker');
+
 const mockCreateEntry = jest.fn();
 const mockUpdateEntry = jest.fn();
+const mockScanImage = jest.fn();
 jest.mock('@/src/store', () => ({
   useJournalStore: () => ({
     isLoading: false,
     isScanning: false,
     createEntry: mockCreateEntry,
     updateEntry: mockUpdateEntry,
-    scanImage: jest.fn(),
+    scanImage: mockScanImage,
   }),
 }));
 
@@ -207,5 +211,187 @@ describe('JournalEntryModal', () => {
 
     expect(await findByText('Take Photo')).toBeTruthy();
     expect(await findByText('Gallery')).toBeTruthy();
+  });
+
+  it('shows alert when camera permission is denied', async () => {
+    ImagePicker.requestCameraPermissionsAsync.mockResolvedValueOnce({ granted: false });
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Permission needed',
+        'Please grant camera permission to scan your journal.',
+      );
+    });
+  });
+
+  it('shows alert when library permission is denied', async () => {
+    ImagePicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce({ granted: false });
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Gallery'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Permission needed',
+        'Please grant photo library permission.',
+      );
+    });
+  });
+
+  it('scans photo and populates content with OCR text', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://scan.jpg' }],
+    });
+    mockScanImage.mockResolvedValueOnce({ text: 'Handwritten journal text here' });
+
+    const { findByText, findByDisplayValue } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(mockScanImage).toHaveBeenCalledWith('file://scan.jpg');
+    });
+    expect(await findByDisplayValue('Handwritten journal text here')).toBeTruthy();
+  });
+
+  it('shows scan failed alert when OCR throws', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://scan.jpg' }],
+    });
+    mockScanImage.mockRejectedValueOnce(new Error('OCR error'));
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={true}
+      />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Scan failed',
+        'Could not read the handwriting. Please try again or type manually.',
+      );
+    });
+  });
+
+  it('shows API key needed alert when scanning without API key', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://scan.jpg' }],
+    });
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="scan"
+        onClose={() => {}}
+        apiKeyExists={false}
+      />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'API key needed',
+        'Add your Claude API key in settings to enable handwriting recognition.',
+      );
+    });
+  });
+
+  it('shows error alert when save fails', async () => {
+    mockCreateEntry.mockRejectedValueOnce(new Error('DB write failed'));
+
+    const { findByText, findByPlaceholderText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="text"
+        onClose={() => {}}
+        apiKeyExists={false}
+      />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Write your thoughts...'), 'Some content');
+    fireEvent.press(await findByText('Save Entry'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB write failed');
+    });
+  });
+
+  it('calls updateEntry when saving in edit mode', async () => {
+    mockUpdateEntry.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editEntry = {
+      id: 'entry-1',
+      date: '2026-02-18',
+      title: 'My Day',
+      content: 'Some thoughts',
+      mood: 4 as const,
+      isScanned: false,
+      createdAt: '2026-02-18T08:00:00.000Z',
+      updatedAt: '2026-02-18T08:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <JournalEntryModal
+        visible={true}
+        initialMode="text"
+        onClose={onClose}
+        apiKeyExists={false}
+        editEntry={editEntry}
+      />,
+    );
+
+    fireEvent.press(await findByText('Update Entry'));
+
+    await waitFor(() => {
+      expect(mockUpdateEntry).toHaveBeenCalledWith(
+        'entry-1',
+        expect.objectContaining({
+          title: 'My Day',
+          content: 'Some thoughts',
+          mood: 4,
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
   });
 });
