@@ -176,10 +176,19 @@ Do whatever you think is right.
 - ~~All tab screen modals (habits, sleep, exercise, nutrition, journal) lack `KeyboardAvoidingView` — keyboard covers inputs on iOS.~~
 - **Status:** Done — wrapped all 5 tab screen modals with `KeyboardAvoidingView` (behavior: padding on iOS, height on Android).
 
-### 31. Add React Error Boundary component
-- No error boundary exists anywhere. A crash in any component takes down the whole app.
-- Should wrap root navigation in `_layout.tsx` with a fallback UI.
-- **Effort:** ~1h
+### 31. ~~Add React Error Boundary component~~ ✅
+- ~~No error boundary exists anywhere. A crash in any component takes down the whole app.~~
+- **Status:** Done — created `ErrorBoundary` in `src/components/ui/` with retry button. Wraps root layout in `_layout.tsx`.
+
+### 32. Refactor large tab screen components (500+ lines)
+- `nutrition.tsx` (680 lines), `settings.tsx` (673 lines), `sleep.tsx` (657 lines), `journal.tsx` (623 lines), `exercise.tsx` (585 lines), `habits.tsx` (550 lines) all exceed the 200-line guideline.
+- Extract modal content, form sections, and list items into dedicated components.
+- **Effort:** ~4-6h (all screens)
+
+### 33. Add API timeout protection for Claude AI calls
+- `foodRecognition.ts` and `handwritingOCR.ts` have no request timeout — a slow API response hangs the UI indefinitely.
+- Should use `Promise.race()` with `AI_TIMEOUT_MS` constant (already defined as 30s).
+- **Effort:** ~30min
 
 ---
 
@@ -222,3 +231,4 @@ Do whatever you think is right.
 - [x] Added `AI_OCR_MAX_TOKENS` constant, replaced hardcoded `4096` in handwritingOCR (TODO #29)
 - [x] Typed camera refs as `CameraView` instead of `any` in nutrition/camera and journal/scan (TODO #29)
 - [x] Added KeyboardAvoidingView to all 5 tab screen form modals — habits, sleep, exercise, nutrition, journal (TODO #30)
+- [x] Created ErrorBoundary component in src/components/ui/ with retry button, wrapped root layout (TODO #31)
