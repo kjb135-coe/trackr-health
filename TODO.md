@@ -203,10 +203,9 @@ Do whatever you think is right.
 - ~~Dashboard had `SkeletonCard` loading but habits, sleep, exercise, nutrition, and journal screens showed blank/empty states while loading.~~
 - **Status:** Done — all 5 data tab screens now show shimmer skeleton placeholders during initial data load. Uses existing `SkeletonCard` component from `src/components/ui/animations/`.
 
-### 63. Add journal and goals store tests
-- Only 4 of 8 stores have tests. `journalStore` and `goalsStore` are untested.
-- Journal handles search, tags, and OCR scanning — critical path for a core feature.
-- **Effort:** ~1-2h (30+ tests)
+### 63. ~~Add journal and goals store tests~~ ✅
+- ~~Only 4 of 8 stores have tests. `journalStore` and `goalsStore` are untested.~~
+- **Status:** Done — journalStore (17 tests): CRUD, search, scanning, tags, error handling. goalsStore (10 tests): AsyncStorage load/save, defaults, partial updates, error resilience. 158 total tests passing.
 
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
@@ -389,3 +388,4 @@ Do whatever you think is right.
 - [x] Extracted reusable FAB, SecondaryFAB, FABGroup components — removed ~100 lines of duplicate styles (TODO #59)
 - [x] Added dismissable error banners to habits, sleep, and exercise screens (TODO #61)
 - [x] Added skeleton loading states (SkeletonCard) to all 5 data tab screens (TODO #62)
+- [x] Added journalStore (17 tests) and goalsStore (10 tests) — 158 total tests (TODO #63)
