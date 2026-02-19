@@ -162,11 +162,7 @@ export default function HabitsScreen() {
             <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
           </>
         ) : habits.length === 0 ? (
-          <EmptyState
-            icon={null}
-            title="No habits yet"
-            subtitle="Tap + to create your first habit"
-          />
+          <EmptyState title="No habits yet" subtitle="Tap + to create your first habit" />
         ) : (
           habits.map((habit, index) => {
             const isCompleted = todayCompletions.get(habit.id)?.completed;
