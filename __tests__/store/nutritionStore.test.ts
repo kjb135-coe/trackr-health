@@ -217,8 +217,9 @@ describe('nutritionStore', () => {
   });
 
   describe('updateMeal', () => {
-    it('updates meal in state', async () => {
-      useNutritionStore.setState({ meals: [mockMeal] });
+    it('updates only the matching meal in state', async () => {
+      const otherMeal = { ...mockMeal, id: 'm2', name: 'Other Meal', foods: [] };
+      useNutritionStore.setState({ meals: [mockMeal, otherMeal] });
       nutritionRepository.updateMeal.mockResolvedValue(undefined);
       nutritionRepository.getDailyTotals.mockResolvedValue({
         calories: 200,
@@ -229,8 +230,9 @@ describe('nutritionStore', () => {
 
       await useNutritionStore.getState().updateMeal('m1', { name: 'Updated meal' });
 
-      const meal = useNutritionStore.getState().meals[0];
-      expect(meal.name).toBe('Updated meal');
+      const meals = useNutritionStore.getState().meals;
+      expect(meals.find((m) => m.id === 'm1')?.name).toBe('Updated meal');
+      expect(meals.find((m) => m.id === 'm2')?.name).toBe('Other Meal');
       expect(useNutritionStore.getState().isLoading).toBe(false);
     });
 
@@ -260,10 +262,19 @@ describe('nutritionStore', () => {
       expect(useNutritionStore.getState().error).toBe('Update failed');
       expect(useNutritionStore.getState().isLoading).toBe(false);
     });
+
+    it('skips daily totals reload when meal not in state', async () => {
+      useNutritionStore.setState({ meals: [] });
+      nutritionRepository.updateMeal.mockResolvedValue(undefined);
+
+      await useNutritionStore.getState().updateMeal('nonexistent', { name: 'test' });
+
+      expect(nutritionRepository.getDailyTotals).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteMeal', () => {
-    it('removes meal from state', async () => {
+    it('removes meal from state and reloads totals', async () => {
       useNutritionStore.setState({ meals: [mockMeal] });
       nutritionRepository.deleteMeal.mockResolvedValue(undefined);
       nutritionRepository.getDailyTotals.mockResolvedValue({
@@ -276,6 +287,16 @@ describe('nutritionStore', () => {
       await useNutritionStore.getState().deleteMeal('m1');
 
       expect(useNutritionStore.getState().meals).toEqual([]);
+      expect(nutritionRepository.getDailyTotals).toHaveBeenCalledWith('2026-02-18');
+    });
+
+    it('skips daily totals reload when meal not in state', async () => {
+      useNutritionStore.setState({ meals: [] });
+      nutritionRepository.deleteMeal.mockResolvedValue(undefined);
+
+      await useNutritionStore.getState().deleteMeal('nonexistent');
+
+      expect(nutritionRepository.getDailyTotals).not.toHaveBeenCalled();
     });
 
     it('sets error and throws on failure', async () => {
@@ -290,7 +311,7 @@ describe('nutritionStore', () => {
   });
 
   describe('addFoodItem', () => {
-    it('adds food item to meal', async () => {
+    it('adds food item to matching meal only', async () => {
       const newFood: FoodItem = {
         id: 'f2',
         mealId: 'm1',
@@ -300,7 +321,8 @@ describe('nutritionStore', () => {
         calories: 95,
         isAIGenerated: false,
       };
-      useNutritionStore.setState({ meals: [mockMeal] });
+      const otherMeal = { ...mockMeal, id: 'm2', name: 'Other', foods: [] };
+      useNutritionStore.setState({ meals: [mockMeal, otherMeal] });
       nutritionRepository.addFoodItem.mockResolvedValue(newFood);
       nutritionRepository.getDailyTotals.mockResolvedValue({
         calories: 200,
@@ -338,11 +360,36 @@ describe('nutritionStore', () => {
 
       expect(useNutritionStore.getState().error).toBe('Add food failed');
     });
+
+    it('skips daily totals reload when meal not in state', async () => {
+      useNutritionStore.setState({ meals: [] });
+      const newFood = {
+        id: 'f3',
+        mealId: 'nonexistent',
+        name: 'Banana',
+        quantity: 1,
+        unit: 'each',
+        calories: 100,
+        isAIGenerated: false,
+      };
+      nutritionRepository.addFoodItem.mockResolvedValue(newFood);
+
+      await useNutritionStore.getState().addFoodItem('nonexistent', {
+        name: 'Banana',
+        quantity: 1,
+        unit: 'each',
+        calories: 100,
+        isAIGenerated: false,
+      });
+
+      expect(nutritionRepository.getDailyTotals).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteFoodItem', () => {
-    it('removes food item from meal', async () => {
-      useNutritionStore.setState({ meals: [mockMeal] });
+    it('removes food item from matching meal only', async () => {
+      const otherMeal = { ...mockMeal, id: 'm2', name: 'Other', foods: [] };
+      useNutritionStore.setState({ meals: [mockMeal, otherMeal] });
       nutritionRepository.deleteFoodItem.mockResolvedValue(undefined);
       nutritionRepository.getDailyTotals.mockResolvedValue({
         calories: 0,
@@ -366,6 +413,15 @@ describe('nutritionStore', () => {
       );
 
       expect(useNutritionStore.getState().error).toBe('Delete food failed');
+    });
+
+    it('skips daily totals reload when meal not in state', async () => {
+      useNutritionStore.setState({ meals: [] });
+      nutritionRepository.deleteFoodItem.mockResolvedValue(undefined);
+
+      await useNutritionStore.getState().deleteFoodItem('f1', 'nonexistent');
+
+      expect(nutritionRepository.getDailyTotals).not.toHaveBeenCalled();
     });
   });
 

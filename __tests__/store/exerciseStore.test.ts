@@ -153,14 +153,16 @@ describe('exerciseStore', () => {
   });
 
   describe('updateSession', () => {
-    it('updates session in state', async () => {
-      useExerciseStore.setState({ sessions: [mockSession] });
+    it('updates only the matching session in state', async () => {
+      const otherSession = { ...mockSession, id: 'e2', type: 'yoga' as const };
+      useExerciseStore.setState({ sessions: [mockSession, otherSession] });
       exerciseRepository.update.mockResolvedValue(undefined);
 
       await useExerciseStore.getState().updateSession('e1', { durationMinutes: 60 });
 
-      const updated = useExerciseStore.getState().sessions.find((s) => s.id === 'e1');
-      expect(updated?.durationMinutes).toBe(60);
+      const sessions = useExerciseStore.getState().sessions;
+      expect(sessions.find((s) => s.id === 'e1')?.durationMinutes).toBe(60);
+      expect(sessions.find((s) => s.id === 'e2')?.type).toBe('yoga');
     });
 
     it('sets error and throws on failure', async () => {

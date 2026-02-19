@@ -91,7 +91,9 @@ describe('sleepStore', () => {
   });
 
   describe('createEntry', () => {
-    it('creates entry and adds to state sorted by date', async () => {
+    it('creates entry and sorts by date descending', async () => {
+      const olderEntry = { ...mockEntry, id: 's0', date: '2026-02-16' };
+      useSleepStore.setState({ entries: [olderEntry] });
       sleepRepository.create.mockResolvedValue(mockEntry);
 
       const result = await useSleepStore.getState().createEntry({
@@ -103,7 +105,9 @@ describe('sleepStore', () => {
       });
 
       expect(result).toEqual(mockEntry);
-      expect(useSleepStore.getState().entries).toContain(mockEntry);
+      const entries = useSleepStore.getState().entries;
+      expect(entries[0].date).toBe('2026-02-18');
+      expect(entries[1].date).toBe('2026-02-16');
     });
 
     it('throws on failure', async () => {
@@ -122,14 +126,16 @@ describe('sleepStore', () => {
   });
 
   describe('updateEntry', () => {
-    it('updates entry in state', async () => {
-      useSleepStore.setState({ entries: [mockEntry] });
+    it('updates only the matching entry in state', async () => {
+      const otherEntry = { ...mockEntry, id: 's2', quality: 3 as const };
+      useSleepStore.setState({ entries: [mockEntry, otherEntry] });
       sleepRepository.update.mockResolvedValue(undefined);
 
       await useSleepStore.getState().updateEntry('s1', { quality: 5 });
 
-      const updated = useSleepStore.getState().entries[0];
-      expect(updated.quality).toBe(5);
+      const entries = useSleepStore.getState().entries;
+      expect(entries.find((e) => e.id === 's1')?.quality).toBe(5);
+      expect(entries.find((e) => e.id === 's2')?.quality).toBe(3);
       expect(useSleepStore.getState().isLoading).toBe(false);
     });
 

@@ -166,13 +166,16 @@ describe('journalStore', () => {
   });
 
   describe('updateEntry', () => {
-    it('updates entry in state', async () => {
-      useJournalStore.setState({ entries: [mockEntry] });
+    it('updates only the matching entry in state', async () => {
+      const otherEntry = { ...mockEntry, id: 'j2', title: 'Other Entry' };
+      useJournalStore.setState({ entries: [mockEntry, otherEntry] });
       journalRepository.update.mockResolvedValue(undefined);
 
       await useJournalStore.getState().updateEntry('j1', { title: 'Updated Title' });
 
-      expect(useJournalStore.getState().entries[0].title).toBe('Updated Title');
+      const entries = useJournalStore.getState().entries;
+      expect(entries.find((e) => e.id === 'j1')?.title).toBe('Updated Title');
+      expect(entries.find((e) => e.id === 'j2')?.title).toBe('Other Entry');
     });
 
     it('sets error and throws on failure', async () => {
