@@ -183,9 +183,9 @@ Yes
 - `setSaving(false)` was placed after `try/catch` instead of in a `finally` block in CreateHabitModal, ExerciseLogModal, and SleepLogModal. If catch re-throws, the save button stays stuck in loading state.
 - **Status:** Done — moved to `finally` block in all 3 modals.
 
-### 182. Add zod validation to 5 healthInsightsAI JSON.parse() casts
-- `healthInsightsAI.ts` uses `JSON.parse(content.text) as T` for DailyAICoaching, HabitSuggestion[], SleepAnalysis, ExerciseRecommendation, and NutritionAdvice. These are unsafe casts — structurally invalid JSON won't be caught until runtime. The codebase already uses zod for foodRecognition and handwritingOCR.
-- **Effort:** ~45min
+### ~~182. Add zod validation to 6 healthInsightsAI JSON.parse() casts~~ ✅
+- `healthInsightsAI.ts` uses `JSON.parse(content.text) as T` for DailyAICoaching, HabitSuggestion[], SleepAnalysis, ExerciseRecommendation, MoodAnalysis, and NutritionAdvice. These are unsafe casts — structurally invalid JSON won't be caught until runtime.
+- **Status:** Done — added 7 zod schemas (AIInsight, DailyCoaching, HabitSuggestion, SleepAnalysis, ExerciseRecommendation, MoodAnalysis, NutritionAdvice). Replaced all 6 `as T` casts with `.parse()`. Added test for valid-JSON-wrong-shape fallback. 601 total tests.
 
 ### 183. Extract shared useImagePicker hook from nutrition and journal modals
 - `NutritionLogModal.tsx` and `JournalEntryModal.tsx` both implement near-identical `handleTakePhoto`/`handlePickImage` with permission requests, launcher calls, and error handling. Only the AI service callback differs.
@@ -973,3 +973,4 @@ Yes
 - [x] Wired habitReminders to UI: reminder toggle + time picker in CreateHabitModal, cancel on delete, Habit type null support — 5 new tests, 600 total (TODO #179)
 - [x] Cleaned up 159 redundant toBeTruthy() assertions across 21 test files (TODO #180)
 - [x] Fixed setSaving(false) leak in 3 modal save handlers — moved to finally block (TODO #181)
+- [x] Added zod validation to 6 healthInsightsAI JSON.parse() casts — 7 schemas, 1 new test, 601 total (TODO #182)
