@@ -15,7 +15,7 @@ export function ModalHeader({ title, onClose }: ModalHeaderProps) {
   return (
     <View style={styles.container}>
       <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
-      <TouchableOpacity onPress={onClose}>
+      <TouchableOpacity onPress={onClose} testID="modal-close">
         <X color={colors.textPrimary} size={24} />
       </TouchableOpacity>
     </View>

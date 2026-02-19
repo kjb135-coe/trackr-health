@@ -62,9 +62,6 @@ export const MOOD_LABELS: Record<number, string> = {
   5: 'Great',
 };
 
-// Default calorie goals
-export const DEFAULT_CALORIE_GOAL = 2000;
-
 // Sleep factors
 export const SLEEP_FACTORS = [
   'caffeine',

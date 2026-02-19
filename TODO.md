@@ -595,9 +595,13 @@ Yes
 - Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
 - **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
 
-### 161. Extract duplicated image picker permission logic into shared utility
+### ~~163. Add ModalHeader tests + remove dead DEFAULT_CALORIE_GOAL constant~~ ✅
+- New ModalHeader component had no tests. `DEFAULT_CALORIE_GOAL` constant unused after TODO #153 replaced it with `goalsStore.goals.dailyCalories`.
+- **Status:** Done — 2 tests (title rendering, close callback). Removed unused constant from constants.ts.
+
+### 161. ~~Extract duplicated image picker permission logic into shared utility~~
 - `NutritionLogModal` and `JournalEntryModal` both implement identical camera/gallery permission request patterns with try-catch-alert.
-- **Effort:** ~15min
+- **Status:** Skipped — permission check is only 4 lines per call; the rest of each handler (image options, post-processing) is unique. Extraction would be over-engineering.
 
 ### ~~162. Consolidate food macro total calculations into single-pass~~ ✅
 - `NutritionLogModal` runs 4 separate `.reduce()` calls for calories, protein, carbs, fat.
@@ -860,3 +864,4 @@ Yes
 - [x] Extracted reusable ModalHeader component, updated 5 modals (TODO #159)
 - [x] Extracted 6 default AI fallback constants from healthInsightsAI (TODO #160)
 - [x] Consolidated 4 food macro reduce() calls into single for..of loop (TODO #162)
+- [x] Added ModalHeader component tests (2 tests), removed unused DEFAULT_CALORIE_GOAL constant (TODO #163)
