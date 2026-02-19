@@ -16,6 +16,7 @@ export function Input({ label, error, containerStyle, style, ...props }: InputPr
     <View style={containerStyle}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
+        accessibilityLabel={label || props.placeholder}
         style={[styles.input, error && styles.inputError, style]}
         placeholderTextColor={colors.textTertiary}
         {...props}

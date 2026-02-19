@@ -1073,9 +1073,9 @@ Yes
 - `src/utils/animations.ts` (75 lines) exports 5 constant objects (ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE, TRANSLATE) with no tests. Add structural tests verifying all expected keys exist and values are positive numbers.
 - **Status:** Done — 15 tests covering all 5 constant objects: shape validation, positive values, ordering invariants (exit < entrance, initialOffset > listItem, press-in < 1, focused > unfocused). 759 total tests across 65 suites.
 
-### 209. Add accessibility attributes to core UI components
+### ~~209. Add accessibility attributes to core UI components~~ ✅
 - `Button.tsx`, `Input.tsx`, `FAB.tsx` lack `accessibilityRole` and `accessibilityLabel`. Button should get `accessibilityRole="button"` and use `title` as label. Input should use the `label` prop as `accessibilityLabel`. FAB should accept an `accessibilityLabel` prop.
-- **Effort:** ~15min
+- **Status:** Done — Button: added accessibilityRole="button", accessibilityLabel={title}, accessibilityState. Input: added accessibilityLabel={label || placeholder}. FAB/SecondaryFAB: added accessibilityRole="button" and optional accessibilityLabel prop.
 
 ### 210. Add accessibility labels to modal form inputs
 - TextInput fields in `CreateHabitModal`, `SleepLogModal`, `NutritionLogModal`, `ExerciseLogModal`, `JournalEntryModal` all lack `accessibilityLabel`. Screen readers can't describe field purpose.

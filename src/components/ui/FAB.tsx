@@ -8,6 +8,7 @@ interface FABProps {
   icon: React.ReactNode;
   /** Set to true when FAB is inside a FABGroup (disables absolute positioning) */
   grouped?: boolean;
+  accessibilityLabel?: string;
 }
 
 interface SecondaryFABProps {
@@ -15,28 +16,39 @@ interface SecondaryFABProps {
   backgroundColor: string;
   borderColor: string;
   icon: React.ReactNode;
+  accessibilityLabel?: string;
 }
 
 interface FABGroupProps {
   children: React.ReactNode;
 }
 
-export function FAB({ onPress, color, icon, grouped }: FABProps) {
+export function FAB({ onPress, color, icon, grouped, accessibilityLabel }: FABProps) {
   return (
     <TouchableOpacity
       style={[styles.fab, !grouped && styles.positioned, { backgroundColor: color }]}
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
     >
       {icon}
     </TouchableOpacity>
   );
 }
 
-export function SecondaryFAB({ onPress, backgroundColor, borderColor, icon }: SecondaryFABProps) {
+export function SecondaryFAB({
+  onPress,
+  backgroundColor,
+  borderColor,
+  icon,
+  accessibilityLabel,
+}: SecondaryFABProps) {
   return (
     <TouchableOpacity
       style={[styles.fab, styles.secondary, { backgroundColor, borderColor }]}
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
     >
       {icon}
     </TouchableOpacity>
