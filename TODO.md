@@ -202,9 +202,10 @@ Do whatever you think is right.
 - ~~`journal.tsx` (629 → 257 lines)~~ ✅ Extracted `JournalEntryModal` component.
 - ~~`sleep.tsx` (677 → 451 lines)~~ ✅ Extracted `SleepLogModal` component.
 - ~~`exercise.tsx` (600 → 391 lines)~~ ✅ Extracted `ExerciseLogModal` component.
-- `settings.tsx` (673 lines), `habits.tsx` (550+ lines) still need extraction.
+- ~~`habits.tsx` (555 → 316 lines)~~ ✅ Extracted `CreateHabitModal` + `HabitSuggestionsModal` components.
+- `settings.tsx` (673 lines) still needs extraction.
 - Extract modal content, form sections, and list items into dedicated components.
-- **Effort:** ~2h remaining (2 screens)
+- **Effort:** ~1h remaining (1 screen)
 
 ---
 
@@ -256,3 +257,4 @@ Do whatever you think is right.
 - [x] Extracted JournalEntryModal from journal.tsx (629 → 257 lines) (TODO #36 partial)
 - [x] Extracted SleepLogModal from sleep.tsx (677 → 451 lines) (TODO #36 partial)
 - [x] Extracted ExerciseLogModal from exercise.tsx (600 → 391 lines) (TODO #36 partial)
+- [x] Extracted CreateHabitModal + HabitSuggestionsModal from habits.tsx (555 → 316 lines) (TODO #36 partial)
