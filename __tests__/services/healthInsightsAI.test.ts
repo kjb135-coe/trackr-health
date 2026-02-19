@@ -214,6 +214,20 @@ describe('healthInsightsAI', () => {
   });
 
   describe('analyzeSleepPatterns', () => {
+    it('returns early when insufficient sleep data', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { sleepRepository } = require('@/src/database/repositories');
+      sleepRepository.getAll.mockResolvedValueOnce([
+        { id: 's1', date: '2026-02-18', durationMinutes: 480, quality: 4 },
+      ]);
+
+      const result = await analyzeSleepPatterns();
+
+      expect(result.pattern).toBe('Not enough data');
+      expect(result.recommendations[0]).toContain('Log at least 3 nights');
+      expect(mockCreate).not.toHaveBeenCalled();
+    });
+
     it('returns parsed analysis when sufficient data', async () => {
       const analysis = {
         pattern: 'Consistent bedtime around 10pm',
@@ -275,6 +289,20 @@ describe('healthInsightsAI', () => {
   });
 
   describe('analyzeJournalMood', () => {
+    it('returns early when insufficient journal data', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { journalRepository } = require('@/src/database/repositories');
+      journalRepository.getAll.mockResolvedValueOnce([
+        { id: 'j1', date: '2026-02-18', title: 'Only one', mood: 4 },
+      ]);
+
+      const result = await analyzeJournalMood();
+
+      expect(result.overallMood).toBe('Not enough data');
+      expect(result.suggestions[0]).toContain('Write a few journal entries');
+      expect(mockCreate).not.toHaveBeenCalled();
+    });
+
     it('returns parsed mood analysis when sufficient data', async () => {
       const mood = {
         overallMood: 'Generally positive',
@@ -305,6 +333,20 @@ describe('healthInsightsAI', () => {
   });
 
   describe('getNutritionAdvice', () => {
+    it('returns early when insufficient meal data', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { nutritionRepository } = require('@/src/database/repositories');
+      nutritionRepository.getAllMeals.mockResolvedValueOnce([
+        { id: 'm1', date: '2026-02-18', totalCalories: 400 },
+      ]);
+
+      const result = await getNutritionAdvice();
+
+      expect(result.advice).toContain('Log more meals');
+      expect(result.suggestions[0]).toContain('log at least 3 meals');
+      expect(mockCreate).not.toHaveBeenCalled();
+    });
+
     it('returns parsed nutrition advice when sufficient data', async () => {
       const advice = {
         advice: 'Increase protein intake',

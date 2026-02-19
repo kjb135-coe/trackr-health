@@ -582,6 +582,10 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~134. Add healthInsightsAI insufficient data branch tests~~ ✅
+- `healthInsightsAI.ts` had 53% branch coverage due to untested early-return paths for insufficient data (sleep < 3, journal < 2, meals < 3).
+- **Status:** Done — added 3 tests using `mockResolvedValueOnce` to override module-level mocks. Branch coverage improved. 508 total tests.
+
 ### ~~133. Fix silent store failures — add error state to swallowed catches~~ ✅
 - `habitStore.toggleCompletion()` and `loadTodayCompletions()` fail silently — no error state set, no user feedback.
 - `nutritionStore.loadDailyTotals()` also swallows errors silently.
@@ -732,3 +736,4 @@ Do whatever you think is right.
 - [x] Fixed database init safety — only cache db after migrations succeed (TODO #131)
 - [x] Added safeJsonParse wrappers to journal, sleep, and nutrition repositories (TODO #132)
 - [x] Fixed silent store failures — habitStore and nutritionStore now set error state (TODO #133)
+- [x] Added healthInsightsAI insufficient data tests (sleep/journal/nutrition) — 508 total tests (TODO #134)
