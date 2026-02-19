@@ -243,19 +243,13 @@ Do whatever you think is right.
 - ~~Dashboard computed values re-calculated on every render.~~
 - **Status:** Done — wrapped `completedHabits`, `todaySleep`, `todayExercise`, `totalExerciseMinutes`, `todayJournalCount` in `useMemo`.
 
-### 75. Add tap-to-navigate from dashboard cards to specific date
-- Dashboard cards navigate to tab screens but don't pass the current date context. E.g., tapping "Sleep" from the dashboard should navigate to the sleep tab with today's date already selected.
-- Currently uses `router.push('/(tabs)/sleep')` with no params.
-- **Effort:** ~30min
+### 75. ~~Add tap-to-navigate from dashboard cards to specific date~~ ✅
+- Dashboard cards navigate to tab screens but don't pass the current date context.
+- **Status:** Not needed — dashboard always shows today's data, and tab screens default to today via `getDateString()`. Tabs persist state across navigation, so users benefit from remembering their last-viewed date when switching between tabs.
 
-### 76. Exercise modal doesn't reset form after editing different sessions
-- When tapping to edit session A, then closing, then tapping session B, the form may show stale values from session A because the `useEffect` that resets the form depends on `editSession` identity which may not change if both are truthy.
-- The `preFill` effect and `editSession` effect can conflict — if preFill is also set, the preFill effect runs too.
-- **Effort:** ~30min
-
-### 77. Sleep modal date is always "today" when editing past entries
-- `SleepLogModal` uses `getDateString()` for the date field when creating, and the `editEntry.date` when editing. But the bedtime/wakeTime reconstruction uses `new Date()` (today) and `yesterday`, not the entry's actual date. Editing a past entry would save it with today's date.
-- **Effort:** ~30min
+### 77. ~~Sleep modal date is always "today" when editing past entries~~ ✅
+- `SleepLogModal` reconstructed bedtime/wakeTime using today's date even when editing past entries.
+- **Status:** Done — uses `parseISO(editEntry.date)` as reference when editing, preserving the original entry's date context.
 
 ### 71. ~~Memoize filtered/mapped lists in tab screens~~ ✅
 - ~~Multiple tab screens filter data on every render without `useMemo`.~~
@@ -458,3 +452,4 @@ Do whatever you think is right.
 - [x] Fixed dashboard test act() warnings + added streak badge test — 14 dashboard tests, 172 total (TODO #72)
 - [x] Memoized dashboard computed values with useMemo (TODO #74)
 - [x] Added edit functionality to sleep and exercise — tap card opens pre-filled modal (TODO #73)
+- [x] Fixed sleep modal date reconstruction when editing past entries (TODO #77)

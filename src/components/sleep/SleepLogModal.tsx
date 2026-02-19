@@ -18,6 +18,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
+import { parseISO } from 'date-fns';
 import { getDateString, getDurationMinutes } from '@/src/utils/date';
 import { getQualityColor } from '@/src/utils/constants';
 import { SleepEntry } from '@/src/types';
@@ -83,17 +84,20 @@ export function SleepLogModal({ visible, onClose, editEntry }: SleepLogModalProp
     }
 
     const today = getDateString();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
 
-    // Construct bedtime (yesterday) and wake time (today)
-    const bedtime = new Date(yesterday);
+    // Use the entry's date when editing, otherwise today
+    const wakeDate = editEntry ? parseISO(editEntry.date) : new Date();
+    const prevDay = new Date(wakeDate);
+    prevDay.setDate(prevDay.getDate() - 1);
+
+    // Construct bedtime (day before) and wake time (entry date)
+    const bedtime = new Date(prevDay);
     bedtime.setHours(bh, bm, 0, 0);
 
-    const wakeTime = new Date();
+    const wakeTime = new Date(wakeDate);
     wakeTime.setHours(wh, wm, 0, 0);
 
-    // If bedtime hour is less than wake hour, bedtime is same day
+    // If bedtime hour is less than wake hour, bedtime is same day as wake
     if (bh < wh) {
       bedtime.setDate(bedtime.getDate() + 1);
     }
