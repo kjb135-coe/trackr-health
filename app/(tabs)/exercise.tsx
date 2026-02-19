@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Plus, Dumbbell, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -29,7 +30,7 @@ export default function ExerciseScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
 
-  const { sessions, loadSessions } = useExerciseStore();
+  const { sessions, loadSessions, deleteSession } = useExerciseStore();
   const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } =
     useAIInsightsStore();
 
@@ -54,6 +55,20 @@ export default function ExerciseScreen() {
     setRefreshing(true);
     await loadSessions();
     setRefreshing(false);
+  };
+
+  const handleDeleteSession = (id: string, type: string) => {
+    Alert.alert('Delete Workout', `Delete this ${type} session?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteSession(id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        },
+      },
+    ]);
   };
 
   const openModal = (preFill?: ExercisePreFill) => {
@@ -91,7 +106,16 @@ export default function ExerciseScreen() {
         ) : (
           recentSessions.map((session, index) => (
             <Animated.View key={session.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard style={styles.sessionCard} delay={index * 50}>
+              <AnimatedCard
+                style={styles.sessionCard}
+                delay={index * 50}
+                onLongPress={() =>
+                  handleDeleteSession(
+                    session.id,
+                    EXERCISE_TYPE_LABELS[session.type] || session.type,
+                  )
+                }
+              >
                 <View style={styles.sessionHeader}>
                   <Text style={[styles.sessionType, { color: colors.textPrimary }]}>
                     {EXERCISE_TYPE_LABELS[session.type] || session.type}

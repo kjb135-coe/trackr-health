@@ -18,6 +18,7 @@ interface AnimatedCardProps {
   variant?: CardVariant;
   padding?: CardPadding;
   onPress?: () => void;
+  onLongPress?: () => void;
   style?: StyleProp<ViewStyle>;
   haptic?: boolean;
   delay?: number;
@@ -30,6 +31,7 @@ export function AnimatedCard({
   variant = 'elevated',
   padding = 'md',
   onPress,
+  onLongPress,
   style,
   haptic = true,
   delay = 0,
@@ -107,10 +109,11 @@ export function AnimatedCard({
     ...getVariantStyle(),
   };
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
       <AnimatedPressable
         onPress={handlePress}
+        onLongPress={onLongPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         style={[cardStyle, animatedStyle, style]}

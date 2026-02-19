@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  Alert,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Plus, X, UtensilsCrossed } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -17,7 +26,7 @@ export default function NutritionScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [apiKeyExists, setApiKeyExists] = useState(false);
 
-  const { meals, dailyTotals, error, loadMealsForDate, loadDailyTotals, clearError } =
+  const { meals, dailyTotals, error, loadMealsForDate, loadDailyTotals, deleteMeal, clearError } =
     useNutritionStore();
 
   const today = getDateString();
@@ -42,6 +51,21 @@ export default function NutritionScreen() {
     setRefreshing(true);
     await loadData();
     setRefreshing(false);
+  };
+
+  const handleDeleteMeal = (id: string, name: string) => {
+    Alert.alert('Delete Meal', `Delete ${name}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteMeal(id);
+          await loadDailyTotals(today);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        },
+      },
+    ]);
   };
 
   const calorieProgress = Math.min(dailyTotals.calories / DEFAULT_CALORIE_GOAL, 1);
@@ -138,7 +162,13 @@ export default function NutritionScreen() {
               key={meal.id}
               entering={FadeInDown.duration(400).delay(150 + index * 50)}
             >
-              <AnimatedCard style={styles.mealCard} delay={index * 50}>
+              <AnimatedCard
+                style={styles.mealCard}
+                delay={index * 50}
+                onLongPress={() =>
+                  handleDeleteMeal(meal.id, MEAL_TYPE_LABELS[meal.mealType] || meal.mealType)
+                }
+              >
                 <View style={styles.mealHeader}>
                   <Text style={[styles.mealType, { color: colors.textPrimary }]}>
                     {MEAL_TYPE_LABELS[meal.mealType]}
