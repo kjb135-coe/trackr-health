@@ -199,6 +199,15 @@ Do whatever you think is right.
 - ~~Only nutrition and journal had dismissable error banners. Habits, sleep, and exercise screens silently swallowed store errors.~~
 - **Status:** Done — all 5 tab screens now consistently show dismissable error banners when store errors occur.
 
+### 62. ~~Add skeleton loading to all data screens~~ ✅
+- ~~Dashboard had `SkeletonCard` loading but habits, sleep, exercise, nutrition, and journal screens showed blank/empty states while loading.~~
+- **Status:** Done — all 5 data tab screens now show shimmer skeleton placeholders during initial data load. Uses existing `SkeletonCard` component from `src/components/ui/animations/`.
+
+### 63. Add journal and goals store tests
+- Only 4 of 8 stores have tests. `journalStore` and `goalsStore` are untested.
+- Journal handles search, tags, and OCR scanning — critical path for a core feature.
+- **Effort:** ~1-2h (30+ tests)
+
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
 - For large datasets, should re-fetch only the relevant date range on date change instead of loading everything upfront.
@@ -379,3 +388,4 @@ Do whatever you think is right.
 - [x] Added date navigation to exercise screen — all 4 data tabs now have DateNavigator (TODO #58)
 - [x] Extracted reusable FAB, SecondaryFAB, FABGroup components — removed ~100 lines of duplicate styles (TODO #59)
 - [x] Added dismissable error banners to habits, sleep, and exercise screens (TODO #61)
+- [x] Added skeleton loading states (SkeletonCard) to all 5 data tab screens (TODO #62)
