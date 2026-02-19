@@ -12,14 +12,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Camera, X } from 'lucide-react-native';
+import { Camera } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedButton } from '@/src/components/ui';
+import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
@@ -146,10 +146,12 @@ export function NutritionLogModal({
         isAIGenerated: true,
         confidence: f.confidence,
       }));
-      totalCalories = detectedFoods.reduce((sum, f) => sum + f.calorieEstimate, 0);
-      totalProtein = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0);
-      totalCarbs = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0);
-      totalFat = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
+      for (const f of detectedFoods) {
+        totalCalories += f.calorieEstimate;
+        totalProtein += f.macroEstimates?.protein || 0;
+        totalCarbs += f.macroEstimates?.carbs || 0;
+        totalFat += f.macroEstimates?.fat || 0;
+      }
     } else if (manualName && manualCalories) {
       const parsedCalories = parseInt(manualCalories, 10);
       if (isNaN(parsedCalories) || parsedCalories <= 0) {
@@ -226,14 +228,7 @@ export function NutritionLogModal({
             },
           ]}
         >
-          <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {editMeal ? 'Edit Meal' : 'Log Meal'}
-            </Text>
-            <TouchableOpacity onPress={resetAndClose}>
-              <X color={colors.textPrimary} size={24} />
-            </TouchableOpacity>
-          </View>
+          <ModalHeader title={editMeal ? 'Edit Meal' : 'Log Meal'} onClose={resetAndClose} />
 
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Meal Type</Text>
           <View style={styles.mealTypeRow}>
@@ -368,16 +363,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
     maxHeight: '85%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
   },
   inputLabel: {
     fontSize: 12,

@@ -52,6 +52,58 @@ export interface MoodAnalysis {
   suggestions: string[];
 }
 
+// Default fallback responses when AI JSON parsing fails
+const DEFAULT_COACHING: DailyAICoaching = {
+  greeting: "Good morning! Let's make today count.",
+  insights: [
+    {
+      category: 'overall',
+      title: 'Keep Tracking',
+      insight: 'Continue logging your health data to get personalized insights.',
+      suggestion: 'Try to log at least one activity today.',
+      priority: 'medium',
+    },
+  ],
+  dailyTip: 'Stay hydrated by keeping a water bottle nearby.',
+  motivationalMessage: 'Every small step counts towards better health!',
+};
+
+const DEFAULT_HABIT_SUGGESTIONS: HabitSuggestion[] = [
+  {
+    name: 'Morning Stretch',
+    description: '5-minute stretching routine after waking up',
+    frequency: 'daily',
+    reason: 'Helps improve flexibility and starts your day with movement',
+  },
+];
+
+const DEFAULT_SLEEP_ANALYSIS: SleepAnalysis = {
+  pattern: 'Variable sleep schedule',
+  qualityTrend: 'stable',
+  recommendations: ['Try to maintain consistent sleep and wake times'],
+  optimalBedtime: '10:30 PM',
+};
+
+const DEFAULT_EXERCISE_RECOMMENDATION: ExerciseRecommendation = {
+  type: 'Walking',
+  duration: 30,
+  intensity: 'low',
+  reason: 'A gentle walk is always a great choice',
+  targetCalories: 150,
+};
+
+const DEFAULT_MOOD_ANALYSIS: MoodAnalysis = {
+  overallMood: 'Varied emotions throughout the week',
+  commonThemes: [],
+  moodTrend: 'stable',
+  suggestions: ['Continue journaling to track your emotional patterns'],
+};
+
+const DEFAULT_NUTRITION_ADVICE = {
+  advice: 'Focus on balanced meals with protein, carbs, and healthy fats.',
+  suggestions: ['Include vegetables with each meal', 'Stay hydrated'],
+};
+
 // Gather recent data for AI analysis
 async function gatherHealthData() {
   const today = new Date();
@@ -144,24 +196,9 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   }
 
   try {
-    const parsed = JSON.parse(content.text);
-    return parsed as DailyAICoaching;
+    return JSON.parse(content.text) as DailyAICoaching;
   } catch {
-    // Return default coaching if parsing fails
-    return {
-      greeting: "Good morning! Let's make today count.",
-      insights: [
-        {
-          category: 'overall',
-          title: 'Keep Tracking',
-          insight: 'Continue logging your health data to get personalized insights.',
-          suggestion: 'Try to log at least one activity today.',
-          priority: 'medium',
-        },
-      ],
-      dailyTip: 'Stay hydrated by keeping a water bottle nearby.',
-      motivationalMessage: 'Every small step counts towards better health!',
-    };
+    return DEFAULT_COACHING;
   }
 }
 
@@ -212,14 +249,7 @@ Suggest habits that fill gaps in their routine. Be specific and practical.`;
   try {
     return JSON.parse(content.text) as HabitSuggestion[];
   } catch {
-    return [
-      {
-        name: 'Morning Stretch',
-        description: '5-minute stretching routine after waking up',
-        frequency: 'daily',
-        reason: 'Helps improve flexibility and starts your day with movement',
-      },
-    ];
+    return DEFAULT_HABIT_SUGGESTIONS;
   }
 }
 
@@ -268,12 +298,7 @@ Be specific and reference their actual data.`;
   try {
     return JSON.parse(content.text) as SleepAnalysis;
   } catch {
-    return {
-      pattern: 'Variable sleep schedule',
-      qualityTrend: 'stable',
-      recommendations: ['Try to maintain consistent sleep and wake times'],
-      optimalBedtime: '10:30 PM',
-    };
+    return DEFAULT_SLEEP_ANALYSIS;
   }
 }
 
@@ -316,13 +341,7 @@ Consider their recent activity level and suggest variety. If they're tired (low 
   try {
     return JSON.parse(content.text) as ExerciseRecommendation;
   } catch {
-    return {
-      type: 'Walking',
-      duration: 30,
-      intensity: 'low',
-      reason: 'A gentle walk is always a great choice',
-      targetCalories: 150,
-    };
+    return DEFAULT_EXERCISE_RECOMMENDATION;
   }
 }
 
@@ -371,12 +390,7 @@ Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
   try {
     return JSON.parse(content.text) as MoodAnalysis;
   } catch {
-    return {
-      overallMood: 'Varied emotions throughout the week',
-      commonThemes: [],
-      moodTrend: 'stable',
-      suggestions: ['Continue journaling to track your emotional patterns'],
-    };
+    return DEFAULT_MOOD_ANALYSIS;
   }
 }
 
@@ -432,9 +446,6 @@ Be practical and encouraging.`;
   try {
     return JSON.parse(content.text);
   } catch {
-    return {
-      advice: 'Focus on balanced meals with protein, carbs, and healthy fats.',
-      suggestions: ['Include vegetables with each meal', 'Stay hydrated'],
-    };
+    return DEFAULT_NUTRITION_ADVICE;
   }
 }

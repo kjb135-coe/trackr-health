@@ -11,13 +11,12 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { X } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedButton } from '@/src/components/ui';
+import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
@@ -150,14 +149,7 @@ export function ExerciseLogModal({
             },
           ]}
         >
-          <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {editSession ? 'Edit Exercise' : 'Log Exercise'}
-            </Text>
-            <TouchableOpacity onPress={onClose}>
-              <X color={colors.textPrimary} size={24} />
-            </TouchableOpacity>
-          </View>
+          <ModalHeader title={editSession ? 'Edit Exercise' : 'Log Exercise'} onClose={onClose} />
 
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Exercise Type</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
@@ -269,16 +261,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
     maxHeight: '80%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
   },
   inputLabel: {
     fontSize: 12,

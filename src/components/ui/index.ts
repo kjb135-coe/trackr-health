@@ -5,6 +5,7 @@ export { ErrorBoundary } from './ErrorBoundary';
 export { ErrorBanner } from './ErrorBanner';
 export { EmptyState } from './EmptyState';
 export { DateNavigator } from './DateNavigator';
+export { ModalHeader } from './ModalHeader';
 export { FAB, SecondaryFAB, FABGroup } from './FAB';
 
 // Animated components

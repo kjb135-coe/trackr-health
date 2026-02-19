@@ -587,6 +587,22 @@ Yes
 - `healthInsights.ts` `getDailyStreak()` called `getAll()` on sleep, exercise, and nutrition repos — full table scans to count consecutive days.
 - **Status:** Done — replaced with `getByDateRange()` / `getMealsByDateRange()` bounded to 90-day window. Sufficient for any realistic streak while preventing full table scans.
 
+### ~~159. Extract reusable ModalHeader component from 5 modal components~~ ✅
+- All 5 modals (CreateHabit, Sleep, Exercise, Nutrition, Journal) implement identical header layout: row with title + X close button.
+- **Status:** Done — created `ModalHeader` component in `src/components/ui/`. Updated all 5 modals. Removed ~65 lines of duplicate styles and imports.
+
+### ~~160. Extract default AI fallback constants from healthInsightsAI~~ ✅
+- Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
+- **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
+
+### 161. Extract duplicated image picker permission logic into shared utility
+- `NutritionLogModal` and `JournalEntryModal` both implement identical camera/gallery permission request patterns with try-catch-alert.
+- **Effort:** ~15min
+
+### ~~162. Consolidate food macro total calculations into single-pass~~ ✅
+- `NutritionLogModal` runs 4 separate `.reduce()` calls for calories, protein, carbs, fat.
+- **Status:** Done — replaced with single `for...of` loop. 1 pass instead of 4.
+
 ### ~~152. Improve AnimatedButton coverage — pressIn/pressOut, secondary variant, sizes~~ ✅
 - `AnimatedButton.tsx` at 82.85% — missing pressIn/pressOut handler tests, secondary variant, sm/lg sizes.
 - **Status:** Done — 4 new tests (pressIn/pressOut, secondary, sm, lg). 13 total tests.
@@ -841,3 +857,6 @@ Yes
 - [x] Replaced hardcoded storage key in goalsStore with STORAGE_KEYS.GOALS constant (TODO #156)
 - [x] Optimized healthInsightsAI: replaced 4 unbounded getAll() with getByDateRange() (TODO #157)
 - [x] Optimized getDailyStreak(): replaced unbounded getAll() with 90-day bounded getByDateRange() (TODO #158)
+- [x] Extracted reusable ModalHeader component, updated 5 modals (TODO #159)
+- [x] Extracted 6 default AI fallback constants from healthInsightsAI (TODO #160)
+- [x] Consolidated 4 food macro reduce() calls into single for..of loop (TODO #162)

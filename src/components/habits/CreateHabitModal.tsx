@@ -10,13 +10,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { X } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedButton } from '@/src/components/ui';
+import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useHabitStore } from '@/src/store';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
@@ -90,14 +89,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
             },
           ]}
         >
-          <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {editHabit ? 'Edit Habit' : 'New Habit'}
-            </Text>
-            <TouchableOpacity onPress={onClose}>
-              <X color={colors.textPrimary} size={24} />
-            </TouchableOpacity>
-          </View>
+          <ModalHeader title={editHabit ? 'Edit Habit' : 'New Habit'} onClose={onClose} />
 
           <TextInput
             style={[
@@ -153,16 +145,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: borderRadius.xl,
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
   },
   input: {
     borderRadius: borderRadius.md,

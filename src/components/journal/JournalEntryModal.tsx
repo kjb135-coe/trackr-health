@@ -12,14 +12,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Camera, X, Edit3 } from 'lucide-react-native';
+import { Camera, Edit3 } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedButton } from '@/src/components/ui';
+import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { JournalEntry } from '@/src/types';
@@ -206,14 +206,10 @@ export function JournalEntryModal({
             },
           ]}
         >
-          <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-              {editEntry ? 'Edit Entry' : mode === 'scan' ? 'Scan Journal' : 'New Entry'}
-            </Text>
-            <TouchableOpacity onPress={resetAndClose}>
-              <X color={colors.textPrimary} size={24} />
-            </TouchableOpacity>
-          </View>
+          <ModalHeader
+            title={editEntry ? 'Edit Entry' : mode === 'scan' ? 'Scan Journal' : 'New Entry'}
+            onClose={resetAndClose}
+          />
 
           {/* Mode Toggle */}
           <View style={[styles.modeToggle, { backgroundColor: colors.surfaceSecondary }]}>
@@ -363,16 +359,6 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xxl,
     maxHeight: '90%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
   },
   modeToggle: {
     flexDirection: 'row',
