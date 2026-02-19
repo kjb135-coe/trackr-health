@@ -227,18 +227,17 @@ Do whatever you think is right.
 - ~~`SkeletonCard` re-exported indirectly via `export * from './animations'`.~~
 - **Status:** Done — replaced wildcard export with explicit named exports (`Skeleton`, `SkeletonCard`) for discoverability.
 
-### 69. Add pull-to-refresh test for dashboard
-- Dashboard has a pull-to-refresh handler that re-loads all stores. The test file doesn't cover the `onRefresh` path or the demo data loading button press.
-- **Effort:** ~30min
+### 69. ~~Add pull-to-refresh test for dashboard~~ ✅
+- ~~Dashboard tests didn't cover refresh or demo data loading.~~
+- **Status:** Done — expanded dashboard tests to 13 tests covering nutrition display, exercise stats, journal count, demo data loading, and multi-store error display. 171 total tests passing.
 
 ### 70. Add loading spinner suppression for dashboard trend data
 - `getTrendData()` and `getDailyStreak()` silently fail (caught in empty catch block), but they could be slow on first load. Consider adding a subtle loading indicator or ensuring the trend data section degrades gracefully when data is still loading.
 - **Effort:** ~20min
 
-### 60. Add pull-to-refresh on date change for sleep and exercise
-- Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
-- For large datasets, should re-fetch only the relevant date range on date change instead of loading everything upfront.
-- **Effort:** ~20min
+### 60. ~~Add pull-to-refresh on date change for sleep and exercise~~ ✅
+- ~~Sleep and exercise screens didn't re-fetch when navigating dates.~~
+- **Status:** Done — `handleDateChange` now calls `loadEntries()`/`loadSessions()` on both screens, consistent with habits and nutrition.
 
 ### 32. Refactor large tab screen components (500+ lines)
 - `nutrition.tsx` (680 lines), `settings.tsx` (673 lines), `sleep.tsx` (657 lines), `journal.tsx` (623 lines), `exercise.tsx` (585 lines), `habits.tsx` (550 lines) all exceed the 200-line guideline.
@@ -423,3 +422,5 @@ Do whatever you think is right.
 - [x] Removed unused `borderRadius` import from nutrition screen (TODO #65)
 - [x] Replaced wildcard export with explicit named exports in ui barrel (TODO #68)
 - [x] Added dashboard screen tests — 8 tests: cards, progress, errors, demo section, data loading (TODO #67)
+- [x] Expanded dashboard tests to 13 — nutrition display, exercise stats, journal count, demo data (TODO #69)
+- [x] Sleep and exercise screens now re-fetch data on date change (TODO #60)
