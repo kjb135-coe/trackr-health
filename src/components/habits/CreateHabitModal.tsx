@@ -113,8 +113,9 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
       onClose();
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (

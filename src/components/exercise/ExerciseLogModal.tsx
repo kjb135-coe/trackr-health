@@ -129,8 +129,9 @@ export function ExerciseLogModal({
       onClose();
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (

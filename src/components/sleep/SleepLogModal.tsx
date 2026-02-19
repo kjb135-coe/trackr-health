@@ -127,8 +127,9 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
       onClose();
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (
