@@ -222,6 +222,17 @@ Do whatever you think is right.
 - ~~Newly extracted modals (SleepLogModal, ExerciseLogModal, JournalEntryModal, NutritionLogModal, CreateHabitModal, HabitSuggestionsModal) have no test coverage.~~
 - **Status:** Done — added 17 tests across 3 modal components: CreateHabitModal (5 tests), SleepLogModal (6 tests), ExerciseLogModal (6 tests). Tests cover rendering, form submission, validation alerts, and preFill behavior. 120 total tests passing.
 
+### 41. Fix ErrorBoundary hardcoded colors and console.error
+- `src/components/ui/ErrorBoundary.tsx` uses hardcoded hex colors (#F8F9FA, #1A1A2E, #6366F1) in StyleSheet — breaks dark mode.
+- Also has `console.error` in `componentDidCatch` that should be wrapped in `__DEV__` check.
+- **Effort:** ~15min
+
+### 42. Add explicit radix to parseInt() calls
+- `SleepLogModal.tsx` lines 41-44 call `parseInt()` without radix parameter.
+- `ExerciseLogModal.tsx` line 71 also missing radix.
+- Should use `parseInt(value, 10)` to avoid potential octal parsing.
+- **Effort:** ~5min
+
 ---
 
 ## Completed in This Audit
