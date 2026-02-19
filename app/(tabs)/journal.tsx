@@ -11,6 +11,8 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Plus, Camera, X, BookOpen, Edit3 } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -253,7 +255,10 @@ export default function JournalScreen() {
 
       {/* Create Entry Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
           <Animated.View
             entering={FadeInDown.duration(300)}
             style={[
@@ -408,7 +413,7 @@ export default function JournalScreen() {
               fullWidth
             />
           </Animated.View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

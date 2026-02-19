@@ -9,6 +9,8 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import {
   Plus,
@@ -317,7 +319,10 @@ export default function SleepScreen() {
 
       {/* Log Sleep Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
           <Animated.View
             entering={FadeInDown.duration(300)}
             style={[
@@ -415,7 +420,7 @@ export default function SleepScreen() {
 
             <AnimatedButton title="Save Sleep Entry" onPress={handleCreateEntry} fullWidth />
           </Animated.View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

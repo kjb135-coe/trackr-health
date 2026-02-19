@@ -10,6 +10,8 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Plus, Check, Trash2, X, Sparkles, ChevronRight } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -238,7 +240,10 @@ export default function HabitsScreen() {
 
       {/* Create Habit Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.modalOverlay}
+        >
           <Animated.View
             entering={FadeInDown.duration(300)}
             style={[
@@ -293,7 +298,7 @@ export default function HabitsScreen() {
               fullWidth
             />
           </Animated.View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       {/* Streak Celebration */}

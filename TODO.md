@@ -172,10 +172,9 @@ Do whatever you think is right.
 - ~~`handwritingOCR.ts` used hardcoded `4096` instead of a constant. Camera refs in `camera.tsx` and `scan.tsx` typed as `any`.~~
 - **Status:** Done — added `AI_OCR_MAX_TOKENS` constant, typed camera refs as `CameraView`.
 
-### 30. Add KeyboardAvoidingView to form modals
-- All tab screen modals (habits, sleep, exercise, nutrition, journal) lack `KeyboardAvoidingView` — keyboard covers inputs on iOS.
-- Also affects `app/journal/scan.tsx` edit mode and `app/sleep/log.tsx`.
-- **Effort:** ~1-2h
+### 30. ~~Add KeyboardAvoidingView to form modals~~ ✅
+- ~~All tab screen modals (habits, sleep, exercise, nutrition, journal) lack `KeyboardAvoidingView` — keyboard covers inputs on iOS.~~
+- **Status:** Done — wrapped all 5 tab screen modals with `KeyboardAvoidingView` (behavior: padding on iOS, height on Android).
 
 ### 31. Add React Error Boundary component
 - No error boundary exists anywhere. A crash in any component takes down the whole app.
@@ -222,3 +221,4 @@ Do whatever you think is right.
 - [x] Eliminated all `any` types from src/ and app/ (ExportData, onboarding, QuickActions, healthInsightsAI) — only auth `as any` remains per user skip
 - [x] Added `AI_OCR_MAX_TOKENS` constant, replaced hardcoded `4096` in handwritingOCR (TODO #29)
 - [x] Typed camera refs as `CameraView` instead of `any` in nutrition/camera and journal/scan (TODO #29)
+- [x] Added KeyboardAvoidingView to all 5 tab screen form modals — habits, sleep, exercise, nutrition, journal (TODO #30)
