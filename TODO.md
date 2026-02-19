@@ -230,6 +230,10 @@ Do whatever you think is right.
 - ~~`SleepLogModal.tsx` lines 41-44 call `parseInt()` without radix parameter.~~
 - **Status:** Done — added explicit radix `10` to all 7 parseInt() calls across SleepLogModal (4), ExerciseLogModal (2), and NutritionLogModal (1).
 
+### 43. ~~Fix mock auth service .then() pattern~~ ✅
+- ~~`src/services/auth/mockAuthService.ts` line 46 uses `.then()` instead of async/await.~~
+- **Status:** Done — replaced `.then()` callback with async/await IIFE pattern in `onAuthStateChange()`.
+
 ---
 
 ## Completed in This Audit
@@ -287,3 +291,4 @@ Do whatever you think is right.
 - [x] Added modal component tests: CreateHabitModal (5), SleepLogModal (6), ExerciseLogModal (6) — 120 total tests (TODO #40)
 - [x] Fixed ErrorBoundary: dynamic theme colors via Appearance API, wrapped console.error in __DEV__ (TODO #41)
 - [x] Added explicit radix (10) to all 7 parseInt() calls across 3 modal components (TODO #42)
+- [x] Replaced .then() with async/await in mockAuthService.onAuthStateChange() (TODO #43)
