@@ -525,6 +525,14 @@ Do whatever you think is right.
 - `mockAuthService.ts` is the actual auth implementation used at runtime (mock Firebase). Zero test coverage.
 - **Status:** Done — 11 tests: signUp, signIn, signInWithGoogle, signOut, onAuthStateChange (stored + null), sendVerificationEmail, sendPasswordReset, reloadUser, updateUserProfile, useGoogleAuth. 461 total tests.
 
+### 119. Improve sleepStore test coverage (70% → 85%+)
+- `sleepStore.ts` at 70.27% line coverage — lowest of all stores. Missing tests for updateEntry, deleteEntry error paths.
+- **Effort:** ~30min
+
+### 120. Improve nutritionStore test coverage (75% → 85%+)
+- `nutritionStore.ts` at 74.64% line coverage. Missing tests for updateMeal, deleteMeal, addFoodItem, updateFoodItem, deleteFoodItem error paths.
+- **Effort:** ~30min
+
 ---
 
 ## Completed in This Audit

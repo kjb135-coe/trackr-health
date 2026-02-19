@@ -79,6 +79,15 @@ describe('sleepStore', () => {
       expect(sleepRepository.getByDateRange).toHaveBeenCalledWith('2026-02-01', '2026-02-28');
       expect(useSleepStore.getState().entries).toEqual([mockEntry]);
     });
+
+    it('sets error on failure', async () => {
+      sleepRepository.getByDateRange.mockRejectedValue(new Error('Range error'));
+
+      await useSleepStore.getState().loadEntriesForRange('2026-02-01', '2026-02-28');
+
+      expect(useSleepStore.getState().error).toBe('Range error');
+      expect(useSleepStore.getState().isLoading).toBe(false);
+    });
   });
 
   describe('createEntry', () => {
@@ -112,6 +121,31 @@ describe('sleepStore', () => {
     });
   });
 
+  describe('updateEntry', () => {
+    it('updates entry in state', async () => {
+      useSleepStore.setState({ entries: [mockEntry] });
+      sleepRepository.update.mockResolvedValue(undefined);
+
+      await useSleepStore.getState().updateEntry('s1', { quality: 5 });
+
+      const updated = useSleepStore.getState().entries[0];
+      expect(updated.quality).toBe(5);
+      expect(useSleepStore.getState().isLoading).toBe(false);
+    });
+
+    it('sets error on failure', async () => {
+      useSleepStore.setState({ entries: [mockEntry] });
+      sleepRepository.update.mockRejectedValue(new Error('Update failed'));
+
+      await expect(useSleepStore.getState().updateEntry('s1', { quality: 5 })).rejects.toThrow(
+        'Update failed',
+      );
+
+      expect(useSleepStore.getState().error).toBe('Update failed');
+      expect(useSleepStore.getState().isLoading).toBe(false);
+    });
+  });
+
   describe('deleteEntry', () => {
     it('removes entry from state', async () => {
       useSleepStore.setState({ entries: [mockEntry] });
@@ -120,6 +154,16 @@ describe('sleepStore', () => {
       await useSleepStore.getState().deleteEntry('s1');
 
       expect(useSleepStore.getState().entries).toEqual([]);
+    });
+
+    it('sets error on failure', async () => {
+      useSleepStore.setState({ entries: [mockEntry] });
+      sleepRepository.delete.mockRejectedValue(new Error('Delete failed'));
+
+      await expect(useSleepStore.getState().deleteEntry('s1')).rejects.toThrow('Delete failed');
+
+      expect(useSleepStore.getState().error).toBe('Delete failed');
+      expect(useSleepStore.getState().isLoading).toBe(false);
     });
   });
 
