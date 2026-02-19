@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -169,14 +169,29 @@ export default function DashboardScreen() {
     setLoadingDemo(false);
   };
 
-  const completedHabits = habits.filter((h) => todayCompletions.get(h.id)?.completed).length;
+  const completedHabits = useMemo(
+    () => habits.filter((h) => todayCompletions.get(h.id)?.completed).length,
+    [habits, todayCompletions],
+  );
   const habitProgress = habits.length > 0 ? completedHabits / habits.length : 0;
 
-  const todaySleep = sleepEntries.find((e) => e.date === today);
-  const todayExercise = exerciseSessions.filter((s) => s.date === today);
-  const totalExerciseMinutes = todayExercise.reduce((sum, s) => sum + s.durationMinutes, 0);
+  const todaySleep = useMemo(
+    () => sleepEntries.find((e) => e.date === today),
+    [sleepEntries, today],
+  );
+  const todayExercise = useMemo(
+    () => exerciseSessions.filter((s) => s.date === today),
+    [exerciseSessions, today],
+  );
+  const totalExerciseMinutes = useMemo(
+    () => todayExercise.reduce((sum, s) => sum + s.durationMinutes, 0),
+    [todayExercise],
+  );
 
-  const todayJournalCount = journalEntries.filter((e) => e.date === today).length;
+  const todayJournalCount = useMemo(
+    () => journalEntries.filter((e) => e.date === today).length,
+    [journalEntries, today],
+  );
 
   const firstError = habitError || sleepError || exerciseError || nutritionError || journalError;
   const clearAllErrors = () => {
