@@ -250,6 +250,10 @@ Do whatever you think is right.
 - ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
 - **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
+### 50. ~~Show daily streak on dashboard~~ ✅
+- ~~`getDailyStreak()` was optimized (TODO #44) but never displayed in any UI.~~
+- **Status:** Done — added streak badge next to date label on dashboard. Shows flame icon + "X days" when streak > 0. Fetched in parallel with trend data via `Promise.all()`.
+
 ### 49. ~~Fix empty Privacy Policy handler in settings~~ ✅
 - ~~Privacy Policy button in settings had an empty `onPress={() => {}}` — clicking did nothing.~~
 - **Status:** Done — shows an alert explaining that all data is stored locally on device. AI features only send data when explicitly triggered.
@@ -325,3 +329,4 @@ Do whatever you think is right.
 - [x] Added tag display on journal entry cards — shows tag badges below content (TODO #47)
 - [x] Added long-press delete to all 4 data screens: exercise, nutrition, sleep, journal (TODO #48)
 - [x] Fixed empty Privacy Policy handler — shows local storage info alert (TODO #49)
+- [x] Added daily streak badge to dashboard header with flame icon (TODO #50)

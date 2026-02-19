@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
+import {
+  Target,
+  Moon,
+  Dumbbell,
+  UtensilsCrossed,
+  BookOpen,
+  Sparkles,
+  Flame,
+} from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -18,7 +26,7 @@ import {
 import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { getDatabase } from '@/src/database';
 import { populateDemoData } from '@/src/utils/demoData';
-import { getTrendData, type TrendData } from '@/src/services/insights';
+import { getTrendData, getDailyStreak, type TrendData } from '@/src/services/insights';
 
 interface DashboardCardProps {
   title: string;
@@ -74,6 +82,7 @@ export default function DashboardScreen() {
   const [dbReady, setDbReady] = useState(false);
   const [loadingDemo, setLoadingDemo] = useState(false);
   const [trendData, setTrendData] = useState<TrendData | null>(null);
+  const [dailyStreak, setDailyStreak] = useState(0);
 
   const { habits, todayCompletions, loadHabits, loadTodayCompletions } = useHabitStore();
   const { entries: sleepEntries, loadEntries: loadSleep } = useSleepStore();
@@ -103,8 +112,9 @@ export default function DashboardScreen() {
       loadJournal(),
     ]);
     try {
-      const trends = await getTrendData();
+      const [trends, streak] = await Promise.all([getTrendData(), getDailyStreak()]);
       setTrendData(trends);
+      setDailyStreak(streak);
     } catch {
       // Silent fail - trends are supplementary
     }
@@ -172,12 +182,25 @@ export default function DashboardScreen() {
       }
       showsVerticalScrollIndicator={false}
     >
-      <Animated.Text
-        entering={FadeInDown.duration(400).delay(100)}
-        style={[styles.dateLabel, { color: colors.textSecondary }]}
-      >
-        {getRelativeDateLabel(new Date())}
-      </Animated.Text>
+      <View style={styles.headerRow}>
+        <Animated.Text
+          entering={FadeInDown.duration(400).delay(100)}
+          style={[styles.dateLabel, { color: colors.textSecondary }]}
+        >
+          {getRelativeDateLabel(new Date())}
+        </Animated.Text>
+        {dailyStreak > 0 && (
+          <Animated.View
+            entering={FadeInDown.duration(400).delay(150)}
+            style={[styles.streakBadge, { backgroundColor: colors.warning + '20' }]}
+          >
+            <Flame color={colors.warning} size={14} />
+            <Text style={[styles.streakText, { color: colors.warning }]}>
+              {dailyStreak} day{dailyStreak !== 1 ? 's' : ''}
+            </Text>
+          </Animated.View>
+        )}
+      </View>
 
       <View style={styles.grid}>
         <DashboardCard
@@ -326,12 +349,29 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     paddingTop: spacing.sm,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
   dateLabel: {
     fontSize: 15,
     fontWeight: '500',
-    marginBottom: spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.md,
+  },
+  streakText: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginLeft: 4,
   },
   grid: {
     flexDirection: 'row',
