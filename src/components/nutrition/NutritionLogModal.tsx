@@ -31,9 +31,15 @@ interface NutritionLogModalProps {
   visible: boolean;
   onClose: () => void;
   apiKeyExists: boolean;
+  date?: string;
 }
 
-export function NutritionLogModal({ visible, onClose, apiKeyExists }: NutritionLogModalProps) {
+export function NutritionLogModal({
+  visible,
+  onClose,
+  apiKeyExists,
+  date,
+}: NutritionLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
@@ -44,7 +50,7 @@ export function NutritionLogModal({ visible, onClose, apiKeyExists }: NutritionL
 
   const { isLoading, isAnalyzing, createMeal, analyzeImage } = useNutritionStore();
 
-  const today = getDateString();
+  const today = date || getDateString();
 
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();

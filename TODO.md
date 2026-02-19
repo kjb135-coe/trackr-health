@@ -247,6 +247,10 @@ Do whatever you think is right.
 - Dashboard cards navigate to tab screens but don't pass the current date context.
 - **Status:** Not needed — dashboard always shows today's data, and tab screens default to today via `getDateString()`. Tabs persist state across navigation, so users benefit from remembering their last-viewed date when switching between tabs.
 
+### 78. ~~Log modals always create entries for today, ignoring DateNavigator selection~~ ✅
+- ExerciseLogModal, NutritionLogModal, and SleepLogModal all hardcoded `getDateString()` (today) when creating new entries.
+- **Status:** Done — added `date` prop to all 3 modals. Parent screens pass `selectedDate`. Modals fall back to `getDateString()` when no date prop is provided.
+
 ### 77. ~~Sleep modal date is always "today" when editing past entries~~ ✅
 - `SleepLogModal` reconstructed bedtime/wakeTime using today's date even when editing past entries.
 - **Status:** Done — uses `parseISO(editEntry.date)` as reference when editing, preserving the original entry's date context.
@@ -453,3 +457,4 @@ Do whatever you think is right.
 - [x] Memoized dashboard computed values with useMemo (TODO #74)
 - [x] Added edit functionality to sleep and exercise — tap card opens pre-filled modal (TODO #73)
 - [x] Fixed sleep modal date reconstruction when editing past entries (TODO #77)
+- [x] Log modals now use selectedDate from DateNavigator instead of hardcoding today (TODO #78)

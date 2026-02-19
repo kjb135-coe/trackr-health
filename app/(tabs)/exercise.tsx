@@ -340,6 +340,7 @@ export default function ExerciseScreen() {
         }}
         preFill={modalPreFill}
         editSession={editSession}
+        date={selectedDate}
       />
     </View>
   );

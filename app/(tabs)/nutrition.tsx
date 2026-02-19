@@ -206,6 +206,7 @@ export default function NutritionScreen() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         apiKeyExists={apiKeyExists}
+        date={selectedDate}
       />
     </View>
   );

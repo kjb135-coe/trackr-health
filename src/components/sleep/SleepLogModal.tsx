@@ -27,9 +27,10 @@ interface SleepLogModalProps {
   visible: boolean;
   onClose: () => void;
   editEntry?: SleepEntry;
+  date?: string;
 }
 
-export function SleepLogModal({ visible, onClose, editEntry }: SleepLogModalProps) {
+export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -83,10 +84,10 @@ export function SleepLogModal({ visible, onClose, editEntry }: SleepLogModalProp
       return;
     }
 
-    const today = getDateString();
+    const entryDate = date || getDateString();
 
-    // Use the entry's date when editing, otherwise today
-    const wakeDate = editEntry ? parseISO(editEntry.date) : new Date();
+    // Use the entry's date when editing, selected date when creating, otherwise today
+    const wakeDate = editEntry ? parseISO(editEntry.date) : parseISO(entryDate);
     const prevDay = new Date(wakeDate);
     prevDay.setDate(prevDay.getDate() - 1);
 
@@ -113,7 +114,7 @@ export function SleepLogModal({ visible, onClose, editEntry }: SleepLogModalProp
       });
     } else {
       await createEntry({
-        date: today,
+        date: entryDate,
         bedtime: bedtime.toISOString(),
         wakeTime: wakeTime.toISOString(),
         durationMinutes,

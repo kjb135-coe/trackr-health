@@ -344,6 +344,7 @@ export default function SleepScreen() {
           setEditEntry(undefined);
         }}
         editEntry={editEntry}
+        date={selectedDate}
       />
     </View>
   );

@@ -47,6 +47,7 @@ interface ExerciseLogModalProps {
   onClose: () => void;
   preFill?: ExercisePreFill | null;
   editSession?: ExerciseSession;
+  date?: string;
 }
 
 export function ExerciseLogModal({
@@ -54,6 +55,7 @@ export function ExerciseLogModal({
   onClose,
   preFill,
   editSession,
+  date,
 }: ExerciseLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -112,7 +114,7 @@ export function ExerciseLogModal({
       });
     } else {
       await createSession({
-        date: getDateString(),
+        date: date || getDateString(),
         type: selectedType,
         durationMinutes,
         intensity,
