@@ -226,11 +226,9 @@ Do whatever you think is right.
 - ~~`src/components/ui/ErrorBoundary.tsx` uses hardcoded hex colors (#F8F9FA, #1A1A2E, #6366F1) in StyleSheet — breaks dark mode.~~
 - **Status:** Done — replaced hardcoded colors with dynamic theme colors using `Appearance.getColorScheme()` + `lightColors`/`darkColors`. Wrapped `console.error` in `__DEV__` check. Moved colors from static StyleSheet to inline styles.
 
-### 42. Add explicit radix to parseInt() calls
-- `SleepLogModal.tsx` lines 41-44 call `parseInt()` without radix parameter.
-- `ExerciseLogModal.tsx` line 71 also missing radix.
-- Should use `parseInt(value, 10)` to avoid potential octal parsing.
-- **Effort:** ~5min
+### 42. ~~Add explicit radix to parseInt() calls~~ ✅
+- ~~`SleepLogModal.tsx` lines 41-44 call `parseInt()` without radix parameter.~~
+- **Status:** Done — added explicit radix `10` to all 7 parseInt() calls across SleepLogModal (4), ExerciseLogModal (2), and NutritionLogModal (1).
 
 ---
 
@@ -288,3 +286,4 @@ Do whatever you think is right.
 - [x] Replaced inline `#FFFFFF` with `colors.white` in 8 component files (TODO #39)
 - [x] Added modal component tests: CreateHabitModal (5), SleepLogModal (6), ExerciseLogModal (6) — 120 total tests (TODO #40)
 - [x] Fixed ErrorBoundary: dynamic theme colors via Appearance API, wrapped console.error in __DEV__ (TODO #41)
+- [x] Added explicit radix (10) to all 7 parseInt() calls across 3 modal components (TODO #42)

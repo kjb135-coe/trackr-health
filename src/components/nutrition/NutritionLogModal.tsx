@@ -135,7 +135,7 @@ export function NutritionLogModal({ visible, onClose, apiKeyExists }: NutritionL
       totalCarbs = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0);
       totalFat = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
     } else if (manualName && manualCalories) {
-      const parsedCalories = parseInt(manualCalories);
+      const parsedCalories = parseInt(manualCalories, 10);
       if (isNaN(parsedCalories) || parsedCalories <= 0) {
         Alert.alert('Invalid calories', 'Calories must be a positive number.');
         return;

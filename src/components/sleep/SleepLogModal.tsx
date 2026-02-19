@@ -38,10 +38,10 @@ export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
   const { createEntry } = useSleepStore();
 
   const handleCreateEntry = async () => {
-    const bh = parseInt(bedtimeHour);
-    const bm = parseInt(bedtimeMin);
-    const wh = parseInt(wakeHour);
-    const wm = parseInt(wakeMin);
+    const bh = parseInt(bedtimeHour, 10);
+    const bm = parseInt(bedtimeMin, 10);
+    const wh = parseInt(wakeHour, 10);
+    const wm = parseInt(wakeMin, 10);
 
     if (isNaN(bh) || bh < 0 || bh > 23 || isNaN(bm) || bm < 0 || bm > 59) {
       Alert.alert('Invalid bedtime', 'Hours must be 0-23 and minutes 0-59.');
