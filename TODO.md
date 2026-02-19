@@ -180,6 +180,16 @@ Do whatever you think is right.
 - ~~No error boundary exists anywhere. A crash in any component takes down the whole app.~~
 - **Status:** Done — created `ErrorBoundary` in `src/components/ui/` with retry button. Wraps root layout in `_layout.tsx`.
 
+### 56. Optimize N+1 streak loading in habits screen
+- `loadStreaks()` in `habits.tsx` loops over all habits calling `getStreak(habitId)` one at a time (N queries).
+- Should add a batch `getStreaksForAllHabits()` method to habitRepository that fetches streaks in fewer queries.
+- **Effort:** ~30min
+
+### 57. Add date navigation to sleep screen
+- Nutrition and habits screens have `DateNavigator` for browsing past dates, but sleep screen still only shows all entries in a flat list.
+- Adding date-based browsing to sleep would let users view/edit sleep logs for specific dates.
+- **Effort:** ~30min
+
 ### 32. Refactor large tab screen components (500+ lines)
 - `nutrition.tsx` (680 lines), `settings.tsx` (673 lines), `sleep.tsx` (657 lines), `journal.tsx` (623 lines), `exercise.tsx` (585 lines), `habits.tsx` (550 lines) all exceed the 200-line guideline.
 - Extract modal content, form sections, and list items into dedicated components.
@@ -257,6 +267,10 @@ Do whatever you think is right.
 ### 53. ~~Add summary cards to sleep and exercise screens~~ ✅
 - ~~Sleep and exercise screens show raw entries but no aggregated stats.~~
 - **Status:** Done — sleep shows 7-day average duration, quality, and nights tracked. Exercise shows total workouts, total time, and total calories burned. Also removed unused `getWeekDates()` from date utils.
+
+### 55. ~~Add weekly completion dots to habit cards~~ ✅
+- ~~Habits screen showed streak number but no visual history of recent completions.~~
+- **Status:** Done — added 7 colored dots below each habit name showing the last 7 days of completions. Uses batch `getCompletionsForDateRange()` from habitRepository. Dots update when date navigates.
 
 ### 51. ~~Add date navigation to nutrition and habits screens~~ ✅
 - ~~Users could only view today's data. No way to browse past dates or check off forgotten habits.~~
@@ -345,3 +359,4 @@ Do whatever you think is right.
 - [x] Created DateNavigator component, added date browsing to nutrition and habits screens (TODO #51)
 - [x] Added summary cards to sleep (avg duration/quality) and exercise (total workouts/time/calories) screens (TODO #53)
 - [x] Added tag filter pills to journal screen — toggle filtering by tag (TODO #54)
+- [x] Added weekly completion dots (7-day visual) to habit cards with batch loading (TODO #55)
