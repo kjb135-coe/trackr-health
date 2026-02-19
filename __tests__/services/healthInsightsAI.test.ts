@@ -22,7 +22,7 @@ const mockHabits = [
 jest.mock('@/src/database/repositories', () => ({
   habitRepository: {
     getAll: jest.fn(() => Promise.resolve(mockHabits)),
-    getCompletionsForHabit: jest.fn(() =>
+    getCompletionsForDateRange: jest.fn(() =>
       Promise.resolve([
         { habitId: 'h1', date: '2026-02-18', completed: true },
         { habitId: 'h1', date: '2026-02-17', completed: false },

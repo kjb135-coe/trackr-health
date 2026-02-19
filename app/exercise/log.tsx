@@ -114,7 +114,7 @@ export default function LogExerciseScreen() {
       running: 11,
       cycling: 8,
       swimming: 10,
-      weights: 5,
+      weight_training: 5,
       yoga: 3,
       hiit: 12,
       walking: 4,
@@ -240,7 +240,7 @@ export default function LogExerciseScreen() {
                   style={[
                     styles.intensityButtonText,
                     { color: colors.textSecondary },
-                    intensity === level && { color: '#FFFFFF' },
+                    intensity === level && { color: colors.white },
                   ]}
                 >
                   {level}

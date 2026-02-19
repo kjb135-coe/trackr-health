@@ -79,18 +79,13 @@ async function gatherHealthData() {
   const recentMeals = meals.filter((m) => m.date >= weekAgoStr);
   const recentJournal = journal.filter((j) => j.date >= weekAgoStr);
 
-  // Get habit completions for each habit
+  // Get all completions in a single batch query instead of N+1
   const todayStr = today.toISOString().split('T')[0];
-  const habitsWithCompletions = await Promise.all(
-    habits.map(async (habit) => {
-      const completions = await habitRepository.getCompletionsForHabit(
-        habit.id,
-        weekAgoStr,
-        todayStr,
-      );
-      return { ...habit, recentCompletions: completions };
-    }),
-  );
+  const allCompletions = await habitRepository.getCompletionsForDateRange(weekAgoStr, todayStr);
+  const habitsWithCompletions = habits.map((habit) => ({
+    ...habit,
+    recentCompletions: allCompletions.filter((c) => c.habitId === habit.id),
+  }));
 
   return {
     habits: habitsWithCompletions,
