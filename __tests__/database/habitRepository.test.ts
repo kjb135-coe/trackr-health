@@ -229,23 +229,42 @@ describe('habitRepository', () => {
   });
 
   describe('getStreak', () => {
-    it('counts consecutive completed days', async () => {
-      mockDb.getFirstAsync
-        .mockResolvedValueOnce({ completed: 1 })
-        .mockResolvedValueOnce({ completed: 1 })
-        .mockResolvedValueOnce({ completed: 0 });
+    it('counts consecutive completed days from today', async () => {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const todayStr = today.toISOString().split('T')[0];
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      mockDb.getAllAsync.mockResolvedValue([{ date: todayStr }, { date: yesterdayStr }]);
 
       const result = await habitRepository.getStreak('h1');
 
       expect(result).toBe(2);
+      expect(mockDb.getAllAsync).toHaveBeenCalledTimes(1);
     });
 
     it('returns 0 when no completions', async () => {
-      mockDb.getFirstAsync.mockResolvedValue(null);
+      mockDb.getAllAsync.mockResolvedValue([]);
 
       const result = await habitRepository.getStreak('h1');
 
       expect(result).toBe(0);
+    });
+
+    it('stops counting on gap in dates', async () => {
+      const today = new Date();
+      const twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+      const todayStr = today.toISOString().split('T')[0];
+      const twoDaysAgoStr = twoDaysAgo.toISOString().split('T')[0];
+
+      // Today completed, yesterday missing, two days ago completed
+      mockDb.getAllAsync.mockResolvedValue([{ date: todayStr }, { date: twoDaysAgoStr }]);
+
+      const result = await habitRepository.getStreak('h1');
+
+      expect(result).toBe(1);
     });
   });
 });

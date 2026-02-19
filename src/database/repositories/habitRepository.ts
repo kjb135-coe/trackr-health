@@ -55,13 +55,16 @@ export const habitRepository = {
       habit.targetDaysPerWeek ?? null,
       habit.reminderTime ?? null,
       now,
-      now
+      now,
     );
 
     return { ...habit, id, createdAt: now, updatedAt: now };
   },
 
-  async update(id: string, updates: Partial<Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+  async update(
+    id: string,
+    updates: Partial<Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>>,
+  ): Promise<void> {
     const db = await getDatabase();
     const now = new Date().toISOString();
 
@@ -101,10 +104,7 @@ export const habitRepository = {
     values.push(now);
     values.push(id);
 
-    await db.runAsync(
-      `UPDATE habits SET ${fields.join(', ')} WHERE id = ?`,
-      ...values
-    );
+    await db.runAsync(`UPDATE habits SET ${fields.join(', ')} WHERE id = ?`, ...values);
   },
 
   async delete(id: string): Promise<void> {
@@ -115,7 +115,7 @@ export const habitRepository = {
   async getAllCompletions(): Promise<HabitCompletion[]> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<HabitCompletionRow>(
-      'SELECT * FROM habit_completions ORDER BY date DESC'
+      'SELECT * FROM habit_completions ORDER BY date DESC',
     );
     return rows.map(mapRowToCompletion);
   },
@@ -124,23 +124,32 @@ export const habitRepository = {
     const db = await getDatabase();
     const rows = await db.getAllAsync<HabitCompletionRow>(
       'SELECT * FROM habit_completions WHERE date = ?',
-      date
+      date,
     );
     return rows.map(mapRowToCompletion);
   },
 
-  async getCompletionsForHabit(habitId: string, startDate: string, endDate: string): Promise<HabitCompletion[]> {
+  async getCompletionsForHabit(
+    habitId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<HabitCompletion[]> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<HabitCompletionRow>(
       'SELECT * FROM habit_completions WHERE habit_id = ? AND date >= ? AND date <= ? ORDER BY date',
       habitId,
       startDate,
-      endDate
+      endDate,
     );
     return rows.map(mapRowToCompletion);
   },
 
-  async setCompletion(habitId: string, date: string, completed: boolean, notes?: string): Promise<HabitCompletion> {
+  async setCompletion(
+    habitId: string,
+    date: string,
+    completed: boolean,
+    notes?: string,
+  ): Promise<HabitCompletion> {
     const db = await getDatabase();
     const id = generateId();
     const now = completed ? new Date().toISOString() : null;
@@ -157,7 +166,7 @@ export const habitRepository = {
       date,
       completed ? 1 : 0,
       now,
-      notes ?? null
+      notes ?? null,
     );
 
     return {
@@ -172,20 +181,25 @@ export const habitRepository = {
 
   async getStreak(habitId: string): Promise<number> {
     const db = await getDatabase();
+    const today = getDateString();
+
+    // Fetch recent completed dates in descending order (single query)
+    const rows = await db.getAllAsync<{ date: string }>(
+      `SELECT date FROM habit_completions
+       WHERE habit_id = ? AND completed = 1 AND date <= ?
+       ORDER BY date DESC`,
+      habitId,
+      today,
+    );
+
+    // Count consecutive days starting from today
     let streak = 0;
-    let currentDate = new Date();
-
-    while (true) {
-      const dateStr = getDateString(currentDate);
-      const completion = await db.getFirstAsync<{ completed: number }>(
-        'SELECT completed FROM habit_completions WHERE habit_id = ? AND date = ?',
-        habitId,
-        dateStr
-      );
-
-      if (completion?.completed) {
+    const expectedDate = new Date();
+    for (const row of rows) {
+      const expected = getDateString(expectedDate);
+      if (row.date === expected) {
         streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
+        expectedDate.setDate(expectedDate.getDate() - 1);
       } else {
         break;
       }

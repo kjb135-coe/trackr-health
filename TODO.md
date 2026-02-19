@@ -156,11 +156,9 @@ Do whatever you think is right.
 - ~~`getAllMeals()` and `getMealsByDate()` fetch meals, then loop N times to fetch food items per meal~~
 - **Status:** Done — replaced N+1 loops with batch `SELECT ... WHERE meal_id IN (...)` + `groupFoodsByMealId()` helper. Now 2 queries instead of N+1.
 
-### 26. Optimize streak calculation in habitRepository
-- `getStreak()` runs an infinite loop querying one day at a time
-- A 365-day streak = 365+ individual queries. Should use a single SQL query instead
-- Also affects `habits.tsx` which calls getStreak on every toggle
-- **Effort:** ~30min
+### 26. ~~Optimize streak calculation in habitRepository~~ ✅
+- ~~`getStreak()` runs an infinite loop querying one day at a time~~
+- **Status:** Done — replaced N-query loop with single `SELECT date ... ORDER BY date DESC` query + JS consecutive counting. 1 query regardless of streak length.
 
 ### 27. Add error state UI to nutrition and journal screens
 - Nutrition screen has no error display — if loading fails, user sees nothing
@@ -204,3 +202,4 @@ Do whatever you think is right.
 - [x] Added image persistence: `persistImage()` copies photos to permanent `documentDirectory/images/` before saving meals/journal entries (TODO #16)
 - [x] Added habitRepository tests (13 tests) covering CRUD, completions, streak with mocked db — 96 total tests (TODO #24)
 - [x] Fixed N+1 query in nutritionRepository: batch food item loading with IN clause (TODO #25)
+- [x] Optimized streak calculation: single SQL query instead of N-query loop (TODO #26)
