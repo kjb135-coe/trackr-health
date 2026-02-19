@@ -259,6 +259,10 @@ Do whatever you think is right.
 - Exercise and sleep screens called `loadSessions()`/`loadEntries()` (full re-fetch) on every date change, even though the data was already in Zustand state from the initial load.
 - **Status:** Done — removed redundant re-fetch from `handleDateChange` in exercise.tsx and sleep.tsx. `useMemo` already filters from in-memory state. Initial load fetches all records once; pull-to-refresh handles forced reloads. SQLite handles local data volumes efficiently.
 
+### 83. ~~Add data export service tests~~ ✅
+- `dataExport.ts` handles JSON/CSV export and sharing with no test coverage.
+- **Status:** Done — 10 tests covering JSON export, CSV generation (all 5 types), sharing availability check, error path. 237 total tests.
+
 ### 82. ~~Add aiInsightsStore tests~~ ✅
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
@@ -480,3 +484,4 @@ Do whatever you think is right.
 - [x] Not needed — tabs already default to today, users benefit from persisted date state (TODO #75)
 - [x] Removed false positive #76 — useEffect correctly fires on object reference change
 - [x] Added aiInsightsStore tests (12 tests): caching, errors, all fetch methods (TODO #82)
+- [x] Added data export service tests (10 tests): JSON/CSV export, sharing (TODO #83)
