@@ -77,8 +77,9 @@ export default function SleepScreen() {
     ]);
   };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = async (date: string) => {
     setSelectedDate(date);
+    await loadEntries();
   };
 
   // Filter entries for selected date
