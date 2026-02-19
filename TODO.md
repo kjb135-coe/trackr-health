@@ -214,6 +214,16 @@ Do whatever you think is right.
 - ~~`app/(tabs)/sleep.tsx` and `src/components/sleep/SleepLogModal.tsx` both define `getQualityColor()` with identical logic but different signatures.~~
 - **Status:** Done — extracted to `src/utils/constants.ts` as `getQualityColor(quality, colors)`. Both files now import the shared function.
 
+### 39. Replace hardcoded `#FFFFFF` with `colors.white` in extracted modals
+- 11 instances of hardcoded `'#FFFFFF'` across newly extracted modal components and other UI files.
+- Should use `colors.white` from theme for consistency, even though white-on-color is visually the same.
+- **Effort:** ~15min
+
+### 40. Add tests for extracted modal components
+- Newly extracted modals (SleepLogModal, ExerciseLogModal, JournalEntryModal, NutritionLogModal, CreateHabitModal, HabitSuggestionsModal) have no test coverage.
+- Should at least have smoke tests for rendering + basic interaction (form submission, validation).
+- **Effort:** ~2-3h
+
 ---
 
 ## Completed in This Audit
