@@ -579,10 +579,9 @@ Yes
 - `const STORAGE_KEY = 'trackr_goals'` should use `STORAGE_KEYS.GOALS` from constants.ts.
 - **Status:** Done — removed local constant, imported `STORAGE_KEYS` from constants.
 
-### 157. healthInsightsAI gatherHealthData fetches unbounded data from all tables
+### ~~157. healthInsightsAI gatherHealthData fetches unbounded data from all tables~~ ✅
 - `getAll()` on sleep, exercise, nutrition, and journal repos fetches entire tables, then filters to 7 days in JS.
-- All 4 repos have `getByDateRange` variants — should use those instead.
-- **Effort:** ~20min
+- **Status:** Done — replaced 4 unbounded `getAll()` calls with `getByDateRange(weekAgo, today)` variants. Database now returns only the 7-day window instead of full table scans.
 
 ### ~~152. Improve AnimatedButton coverage — pressIn/pressOut, secondary variant, sizes~~ ✅
 - `AnimatedButton.tsx` at 82.85% — missing pressIn/pressOut handler tests, secondary variant, sm/lg sizes.
@@ -836,3 +835,4 @@ Yes
 - [x] Replaced 6 non-standard error handlers in aiInsightsStore with getErrorMessage() (TODO #154)
 - [x] Added type safety to goals.tsx — `keyof Goals` instead of string (TODO #155)
 - [x] Replaced hardcoded storage key in goalsStore with STORAGE_KEYS.GOALS constant (TODO #156)
+- [x] Optimized healthInsightsAI: replaced 4 unbounded getAll() with getByDateRange() (TODO #157)

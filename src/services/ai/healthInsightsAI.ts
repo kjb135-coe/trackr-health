@@ -56,24 +56,18 @@ export interface MoodAnalysis {
 async function gatherHealthData() {
   const today = new Date();
   const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const todayStr = today.toISOString().split('T')[0];
   const weekAgoStr = weekAgo.toISOString().split('T')[0];
 
-  const [habits, sleep, exercise, meals, journal] = await Promise.all([
+  const [habits, recentSleep, recentExercise, recentMeals, recentJournal] = await Promise.all([
     habitRepository.getAll(),
-    sleepRepository.getAll(),
-    exerciseRepository.getAll(),
-    nutritionRepository.getAllMeals(),
-    journalRepository.getAll(),
+    sleepRepository.getByDateRange(weekAgoStr, todayStr),
+    exerciseRepository.getByDateRange(weekAgoStr, todayStr),
+    nutritionRepository.getMealsByDateRange(weekAgoStr, todayStr),
+    journalRepository.getByDateRange(weekAgoStr, todayStr),
   ]);
 
-  // Filter to last 7 days where applicable
-  const recentSleep = sleep.filter((s) => s.date >= weekAgoStr);
-  const recentExercise = exercise.filter((e) => e.date >= weekAgoStr);
-  const recentMeals = meals.filter((m) => m.date >= weekAgoStr);
-  const recentJournal = journal.filter((j) => j.date >= weekAgoStr);
-
-  // Get all completions in a single batch query instead of N+1
-  const todayStr = today.toISOString().split('T')[0];
+  // Get all completions in a single batch query
   const allCompletions = await habitRepository.getCompletionsForDateRange(weekAgoStr, todayStr);
   const habitsWithCompletions = habits.map((habit) => ({
     ...habit,

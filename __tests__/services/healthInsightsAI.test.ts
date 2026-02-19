@@ -30,7 +30,7 @@ jest.mock('@/src/database/repositories', () => ({
     ),
   },
   sleepRepository: {
-    getAll: jest.fn(() =>
+    getByDateRange: jest.fn(() =>
       Promise.resolve([
         {
           id: 's1',
@@ -60,7 +60,7 @@ jest.mock('@/src/database/repositories', () => ({
     ),
   },
   exerciseRepository: {
-    getAll: jest.fn(() =>
+    getByDateRange: jest.fn(() =>
       Promise.resolve([
         {
           id: 'e1',
@@ -74,7 +74,7 @@ jest.mock('@/src/database/repositories', () => ({
     ),
   },
   nutritionRepository: {
-    getAllMeals: jest.fn(() =>
+    getMealsByDateRange: jest.fn(() =>
       Promise.resolve([
         {
           id: 'm1',
@@ -110,7 +110,7 @@ jest.mock('@/src/database/repositories', () => ({
     ),
   },
   journalRepository: {
-    getAll: jest.fn(() =>
+    getByDateRange: jest.fn(() =>
       Promise.resolve([
         { id: 'j1', date: '2026-02-18', title: 'Good day', mood: 4, tags: ['work'] },
         { id: 'j2', date: '2026-02-17', title: 'Okay day', mood: 3, tags: ['home'] },
@@ -217,7 +217,7 @@ describe('healthInsightsAI', () => {
     it('returns early when insufficient sleep data', async () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { sleepRepository } = require('@/src/database/repositories');
-      sleepRepository.getAll.mockResolvedValueOnce([
+      sleepRepository.getByDateRange.mockResolvedValueOnce([
         { id: 's1', date: '2026-02-18', durationMinutes: 480, quality: 4 },
       ]);
 
@@ -292,7 +292,7 @@ describe('healthInsightsAI', () => {
     it('returns early when insufficient journal data', async () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { journalRepository } = require('@/src/database/repositories');
-      journalRepository.getAll.mockResolvedValueOnce([
+      journalRepository.getByDateRange.mockResolvedValueOnce([
         { id: 'j1', date: '2026-02-18', title: 'Only one', mood: 4 },
       ]);
 
@@ -336,7 +336,7 @@ describe('healthInsightsAI', () => {
     it('returns early when insufficient meal data', async () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { nutritionRepository } = require('@/src/database/repositories');
-      nutritionRepository.getAllMeals.mockResolvedValueOnce([
+      nutritionRepository.getMealsByDateRange.mockResolvedValueOnce([
         { id: 'm1', date: '2026-02-18', totalCalories: 400 },
       ]);
 
