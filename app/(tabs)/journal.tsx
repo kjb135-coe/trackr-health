@@ -99,6 +99,7 @@ export default function JournalScreen() {
   };
 
   const openModal = (mode: 'text' | 'scan') => {
+    setEditEntry(undefined);
     setModalMode(mode);
     setModalVisible(true);
   };

@@ -204,7 +204,10 @@ export default function NutritionScreen() {
 
       <FAB
         color={colors.nutrition}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          setEditMeal(undefined);
+          setModalVisible(true);
+        }}
         icon={<Plus color={colors.white} size={24} />}
       />
 
