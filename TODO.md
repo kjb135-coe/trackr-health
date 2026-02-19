@@ -255,11 +255,9 @@ Do whatever you think is right.
 - `app/nutrition/camera.tsx` always set `mealType: 'snack'` with no way to change it.
 - **Status:** Done — added meal type selector (breakfast/lunch/dinner/snack) to the results card. Defaults to lunch. Uses `MEAL_TYPE_LABELS` for consistency.
 
-### 80. Stores load all records instead of date-ranged queries
-- `exerciseStore.loadSessions()`, `sleepStore.loadEntries()`, and `journalStore.loadEntries()` all call `getAll()` which fetches every record from the database.
-- Tab screens then filter in JS. This becomes slow as the database grows.
-- Should add date-ranged loading (e.g., last 90 days) or load on-demand per date.
-- **Effort:** ~2h
+### 80. ~~Redundant full re-fetch on every date change~~ ✅
+- Exercise and sleep screens called `loadSessions()`/`loadEntries()` (full re-fetch) on every date change, even though the data was already in Zustand state from the initial load.
+- **Status:** Done — removed redundant re-fetch from `handleDateChange` in exercise.tsx and sleep.tsx. `useMemo` already filters from in-memory state. Initial load fetches all records once; pull-to-refresh handles forced reloads. SQLite handles local data volumes efficiently.
 
 ### 77. ~~Sleep modal date is always "today" when editing past entries~~ ✅
 - `SleepLogModal` reconstructed bedtime/wakeTime using today's date even when editing past entries.
@@ -469,3 +467,4 @@ Do whatever you think is right.
 - [x] Fixed sleep modal date reconstruction when editing past entries (TODO #77)
 - [x] Log modals now use selectedDate from DateNavigator instead of hardcoding today (TODO #78)
 - [x] Added meal type selector to nutrition camera — no longer hardcodes 'snack' (TODO #79)
+- [x] Removed redundant full data re-fetch from exercise/sleep date change handlers (TODO #80)

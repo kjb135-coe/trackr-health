@@ -88,9 +88,8 @@ export default function ExerciseScreen() {
     setModalVisible(true);
   };
 
-  const handleDateChange = async (date: string) => {
+  const handleDateChange = (date: string) => {
     setSelectedDate(date);
-    await loadSessions();
   };
 
   // Filter sessions for selected date
