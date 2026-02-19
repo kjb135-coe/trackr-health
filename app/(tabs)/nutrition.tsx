@@ -1,12 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Alert,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { Plus, UtensilsCrossed } from 'lucide-react-native';
+import { Plus, UtensilsCrossed, Sparkles } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
-import { spacing } from '@/src/theme';
+import { spacing, borderRadius } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
 import {
+  AnimatedButton,
   AnimatedCard,
   DateNavigator,
   FAB,
@@ -14,7 +24,7 @@ import {
   ErrorBanner,
   EmptyState,
 } from '@/src/components/ui';
-import { useNutritionStore } from '@/src/store';
+import { useNutritionStore, useAIInsightsStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
@@ -28,6 +38,7 @@ export default function NutritionScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
   const [editMeal, setEditMeal] = useState<Meal | undefined>();
+  const [showNutritionAdvice, setShowNutritionAdvice] = useState(false);
 
   const {
     meals,
@@ -39,6 +50,7 @@ export default function NutritionScreen() {
     deleteMeal,
     clearError,
   } = useNutritionStore();
+  const { nutritionAdvice, isLoadingNutrition, fetchNutritionAdvice } = useAIInsightsStore();
 
   useEffect(() => {
     loadData(selectedDate);
@@ -80,6 +92,11 @@ export default function NutritionScreen() {
         },
       },
     ]);
+  };
+
+  const handleGetNutritionAdvice = () => {
+    setShowNutritionAdvice(true);
+    fetchNutritionAdvice();
   };
 
   const calorieProgress = Math.min(dailyTotals.calories / DEFAULT_CALORIE_GOAL, 1);
@@ -203,6 +220,73 @@ export default function NutritionScreen() {
             </Animated.View>
           ))
         )}
+
+        {/* AI Nutrition Advice */}
+        {apiKeyExists && meals.length >= 3 && (
+          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+            {!showNutritionAdvice ? (
+              <TouchableOpacity
+                style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}
+                onPress={handleGetNutritionAdvice}
+              >
+                <Sparkles color={colors.nutrition} size={20} />
+                <Text style={[styles.aiSectionText, { color: colors.textPrimary }]}>
+                  Get AI Nutrition Advice
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <AnimatedCard style={styles.adviceCard} delay={100}>
+                <View style={styles.adviceHeader}>
+                  <Sparkles color={colors.nutrition} size={20} />
+                  <Text style={[styles.adviceTitle, { color: colors.textPrimary }]}>
+                    Nutrition Advice
+                  </Text>
+                </View>
+
+                {isLoadingNutrition ? (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator color={colors.nutrition} />
+                    <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+                      Analyzing your nutrition data...
+                    </Text>
+                  </View>
+                ) : nutritionAdvice ? (
+                  <>
+                    <Text style={[styles.adviceText, { color: colors.textSecondary }]}>
+                      {nutritionAdvice.advice}
+                    </Text>
+
+                    {nutritionAdvice.suggestions.length > 0 && (
+                      <>
+                        <Text style={[styles.suggestionsTitle, { color: colors.textSecondary }]}>
+                          Suggestions:
+                        </Text>
+                        {nutritionAdvice.suggestions.map((suggestion) => (
+                          <View key={suggestion} style={styles.suggestionItem}>
+                            <Text style={[styles.suggestionBullet, { color: colors.nutrition }]}>
+                              •
+                            </Text>
+                            <Text style={[styles.suggestionText, { color: colors.textSecondary }]}>
+                              {suggestion}
+                            </Text>
+                          </View>
+                        ))}
+                      </>
+                    )}
+
+                    <AnimatedButton
+                      title="Refresh Advice"
+                      variant="secondary"
+                      onPress={handleGetNutritionAdvice}
+                      loading={isLoadingNutrition}
+                      style={{ marginTop: spacing.md }}
+                    />
+                  </>
+                ) : null}
+              </AnimatedCard>
+            )}
+          </Animated.View>
+        )}
       </ScrollView>
 
       <FAB
@@ -307,5 +391,62 @@ const styles = StyleSheet.create({
   foodItem: {
     fontSize: 14,
     marginTop: 2,
+  },
+  aiSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    marginTop: spacing.md,
+  },
+  aiSectionText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: spacing.sm,
+  },
+  adviceCard: {
+    padding: spacing.md,
+    marginTop: spacing.md,
+  },
+  adviceHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  adviceTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: spacing.sm,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  loadingText: {
+    fontSize: 14,
+  },
+  adviceText: {
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: spacing.md,
+  },
+  suggestionsTitle: {
+    fontSize: 14,
+    marginBottom: spacing.xs,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  suggestionBullet: {
+    fontSize: 14,
+    marginRight: spacing.xs,
+  },
+  suggestionText: {
+    fontSize: 14,
+    lineHeight: 22,
+    flex: 1,
   },
 });
