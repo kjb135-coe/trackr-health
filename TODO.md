@@ -267,6 +267,10 @@ Do whatever you think is right.
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
 
+### 92. ~~Add edit functionality to nutrition and journal entries~~ ✅
+- Users could create and delete meals/journal entries but not edit them. Sleep and exercise already had edit support (TODO #73).
+- **Status:** Done — tap on meal card opens NutritionLogModal pre-filled with meal type, name, calories. Tap on journal entry card opens JournalEntryModal pre-filled with title, content, mood. Both modals detect edit mode and call `updateMeal`/`updateEntry` instead of create. Titles and button text update dynamically.
+
 ### 90. ~~Fix exercise calorie estimation key mismatch~~ ✅
 - `estimateCalories()` used `weights` key but exercise type ID is `weight_training`, causing wrong calorie estimate (6 default instead of 5 cal/min).
 - **Status:** Done — changed `weights` to `weight_training` in `baseCaloriesPerMinute` lookup.
@@ -526,3 +530,4 @@ Do whatever you think is right.
 - [x] Added healthInsightsAI tests (13): all 6 AI functions, JSON parsing, fallback defaults — 300 total tests (TODO #89)
 - [x] Fixed exercise calorie estimation: `weights` → `weight_training` key mismatch (TODO #90)
 - [x] Replaced N+1 habit completion queries with batch `getCompletionsForDateRange()` in healthInsightsAI (TODO #91)
+- [x] Added edit functionality to nutrition and journal — tap card opens pre-filled modal (TODO #92)
