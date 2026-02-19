@@ -542,6 +542,18 @@ Do whatever you think is right.
 - `exerciseStore.ts` at 85.36% line coverage. Missing tests for loadSessionsForRange error, createSession sort, updateSession error, deleteSession error.
 - **Status:** Done — added 4 tests (loadSessionsForRange error, createSession sort, updateSession error, deleteSession error). 17 total tests.
 
+### 123. ~~Improve healthInsights test coverage (85% → 95%+)~~ ✅
+- `healthInsights.ts` at 85.71% line coverage. Missing coverage for getTrend branches and meals in getDailyStreak.
+- **Status:** Done — added 4 tests (meals toward streak, up/down/stable trend detection). 15 total tests.
+
+### 124. ~~Improve journalStore test coverage (91% → 97%+)~~ ✅
+- `journalStore.ts` at 91.66% line coverage. Missing tests for loadEntriesForRange error, loadEntriesForDate, updateEntry error.
+- **Status:** Done — added 3 tests. 20 total tests.
+
+### 125. ~~Improve authStore test coverage (86% → 97%+)~~ ✅
+- `authStore.ts` at 86.66% line coverage. Missing tests for signInWithGoogle error, sendVerificationEmail error, sendPasswordReset error.
+- **Status:** Done — added 3 tests. 17 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -676,3 +688,6 @@ Do whatever you think is right.
 - [x] Improved nutritionStore coverage — 7 new tests (error paths + sort + updateMeal), 25 total — 473 total tests (TODO #120)
 - [x] Improved habitStore coverage from 75% to 95%+ — 3 new tests (updateHabit error, getAllStreaks, getWeeklyCompletions), 22 total (TODO #121)
 - [x] Improved exerciseStore coverage from 85% to 95%+ — 4 new tests (error paths + sort), 17 total — 480 total tests (TODO #122)
+- [x] Improved healthInsights coverage — 4 new tests (trend detection + meals streak), 15 total (TODO #123)
+- [x] Improved journalStore coverage — 3 new tests (error paths + loadEntriesForDate), 20 total (TODO #124)
+- [x] Improved authStore coverage — 3 new tests (signInWithGoogle/sendVerification/sendPasswordReset errors), 17 total — 490 total tests (TODO #125)

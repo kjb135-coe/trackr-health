@@ -115,6 +115,17 @@ describe('authStore', () => {
     expect(useAuthStore.getState().user).toEqual(mockUser);
   });
 
+  it('signInWithGoogle sets error on failure', async () => {
+    (authService.signInWithGoogle as jest.Mock).mockRejectedValue(new Error('Google auth failed'));
+
+    await expect(useAuthStore.getState().signInWithGoogle('bad-token')).rejects.toThrow(
+      'Google auth failed',
+    );
+
+    expect(useAuthStore.getState().error).toBe('Google auth failed');
+    expect(useAuthStore.getState().isLoading).toBe(false);
+  });
+
   it('signOut clears user on success', async () => {
     (authService.signOut as jest.Mock).mockResolvedValue(undefined);
     act(() => useAuthStore.setState({ user: mockUser }));
@@ -143,12 +154,36 @@ describe('authStore', () => {
     expect(useAuthStore.getState().isLoading).toBe(false);
   });
 
+  it('sendVerificationEmail sets error on failure', async () => {
+    (authService.sendVerificationEmail as jest.Mock).mockRejectedValue(
+      new Error('Verification failed'),
+    );
+
+    await expect(useAuthStore.getState().sendVerificationEmail()).rejects.toThrow(
+      'Verification failed',
+    );
+
+    expect(useAuthStore.getState().error).toBe('Verification failed');
+    expect(useAuthStore.getState().isLoading).toBe(false);
+  });
+
   it('sendPasswordReset calls service with email', async () => {
     (authService.sendPasswordReset as jest.Mock).mockResolvedValue(undefined);
 
     await useAuthStore.getState().sendPasswordReset('test@test.com');
 
     expect(authService.sendPasswordReset).toHaveBeenCalledWith('test@test.com');
+    expect(useAuthStore.getState().isLoading).toBe(false);
+  });
+
+  it('sendPasswordReset sets error on failure', async () => {
+    (authService.sendPasswordReset as jest.Mock).mockRejectedValue(new Error('Reset failed'));
+
+    await expect(useAuthStore.getState().sendPasswordReset('test@test.com')).rejects.toThrow(
+      'Reset failed',
+    );
+
+    expect(useAuthStore.getState().error).toBe('Reset failed');
     expect(useAuthStore.getState().isLoading).toBe(false);
   });
 

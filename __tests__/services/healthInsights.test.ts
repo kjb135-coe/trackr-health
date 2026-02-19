@@ -151,6 +151,17 @@ describe('getDailyStreak', () => {
 
     expect(streak).toBe(1);
   });
+
+  it('counts meals toward streak', async () => {
+    const today = new Date();
+    const dates = Array.from({ length: 3 }, (_, i) => getDateString(subDays(today, i)));
+
+    mockGetAllMeals.mockResolvedValue(dates.map((date) => ({ date, totalCalories: 500 })));
+
+    const streak = await getDailyStreak();
+
+    expect(streak).toBe(3);
+  });
 });
 
 describe('getTrendData', () => {
@@ -162,5 +173,51 @@ describe('getTrendData', () => {
     expect(['up', 'down', 'stable']).toContain(data.sleepTrend);
     expect(['up', 'down', 'stable']).toContain(data.exerciseTrend);
     expect(['up', 'down', 'stable']).toContain(data.habitTrend);
+  });
+
+  it('detects upward trends when this week improves over last week', async () => {
+    // First call for this week returns data, second call for last week returns less data
+    let callCount = 0;
+    mockGetByDateRangeSleep.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.resolve([{ date: '2026-02-16', durationMinutes: 540, quality: 4 }]);
+      }
+      return Promise.resolve([{ date: '2026-02-09', durationMinutes: 360, quality: 2 }]);
+    });
+
+    const data = await getTrendData();
+
+    expect(data.sleepTrend).toBe('up');
+  });
+
+  it('detects downward trends when this week declines', async () => {
+    let callCount = 0;
+    mockGetByDateRangeExercise.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.resolve([{ date: '2026-02-16', durationMinutes: 20 }]);
+      }
+      return Promise.resolve([{ date: '2026-02-09', durationMinutes: 100 }]);
+    });
+
+    const data = await getTrendData();
+
+    expect(data.exerciseTrend).toBe('down');
+  });
+
+  it('detects stable trends when change is within threshold', async () => {
+    let callCount = 0;
+    mockGetByDateRangeSleep.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        return Promise.resolve([{ date: '2026-02-16', durationMinutes: 480, quality: 4 }]);
+      }
+      return Promise.resolve([{ date: '2026-02-09', durationMinutes: 475, quality: 4 }]);
+    });
+
+    const data = await getTrendData();
+
+    expect(data.sleepTrend).toBe('stable');
   });
 });

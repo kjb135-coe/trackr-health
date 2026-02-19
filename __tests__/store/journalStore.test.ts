@@ -107,6 +107,26 @@ describe('journalStore', () => {
       expect(journalRepository.getByDateRange).toHaveBeenCalledWith('2026-02-19', '2026-02-19');
       expect(useJournalStore.getState().entries).toEqual([mockEntry]);
     });
+
+    it('sets error on failure', async () => {
+      journalRepository.getByDateRange.mockRejectedValue(new Error('Range error'));
+
+      await useJournalStore.getState().loadEntriesForRange('2026-02-01', '2026-02-28');
+
+      expect(useJournalStore.getState().error).toBe('Range error');
+      expect(useJournalStore.getState().isLoading).toBe(false);
+    });
+  });
+
+  describe('loadEntriesForDate', () => {
+    it('delegates to repository', async () => {
+      journalRepository.getByDate.mockResolvedValue([mockEntry]);
+
+      const result = await useJournalStore.getState().loadEntriesForDate('2026-02-19');
+
+      expect(result).toEqual([mockEntry]);
+      expect(journalRepository.getByDate).toHaveBeenCalledWith('2026-02-19');
+    });
   });
 
   describe('createEntry', () => {
@@ -153,6 +173,18 @@ describe('journalStore', () => {
       await useJournalStore.getState().updateEntry('j1', { title: 'Updated Title' });
 
       expect(useJournalStore.getState().entries[0].title).toBe('Updated Title');
+    });
+
+    it('sets error and throws on failure', async () => {
+      useJournalStore.setState({ entries: [mockEntry] });
+      journalRepository.update.mockRejectedValue(new Error('Update failed'));
+
+      await expect(useJournalStore.getState().updateEntry('j1', { title: 'fail' })).rejects.toThrow(
+        'Update failed',
+      );
+
+      expect(useJournalStore.getState().error).toBe('Update failed');
+      expect(useJournalStore.getState().isLoading).toBe(false);
     });
   });
 
