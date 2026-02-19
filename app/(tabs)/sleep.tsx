@@ -27,7 +27,7 @@ import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
 import { QUALITY_LABELS, getQualityColor } from '@/src/utils/constants';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
 import { SleepEntry } from '@/src/types';
 
@@ -36,7 +36,7 @@ export default function SleepScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editEntry, setEditEntry] = useState<SleepEntry | undefined>();
-  const [apiKeyExists, setApiKeyExists] = useState(false);
+  const apiKeyExists = useApiKeyExists();
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
 
@@ -45,14 +45,8 @@ export default function SleepScreen() {
 
   useEffect(() => {
     loadEntries();
-    checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setApiKeyExists(exists);
-  };
 
   const handleGetAnalysis = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

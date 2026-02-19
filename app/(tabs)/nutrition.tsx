@@ -27,7 +27,7 @@ import {
 import { useNutritionStore, useAIInsightsStore, useGoalsStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
 import { Meal } from '@/src/types';
 
@@ -35,7 +35,7 @@ export default function NutritionScreen() {
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [apiKeyExists, setApiKeyExists] = useState(false);
+  const apiKeyExists = useApiKeyExists();
   const [selectedDate, setSelectedDate] = useState(getDateString());
   const [editMeal, setEditMeal] = useState<Meal | undefined>();
   const [showNutritionAdvice, setShowNutritionAdvice] = useState(false);
@@ -56,7 +56,6 @@ export default function NutritionScreen() {
 
   useEffect(() => {
     loadData(selectedDate);
-    checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -68,11 +67,6 @@ export default function NutritionScreen() {
   const handleDateChange = async (date: string) => {
     setSelectedDate(date);
     await loadData(date);
-  };
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setApiKeyExists(exists);
   };
 
   const onRefresh = async () => {

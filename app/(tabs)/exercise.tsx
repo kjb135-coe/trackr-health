@@ -28,7 +28,7 @@ import { formatDuration, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
 import { ExerciseIntensity, ExerciseSession } from '@/src/types';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
 
 export default function ExerciseScreen() {
@@ -37,7 +37,7 @@ export default function ExerciseScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPreFill, setModalPreFill] = useState<ExercisePreFill | null>(null);
   const [editSession, setEditSession] = useState<ExerciseSession | undefined>();
-  const [apiKeyExists, setApiKeyExists] = useState(false);
+  const apiKeyExists = useApiKeyExists();
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
 
@@ -48,14 +48,8 @@ export default function ExerciseScreen() {
 
   useEffect(() => {
     loadSessions();
-    checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setApiKeyExists(exists);
-  };
 
   const handleGetRecommendation = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

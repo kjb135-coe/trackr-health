@@ -595,6 +595,10 @@ Yes
 - Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
 - **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
 
+### ~~168. Extract useApiKeyExists hook — removes 5 copy-pasted patterns~~ ✅
+- All 5 tab screens had identical `checkApiKey` function + `useState` + `useEffect` pattern.
+- **Status:** Done — created `useApiKeyExists()` hook in `src/services/claude/client.ts`. Updated all 5 screens. Removed ~25 lines of duplicate code.
+
 ### ~~167. Code quality batch: stale date fix, DRY safeJsonParse, theme consistency~~ ✅
 - Dashboard `loadAll` closed over stale `today` from mount — app staying open past midnight used wrong date on refresh.
 - `safeJsonParse<T>` was copy-pasted in 3 repositories (sleep, journal, nutrition).
@@ -891,3 +895,4 @@ Yes
 - [x] Added 5 non-text response tests for healthInsightsAI — 575 total tests (TODO #165)
 - [x] Added missing sports/cardio/stretching to calorie estimation, toggleCompletion error test, updateUserProfile edge cases — 578 total tests (TODO #166)
 - [x] Fixed stale date in dashboard, extracted safeJsonParse, used colors.overlay in 7 modals, unified theme key, fixed sleep #FFFFFF, removed dead DateString type (TODO #167)
+- [x] Extracted useApiKeyExists hook, removed 5 copy-pasted checkApiKey patterns from tab screens (TODO #168)

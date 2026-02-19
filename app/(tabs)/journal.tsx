@@ -39,7 +39,7 @@ import { useJournalStore, useAIInsightsStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
 import { JournalEntry } from '@/src/types';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 import { JournalEntryModal } from '@/src/components/journal';
 
 export default function JournalScreen() {
@@ -47,7 +47,7 @@ export default function JournalScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState<'text' | 'scan'>('text');
-  const [apiKeyExists, setApiKeyExists] = useState(false);
+  const apiKeyExists = useApiKeyExists();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -60,14 +60,8 @@ export default function JournalScreen() {
 
   useEffect(() => {
     loadEntries();
-    checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setApiKeyExists(exists);
-  };
 
   const onRefresh = async () => {
     setRefreshing(true);

@@ -32,7 +32,7 @@ import {
 import { subDays, format, parseISO } from 'date-fns';
 import { getDateString } from '@/src/utils/date';
 import { Habit } from '@/src/types';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 
 export default function HabitsScreen() {
   const { colors } = useTheme();
@@ -42,7 +42,7 @@ export default function HabitsScreen() {
   const [suggestionsVisible, setSuggestionsVisible] = useState(false);
   const [streaks, setStreaks] = useState<Map<string, number>>(new Map());
   const [weeklyCompletions, setWeeklyCompletions] = useState<Map<string, Set<string>>>(new Map());
-  const [apiKeyExists, setApiKeyExists] = useState(false);
+  const apiKeyExists = useApiKeyExists();
   const [selectedDate, setSelectedDate] = useState(getDateString());
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationStreak, setCelebrationStreak] = useState(0);
@@ -67,14 +67,8 @@ export default function HabitsScreen() {
 
   useEffect(() => {
     loadData(selectedDate);
-    checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setApiKeyExists(exists);
-  };
 
   useEffect(() => {
     loadStreaks();

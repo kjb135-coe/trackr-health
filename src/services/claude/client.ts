@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import * as SecureStore from 'expo-secure-store';
 
@@ -51,4 +52,12 @@ export async function hasApiKey(): Promise<boolean> {
 
 export function resetClient(): void {
   clientInstance = null;
+}
+
+export function useApiKeyExists(): boolean {
+  const [exists, setExists] = useState(false);
+  useEffect(() => {
+    hasApiKey().then(setExists);
+  }, []);
+  return exists;
 }
