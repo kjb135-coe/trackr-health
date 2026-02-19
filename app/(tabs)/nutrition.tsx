@@ -24,9 +24,9 @@ import {
   ErrorBanner,
   EmptyState,
 } from '@/src/components/ui';
-import { useNutritionStore, useAIInsightsStore } from '@/src/store';
+import { useNutritionStore, useAIInsightsStore, useGoalsStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
-import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
+import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
 import { Meal } from '@/src/types';
@@ -51,6 +51,8 @@ export default function NutritionScreen() {
     clearError,
   } = useNutritionStore();
   const { nutritionAdvice, isLoadingNutrition, fetchNutritionAdvice } = useAIInsightsStore();
+  const { goals } = useGoalsStore();
+  const calorieGoal = goals.dailyCalories;
 
   useEffect(() => {
     loadData(selectedDate);
@@ -99,7 +101,7 @@ export default function NutritionScreen() {
     fetchNutritionAdvice();
   };
 
-  const calorieProgress = Math.min(dailyTotals.calories / DEFAULT_CALORIE_GOAL, 1);
+  const calorieProgress = Math.min(dailyTotals.calories / calorieGoal, 1);
   const dateMeals = useMemo(
     () => meals.filter((m) => m.date === selectedDate),
     [meals, selectedDate],
@@ -134,7 +136,7 @@ export default function NutritionScreen() {
                 {dailyTotals.calories}
               </Text>
               <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>
-                / {DEFAULT_CALORIE_GOAL} cal
+                / {calorieGoal} cal
               </Text>
             </View>
             <View style={[styles.progressBar, { backgroundColor: colors.border }]}>

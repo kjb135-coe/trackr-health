@@ -7,6 +7,7 @@ import * as Haptics from 'expo-haptics';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Card, Button } from '@/src/components/ui';
 import { useGoalsStore } from '@/src/store';
+import { Goals } from '@/src/store/goalsStore';
 
 export default function GoalsScreen() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function GoalsScreen() {
     router.back();
   };
 
-  const updateLocalGoal = (key: string, value: number) => {
+  const updateLocalGoal = (key: keyof Goals, value: number) => {
     setLocalGoals((prev) => ({ ...prev, [key]: value }));
   };
 

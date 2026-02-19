@@ -12,6 +12,7 @@ import {
   ExerciseRecommendation,
   MoodAnalysis,
 } from '@/src/services/ai';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface AIInsightsState {
   // Data
@@ -87,7 +88,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingCoaching: false,
-        error: error instanceof Error ? error.message : 'Failed to load AI coaching',
+        error: getErrorMessage(error),
       });
     }
   },
@@ -100,7 +101,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingHabits: false,
-        error: error instanceof Error ? error.message : 'Failed to load habit suggestions',
+        error: getErrorMessage(error),
       });
     }
   },
@@ -113,7 +114,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingSleep: false,
-        error: error instanceof Error ? error.message : 'Failed to analyze sleep',
+        error: getErrorMessage(error),
       });
     }
   },
@@ -126,7 +127,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingExercise: false,
-        error: error instanceof Error ? error.message : 'Failed to get exercise recommendation',
+        error: getErrorMessage(error),
       });
     }
   },
@@ -139,7 +140,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingMood: false,
-        error: error instanceof Error ? error.message : 'Failed to analyze mood',
+        error: getErrorMessage(error),
       });
     }
   },
@@ -152,7 +153,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     } catch (error) {
       set({
         isLoadingNutrition: false,
-        error: error instanceof Error ? error.message : 'Failed to get nutrition advice',
+        error: getErrorMessage(error),
       });
     }
   },

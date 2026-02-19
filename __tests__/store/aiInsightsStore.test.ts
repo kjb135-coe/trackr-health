@@ -83,7 +83,7 @@ describe('aiInsightsStore', () => {
         await useAIInsightsStore.getState().fetchDailyCoaching();
       });
 
-      expect(useAIInsightsStore.getState().error).toBe('Failed to load AI coaching');
+      expect(useAIInsightsStore.getState().error).toBe('string error');
     });
   });
 

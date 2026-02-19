@@ -563,6 +563,27 @@ Yes
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~153. Nutrition screen ignores user's calorie goal from goalsStore~~ ✅
+- `app/(tabs)/nutrition.tsx` uses hardcoded `DEFAULT_CALORIE_GOAL = 2000` instead of reading `goalsStore.goals.dailyCalories`.
+- **Status:** Done — replaced hardcoded constant with `useGoalsStore().goals.dailyCalories`. Progress bar and target display now reflect user's configured goal.
+
+### ~~154. aiInsightsStore uses non-standard error handling pattern~~ ✅
+- All 6 catch blocks used `error instanceof Error ? error.message : 'Failed to ...'` instead of centralized `getErrorMessage()`.
+- **Status:** Done — replaced all 6 instances with `getErrorMessage(error)`. Consistent with all other stores.
+
+### ~~155. goals.tsx updateLocalGoal uses untyped string key~~ ✅
+- `key: string` should be `key: keyof Goals` for type safety.
+- **Status:** Done — exported `Goals` interface from goalsStore, typed key as `keyof Goals`.
+
+### ~~156. goalsStore uses hardcoded storage key instead of STORAGE_KEYS constant~~ ✅
+- `const STORAGE_KEY = 'trackr_goals'` should use `STORAGE_KEYS.GOALS` from constants.ts.
+- **Status:** Done — removed local constant, imported `STORAGE_KEYS` from constants.
+
+### 157. healthInsightsAI gatherHealthData fetches unbounded data from all tables
+- `getAll()` on sleep, exercise, nutrition, and journal repos fetches entire tables, then filters to 7 days in JS.
+- All 4 repos have `getByDateRange` variants — should use those instead.
+- **Effort:** ~20min
+
 ### ~~152. Improve AnimatedButton coverage — pressIn/pressOut, secondary variant, sizes~~ ✅
 - `AnimatedButton.tsx` at 82.85% — missing pressIn/pressOut handler tests, secondary variant, sm/lg sizes.
 - **Status:** Done — 4 new tests (pressIn/pressOut, secondary, sm, lg). 13 total tests.
@@ -811,3 +832,7 @@ Yes
 - [x] Improved AnimatedCard coverage from 84% to ~90% — 3 new tests (outlined/filled variants, pressIn/pressOut events) — 554 total tests (TODO #150)
 - [x] Improved Dashboard coverage from 76% to ~90% — 6 new tests (card navigation, error dismiss, demo error, pull-to-refresh) — 560 total tests (TODO #151)
 - [x] Improved AnimatedButton coverage from 82% to ~90% — 4 new tests (pressIn/pressOut, secondary variant, sizes) — 564 total tests (TODO #152)
+- [x] Fixed nutrition calorie goal to use goalsStore instead of hardcoded constant (TODO #153)
+- [x] Replaced 6 non-standard error handlers in aiInsightsStore with getErrorMessage() (TODO #154)
+- [x] Added type safety to goals.tsx — `keyof Goals` instead of string (TODO #155)
+- [x] Replaced hardcoded storage key in goalsStore with STORAGE_KEYS.GOALS constant (TODO #156)

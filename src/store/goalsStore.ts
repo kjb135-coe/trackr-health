@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/src/utils/constants';
 
-interface Goals {
+export interface Goals {
   sleepHours: number;
   exerciseMinutesPerWeek: number;
   dailyCalories: number;
@@ -26,8 +27,6 @@ const DEFAULT_GOALS: Goals = {
   journalEntriesPerWeek: 3,
 };
 
-const STORAGE_KEY = 'trackr_goals';
-
 export const useGoalsStore = create<GoalsState>((set, get) => ({
   goals: DEFAULT_GOALS,
   isLoading: false,
@@ -35,7 +34,7 @@ export const useGoalsStore = create<GoalsState>((set, get) => ({
   loadGoals: async () => {
     set({ isLoading: true });
     try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      const stored = await AsyncStorage.getItem(STORAGE_KEYS.GOALS);
       if (stored) {
         const goals = JSON.parse(stored);
         set({ goals: { ...DEFAULT_GOALS, ...goals } });
@@ -50,7 +49,7 @@ export const useGoalsStore = create<GoalsState>((set, get) => ({
     const newGoals = { ...get().goals, ...updates };
     set({ goals: newGoals });
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newGoals));
+      await AsyncStorage.setItem(STORAGE_KEYS.GOALS, JSON.stringify(newGoals));
     } catch {
       // Silent fail - goals saved in memory, not persisted
     }
