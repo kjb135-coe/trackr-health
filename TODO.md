@@ -145,10 +145,9 @@ Do whatever you think is right.
 - No Sentry, Crashlytics, or similar.
 - `[Q]` Want crash reporting? **Sentry** / **Firebase Crashlytics** / **None for now**
 
-### 23. Use centralized `getErrorMessage()` in store error handlers
-- Several stores (nutritionStore, exerciseStore, sleepStore) use `(error as Error).message` for error extraction
-- Should use the centralized `getErrorMessage()` from `src/utils/date.ts` for consistent, safe error handling
-- **Effort:** ~15min
+### 23. ~~Use centralized `getErrorMessage()` in store error handlers~~ ✅
+- ~~Several stores (nutritionStore, exerciseStore, sleepStore) use `(error as Error).message` for error extraction~~
+- **Status:** Done — replaced 28 occurrences across 5 stores (habit, sleep, exercise, nutrition, journal) with `getErrorMessage(error)`
 
 ### 24. Add database repository tests
 - All store tests mock the repository layer. No tests verify actual SQLite queries.
@@ -183,3 +182,4 @@ Do whatever you think is right.
 - [x] Fixed catch (err: any) patterns in auth screens with proper unknown type narrowing (TODO #21)
 - [x] Deep linking already configured: scheme "trackr" in app.json + Expo Router auto-handles routes (TODO #15)
 - [x] Added sleep, nutrition, and exercise store tests: sleepStore (12), exerciseStore (12), nutritionStore (16) — 83 total tests (TODO #22)
+- [x] Replaced 28 `(error as Error).message` with centralized `getErrorMessage()` across all 5 stores (TODO #23)

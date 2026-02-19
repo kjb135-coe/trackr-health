@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { SleepEntry } from '@/src/types';
 import { sleepRepository } from '@/src/database/repositories';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface SleepState {
   entries: SleepEntry[];
@@ -11,7 +12,10 @@ interface SleepState {
   loadEntriesForRange: (startDate: string, endDate: string) => Promise<void>;
   getEntryByDate: (date: string) => Promise<SleepEntry | null>;
   createEntry: (entry: Omit<SleepEntry, 'id' | 'createdAt' | 'updatedAt'>) => Promise<SleepEntry>;
-  updateEntry: (id: string, updates: Partial<Omit<SleepEntry, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  updateEntry: (
+    id: string,
+    updates: Partial<Omit<SleepEntry, 'id' | 'createdAt' | 'updatedAt'>>,
+  ) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   getAverageQuality: (startDate: string, endDate: string) => Promise<number | null>;
   getAverageDuration: (startDate: string, endDate: string) => Promise<number | null>;
@@ -29,7 +33,7 @@ export const useSleepStore = create<SleepState>((set, get) => ({
       const entries = await sleepRepository.getAll();
       set({ entries, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -39,7 +43,7 @@ export const useSleepStore = create<SleepState>((set, get) => ({
       const entries = await sleepRepository.getByDateRange(startDate, endDate);
       set({ entries, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -57,7 +61,7 @@ export const useSleepStore = create<SleepState>((set, get) => ({
       }));
       return entry;
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -68,12 +72,12 @@ export const useSleepStore = create<SleepState>((set, get) => ({
       await sleepRepository.update(id, updates);
       set((state) => ({
         entries: state.entries.map((e) =>
-          e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e
+          e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e,
         ),
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -87,7 +91,7 @@ export const useSleepStore = create<SleepState>((set, get) => ({
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { Meal, FoodItem, AIFoodAnalysis } from '@/src/types';
 import { nutritionRepository } from '@/src/database/repositories';
 import { analyzeFoodImage } from '@/src/services/claude';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 interface NutritionState {
   meals: Meal[];
@@ -14,8 +14,14 @@ interface NutritionState {
   loadMeals: () => Promise<void>;
   loadMealsForDate: (date: string) => Promise<void>;
   loadDailyTotals: (date?: string) => Promise<void>;
-  createMeal: (meal: Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>, foods: Omit<FoodItem, 'id' | 'mealId'>[]) => Promise<Meal>;
-  updateMeal: (id: string, updates: Partial<Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  createMeal: (
+    meal: Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>,
+    foods: Omit<FoodItem, 'id' | 'mealId'>[],
+  ) => Promise<Meal>;
+  updateMeal: (
+    id: string,
+    updates: Partial<Omit<Meal, 'id' | 'foods' | 'createdAt' | 'updatedAt'>>,
+  ) => Promise<void>;
   deleteMeal: (id: string) => Promise<void>;
   addFoodItem: (mealId: string, food: Omit<FoodItem, 'id' | 'mealId'>) => Promise<FoodItem>;
   deleteFoodItem: (id: string, mealId: string) => Promise<void>;
@@ -36,7 +42,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       const meals = await nutritionRepository.getAllMeals();
       set({ meals, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -46,7 +52,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       const meals = await nutritionRepository.getMealsByDate(date);
       set({ meals, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -72,7 +78,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       await get().loadDailyTotals(mealData.date);
       return meal;
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -84,7 +90,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       const meal = get().meals.find((m) => m.id === id);
       set((state) => ({
         meals: state.meals.map((m) =>
-          m.id === id ? { ...m, ...updates, updatedAt: new Date().toISOString() } : m
+          m.id === id ? { ...m, ...updates, updatedAt: new Date().toISOString() } : m,
         ),
         isLoading: false,
       }));
@@ -92,7 +98,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
         await get().loadDailyTotals(meal.date);
       }
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -110,7 +116,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
         await get().loadDailyTotals(meal.date);
       }
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -120,7 +126,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       const foodItem = await nutritionRepository.addFoodItem(mealId, food);
       set((state) => ({
         meals: state.meals.map((m) =>
-          m.id === mealId ? { ...m, foods: [...m.foods, foodItem] } : m
+          m.id === mealId ? { ...m, foods: [...m.foods, foodItem] } : m,
         ),
       }));
       const meal = get().meals.find((m) => m.id === mealId);
@@ -129,7 +135,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       }
       return foodItem;
     } catch (error) {
-      set({ error: (error as Error).message });
+      set({ error: getErrorMessage(error) });
       throw error;
     }
   },
@@ -139,7 +145,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       await nutritionRepository.deleteFoodItem(id, mealId);
       set((state) => ({
         meals: state.meals.map((m) =>
-          m.id === mealId ? { ...m, foods: m.foods.filter((f) => f.id !== id) } : m
+          m.id === mealId ? { ...m, foods: m.foods.filter((f) => f.id !== id) } : m,
         ),
       }));
       const meal = get().meals.find((m) => m.id === mealId);
@@ -147,7 +153,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
         await get().loadDailyTotals(meal.date);
       }
     } catch (error) {
-      set({ error: (error as Error).message });
+      set({ error: getErrorMessage(error) });
       throw error;
     }
   },
@@ -159,7 +165,7 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
       set({ isAnalyzing: false });
       return analysis;
     } catch (error) {
-      set({ error: (error as Error).message, isAnalyzing: false });
+      set({ error: getErrorMessage(error), isAnalyzing: false });
       throw error;
     }
   },

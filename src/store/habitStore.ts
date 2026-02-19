@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Habit, HabitCompletion } from '@/src/types';
 import { habitRepository } from '@/src/database/repositories';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 interface HabitState {
   habits: Habit[];
@@ -12,7 +12,10 @@ interface HabitState {
   loadHabits: () => Promise<void>;
   loadTodayCompletions: () => Promise<void>;
   createHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Habit>;
-  updateHabit: (id: string, updates: Partial<Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  updateHabit: (
+    id: string,
+    updates: Partial<Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>>,
+  ) => Promise<void>;
   deleteHabit: (id: string) => Promise<void>;
   toggleCompletion: (habitId: string, date?: string) => Promise<void>;
   getStreak: (habitId: string) => Promise<number>;
@@ -31,7 +34,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       const habits = await habitRepository.getAll();
       set({ habits, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -57,7 +60,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       }));
       return habit;
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -68,12 +71,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
       await habitRepository.update(id, updates);
       set((state) => ({
         habits: state.habits.map((h) =>
-          h.id === id ? { ...h, ...updates, updatedAt: new Date().toISOString() } : h
+          h.id === id ? { ...h, ...updates, updatedAt: new Date().toISOString() } : h,
         ),
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -87,7 +90,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },

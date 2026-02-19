@@ -20,6 +20,9 @@ jest.mock('@/src/services/claude', () => ({
 
 jest.mock('@/src/utils/date', () => ({
   getDateString: jest.fn(() => '2026-02-18'),
+  getErrorMessage: jest.fn((error: unknown) =>
+    error instanceof Error ? error.message : 'An unexpected error occurred',
+  ),
 }));
 
 const { nutritionRepository } = jest.requireMock('@/src/database/repositories');

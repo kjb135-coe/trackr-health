@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { JournalEntry, OCRResult } from '@/src/types';
 import { journalRepository } from '@/src/database/repositories';
 import { scanHandwrittenJournal } from '@/src/services/claude';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface JournalState {
   entries: JournalEntry[];
@@ -12,8 +13,13 @@ interface JournalState {
   loadEntries: () => Promise<void>;
   loadEntriesForRange: (startDate: string, endDate: string) => Promise<void>;
   loadEntriesForDate: (date: string) => Promise<JournalEntry[]>;
-  createEntry: (entry: Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>) => Promise<JournalEntry>;
-  updateEntry: (id: string, updates: Partial<Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  createEntry: (
+    entry: Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>,
+  ) => Promise<JournalEntry>;
+  updateEntry: (
+    id: string,
+    updates: Partial<Omit<JournalEntry, 'id' | 'createdAt' | 'updatedAt'>>,
+  ) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
   search: (query: string) => Promise<JournalEntry[]>;
   scanImage: (imageUri: string) => Promise<OCRResult>;
@@ -33,7 +39,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       const entries = await journalRepository.getAll();
       set({ entries, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -43,7 +49,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       const entries = await journalRepository.getByDateRange(startDate, endDate);
       set({ entries, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -61,7 +67,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       }));
       return entry;
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -72,12 +78,12 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       await journalRepository.update(id, updates);
       set((state) => ({
         entries: state.entries.map((e) =>
-          e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e
+          e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e,
         ),
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -91,7 +97,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -107,7 +113,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
       set({ isScanning: false });
       return result;
     } catch (error) {
-      set({ error: (error as Error).message, isScanning: false });
+      set({ error: getErrorMessage(error), isScanning: false });
       throw error;
     }
   },

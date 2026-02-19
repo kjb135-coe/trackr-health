@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { ExerciseSession } from '@/src/types';
 import { exerciseRepository } from '@/src/database/repositories';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface ExerciseState {
   sessions: ExerciseSession[];
@@ -10,8 +11,13 @@ interface ExerciseState {
   loadSessions: () => Promise<void>;
   loadSessionsForRange: (startDate: string, endDate: string) => Promise<void>;
   loadSessionsForDate: (date: string) => Promise<ExerciseSession[]>;
-  createSession: (session: Omit<ExerciseSession, 'id' | 'createdAt' | 'updatedAt'>) => Promise<ExerciseSession>;
-  updateSession: (id: string, updates: Partial<Omit<ExerciseSession, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<void>;
+  createSession: (
+    session: Omit<ExerciseSession, 'id' | 'createdAt' | 'updatedAt'>,
+  ) => Promise<ExerciseSession>;
+  updateSession: (
+    id: string,
+    updates: Partial<Omit<ExerciseSession, 'id' | 'createdAt' | 'updatedAt'>>,
+  ) => Promise<void>;
   deleteSession: (id: string) => Promise<void>;
   getTotalDuration: (startDate: string, endDate: string) => Promise<number>;
   getTotalCalories: (startDate: string, endDate: string) => Promise<number>;
@@ -29,7 +35,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
       const sessions = await exerciseRepository.getAll();
       set({ sessions, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -39,7 +45,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
       const sessions = await exerciseRepository.getByDateRange(startDate, endDate);
       set({ sessions, isLoading: false });
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
     }
   },
 
@@ -57,7 +63,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
       }));
       return session;
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -68,12 +74,12 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
       await exerciseRepository.update(id, updates);
       set((state) => ({
         sessions: state.sessions.map((s) =>
-          s.id === id ? { ...s, ...updates, updatedAt: new Date().toISOString() } : s
+          s.id === id ? { ...s, ...updates, updatedAt: new Date().toISOString() } : s,
         ),
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
@@ -87,7 +93,7 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
         isLoading: false,
       }));
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false });
+      set({ error: getErrorMessage(error), isLoading: false });
       throw error;
     }
   },
