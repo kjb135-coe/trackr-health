@@ -308,3 +308,4 @@ Do whatever you think is right.
 - [x] Fixed hardcoded export version '1.6.0' → Constants.expoConfig?.version (TODO #45)
 - [x] Optimized getWeeklyStats(): batch queries via Promise.all() instead of N+1 per-habit loop (TODO #46)
 - [x] Added `getCompletionsForDateRange()` to habitRepository and `getMealsByDateRange()` to nutritionRepository
+- [x] Added healthInsights test suite (11 tests): weekly stats, daily streak, trend data — 131 total tests
