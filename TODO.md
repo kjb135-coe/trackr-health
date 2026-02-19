@@ -582,6 +582,11 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### 142. Wire fetchNutritionAdvice to nutrition screen
+- `fetchNutritionAdvice()` exists in aiInsightsStore but is never called from UI.
+- Follow the same pattern as journal/sleep AI analysis sections.
+- **Effort:** ~30min
+
 ### ~~141. Wire fetchMoodAnalysis to journal screen~~ ✅
 - `fetchMoodAnalysis()` and `fetchNutritionAdvice()` exist in aiInsightsStore but are never called from UI.
 - Follow the same pattern as sleep screen's AI analysis section (trend, recommendations, refresh button).
