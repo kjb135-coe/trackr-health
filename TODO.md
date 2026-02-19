@@ -152,6 +152,27 @@ Do whatever you think is right.
 - ~~All store tests mock the repository layer. No tests verify actual SQLite queries.~~
 - **Status:** Added habitRepository tests (13 tests) covering getAll, getById, create, update, delete, completions, setCompletion, getStreak with mocked db. Other repos follow the same pattern.
 
+### 25. Fix N+1 query in nutritionRepository
+- `getAllMeals()` and `getMealsByDate()` fetch meals, then loop N times to fetch food items per meal
+- Should use a JOIN query to fetch meals + food items in one query, then group in JS
+- **Effort:** ~30min
+
+### 26. Optimize streak calculation in habitRepository
+- `getStreak()` runs an infinite loop querying one day at a time
+- A 365-day streak = 365+ individual queries. Should use a single SQL query instead
+- Also affects `habits.tsx` which calls getStreak on every toggle
+- **Effort:** ~30min
+
+### 27. Add error state UI to nutrition and journal screens
+- Nutrition screen has no error display — if loading fails, user sees nothing
+- Journal modal doesn't show errors from scanImage/createEntry failures
+- **Effort:** ~30min
+
+### 28. Add SafeAreaView to modal overlays
+- All tab screen modals (habits, sleep, exercise, nutrition, journal) use View instead of SafeAreaView
+- Content can be cut off on devices with notches
+- **Effort:** ~30min
+
 ---
 
 ## Completed in This Audit
