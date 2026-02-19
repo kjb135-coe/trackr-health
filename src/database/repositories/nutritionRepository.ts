@@ -105,6 +105,31 @@ export const nutritionRepository = {
     return meals;
   },
 
+  async getMealsByDateRange(startDate: string, endDate: string): Promise<Meal[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<MealRow>(
+      'SELECT * FROM meals WHERE date >= ? AND date <= ? ORDER BY created_at',
+      startDate,
+      endDate,
+    );
+    const meals = rows.map(mapRowToMeal);
+
+    if (meals.length > 0) {
+      const mealIds = meals.map((m) => m.id);
+      const placeholders = mealIds.map(() => '?').join(',');
+      const foodRows = await db.getAllAsync<FoodItemRow>(
+        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
+        ...mealIds,
+      );
+      const foodsByMeal = groupFoodsByMealId(foodRows);
+      for (const meal of meals) {
+        meal.foods = foodsByMeal.get(meal.id) ?? [];
+      }
+    }
+
+    return meals;
+  },
+
   async getFoodItemsForMeal(mealId: string): Promise<FoodItem[]> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<FoodItemRow>(

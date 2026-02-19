@@ -144,6 +144,16 @@ export const habitRepository = {
     return rows.map(mapRowToCompletion);
   },
 
+  async getCompletionsForDateRange(startDate: string, endDate: string): Promise<HabitCompletion[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<HabitCompletionRow>(
+      'SELECT * FROM habit_completions WHERE date >= ? AND date <= ? ORDER BY date',
+      startDate,
+      endDate,
+    );
+    return rows.map(mapRowToCompletion);
+  },
+
   async setCompletion(
     habitId: string,
     date: string,

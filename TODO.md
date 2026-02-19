@@ -234,6 +234,18 @@ Do whatever you think is right.
 - ~~`src/services/auth/mockAuthService.ts` line 46 uses `.then()` instead of async/await.~~
 - **Status:** Done — replaced `.then()` callback with async/await IIFE pattern in `onAuthStateChange()`.
 
+### 44. ~~Optimize getDailyStreak() — unbounded loop with repeated full-table fetches~~ ✅
+- ~~`src/services/insights/healthInsights.ts` getDailyStreak() runs `while(true)` calling `.getAll()` on sleep, exercise, and nutrition repos **every iteration**~~
+- **Status:** Done — fetches all data once with `Promise.all()`, builds a `Set` of active dates, then iterates in JS. 3 queries total regardless of streak length.
+
+### 45. ~~Fix hardcoded export version string~~ ✅
+- ~~`src/services/export/dataExport.ts` line 40 hardcodes `'1.6.0'` but package.json says `1.0.0`~~
+- **Status:** Done — replaced with `Constants.expoConfig?.version ?? '1.0.0'`.
+
+### 46. ~~Optimize N+1 query in getWeeklyStats()~~ ✅
+- ~~`src/services/insights/healthInsights.ts` getWeeklyStats() loops over all habits calling `getCompletionsForHabit()` once per habit~~
+- **Status:** Done — replaced N+1 loop with batch `getCompletionsForDateRange()` + parallel `Promise.all()` for all 5 data sources. Added `getMealsByDateRange()` to nutritionRepository and `getCompletionsForDateRange()` to habitRepository.
+
 ---
 
 ## Completed in This Audit
@@ -292,3 +304,7 @@ Do whatever you think is right.
 - [x] Fixed ErrorBoundary: dynamic theme colors via Appearance API, wrapped console.error in __DEV__ (TODO #41)
 - [x] Added explicit radix (10) to all 7 parseInt() calls across 3 modal components (TODO #42)
 - [x] Replaced .then() with async/await in mockAuthService.onAuthStateChange() (TODO #43)
+- [x] Optimized getDailyStreak(): fetch once + Set lookup instead of N×3 full-table fetches per day (TODO #44)
+- [x] Fixed hardcoded export version '1.6.0' → Constants.expoConfig?.version (TODO #45)
+- [x] Optimized getWeeklyStats(): batch queries via Promise.all() instead of N+1 per-habit loop (TODO #46)
+- [x] Added `getCompletionsForDateRange()` to habitRepository and `getMealsByDateRange()` to nutritionRepository

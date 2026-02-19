@@ -1,5 +1,6 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import Constants from 'expo-constants';
 import {
   habitRepository,
   sleepRepository,
@@ -37,7 +38,7 @@ export async function exportAllData(): Promise<string> {
 
   const exportData: ExportData = {
     exportedAt: new Date().toISOString(),
-    version: '1.6.0',
+    version: Constants.expoConfig?.version ?? '1.0.0',
     habits,
     habitCompletions,
     sleep,
