@@ -62,7 +62,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('shows default message when error has no message', () => {
-    function ThrowNull() {
+    function ThrowNull(): React.ReactNode {
       throw new Error('');
     }
     const { getByText } = render(
