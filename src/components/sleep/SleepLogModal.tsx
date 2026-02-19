@@ -55,6 +55,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
   const [wakeHour, setWakeHour] = useState(initial.wh);
   const [wakeMin, setWakeMin] = useState(initial.wm);
   const [quality, setQuality] = useState<1 | 2 | 3 | 4 | 5>(initial.q);
+  const [saving, setSaving] = useState(false);
 
   // Reset form when editEntry changes
   React.useEffect(() => {
@@ -105,6 +106,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
 
     const durationMinutes = getDurationMinutes(bedtime, wakeTime);
 
+    setSaving(true);
     try {
       if (editEntry) {
         await updateEntry(editEntry.id, {
@@ -127,6 +129,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
     }
+    setSaving(false);
   };
 
   return (
@@ -235,6 +238,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
           <AnimatedButton
             title={editEntry ? 'Update Sleep Entry' : 'Save Sleep Entry'}
             onPress={handleCreateEntry}
+            loading={saving}
             fullWidth
           />
         </Animated.View>

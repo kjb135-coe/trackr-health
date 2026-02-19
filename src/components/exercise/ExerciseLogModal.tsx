@@ -65,6 +65,7 @@ export function ExerciseLogModal({
     editSession?.intensity || 'moderate',
   );
   const [calories, setCalories] = useState(editSession?.caloriesBurned?.toString() || '');
+  const [saving, setSaving] = useState(false);
 
   const { createSession, updateSession } = useExerciseStore();
 
@@ -105,6 +106,7 @@ export function ExerciseLogModal({
       return;
     }
 
+    setSaving(true);
     try {
       if (editSession) {
         await updateSession(editSession.id, {
@@ -129,6 +131,7 @@ export function ExerciseLogModal({
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
     }
+    setSaving(false);
   };
 
   return (
@@ -245,6 +248,7 @@ export function ExerciseLogModal({
           <AnimatedButton
             title={editSession ? 'Update Workout' : 'Save Workout'}
             onPress={handleCreateSession}
+            loading={saving}
             fullWidth
           />
         </Animated.View>
