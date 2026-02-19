@@ -1,46 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Modal,
-  TextInput,
-  Alert,
-  Image,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import { Plus, Camera, X, BookOpen, Edit3 } from 'lucide-react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { Plus, Camera, X, BookOpen } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import * as ImagePicker from 'expo-image-picker';
-import * as Haptics from 'expo-haptics';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
+import { AnimatedCard } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
-import { getDateString, getRelativeDateLabel } from '@/src/utils/date';
+import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
+import { JournalEntryModal } from '@/src/components/journal/JournalEntryModal';
 
 export default function JournalScreen() {
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [mode, setMode] = useState<'text' | 'scan'>('text');
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [mood, setMood] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
-  const [scannedImage, setScannedImage] = useState<string | null>(null);
+  const [modalMode, setModalMode] = useState<'text' | 'scan'>('text');
   const [apiKeyExists, setApiKeyExists] = useState(false);
 
-  const { entries, isLoading, isScanning, error, loadEntries, createEntry, scanImage, clearError } =
-    useJournalStore();
+  const { entries, error, loadEntries, clearError } = useJournalStore();
 
   useEffect(() => {
     loadEntries();
@@ -59,103 +37,8 @@ export default function JournalScreen() {
     setRefreshing(false);
   };
 
-  const handleTakePhoto = async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant camera permission to scan your journal.');
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ['images'],
-      quality: 0.8,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setScannedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const ocrResult = await scanImage(result.assets[0].uri);
-          setContent(ocrResult.text);
-        } catch {
-          Alert.alert(
-            'Scan failed',
-            'Could not read the handwriting. Please try again or type manually.',
-          );
-        }
-      } else {
-        Alert.alert(
-          'API key needed',
-          'Add your Claude API key in settings to enable handwriting recognition.',
-        );
-      }
-    }
-  };
-
-  const handlePickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant photo library permission.');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: 0.8,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setScannedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const ocrResult = await scanImage(result.assets[0].uri);
-          setContent(ocrResult.text);
-        } catch {
-          Alert.alert(
-            'Scan failed',
-            'Could not read the handwriting. Please try again or type manually.',
-          );
-        }
-      } else {
-        Alert.alert(
-          'API key needed',
-          'Add your Claude API key in settings to enable handwriting recognition.',
-        );
-      }
-    }
-  };
-
-  const handleSaveEntry = async () => {
-    if (!content.trim()) {
-      Alert.alert('Missing content', 'Please write something in your journal entry.');
-      return;
-    }
-
-    await createEntry({
-      date: getDateString(),
-      title: title.trim() || undefined,
-      content: content.trim(),
-      mood: mood || undefined,
-      isScanned: mode === 'scan' && !!scannedImage,
-      originalImageUri: scannedImage || undefined,
-    });
-
-    resetModal();
-  };
-
-  const resetModal = () => {
-    setModalVisible(false);
-    setMode('text');
-    setTitle('');
-    setContent('');
-    setMood(null);
-    setScannedImage(null);
-  };
-
-  const openModal = (initialMode: 'text' | 'scan') => {
-    setMode(initialMode);
+  const openModal = (mode: 'text' | 'scan') => {
+    setModalMode(mode);
     setModalVisible(true);
   };
 
@@ -253,187 +136,14 @@ export default function JournalScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Create Entry Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
-          <Animated.View
-            entering={FadeInDown.duration(300)}
-            style={[
-              styles.modalContent,
-              {
-                backgroundColor: colors.surface,
-                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
-              },
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
-                {mode === 'scan' ? 'Scan Journal' : 'New Entry'}
-              </Text>
-              <TouchableOpacity onPress={resetModal}>
-                <X color={colors.textPrimary} size={24} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Mode Toggle */}
-            <View style={[styles.modeToggle, { backgroundColor: colors.surfaceSecondary }]}>
-              <TouchableOpacity
-                style={[styles.modeOption, mode === 'text' && { backgroundColor: colors.journal }]}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setMode('text');
-                }}
-              >
-                <Edit3 color={mode === 'text' ? '#FFFFFF' : colors.textSecondary} size={16} />
-                <Text
-                  style={[
-                    styles.modeText,
-                    { color: colors.textSecondary },
-                    mode === 'text' && { color: '#FFFFFF', fontWeight: '600' },
-                  ]}
-                >
-                  Type
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modeOption, mode === 'scan' && { backgroundColor: colors.journal }]}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setMode('scan');
-                }}
-              >
-                <Camera color={mode === 'scan' ? '#FFFFFF' : colors.textSecondary} size={16} />
-                <Text
-                  style={[
-                    styles.modeText,
-                    { color: colors.textSecondary },
-                    mode === 'scan' && { color: '#FFFFFF', fontWeight: '600' },
-                  ]}
-                >
-                  Scan
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {mode === 'scan' && (
-              <>
-                <View style={styles.cameraRow}>
-                  <AnimatedButton
-                    title="Take Photo"
-                    variant="secondary"
-                    onPress={handleTakePhoto}
-                    style={{ flex: 1, marginRight: spacing.sm }}
-                  />
-                  <AnimatedButton
-                    title="Gallery"
-                    variant="secondary"
-                    onPress={handlePickImage}
-                    style={{ flex: 1 }}
-                  />
-                </View>
-
-                {isScanning && (
-                  <View style={styles.scanningContainer}>
-                    <ActivityIndicator color={colors.primary} />
-                    <Text style={[styles.scanningText, { color: colors.textSecondary }]}>
-                      Reading handwriting...
-                    </Text>
-                  </View>
-                )}
-
-                {scannedImage && (
-                  <Image source={{ uri: scannedImage }} style={styles.previewImage} />
-                )}
-              </>
-            )}
-
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
-              Title (optional)
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
-              ]}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Give your entry a title"
-              placeholderTextColor={colors.textTertiary}
-            />
-
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Content</Text>
-            <TextInput
-              style={[
-                styles.input,
-                styles.contentInput,
-                { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
-              ]}
-              value={content}
-              onChangeText={setContent}
-              placeholder="Write your thoughts..."
-              placeholderTextColor={colors.textTertiary}
-              multiline
-              textAlignVertical="top"
-            />
-
-            <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
-              How are you feeling?
-            </Text>
-            <View style={styles.moodRow}>
-              {([1, 2, 3, 4, 5] as const).map((m) => (
-                <TouchableOpacity
-                  key={m}
-                  style={[
-                    styles.moodOption,
-                    { backgroundColor: colors.surfaceSecondary },
-                    mood === m && {
-                      backgroundColor: colors.journal + '30',
-                      borderWidth: 2,
-                      borderColor: colors.journal,
-                    },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setMood(mood === m ? null : m);
-                  }}
-                >
-                  <Text style={styles.moodEmoji}>{getMoodEmoji(m)}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <AnimatedButton
-              title="Save Entry"
-              onPress={handleSaveEntry}
-              loading={isLoading}
-              disabled={!content.trim()}
-              fullWidth
-            />
-          </Animated.View>
-        </KeyboardAvoidingView>
-      </Modal>
+      <JournalEntryModal
+        visible={modalVisible}
+        initialMode={modalMode}
+        onClose={() => setModalVisible(false)}
+        apiKeyExists={apiKeyExists}
+      />
     </View>
   );
-}
-
-function getMoodEmoji(mood: number): string {
-  switch (mood) {
-    case 1:
-      return '😢';
-    case 2:
-      return '😕';
-    case 3:
-      return '😐';
-    case 4:
-      return '🙂';
-    case 5:
-      return '😄';
-    default:
-      return '😐';
-  }
 }
 
 const styles = StyleSheet.create({
@@ -535,94 +245,5 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     borderWidth: 2,
     marginBottom: spacing.sm,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: borderRadius.xl,
-    borderTopRightRadius: borderRadius.xl,
-    padding: spacing.lg,
-    paddingBottom: spacing.xxl,
-    maxHeight: '90%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.lg,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  modeToggle: {
-    flexDirection: 'row',
-    borderRadius: borderRadius.md,
-    padding: 4,
-    marginBottom: spacing.lg,
-  },
-  modeOption: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.md - 2,
-  },
-  modeText: {
-    fontSize: 14,
-    marginLeft: spacing.xs,
-  },
-  cameraRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.md,
-  },
-  scanningContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.md,
-  },
-  scanningText: {
-    fontSize: 16,
-    marginLeft: spacing.sm,
-  },
-  previewImage: {
-    width: '100%',
-    height: 120,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.md,
-  },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: spacing.sm,
-  },
-  input: {
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    fontSize: 16,
-    marginBottom: spacing.md,
-  },
-  contentInput: {
-    height: 120,
-  },
-  moodRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
-  },
-  moodOption: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  moodEmoji: {
-    fontSize: 24,
   },
 });
