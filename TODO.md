@@ -497,6 +497,10 @@ Do whatever you think is right.
 - 3 AI service files (healthInsightsAI, foodRecognition, handwritingOCR) had identical Promise.race + setTimeout timeout pattern.
 - **Status:** Done — extracted `withTimeout<T>(promise, message)` to `src/utils/constants.ts`. All 3 services now import the shared utility. Added 3 tests. 410 total tests.
 
+### 112. ~~Add authStore tests~~ ✅
+- `authStore` was the last untested Zustand store. All 7 methods untested.
+- **Status:** Done — 14 tests covering initialize, signUp/signIn (success + error), signInWithGoogle, signOut (success + error), sendVerificationEmail, sendPasswordReset, reloadUser (success + silent fail), clearError. 424 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -618,3 +622,4 @@ Do whatever you think is right.
 - [x] Extracted estimateCalories to constants.ts + 6 tests — 407 total tests (TODO #109)
 - [x] Fixed 5 ESLint warnings in test files — 0 errors, 0 warnings (TODO #110)
 - [x] Extracted shared withTimeout utility + 3 tests — 410 total tests (TODO #111)
+- [x] Added authStore tests (14 tests) — 424 total tests (TODO #112)
