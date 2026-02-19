@@ -205,3 +205,4 @@ Do whatever you think is right.
 - [x] Added safe area insets to all 6 modal overlays across 5 tab screens (TODO #28)
 - [x] Added typed row interfaces to all 4 remaining repositories — zero `any` in repos (sleep, exercise, nutrition, journal)
 - [x] Added saving state + loading spinner to nutrition camera Save Meal button
+- [x] Eliminated all `any` types from src/ and app/ (ExportData, onboarding, QuickActions, healthInsightsAI) — only auth `as any` remains per user skip

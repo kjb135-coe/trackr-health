@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { Moon, Dumbbell, Camera, PenLine } from 'lucide-react-native';
 import Animated, {
   useSharedValue,
@@ -41,7 +41,7 @@ function QuickActionButton({ label, Icon, color, onPress }: QuickActionButtonPro
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     scale.value = withSequence(
       withSpring(0.85, { damping: 15, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 300 })
+      withSpring(1, { damping: 10, stiffness: 300 }),
     );
     onPress();
   };
@@ -104,7 +104,7 @@ export function QuickActions() {
             label={action.label}
             Icon={action.Icon}
             color={action.color}
-            onPress={() => router.push(action.route as any)}
+            onPress={() => router.push(action.route as Href)}
           />
         ))}
       </View>

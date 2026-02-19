@@ -1,16 +1,30 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { habitRepository, sleepRepository, exerciseRepository, nutritionRepository, journalRepository } from '@/src/database/repositories';
+import {
+  habitRepository,
+  sleepRepository,
+  exerciseRepository,
+  nutritionRepository,
+  journalRepository,
+} from '@/src/database/repositories';
+import {
+  Habit,
+  HabitCompletion,
+  SleepEntry,
+  ExerciseSession,
+  Meal,
+  JournalEntry,
+} from '@/src/types';
 
 interface ExportData {
   exportedAt: string;
   version: string;
-  habits: any[];
-  habitCompletions: any[];
-  sleep: any[];
-  exercise: any[];
-  meals: any[];
-  journal: any[];
+  habits: Habit[];
+  habitCompletions: HabitCompletion[];
+  sleep: SleepEntry[];
+  exercise: ExerciseSession[];
+  meals: Meal[];
+  journal: JournalEntry[];
 }
 
 export async function exportAllData(): Promise<string> {
@@ -54,7 +68,9 @@ export async function shareExportedData(): Promise<void> {
   }
 }
 
-export async function generateCSVExport(type: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal'): Promise<string> {
+export async function generateCSVExport(
+  type: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal',
+): Promise<string> {
   let csvContent = '';
   let fileName = '';
 
@@ -88,7 +104,8 @@ export async function generateCSVExport(type: 'habits' | 'sleep' | 'exercise' | 
     }
     case 'nutrition': {
       const meals = await nutritionRepository.getAllMeals();
-      csvContent = 'id,date,mealType,name,totalCalories,totalProtein,totalCarbs,totalFat,createdAt\n';
+      csvContent =
+        'id,date,mealType,name,totalCalories,totalProtein,totalCarbs,totalFat,createdAt\n';
       meals.forEach((m) => {
         csvContent += `"${m.id}","${m.date}","${m.mealType}","${m.name || ''}",${m.totalCalories},${m.totalProtein || 0},${m.totalCarbs || 0},${m.totalFat || 0},"${m.createdAt}"\n`;
       });
@@ -112,7 +129,9 @@ export async function generateCSVExport(type: 'habits' | 'sleep' | 'exercise' | 
   return filePath;
 }
 
-export async function shareCSVExport(type: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal'): Promise<void> {
+export async function shareCSVExport(
+  type: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal',
+): Promise<void> {
   const filePath = await generateCSVExport(type);
 
   if (await Sharing.isAvailableAsync()) {

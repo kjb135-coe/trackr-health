@@ -1,5 +1,11 @@
 import { getClaudeClient } from '../claude/client';
-import { habitRepository, sleepRepository, exerciseRepository, nutritionRepository, journalRepository } from '@/src/database/repositories';
+import {
+  habitRepository,
+  sleepRepository,
+  exerciseRepository,
+  nutritionRepository,
+  journalRepository,
+} from '@/src/database/repositories';
 
 export interface AIInsight {
   category: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal' | 'overall';
@@ -69,9 +75,13 @@ async function gatherHealthData() {
   const todayStr = today.toISOString().split('T')[0];
   const habitsWithCompletions = await Promise.all(
     habits.map(async (habit) => {
-      const completions = await habitRepository.getCompletionsForHabit(habit.id, weekAgoStr, todayStr);
+      const completions = await habitRepository.getCompletionsForHabit(
+        habit.id,
+        weekAgoStr,
+        todayStr,
+      );
       return { ...habit, recentCompletions: completions };
-    })
+    }),
   );
 
   return {
@@ -92,7 +102,7 @@ export async function generateDailyCoaching(): Promise<DailyAICoaching> {
 User's Health Data (Last 7 Days):
 
 HABITS (${data.habits.length} habits):
-${data.habits.map((h) => `- ${h.name}: ${h.recentCompletions?.filter((c: any) => c.completed).length || 0}/7 days completed`).join('\n')}
+${data.habits.map((h) => `- ${h.name}: ${h.recentCompletions?.filter((c) => c.completed).length || 0}/7 days completed`).join('\n')}
 
 SLEEP (${data.sleep.length} entries):
 ${data.sleep.map((s) => `- ${s.date}: ${s.durationMinutes} min, quality ${s.quality}/5`).join('\n') || 'No sleep data'}
@@ -101,7 +111,12 @@ EXERCISE (${data.exercise.length} sessions):
 ${data.exercise.map((e) => `- ${e.date}: ${e.type}, ${e.durationMinutes} min, ${e.intensity} intensity`).join('\n') || 'No exercise data'}
 
 NUTRITION (${data.meals.length} meals logged):
-${data.meals.slice(0, 10).map((m) => `- ${m.date} ${m.mealType}: ${m.totalCalories} cal`).join('\n') || 'No nutrition data'}
+${
+  data.meals
+    .slice(0, 10)
+    .map((m) => `- ${m.date} ${m.mealType}: ${m.totalCalories} cal`)
+    .join('\n') || 'No nutrition data'
+}
 
 JOURNAL (${data.journal.length} entries):
 ${data.journal.map((j) => `- ${j.date}: mood ${j.mood || 'not set'}/5`).join('\n') || 'No journal entries'}
@@ -141,7 +156,7 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   } catch {
     // Return default coaching if parsing fails
     return {
-      greeting: 'Good morning! Let\'s make today count.',
+      greeting: "Good morning! Let's make today count.",
       insights: [
         {
           category: 'overall',
@@ -168,7 +183,12 @@ ${data.habits.map((h) => `- ${h.name} (${h.frequency})`).join('\n') || 'No habit
 
 Recent Exercise Types: ${[...new Set(data.exercise.map((e) => e.type))].join(', ') || 'None'}
 Average Sleep Quality: ${data.sleep.length > 0 ? (data.sleep.reduce((acc, s) => acc + s.quality, 0) / data.sleep.length).toFixed(1) : 'Unknown'}
-Recent Journal Moods: ${data.journal.filter((j) => j.mood).map((j) => j.mood).join(', ') || 'Not tracked'}
+Recent Journal Moods: ${
+    data.journal
+      .filter((j) => j.mood)
+      .map((j) => j.mood)
+      .join(', ') || 'Not tracked'
+  }
 
 Respond with ONLY valid JSON array:
 [
@@ -372,7 +392,13 @@ export async function getNutritionAdvice(): Promise<{ advice: string; suggestion
   const prompt = `Provide brief nutrition advice based on this meal log.
 
 Recent Meals:
-${data.meals.slice(0, 10).map((m) => `- ${m.date} ${m.mealType}: ${m.name || 'Unnamed'}, ${m.totalCalories} cal, P:${m.totalProtein || 0}g C:${m.totalCarbs || 0}g F:${m.totalFat || 0}g`).join('\n')}
+${data.meals
+  .slice(0, 10)
+  .map(
+    (m) =>
+      `- ${m.date} ${m.mealType}: ${m.name || 'Unnamed'}, ${m.totalCalories} cal, P:${m.totalProtein || 0}g C:${m.totalCarbs || 0}g F:${m.totalFat || 0}g`,
+  )
+  .join('\n')}
 
 Average Calories per Meal: ${avgCalories.toFixed(0)}
 
