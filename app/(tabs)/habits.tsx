@@ -48,6 +48,7 @@ export default function HabitsScreen() {
     deleteHabit,
     toggleCompletion,
     getStreak,
+    getAllStreaks,
     getWeeklyCompletions,
   } = useHabitStore();
 
@@ -84,12 +85,8 @@ export default function HabitsScreen() {
   };
 
   const loadStreaks = async () => {
-    const newStreaks = new Map<string, number>();
-    for (const habit of habits) {
-      const streak = await getStreak(habit.id);
-      newStreaks.set(habit.id, streak);
-    }
-    setStreaks(newStreaks);
+    const allStreaks = await getAllStreaks();
+    setStreaks(allStreaks);
   };
 
   const onRefresh = async () => {

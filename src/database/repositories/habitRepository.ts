@@ -217,6 +217,49 @@ export const habitRepository = {
 
     return streak;
   },
+
+  async getAllStreaks(habitIds: string[]): Promise<Map<string, number>> {
+    if (habitIds.length === 0) return new Map();
+    const db = await getDatabase();
+    const today = getDateString();
+    const placeholders = habitIds.map(() => '?').join(',');
+
+    // Single query for all habits' completions
+    const rows = await db.getAllAsync<{ habit_id: string; date: string }>(
+      `SELECT habit_id, date FROM habit_completions
+       WHERE habit_id IN (${placeholders}) AND completed = 1 AND date <= ?
+       ORDER BY habit_id, date DESC`,
+      ...habitIds,
+      today,
+    );
+
+    // Group dates by habit
+    const byHabit = new Map<string, string[]>();
+    for (const row of rows) {
+      if (!byHabit.has(row.habit_id)) byHabit.set(row.habit_id, []);
+      byHabit.get(row.habit_id)!.push(row.date);
+    }
+
+    // Compute streaks per habit
+    const result = new Map<string, number>();
+    for (const habitId of habitIds) {
+      const dates = byHabit.get(habitId) || [];
+      let streak = 0;
+      const expectedDate = new Date();
+      for (const date of dates) {
+        const expected = getDateString(expectedDate);
+        if (date === expected) {
+          streak++;
+          expectedDate.setDate(expectedDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      result.set(habitId, streak);
+    }
+
+    return result;
+  },
 };
 
 function mapRowToHabit(row: HabitRow): Habit {

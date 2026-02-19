@@ -20,6 +20,7 @@ interface HabitState {
   deleteHabit: (id: string) => Promise<void>;
   toggleCompletion: (habitId: string, date?: string) => Promise<void>;
   getStreak: (habitId: string) => Promise<number>;
+  getAllStreaks: () => Promise<Map<string, number>>;
   getWeeklyCompletions: (endDate: string) => Promise<Map<string, Set<string>>>;
   clearError: () => void;
 }
@@ -118,6 +119,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
   getStreak: async (habitId) => {
     return habitRepository.getStreak(habitId);
+  },
+
+  getAllStreaks: async () => {
+    const { habits } = get();
+    const habitIds = habits.map((h) => h.id);
+    return habitRepository.getAllStreaks(habitIds);
   },
 
   getWeeklyCompletions: async (endDate) => {
