@@ -211,16 +211,23 @@ Do whatever you think is right.
 - All 5 tab screens had duplicate inline error banner implementations (TouchableOpacity + X icon + identical styles).
 - **Status:** Done — created `ErrorBanner` component in `src/components/ui/`. Updated all 5 screens to use it. Removed ~50 lines of duplicate styles and unused `X` imports.
 
-### 65. Clean up unused imports after ErrorBanner and style extraction
-- After extracting ErrorBanner and removing duplicate styles, some screens may have unused imports (`borderRadius` from theme, etc.).
-- Run a lint pass and remove any leftover unused imports across tab screens.
-- **Effort:** ~15min
+### 65. ~~Clean up unused imports after ErrorBanner and style extraction~~ ✅
+- ~~After extracting ErrorBanner and removing duplicate styles, some screens may have unused imports (`borderRadius` from theme, etc.).~~
+- **Status:** Done — removed unused `borderRadius` import from nutrition.tsx. 0 ESLint errors, 0 warnings.
 
-### 66. Add error handling to dashboard screen
-- Dashboard loads data from 4+ stores (habits, sleep, exercise, nutrition) but doesn't display errors from any of them.
-- If any store fails to load, the dashboard silently shows empty/stale data with no indication of failure.
-- Should aggregate errors from sub-stores and show an ErrorBanner.
-- **Effort:** ~30min
+### 66. ~~Add error handling to dashboard screen~~ ✅
+- ~~Dashboard loads data from 4+ stores (habits, sleep, exercise, nutrition) but doesn't display errors from any of them.~~
+- **Status:** Done — dashboard now shows `ErrorBanner` when any of the 5 stores has an error. Dismissing clears all store errors.
+
+### 67. Add dashboard unit tests
+- Dashboard (`app/(tabs)/index.tsx`) has zero test coverage. It loads data from 5 stores, computes aggregated stats, and has conditional rendering logic (skeleton states, demo data section, streak badge).
+- Should test: loading state, data rendering, error banner display, pull-to-refresh, demo data loading.
+- **Effort:** ~1-2h
+
+### 68. Add SkeletonCard to ui barrel export
+- `SkeletonCard` is imported from `@/src/components/ui` but it's re-exported through `animations/index.ts` → `ui/index.ts` via `export * from './animations'`. This works but is indirect.
+- Consider adding an explicit named export for discoverability: `export { SkeletonCard } from './animations'`.
+- **Effort:** ~5min
 
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
@@ -405,3 +412,5 @@ Do whatever you think is right.
 - [x] Added skeleton loading states (SkeletonCard) to all 5 data tab screens (TODO #62)
 - [x] Added journalStore (17 tests) and goalsStore (10 tests) — 158 total tests (TODO #63)
 - [x] Extracted reusable ErrorBanner component — replaced inline banners in all 5 tab screens (TODO #64)
+- [x] Removed unused `borderRadius` import from nutrition screen (TODO #65)
+- [x] Added error banner to dashboard — aggregates errors from all 5 stores (TODO #66)
