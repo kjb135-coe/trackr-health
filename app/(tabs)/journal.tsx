@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   RefreshControl,
   TextInput,
+  Alert,
 } from 'react-native';
 import { Plus, Camera, X, BookOpen, Search } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard } from '@/src/components/ui';
@@ -29,7 +31,7 @@ export default function JournalScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
 
-  const { entries, error, loadEntries, search, clearError } = useJournalStore();
+  const { entries, error, loadEntries, deleteEntry, search, clearError } = useJournalStore();
 
   useEffect(() => {
     loadEntries();
@@ -62,6 +64,20 @@ export default function JournalScreen() {
   );
 
   const displayedEntries = searchResults ?? entries;
+
+  const handleDeleteEntry = (id: string, title: string) => {
+    Alert.alert('Delete Entry', `Delete "${title || 'Untitled'}"?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteEntry(id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        },
+      },
+    ]);
+  };
 
   const openModal = (mode: 'text' | 'scan') => {
     setModalMode(mode);
@@ -125,7 +141,11 @@ export default function JournalScreen() {
         ) : (
           displayedEntries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard style={styles.entryCard} delay={index * 50}>
+              <AnimatedCard
+                style={styles.entryCard}
+                delay={index * 50}
+                onLongPress={() => handleDeleteEntry(entry.id, entry.title ?? '')}
+              >
                 <View style={styles.entryHeader}>
                   <Text style={[styles.entryDate, { color: colors.textSecondary }]}>
                     {getRelativeDateLabel(entry.date)}

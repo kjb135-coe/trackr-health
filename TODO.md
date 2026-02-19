@@ -246,9 +246,9 @@ Do whatever you think is right.
 - ~~Journal store has `search()` and `getAllTags()` methods but no UI calls them. Tags stored but never displayed.~~
 - **Status:** Done — added search bar to journal screen (filters entries via `journalRepository.search()`). Added tag badges on journal entry cards.
 
-### 48. ~~Add long-press delete to exercise and nutrition cards~~ ✅
-- ~~Exercise and nutrition meal cards have no way to delete entries from the list screen.~~
-- **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up `handleDeleteSession` on exercise cards and `handleDeleteMeal` on nutrition cards with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
+### 48. ~~Add long-press delete to all data screens~~ ✅
+- ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
+- **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
 ### 46. ~~Optimize N+1 query in getWeeklyStats()~~ ✅
 - ~~`src/services/insights/healthInsights.ts` getWeeklyStats() loops over all habits calling `getCompletionsForHabit()` once per habit~~
@@ -319,4 +319,4 @@ Do whatever you think is right.
 - [x] Added healthInsights test suite (11 tests): weekly stats, daily streak, trend data — 131 total tests
 - [x] Added journal search bar — filters entries via existing `journalRepository.search()` (TODO #47)
 - [x] Added tag display on journal entry cards — shows tag badges below content (TODO #47)
-- [x] Added long-press delete to exercise session cards and nutrition meal cards with Alert confirmation (TODO #48)
+- [x] Added long-press delete to all 4 data screens: exercise, nutrition, sleep, journal (TODO #48)

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Plus, Moon, Sparkles, TrendingUp, TrendingDown, Minus, Clock } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -27,7 +28,7 @@ export default function SleepScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
 
-  const { entries, loadEntries } = useSleepStore();
+  const { entries, loadEntries, deleteEntry } = useSleepStore();
   const { sleepAnalysis, isLoadingSleep, fetchSleepAnalysis } = useAIInsightsStore();
 
   useEffect(() => {
@@ -51,6 +52,20 @@ export default function SleepScreen() {
     setRefreshing(true);
     await loadEntries();
     setRefreshing(false);
+  };
+
+  const handleDeleteEntry = (id: string, date: string) => {
+    Alert.alert('Delete Sleep Entry', `Delete sleep entry from ${date}?`, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteEntry(id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        },
+      },
+    ]);
   };
 
   const recentEntries = entries.slice(0, 7);
@@ -85,7 +100,11 @@ export default function SleepScreen() {
         ) : (
           recentEntries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard style={styles.entryCard} delay={index * 50}>
+              <AnimatedCard
+                style={styles.entryCard}
+                delay={index * 50}
+                onLongPress={() => handleDeleteEntry(entry.id, getRelativeDateLabel(entry.date))}
+              >
                 <View style={styles.entryHeader}>
                   <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
                     {getRelativeDateLabel(entry.date)}
