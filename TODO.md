@@ -189,9 +189,14 @@ Do whatever you think is right.
 - ~~`foodRecognition.ts`, `handwritingOCR.ts`, and `healthInsightsAI.ts` had no request timeout.~~
 - **Status:** Done — all 8 API calls now use `Promise.race()` with `AI_TIMEOUT_MS` (30s). Also replaced 6 hardcoded model names in `healthInsightsAI.ts` with `AI_MODEL` constant.
 
-### 34. Add unit tests for AI service timeout behavior
-- Timeout was added to all Claude API calls but no tests verify the timeout logic fires correctly.
-- Mock `client.messages.create` to simulate slow responses and assert timeout error.
+### 34. ~~Add unit tests for AI service timeout behavior~~ ✅
+- ~~Timeout was added to all Claude API calls but no tests verify the timeout logic fires correctly.~~
+- **Status:** Done — 6 tests for `foodRecognition`: success, timeout, non-text response, invalid JSON, schema validation failure, macro mapping.
+
+### 35. Add input validation for numeric form fields
+- Sleep time inputs accept any text (should validate 0-23 hours, 0-59 minutes).
+- Nutrition calories input has no positive number validation.
+- Exercise duration can be zero but UI still allows save.
 - **Effort:** ~1h
 
 ---
@@ -238,3 +243,4 @@ Do whatever you think is right.
 - [x] Created ErrorBoundary component in src/components/ui/ with retry button, wrapped root layout (TODO #31)
 - [x] Added timeout protection (30s) to all 8 Claude API calls across 3 service files (TODO #33)
 - [x] Replaced 6 hardcoded `claude-sonnet-4-20250514` model strings with `AI_MODEL` constant in healthInsightsAI.ts
+- [x] Added 6 unit tests for foodRecognition service: success, timeout, error handling, schema validation (TODO #34)
