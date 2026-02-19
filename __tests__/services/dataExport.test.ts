@@ -45,6 +45,8 @@ const mockSleep = [
     wakeTime: '06:00',
     durationMinutes: 480,
     quality: 4,
+    notes: 'Slept well',
+    factors: ['exercise'],
     createdAt: '2026-02-18T00:00:00Z',
   },
 ];
@@ -189,6 +191,54 @@ describe('dataExport', () => {
       expect(filePath).toBe('file:///docs/trackr-journal.csv');
       const [, content] = mockWriteAsStringAsync.mock.calls[0];
       expect(content).toContain('id,date,title,mood,tags');
+    });
+
+    it('escapes double quotes per RFC 4180', async () => {
+      mockHabits[0].name = 'My "Awesome" Habit';
+      mockHabits[0].description = 'Description with "quotes"';
+
+      await generateCSVExport('habits');
+      const [, content] = mockWriteAsStringAsync.mock.calls[0];
+
+      // Internal quotes must be doubled: " → ""
+      expect(content).toContain('"My ""Awesome"" Habit"');
+      expect(content).toContain('"Description with ""quotes"""');
+
+      // Restore
+      mockHabits[0].name = 'Read';
+      mockHabits[0].description = '';
+    });
+
+    it('handles null and undefined fields gracefully', async () => {
+      const originalNotes = mockSleep[0].notes;
+      const originalFactors = mockSleep[0].factors;
+      (mockSleep[0] as Record<string, unknown>).notes = null;
+      (mockSleep[0] as Record<string, unknown>).factors = undefined;
+
+      await generateCSVExport('sleep');
+      const [, content] = mockWriteAsStringAsync.mock.calls[0];
+
+      // Should not contain "null" or "undefined" as text
+      const dataLine = content.split('\n')[1];
+      expect(dataLine).not.toContain('null');
+      expect(dataLine).not.toContain('undefined');
+
+      // Restore
+      (mockSleep[0] as Record<string, unknown>).notes = originalNotes;
+      (mockSleep[0] as Record<string, unknown>).factors = originalFactors;
+    });
+
+    it('handles strings with commas inside quoted fields', async () => {
+      mockJournal[0].title = 'Work, life, balance';
+
+      await generateCSVExport('journal');
+      const [, content] = mockWriteAsStringAsync.mock.calls[0];
+
+      // Commas inside quotes should be preserved, not split into columns
+      expect(content).toContain('"Work, life, balance"');
+
+      // Restore
+      mockJournal[0].title = 'Day';
     });
   });
 
