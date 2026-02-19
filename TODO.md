@@ -250,9 +250,9 @@ Do whatever you think is right.
 - ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
 - **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
-### 52. ~~Add 7-day average summary card to sleep screen~~ ✅
-- ~~Sleep screen shows raw entries but no aggregated stats.~~
-- **Status:** Done — added summary card showing average duration, average quality, and number of nights tracked. Also removed unused `getWeekDates()` from date utils.
+### 53. ~~Add summary cards to sleep and exercise screens~~ ✅
+- ~~Sleep and exercise screens show raw entries but no aggregated stats.~~
+- **Status:** Done — sleep shows 7-day average duration, quality, and nights tracked. Exercise shows total workouts, total time, and total calories burned. Also removed unused `getWeekDates()` from date utils.
 
 ### 51. ~~Add date navigation to nutrition and habits screens~~ ✅
 - ~~Users could only view today's data. No way to browse past dates or check off forgotten habits.~~
@@ -339,4 +339,4 @@ Do whatever you think is right.
 - [x] Fixed empty Privacy Policy handler — shows local storage info alert (TODO #49)
 - [x] Added daily streak badge to dashboard header with flame icon (TODO #50)
 - [x] Created DateNavigator component, added date browsing to nutrition and habits screens (TODO #51)
-- [x] Added 7-day average summary card to sleep screen + removed dead `getWeekDates()` (TODO #52)
+- [x] Added summary cards to sleep (avg duration/quality) and exercise (total workouts/time/calories) screens (TODO #53)

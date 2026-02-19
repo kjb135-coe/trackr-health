@@ -78,6 +78,9 @@ export default function ExerciseScreen() {
 
   const recentSessions = sessions.slice(0, 10);
 
+  const totalMinutes = recentSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+  const totalCalories = recentSessions.reduce((sum, s) => sum + (s.caloriesBurned || 0), 0);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
@@ -91,7 +94,45 @@ export default function ExerciseScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View entering={FadeInDown.duration(400)}>
+        {recentSessions.length > 0 && (
+          <Animated.View entering={FadeInDown.duration(400)}>
+            <AnimatedCard style={styles.summaryCard}>
+              <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
+                Recent Activity
+              </Text>
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                    {recentSessions.length}
+                  </Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                    Workouts
+                  </Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                    {formatDuration(totalMinutes)}
+                  </Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                    Total Time
+                  </Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                    {totalCalories.toLocaleString()}
+                  </Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                    Calories
+                  </Text>
+                </View>
+              </View>
+            </AnimatedCard>
+          </Animated.View>
+        )}
+
+        <Animated.View
+          entering={FadeInDown.duration(400).delay(recentSessions.length > 0 ? 100 : 0)}
+        >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Recent Workouts</Text>
         </Animated.View>
 
@@ -275,6 +316,30 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
+  },
+  summaryCard: {
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  summaryItem: {
+    alignItems: 'center',
+  },
+  summaryValue: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  summaryLabel: {
+    fontSize: 12,
+    marginTop: 2,
   },
   sectionTitle: {
     fontSize: 18,
