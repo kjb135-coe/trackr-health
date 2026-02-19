@@ -219,15 +219,21 @@ Do whatever you think is right.
 - ~~Dashboard loads data from 4+ stores (habits, sleep, exercise, nutrition) but doesn't display errors from any of them.~~
 - **Status:** Done — dashboard now shows `ErrorBanner` when any of the 5 stores has an error. Dismissing clears all store errors.
 
-### 67. Add dashboard unit tests
-- Dashboard (`app/(tabs)/index.tsx`) has zero test coverage. It loads data from 5 stores, computes aggregated stats, and has conditional rendering logic (skeleton states, demo data section, streak badge).
-- Should test: loading state, data rendering, error banner display, pull-to-refresh, demo data loading.
-- **Effort:** ~1-2h
+### 67. ~~Add dashboard unit tests~~ ✅
+- ~~Dashboard (`app/(tabs)/index.tsx`) has zero test coverage.~~
+- **Status:** Done — 8 tests covering card rendering, habit progress, empty states, error banner, demo section, data loading. 166 total tests passing.
 
-### 68. Add SkeletonCard to ui barrel export
-- `SkeletonCard` is imported from `@/src/components/ui` but it's re-exported through `animations/index.ts` → `ui/index.ts` via `export * from './animations'`. This works but is indirect.
-- Consider adding an explicit named export for discoverability: `export { SkeletonCard } from './animations'`.
-- **Effort:** ~5min
+### 68. ~~Add SkeletonCard to ui barrel export~~ ✅
+- ~~`SkeletonCard` re-exported indirectly via `export * from './animations'`.~~
+- **Status:** Done — replaced wildcard export with explicit named exports (`Skeleton`, `SkeletonCard`) for discoverability.
+
+### 69. Add pull-to-refresh test for dashboard
+- Dashboard has a pull-to-refresh handler that re-loads all stores. The test file doesn't cover the `onRefresh` path or the demo data loading button press.
+- **Effort:** ~30min
+
+### 70. Add loading spinner suppression for dashboard trend data
+- `getTrendData()` and `getDailyStreak()` silently fail (caught in empty catch block), but they could be slow on first load. Consider adding a subtle loading indicator or ensuring the trend data section degrades gracefully when data is still loading.
+- **Effort:** ~20min
 
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
@@ -414,3 +420,6 @@ Do whatever you think is right.
 - [x] Extracted reusable ErrorBanner component — replaced inline banners in all 5 tab screens (TODO #64)
 - [x] Removed unused `borderRadius` import from nutrition screen (TODO #65)
 - [x] Added error banner to dashboard — aggregates errors from all 5 stores (TODO #66)
+- [x] Removed unused `borderRadius` import from nutrition screen (TODO #65)
+- [x] Replaced wildcard export with explicit named exports in ui barrel (TODO #68)
+- [x] Added dashboard screen tests — 8 tests: cards, progress, errors, demo section, data loading (TODO #67)
