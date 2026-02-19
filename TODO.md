@@ -185,10 +185,14 @@ Do whatever you think is right.
 - Extract modal content, form sections, and list items into dedicated components.
 - **Effort:** ~4-6h (all screens)
 
-### 33. Add API timeout protection for Claude AI calls
-- `foodRecognition.ts` and `handwritingOCR.ts` have no request timeout — a slow API response hangs the UI indefinitely.
-- Should use `Promise.race()` with `AI_TIMEOUT_MS` constant (already defined as 30s).
-- **Effort:** ~30min
+### 33. ~~Add API timeout protection for Claude AI calls~~ ✅
+- ~~`foodRecognition.ts`, `handwritingOCR.ts`, and `healthInsightsAI.ts` had no request timeout.~~
+- **Status:** Done — all 8 API calls now use `Promise.race()` with `AI_TIMEOUT_MS` (30s). Also replaced 6 hardcoded model names in `healthInsightsAI.ts` with `AI_MODEL` constant.
+
+### 34. Add unit tests for AI service timeout behavior
+- Timeout was added to all Claude API calls but no tests verify the timeout logic fires correctly.
+- Mock `client.messages.create` to simulate slow responses and assert timeout error.
+- **Effort:** ~1h
 
 ---
 
@@ -232,3 +236,5 @@ Do whatever you think is right.
 - [x] Typed camera refs as `CameraView` instead of `any` in nutrition/camera and journal/scan (TODO #29)
 - [x] Added KeyboardAvoidingView to all 5 tab screen form modals — habits, sleep, exercise, nutrition, journal (TODO #30)
 - [x] Created ErrorBoundary component in src/components/ui/ with retry button, wrapped root layout (TODO #31)
+- [x] Added timeout protection (30s) to all 8 Claude API calls across 3 service files (TODO #33)
+- [x] Replaced 6 hardcoded `claude-sonnet-4-20250514` model strings with `AI_MODEL` constant in healthInsightsAI.ts
