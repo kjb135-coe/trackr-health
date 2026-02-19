@@ -137,10 +137,10 @@ Yes
 - All data is local SQLite only. No cloud backup/sync.
 - Depends on auth decision (item #3).
 
-### 179. Wire habitReminders notification service to habits UI
+### ~~179. Wire habitReminders notification service to habits UI~~ ✅
 - `src/services/notifications/habitReminders.ts` is fully built and tested (10 tests) but never imported in any screen code.
 - Needs: schedule reminder when habit is created, cancel when deleted, permission request, settings toggle.
-- **Effort:** ~1-2h
+- **Status:** Done — Added reminder toggle + time picker to CreateHabitModal, schedule on create/edit, cancel on disable/delete. Updated Habit type to support `null` for clearing. 5 new tests. 600 total.
 
 ### ~~180. Clean up redundant toBeTruthy() in component test assertions~~ ✅
 - 159 instances of `expect(await findByText('X')).toBeTruthy()` across 21 test files. Since `findByText` already throws if not found, the `.toBeTruthy()` is redundant.
@@ -949,3 +949,10 @@ Yes
 - [x] Fixed test suite after animation rewrite: updated 7 reanimated mocks to strip entering/exiting props, added Firebase ESM mocks to jest.setup.js, removed unused TRANSLATE import (TODO #171)
 - [x] Deduplicated 7 inline reanimated test mocks into shared __tests__/helpers/reanimatedMock.ts (TODO #172)
 - [x] Added onboardingStore tests: initialize, setCompleted, legacy key migration, error fallback — 7 tests, 585 total (TODO #173)
+- [x] Extracted getAuthErrorMessage utility, replaced 3 duplicate functions across auth screens (TODO #174)
+- [x] Added FadeInDown/FadeOut entrance animations to forgot-password and verify-email screens (TODO #175)
+- [x] Fixed auth consistency: STORAGE_KEYS.AUTH_USER, getAuthErrorMessage in login, EMAIL_VERIFICATION_POLL_MS (TODO #176)
+- [x] Fixed missing await on completeOnboarding() in onboarding.tsx (TODO #177)
+- [x] Added demoData tests (6): habit creation, completions, sleep, exercise, meals, journals — 595 total (TODO #178)
+- [x] Wired habitReminders to UI: reminder toggle + time picker in CreateHabitModal, cancel on delete, Habit type null support — 5 new tests, 600 total (TODO #179)
+- [x] Cleaned up 159 redundant toBeTruthy() assertions across 21 test files (TODO #180)
