@@ -1048,3 +1048,11 @@ Yes
 ### ~~202. Add firebase config initialization tests~~ ✅
 - `src/services/firebase/config.ts` (43 lines) has zero tests. Test `isConfigured` with/without env vars, hot-reload recovery, null exports when unconfigured.
 - **Status:** Done — 8 tests: isConfigured false (no vars, partial vars), isConfigured true (all vars), null exports when unconfigured, no initializeApp when unconfigured, initializes new app, reuses existing app, hot-reload fallback to getAuth. Also added missing `getAuth` mock to jest.setup.js. 724 total tests.
+
+### 203. Expand constants.test.ts coverage for untested exports
+- `constants.test.ts` only tests 3 exports (getQualityColor, estimateCalories, withTimeout) but `constants.ts` exports 13+: STORAGE_KEYS, QUALITY_LABELS, MOOD_LABELS, INTENSITY_LABELS, EXERCISE_TYPE_LABELS, MEAL_TYPE_LABELS, SLEEP_FACTORS, HABIT_COLORS, OCR_CONFIDENCE, AI_MODEL, AI_MAX_TOKENS, APP_LINKS, EMAIL_VERIFICATION_POLL_MS.
+- **Effort:** ~15min
+
+### 204. Remove duplicate feature color definitions from colors.ts
+- Feature colors (habits, sleep, exercise, nutrition, journal) are defined in 3 places: `colors.ts`, `ThemeContext.tsx` (light+dark), and `constants.ts` (HABIT_COLORS). `colors.ts` is only used by ErrorBoundary. Remove duplicates.
+- **Effort:** ~10min
