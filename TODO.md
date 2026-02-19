@@ -1064,3 +1064,11 @@ Yes
 ### ~~206. Add try-catch to onboardingStore AsyncStorage write~~ ✅
 - `src/store/onboardingStore.ts` line 37-39: `setCompleted()` calls `AsyncStorage.setItem()` without try-catch. If storage fails, the promise rejects silently. Should wrap in try-catch with `getErrorMessage()`.
 - **Status:** Done — Wrapped AsyncStorage.setItem in try-catch with silent fail. State is set optimistically before the write so the user isn't stuck on onboarding if storage fails.
+
+### 207. Add csvEscape edge case tests to dataExport.test.ts
+- `csvEscape()` in `dataExport.ts` is only indirectly tested via CSV generation. Add direct tests for edge cases: strings with internal double quotes, null/undefined, strings with commas, strings with newlines. Export the function or test via CSV rows containing these edge cases.
+- **Effort:** ~10min
+
+### 208. Add animations.ts constant shape tests
+- `src/utils/animations.ts` (75 lines) exports 5 constant objects (ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE, TRANSLATE) with no tests. Add structural tests verifying all expected keys exist and values are positive numbers.
+- **Effort:** ~10min
