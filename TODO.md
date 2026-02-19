@@ -1037,3 +1037,7 @@ Yes
 - `src/services/auth/authService.ts` exports 11 functions for Firebase auth but has no tests. Only the mock service and error messages are tested.
 - Mock Firebase `auth` module. Test all functions: signUp, signIn, signOut, sendPasswordReset, etc. Test both configured and unconfigured states.
 - **Effort:** ~20min
+
+### 200. Add settings screen tests
+- `app/settings.tsx` has no screen-level test coverage. Tests should cover: theme toggle, API key input, data export, demo data loading, version display.
+- **Effort:** ~20min
