@@ -1057,9 +1057,9 @@ Yes
 - Feature colors (habits, sleep, exercise, nutrition, journal) are defined in 3 places: `colors.ts`, `ThemeContext.tsx` (light+dark), and `constants.ts` (HABIT_COLORS). `colors.ts` is only used by ErrorBoundary. Remove duplicates.
 - **Status:** Done — Deleted `src/theme/colors.ts` (dead code, never imported anywhere) and removed re-export from `src/theme/index.ts`. HABIT_COLORS left in place — it serves a distinct purpose as a color picker palette for habits, not a duplicate of feature colors.
 
-### 205. Fix CSV quote escaping bug in dataExport.ts
+### ~~205. Fix CSV quote escaping bug in dataExport.ts~~ ✅
 - `src/services/export/dataExport.ts` wraps strings in quotes but doesn't escape internal quotes. If a habit name contains `"`, the CSV output is malformed (e.g., `"My "Awesome" Habit"` is invalid CSV). Need to escape `"` as `""` per RFC 4180.
-- **Effort:** ~10min
+- **Status:** Done — Added `csvEscape()` helper that wraps in quotes and doubles internal quotes per RFC 4180. Applied to all string fields across all 5 CSV export types (habits, sleep, exercise, nutrition, journal). Also handles null/undefined gracefully.
 
 ### 206. Add try-catch to onboardingStore AsyncStorage write
 - `src/store/onboardingStore.ts` line 37-39: `setCompleted()` calls `AsyncStorage.setItem()` without try-catch. If storage fails, the promise rejects silently. Should wrap in try-catch with `getErrorMessage()`.

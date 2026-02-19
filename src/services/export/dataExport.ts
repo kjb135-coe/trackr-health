@@ -17,6 +17,12 @@ import {
   JournalEntry,
 } from '@/src/types';
 
+/** Escape a value for CSV per RFC 4180: wrap in quotes, double any internal quotes. */
+function csvEscape(value: string | null | undefined): string {
+  const str = value ?? '';
+  return `"${str.replace(/"/g, '""')}"`;
+}
+
 interface ExportData {
   exportedAt: string;
   version: string;
@@ -80,7 +86,7 @@ export async function generateCSVExport(
       const habits = await habitRepository.getAll();
       csvContent = 'id,name,description,frequency,color,icon,reminderTime,createdAt\n';
       habits.forEach((h) => {
-        csvContent += `"${h.id}","${h.name}","${h.description || ''}","${h.frequency}","${h.color}","${h.icon}","${h.reminderTime || ''}","${h.createdAt}"\n`;
+        csvContent += `${csvEscape(h.id)},${csvEscape(h.name)},${csvEscape(h.description)},${csvEscape(h.frequency)},${csvEscape(h.color)},${csvEscape(h.icon)},${csvEscape(h.reminderTime)},${csvEscape(h.createdAt)}\n`;
       });
       fileName = 'trackr-habits.csv';
       break;
@@ -89,7 +95,7 @@ export async function generateCSVExport(
       const sleep = await sleepRepository.getAll();
       csvContent = 'id,date,bedtime,wakeTime,durationMinutes,quality,notes,factors,createdAt\n';
       sleep.forEach((s) => {
-        csvContent += `"${s.id}","${s.date}","${s.bedtime}","${s.wakeTime}",${s.durationMinutes},${s.quality},"${s.notes || ''}","${(s.factors || []).join(';')}","${s.createdAt}"\n`;
+        csvContent += `${csvEscape(s.id)},${csvEscape(s.date)},${csvEscape(s.bedtime)},${csvEscape(s.wakeTime)},${s.durationMinutes},${s.quality},${csvEscape(s.notes)},${csvEscape((s.factors || []).join(';'))},${csvEscape(s.createdAt)}\n`;
       });
       fileName = 'trackr-sleep.csv';
       break;
@@ -98,7 +104,7 @@ export async function generateCSVExport(
       const exercise = await exerciseRepository.getAll();
       csvContent = 'id,date,type,durationMinutes,intensity,caloriesBurned,notes,createdAt\n';
       exercise.forEach((e) => {
-        csvContent += `"${e.id}","${e.date}","${e.type}",${e.durationMinutes},"${e.intensity}",${e.caloriesBurned || 0},"${e.notes || ''}","${e.createdAt}"\n`;
+        csvContent += `${csvEscape(e.id)},${csvEscape(e.date)},${csvEscape(e.type)},${e.durationMinutes},${csvEscape(e.intensity)},${e.caloriesBurned || 0},${csvEscape(e.notes)},${csvEscape(e.createdAt)}\n`;
       });
       fileName = 'trackr-exercise.csv';
       break;
@@ -108,7 +114,7 @@ export async function generateCSVExport(
       csvContent =
         'id,date,mealType,name,totalCalories,totalProtein,totalCarbs,totalFat,createdAt\n';
       meals.forEach((m) => {
-        csvContent += `"${m.id}","${m.date}","${m.mealType}","${m.name || ''}",${m.totalCalories},${m.totalProtein || 0},${m.totalCarbs || 0},${m.totalFat || 0},"${m.createdAt}"\n`;
+        csvContent += `${csvEscape(m.id)},${csvEscape(m.date)},${csvEscape(m.mealType)},${csvEscape(m.name)},${m.totalCalories},${m.totalProtein || 0},${m.totalCarbs || 0},${m.totalFat || 0},${csvEscape(m.createdAt)}\n`;
       });
       fileName = 'trackr-nutrition.csv';
       break;
@@ -117,7 +123,7 @@ export async function generateCSVExport(
       const journal = await journalRepository.getAll();
       csvContent = 'id,date,title,mood,tags,isScanned,createdAt\n';
       journal.forEach((j) => {
-        csvContent += `"${j.id}","${j.date}","${j.title}",${j.mood || ''},"${(j.tags || []).join(';')}",${j.isScanned},"${j.createdAt}"\n`;
+        csvContent += `${csvEscape(j.id)},${csvEscape(j.date)},${csvEscape(j.title)},${j.mood || ''},${csvEscape((j.tags || []).join(';'))},${j.isScanned},${csvEscape(j.createdAt)}\n`;
       });
       fileName = 'trackr-journal.csv';
       break;
