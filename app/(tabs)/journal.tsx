@@ -37,7 +37,7 @@ import {
 } from '@/src/components/ui';
 import { useJournalStore, useAIInsightsStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
-import { MOOD_LABELS } from '@/src/utils/constants';
+import { MOOD_LABELS, TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { JournalEntry } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { JournalEntryModal } from '@/src/components/journal';
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-    paddingBottom: 100,
+    paddingBottom: TAB_CONTENT_PADDING_BOTTOM,
   },
   searchContainer: {
     flexDirection: 'row',

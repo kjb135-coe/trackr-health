@@ -26,7 +26,7 @@ import {
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
-import { QUALITY_LABELS, getQualityColor } from '@/src/utils/constants';
+import { QUALITY_LABELS, getQualityColor, TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
 import { SleepEntry } from '@/src/types';
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-    paddingBottom: 100,
+    paddingBottom: TAB_CONTENT_PADDING_BOTTOM,
   },
   summaryCard: {
     padding: spacing.md,

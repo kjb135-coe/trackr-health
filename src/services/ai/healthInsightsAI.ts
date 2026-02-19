@@ -6,7 +6,13 @@ import {
   nutritionRepository,
   journalRepository,
 } from '@/src/database/repositories';
-import { AI_MODEL, withTimeout } from '@/src/utils/constants';
+import {
+  AI_MODEL,
+  AI_MAX_TOKENS,
+  AI_MAX_TOKENS_MEDIUM,
+  AI_MAX_TOKENS_BRIEF,
+  withTimeout,
+} from '@/src/utils/constants';
 
 export interface AIInsight {
   category: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal' | 'overall';
@@ -184,7 +190,7 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 1024,
+      max_tokens: AI_MAX_TOKENS,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Daily coaching request timed out. Please try again.',
@@ -235,7 +241,7 @@ Suggest habits that fill gaps in their routine. Be specific and practical.`;
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 512,
+      max_tokens: AI_MAX_TOKENS_MEDIUM,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Habit suggestions request timed out. Please try again.',
@@ -284,7 +290,7 @@ Be specific and reference their actual data.`;
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 512,
+      max_tokens: AI_MAX_TOKENS_MEDIUM,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Sleep analysis request timed out. Please try again.',
@@ -327,7 +333,7 @@ Consider their recent activity level and suggest variety. If they're tired (low 
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 256,
+      max_tokens: AI_MAX_TOKENS_BRIEF,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Exercise recommendation request timed out. Please try again.',
@@ -376,7 +382,7 @@ Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 512,
+      max_tokens: AI_MAX_TOKENS_MEDIUM,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Mood analysis request timed out. Please try again.',
@@ -432,7 +438,7 @@ Be practical and encouraging.`;
   const response = await withTimeout(
     client.messages.create({
       model: AI_MODEL,
-      max_tokens: 256,
+      max_tokens: AI_MAX_TOKENS_BRIEF,
       messages: [{ role: 'user', content: prompt }],
     }),
     'Nutrition advice request timed out. Please try again.',

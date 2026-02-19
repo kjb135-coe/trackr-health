@@ -32,6 +32,7 @@ import {
 import { subDays, format, parseISO } from 'date-fns';
 import { getDateString } from '@/src/utils/date';
 import { Habit } from '@/src/types';
+import { TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
 
 export default function HabitsScreen() {
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-    paddingBottom: 100,
+    paddingBottom: TAB_CONTENT_PADDING_BOTTOM,
   },
   habitCard: {
     flexDirection: 'row',

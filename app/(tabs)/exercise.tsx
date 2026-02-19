@@ -26,7 +26,11 @@ import {
 import { useExerciseStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
-import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
+import {
+  EXERCISE_TYPE_LABELS,
+  INTENSITY_LABELS,
+  TAB_CONTENT_PADDING_BOTTOM,
+} from '@/src/utils/constants';
 import { ExerciseIntensity, ExerciseSession } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
@@ -344,7 +348,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-    paddingBottom: 100,
+    paddingBottom: TAB_CONTENT_PADDING_BOTTOM,
   },
   summaryCard: {
     padding: spacing.md,

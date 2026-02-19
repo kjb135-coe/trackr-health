@@ -26,7 +26,7 @@ import {
 } from '@/src/components/ui';
 import { useNutritionStore, useAIInsightsStore, useGoalsStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
-import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
+import { MEAL_TYPE_LABELS, TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
 import { Meal } from '@/src/types';
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.md,
-    paddingBottom: 100,
+    paddingBottom: TAB_CONTENT_PADDING_BOTTOM,
   },
   summaryCard: {
     padding: spacing.md,

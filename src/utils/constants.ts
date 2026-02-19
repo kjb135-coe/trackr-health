@@ -109,8 +109,13 @@ export function estimateCalories(type: string, durationMinutes: number, intensit
 // AI Configuration
 export const AI_MODEL = 'claude-sonnet-4-20250514';
 export const AI_MAX_TOKENS = 1024;
+export const AI_MAX_TOKENS_MEDIUM = 512;
+export const AI_MAX_TOKENS_BRIEF = 256;
 export const AI_OCR_MAX_TOKENS = 4096;
 const AI_TIMEOUT_MS = 30000;
+
+// Layout
+export const TAB_CONTENT_PADDING_BOTTOM = 100;
 
 /** Race a promise against a timeout. Rejects with the given message if the timeout fires first. */
 export function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {

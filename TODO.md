@@ -599,6 +599,11 @@ Yes
 - All 5 tab screens had identical `checkApiKey` function + `useState` + `useEffect` pattern.
 - **Status:** Done — created `useApiKeyExists()` hook in `src/services/claude/client.ts`. Updated all 5 screens. Removed ~25 lines of duplicate code.
 
+### ~~169. Replace hardcoded magic numbers with named constants~~ ✅
+- `healthInsightsAI.ts` used hardcoded `max_tokens: 512` and `256` instead of named constants.
+- All 5 tab screens used `paddingBottom: 100` magic number.
+- **Status:** Done — added `AI_MAX_TOKENS_MEDIUM` (512), `AI_MAX_TOKENS_BRIEF` (256), `TAB_CONTENT_PADDING_BOTTOM` (100) to constants.ts. Updated healthInsightsAI (5 calls) and all 5 tab screens.
+
 ### ~~168. Extract useApiKeyExists hook — removes 5 copy-pasted functions~~ ✅
 - All 5 tab screens (habits, sleep, exercise, nutrition, journal) had identical `checkApiKey` function + `useState` + `useEffect` pattern.
 - **Status:** Done — created `useApiKeyExists()` hook in `src/services/claude/client.ts`. Replaced manual pattern in all 5 screens. Each screen drops from 7 lines to 1. Exported from barrel.
@@ -900,4 +905,5 @@ Yes
 - [x] Added missing sports/cardio/stretching to calorie estimation, toggleCompletion error test, updateUserProfile edge cases — 578 total tests (TODO #166)
 - [x] Fixed stale date in dashboard, extracted safeJsonParse, used colors.overlay in 7 modals, unified theme key, fixed sleep #FFFFFF, removed dead DateString type (TODO #167)
 - [x] Extracted useApiKeyExists hook, replaced 5 copy-pasted checkApiKey patterns across tab screens (TODO #168)
+- [x] Replaced hardcoded max_tokens and paddingBottom with named constants (TODO #169)
 - [x] Extracted useApiKeyExists hook, removed 5 copy-pasted checkApiKey patterns from tab screens (TODO #168)
