@@ -135,3 +135,9 @@ export const OCR_CONFIDENCE: Record<'HIGH' | 'MEDIUM' | 'LOW', number> = {
   MEDIUM: 0.75,
   LOW: 0.5,
 };
+
+// App links
+export const APP_LINKS = {
+  APP_STORE: 'https://apps.apple.com/app/trackr-health',
+  SUPPORT_EMAIL: 'mailto:support@trackr.app?subject=Trackr Support',
+} as const;

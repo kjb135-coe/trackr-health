@@ -136,8 +136,8 @@ export default function NutritionCameraScreen() {
       );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch {
-      Alert.alert('Error', 'Failed to save meal');
+    } catch (error: unknown) {
+      Alert.alert('Error', getErrorMessage(error));
     }
     setSaving(false);
   };

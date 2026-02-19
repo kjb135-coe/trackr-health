@@ -566,6 +566,10 @@ Do whatever you think is right.
 - exerciseRepository (73%), sleepRepository (85%), journalRepository (85%), nutritionRepository (86%) all had uncovered update field branches.
 - **Status:** Done — added "updates all optional fields" tests to exercise, sleep, journal, and nutrition repos. Also added multi-food grouping test for nutritionRepository. 502 total tests.
 
+### 129. ~~Code quality quick wins~~ ✅
+- `coverage/` directory not in .gitignore. Hardcoded App Store and support email URLs in settings.tsx. Generic error message in nutrition/camera.tsx.
+- **Status:** Done — added `coverage/` to .gitignore, extracted `APP_LINKS` constant to constants.ts, replaced hardcoded URLs in settings.tsx, replaced generic error with `getErrorMessage()` in camera save handler.
+
 ---
 
 ## Completed in This Audit
@@ -706,3 +710,4 @@ Do whatever you think is right.
 - [x] Removed unused deps: expo-blur, expo-crypto, expo-image-manipulator (TODO #126)
 - [x] Improved habitRepository coverage from 55% to 90%+ — 7 new tests (update fields, completions, streaks), 21 total — 497 total tests (TODO #127)
 - [x] Improved all 4 repository update field coverage — exercise, sleep, journal, nutrition repos + multi-food grouping test — 502 total tests (TODO #128)
+- [x] Added coverage/ to .gitignore, extracted APP_LINKS constant, fixed generic error in camera save (TODO #129)

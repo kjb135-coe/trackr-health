@@ -43,6 +43,7 @@ import { AnimatedButton } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 import { hasApiKey, setApiKey, deleteApiKey } from '@/src/services/claude';
 import { shareExportedData, shareCSVExport } from '@/src/services/export';
+import { APP_LINKS } from '@/src/utils/constants';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
@@ -484,7 +485,7 @@ export default function SettingsScreen() {
             iconBg={colors.warning + '20'}
             title="Rate Trackr"
             subtitle="Love the app? Leave a review!"
-            onPress={() => Linking.openURL('https://apps.apple.com/app/trackr-health')}
+            onPress={() => Linking.openURL(APP_LINKS.APP_STORE)}
           />
 
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
@@ -504,7 +505,7 @@ export default function SettingsScreen() {
             iconBg={colors.journal + '20'}
             title="Contact Support"
             subtitle="Get help or send feedback"
-            onPress={() => Linking.openURL('mailto:support@trackr.app?subject=Trackr Support')}
+            onPress={() => Linking.openURL(APP_LINKS.SUPPORT_EMAIL)}
           />
 
           <View style={[styles.divider, { backgroundColor: colors.border }]} />
