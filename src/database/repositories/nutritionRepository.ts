@@ -310,6 +310,15 @@ async function attachFoodsToMeals(
   return meals;
 }
 
+function safeJsonParse<T>(value: string | null): T | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return undefined;
+  }
+}
+
 function mapRowToMeal(row: MealRow): Meal {
   return {
     id: row.id,
@@ -323,7 +332,7 @@ function mapRowToMeal(row: MealRow): Meal {
     totalFat: row.total_fat ?? undefined,
     totalFiber: row.total_fiber ?? undefined,
     photoUri: row.photo_uri ?? undefined,
-    aiAnalysis: row.ai_analysis ? JSON.parse(row.ai_analysis) : undefined,
+    aiAnalysis: safeJsonParse(row.ai_analysis),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

@@ -139,6 +139,15 @@ export const sleepRepository = {
   },
 };
 
+function safeJsonParse<T>(value: string | null): T | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return undefined;
+  }
+}
+
 function mapRowToSleepEntry(row: SleepEntryRow): SleepEntry {
   return {
     id: row.id,
@@ -148,7 +157,7 @@ function mapRowToSleepEntry(row: SleepEntryRow): SleepEntry {
     durationMinutes: row.duration_minutes,
     quality: row.quality as 1 | 2 | 3 | 4 | 5,
     notes: row.notes ?? undefined,
-    factors: row.factors ? JSON.parse(row.factors) : undefined,
+    factors: safeJsonParse<string[]>(row.factors),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

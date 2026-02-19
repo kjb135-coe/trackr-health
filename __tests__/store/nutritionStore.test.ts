@@ -152,13 +152,12 @@ describe('nutritionStore', () => {
       expect(nutritionRepository.getDailyTotals).toHaveBeenCalledWith('2026-02-18');
     });
 
-    it('silently fails on error', async () => {
+    it('sets error on failure', async () => {
       nutritionRepository.getDailyTotals.mockRejectedValue(new Error('fail'));
 
       await useNutritionStore.getState().loadDailyTotals('2026-02-18');
 
-      // Should not set error - silent fail
-      expect(useNutritionStore.getState().error).toBeNull();
+      expect(useNutritionStore.getState().error).toBe('fail');
     });
   });
 

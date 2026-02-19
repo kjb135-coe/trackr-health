@@ -165,13 +165,26 @@ export const journalRepository = {
     const tagSet = new Set<string>();
     for (const row of rows) {
       if (row.tags) {
-        const tags = JSON.parse(row.tags) as string[];
-        tags.forEach((tag) => tagSet.add(tag));
+        try {
+          const tags = JSON.parse(row.tags) as string[];
+          tags.forEach((tag) => tagSet.add(tag));
+        } catch {
+          // Skip rows with corrupted JSON
+        }
       }
     }
     return Array.from(tagSet).sort();
   },
 };
+
+function safeJsonParse<T>(value: string | null): T | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return undefined;
+  }
+}
 
 function mapRowToEntry(row: JournalEntryRow): JournalEntry {
   return {
@@ -180,7 +193,7 @@ function mapRowToEntry(row: JournalEntryRow): JournalEntry {
     title: row.title ?? undefined,
     content: row.content,
     mood: (row.mood as JournalEntry['mood']) ?? undefined,
-    tags: row.tags ? JSON.parse(row.tags) : undefined,
+    tags: safeJsonParse<string[]>(row.tags),
     isScanned: Boolean(row.is_scanned),
     originalImageUri: row.original_image_uri ?? undefined,
     ocrConfidence: row.ocr_confidence ?? undefined,

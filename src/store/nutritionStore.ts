@@ -61,8 +61,8 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
     try {
       const totals = await nutritionRepository.getDailyTotals(dateStr);
       set({ dailyTotals: totals });
-    } catch {
-      // Silent fail - totals will show zero
+    } catch (error) {
+      set({ error: getErrorMessage(error) });
     }
   },
 

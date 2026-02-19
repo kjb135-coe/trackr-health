@@ -5,8 +5,9 @@ let db: SQLite.SQLiteDatabase | null = null;
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (db) return db;
 
-  db = await SQLite.openDatabaseAsync('trackr.db');
-  await runMigrations(db);
+  const database = await SQLite.openDatabaseAsync('trackr.db');
+  await runMigrations(database);
+  db = database;
   return db;
 }
 
@@ -22,7 +23,7 @@ async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
 
   // Check which migrations have been applied
   const appliedMigrations = await database.getAllAsync<{ name: string }>(
-    'SELECT name FROM migrations'
+    'SELECT name FROM migrations',
   );
   const appliedSet = new Set(appliedMigrations.map((m) => m.name));
 
@@ -30,10 +31,7 @@ async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
   for (const migration of migrations) {
     if (!appliedSet.has(migration.name)) {
       await database.execAsync(migration.sql);
-      await database.runAsync(
-        'INSERT INTO migrations (name) VALUES (?)',
-        migration.name
-      );
+      await database.runAsync('INSERT INTO migrations (name) VALUES (?)', migration.name);
     }
   }
 }

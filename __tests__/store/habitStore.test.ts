@@ -202,13 +202,13 @@ describe('habitStore', () => {
       expect(map.get('1')).toEqual(mockCompletion);
     });
 
-    it('silently fails on error', async () => {
+    it('sets error on failure', async () => {
       habitRepository.getCompletionsForDate.mockRejectedValue(new Error('fail'));
 
       await useHabitStore.getState().loadTodayCompletions();
 
       expect(useHabitStore.getState().todayCompletions.size).toBe(0);
-      expect(useHabitStore.getState().error).toBeNull();
+      expect(useHabitStore.getState().error).toBe('fail');
     });
   });
 
