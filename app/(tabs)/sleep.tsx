@@ -21,6 +21,7 @@ import {
   FAB,
   SkeletonCard,
   ErrorBanner,
+  EmptyState,
 } from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
@@ -158,13 +159,11 @@ export default function SleepScreen() {
         {isLoading && entries.length === 0 ? (
           <SkeletonCard lines={3} style={{ marginBottom: spacing.sm }} />
         ) : !dateEntry ? (
-          <View style={styles.emptyState}>
-            <Moon color={colors.sleep} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No sleep logged</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              Tap + to log your sleep
-            </Text>
-          </View>
+          <EmptyState
+            icon={<Moon color={colors.sleep} size={48} />}
+            title="No sleep logged"
+            subtitle="Tap + to log your sleep"
+          />
         ) : (
           <Animated.View entering={FadeInDown.duration(400)}>
             <AnimatedCard
@@ -380,19 +379,6 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 12,
     marginTop: 2,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: spacing.md,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    marginTop: spacing.xs,
   },
   entryCard: {
     padding: spacing.md,

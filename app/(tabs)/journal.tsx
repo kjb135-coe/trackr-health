@@ -21,6 +21,7 @@ import {
   FABGroup,
   SkeletonCard,
   ErrorBanner,
+  EmptyState,
 } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
@@ -178,17 +179,15 @@ export default function JournalScreen() {
             <SkeletonCard lines={3} style={{ marginBottom: spacing.sm }} />
           </>
         ) : displayedEntries.length === 0 ? (
-          <View style={styles.emptyState}>
-            <BookOpen color={colors.journal} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              {searchQuery || selectedTag ? 'No matching entries' : 'No journal entries yet'}
-            </Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              {searchQuery || selectedTag
+          <EmptyState
+            icon={<BookOpen color={colors.journal} size={48} />}
+            title={searchQuery || selectedTag ? 'No matching entries' : 'No journal entries yet'}
+            subtitle={
+              searchQuery || selectedTag
                 ? 'Try a different search term or tag'
-                : 'Start writing or scan a handwritten entry'}
-            </Text>
-          </View>
+                : 'Start writing or scan a handwritten entry'
+            }
+          />
         ) : (
           displayedEntries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
@@ -316,20 +315,6 @@ const styles = StyleSheet.create({
   tagFilterText: {
     fontSize: 13,
     fontWeight: '500',
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: spacing.md,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    marginTop: spacing.xs,
-    textAlign: 'center',
   },
   entryCard: {
     padding: spacing.md,

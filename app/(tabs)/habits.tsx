@@ -13,7 +13,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, DateNavigator, FAB, SkeletonCard, ErrorBanner } from '@/src/components/ui';
+import {
+  AnimatedCard,
+  DateNavigator,
+  FAB,
+  SkeletonCard,
+  ErrorBanner,
+  EmptyState,
+} from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
 import {
   StreakBadge,
@@ -155,12 +162,11 @@ export default function HabitsScreen() {
             <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
           </>
         ) : habits.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No habits yet</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              Tap + to create your first habit
-            </Text>
-          </View>
+          <EmptyState
+            icon={null}
+            title="No habits yet"
+            subtitle="Tap + to create your first habit"
+          />
         ) : (
           habits.map((habit, index) => {
             const isCompleted = todayCompletions.get(habit.id)?.completed;
@@ -277,18 +283,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  emptySubtext: {
-    fontSize: 14,
-    marginTop: spacing.xs,
   },
   habitCard: {
     flexDirection: 'row',

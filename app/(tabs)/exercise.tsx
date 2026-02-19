@@ -21,6 +21,7 @@ import {
   FAB,
   SkeletonCard,
   ErrorBanner,
+  EmptyState,
 } from '@/src/components/ui';
 import { useExerciseStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, getDateString } from '@/src/utils/date';
@@ -168,13 +169,11 @@ export default function ExerciseScreen() {
             <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
           </>
         ) : dateSessions.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Dumbbell color={colors.exercise} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No workouts</Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              Tap + to log your exercise
-            </Text>
-          </View>
+          <EmptyState
+            icon={<Dumbbell color={colors.exercise} size={48} />}
+            title="No workouts"
+            subtitle="Tap + to log your exercise"
+          />
         ) : (
           dateSessions.map((session, index) => (
             <Animated.View key={session.id} entering={FadeInDown.duration(400).delay(index * 50)}>
@@ -376,19 +375,6 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 12,
     marginTop: 2,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: spacing.md,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    marginTop: spacing.xs,
   },
   sessionCard: {
     padding: spacing.md,

@@ -3,6 +3,7 @@ export { Card } from './Card';
 export { Input } from './Input';
 export { ErrorBoundary } from './ErrorBoundary';
 export { ErrorBanner } from './ErrorBanner';
+export { EmptyState } from './EmptyState';
 export { DateNavigator } from './DateNavigator';
 export { FAB, SecondaryFAB, FABGroup } from './FAB';
 

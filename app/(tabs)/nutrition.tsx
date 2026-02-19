@@ -6,7 +6,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
-import { AnimatedCard, DateNavigator, FAB, SkeletonCard, ErrorBanner } from '@/src/components/ui';
+import {
+  AnimatedCard,
+  DateNavigator,
+  FAB,
+  SkeletonCard,
+  ErrorBanner,
+  EmptyState,
+} from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -157,15 +164,11 @@ export default function NutritionScreen() {
             <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
           </>
         ) : dateMeals.length === 0 ? (
-          <View style={styles.emptyState}>
-            <UtensilsCrossed color={colors.nutrition} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              No meals logged yet
-            </Text>
-            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              Tap + to log your food
-            </Text>
-          </View>
+          <EmptyState
+            icon={<UtensilsCrossed color={colors.nutrition} size={48} />}
+            title="No meals logged yet"
+            subtitle="Tap + to log your food"
+          />
         ) : (
           dateMeals.map((meal, index) => (
             <Animated.View
@@ -283,19 +286,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: spacing.md,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: spacing.md,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    marginTop: spacing.xs,
   },
   mealCard: {
     padding: spacing.md,

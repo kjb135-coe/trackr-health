@@ -108,6 +108,10 @@ Do whatever you think is right.
 - All modal save handlers lacked try-catch — failures gave no user feedback.
 - **Status:** Done — wrapped save operations in all 6 modal components (NutritionLogModal, JournalEntryModal, ExerciseLogModal, SleepLogModal, CreateHabitModal, HabitSuggestionsModal) with try-catch + `Alert.alert('Save failed', getErrorMessage(error))`.
 
+### 98. ~~Extract reusable EmptyState component~~ ✅
+- All 5 tab screens had duplicate empty state pattern (container View + title Text + subtitle Text + identical styles).
+- **Status:** Done — created `EmptyState` component in `src/components/ui/`. Updated all 5 screens. Removed ~60 lines of duplicate styles.
+
 ### 97. ~~Add ErrorBanner and DateNavigator UI component tests~~ ✅
 - Two core reusable UI components used across all tab screens had no test coverage.
 - **Status:** Done — ErrorBanner (2 tests): rendering and dismiss callback. DateNavigator (4 tests): today/yesterday labels, navigation to today, disabled forward on today. 334 total tests.
@@ -557,3 +561,4 @@ Do whatever you think is right.
 - [x] Memoized AICoaching category/priority lookups with useMemo (TODO #95)
 - [x] Added habitReminders tests (10): permissions, scheduling, cancellation, filtering, listeners — 328 total tests (TODO #96)
 - [x] Added ErrorBanner (2) and DateNavigator (4) UI component tests — 334 total tests (TODO #97)
+- [x] Extracted reusable EmptyState component — replaced inline patterns in all 5 tab screens (TODO #98)
