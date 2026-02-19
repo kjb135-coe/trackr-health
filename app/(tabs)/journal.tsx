@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, FAB, SecondaryFAB, FABGroup } from '@/src/components/ui';
+import { AnimatedCard, FAB, SecondaryFAB, FABGroup, SkeletonCard } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
@@ -32,7 +32,8 @@ export default function JournalScreen() {
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const { entries, error, loadEntries, deleteEntry, search, clearError } = useJournalStore();
+  const { entries, isLoading, error, loadEntries, deleteEntry, search, clearError } =
+    useJournalStore();
 
   useEffect(() => {
     loadEntries();
@@ -170,7 +171,12 @@ export default function JournalScreen() {
           </ScrollView>
         )}
 
-        {displayedEntries.length === 0 ? (
+        {isLoading && entries.length === 0 ? (
+          <>
+            <SkeletonCard lines={3} style={{ marginBottom: spacing.sm }} />
+            <SkeletonCard lines={3} style={{ marginBottom: spacing.sm }} />
+          </>
+        ) : displayedEntries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>

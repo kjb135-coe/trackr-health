@@ -23,7 +23,13 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton, DateNavigator, FAB } from '@/src/components/ui';
+import {
+  AnimatedCard,
+  AnimatedButton,
+  DateNavigator,
+  FAB,
+  SkeletonCard,
+} from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
@@ -39,7 +45,7 @@ export default function SleepScreen() {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
 
-  const { entries, error, loadEntries, deleteEntry, clearError } = useSleepStore();
+  const { entries, isLoading, error, loadEntries, deleteEntry, clearError } = useSleepStore();
   const { sleepAnalysis, isLoadingSleep, fetchSleepAnalysis } = useAIInsightsStore();
 
   useEffect(() => {
@@ -156,7 +162,9 @@ export default function SleepScreen() {
           </Animated.View>
         )}
 
-        {!dateEntry ? (
+        {isLoading && entries.length === 0 ? (
+          <SkeletonCard lines={3} style={{ marginBottom: spacing.sm }} />
+        ) : !dateEntry ? (
           <View style={styles.emptyState}>
             <Moon color={colors.sleep} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No sleep logged</Text>

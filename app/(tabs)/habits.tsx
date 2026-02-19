@@ -13,7 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, DateNavigator, FAB } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB, SkeletonCard } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
 import {
   StreakBadge,
@@ -50,6 +50,7 @@ export default function HabitsScreen() {
     getStreak,
     getAllStreaks,
     getWeeklyCompletions,
+    isLoading,
     error,
     clearError,
   } = useHabitStore();
@@ -155,7 +156,13 @@ export default function HabitsScreen() {
           </TouchableOpacity>
         )}
 
-        {habits.length === 0 ? (
+        {isLoading && habits.length === 0 ? (
+          <>
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+          </>
+        ) : habits.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No habits yet</Text>
             <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>

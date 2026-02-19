@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
-import { AnimatedCard, DateNavigator, FAB } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB, SkeletonCard } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -28,8 +28,16 @@ export default function NutritionScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
 
-  const { meals, dailyTotals, error, loadMealsForDate, loadDailyTotals, deleteMeal, clearError } =
-    useNutritionStore();
+  const {
+    meals,
+    dailyTotals,
+    isLoading,
+    error,
+    loadMealsForDate,
+    loadDailyTotals,
+    deleteMeal,
+    clearError,
+  } = useNutritionStore();
 
   useEffect(() => {
     loadData(selectedDate);
@@ -154,7 +162,12 @@ export default function NutritionScreen() {
           </Text>
         </Animated.View>
 
-        {dateMeals.length === 0 ? (
+        {isLoading && meals.length === 0 ? (
+          <>
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+          </>
+        ) : dateMeals.length === 0 ? (
           <View style={styles.emptyState}>
             <UtensilsCrossed color={colors.nutrition} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>

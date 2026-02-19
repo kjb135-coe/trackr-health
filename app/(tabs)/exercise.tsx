@@ -14,7 +14,13 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton, DateNavigator, FAB } from '@/src/components/ui';
+import {
+  AnimatedCard,
+  AnimatedButton,
+  DateNavigator,
+  FAB,
+  SkeletonCard,
+} from '@/src/components/ui';
 import { useExerciseStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
@@ -32,7 +38,8 @@ export default function ExerciseScreen() {
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
 
-  const { sessions, error, loadSessions, deleteSession, clearError } = useExerciseStore();
+  const { sessions, isLoading, error, loadSessions, deleteSession, clearError } =
+    useExerciseStore();
   const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } =
     useAIInsightsStore();
 
@@ -153,7 +160,12 @@ export default function ExerciseScreen() {
           </Animated.View>
         )}
 
-        {dateSessions.length === 0 ? (
+        {isLoading && sessions.length === 0 ? (
+          <>
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+            <SkeletonCard lines={2} style={{ marginBottom: spacing.sm }} />
+          </>
+        ) : dateSessions.length === 0 ? (
           <View style={styles.emptyState}>
             <Dumbbell color={colors.exercise} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No workouts</Text>
