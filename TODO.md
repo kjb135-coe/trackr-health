@@ -473,6 +473,10 @@ Do whatever you think is right.
 - `src/components/dashboard/AICoaching.tsx` (356 lines) — complex component with 4 render states: no API key, loading, error, coaching data. Zero test coverage.
 - **Status:** Done — 7 tests: API key setup prompt, setup button callback, loading state, error state, coaching data with insights, daily tip/motivation, auto-fetch on mount. 378 total tests.
 
+### 107. ~~Expand date utility test coverage~~ ✅
+- `src/utils/date.ts` exports 11 functions but only 4 were tested.
+- **Status:** Done — added tests for `formatDate` (3), `parseDate` (1), `getStartOfDay` (1), `getEndOfDay` (1), `getDurationMinutes` (2), `formatTime` (2), `getRelativeDateLabel` expanded (3 more), `generateId` (2). Date tests: 9 → 25. 393 total tests.
+
 ### 106. ~~Replace hardcoded `#FFFFFF` in AICoaching setupButtonText style~~ ✅
 - `src/components/dashboard/AICoaching.tsx` line 351: `color: '#FFFFFF'` in static StyleSheet.
 - **Status:** Not needed — static `StyleSheet.create()` can't reference dynamic theme colors. White text on `colors.primary` button is correct regardless of theme.
