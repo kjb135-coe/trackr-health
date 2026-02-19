@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import { AnimatedButton } from '@/src/components/ui';
 
@@ -69,14 +70,12 @@ describe('AnimatedButton', () => {
   });
 
   it('triggers haptic feedback by default', async () => {
-    const Haptics = require('expo-haptics');
     const { findByText } = renderWithTheme(<AnimatedButton title="Tap" onPress={jest.fn()} />);
     fireEvent.press(await findByText('Tap'));
     expect(Haptics.impactAsync).toHaveBeenCalled();
   });
 
   it('skips haptic feedback when haptic=false', async () => {
-    const Haptics = require('expo-haptics');
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Tap" onPress={jest.fn()} haptic={false} />,
     );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { Text } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import { AnimatedCard } from '@/src/components/ui';
 
@@ -63,7 +64,6 @@ describe('AnimatedCard', () => {
   });
 
   it('triggers haptic feedback on press by default', async () => {
-    const Haptics = require('expo-haptics');
     const { findByText } = renderWithTheme(
       <AnimatedCard onPress={jest.fn()}>
         <Text>Haptic card</Text>
@@ -74,7 +74,6 @@ describe('AnimatedCard', () => {
   });
 
   it('skips haptic feedback when haptic=false', async () => {
-    const Haptics = require('expo-haptics');
     const { findByText } = renderWithTheme(
       <AnimatedCard onPress={jest.fn()} haptic={false}>
         <Text>No haptic</Text>

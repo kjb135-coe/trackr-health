@@ -6,7 +6,8 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   removeItem: jest.fn().mockResolvedValue(undefined),
 }));
 
-// Must import after mocking
+// Must import after mocking AsyncStorage
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { authService, useGoogleAuth } = require('@/src/services/auth/mockAuthService');
 
 describe('mockAuthService', () => {
