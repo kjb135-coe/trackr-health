@@ -1061,6 +1061,6 @@ Yes
 - `src/services/export/dataExport.ts` wraps strings in quotes but doesn't escape internal quotes. If a habit name contains `"`, the CSV output is malformed (e.g., `"My "Awesome" Habit"` is invalid CSV). Need to escape `"` as `""` per RFC 4180.
 - **Status:** Done — Added `csvEscape()` helper that wraps in quotes and doubles internal quotes per RFC 4180. Applied to all string fields across all 5 CSV export types (habits, sleep, exercise, nutrition, journal). Also handles null/undefined gracefully.
 
-### 206. Add try-catch to onboardingStore AsyncStorage write
+### ~~206. Add try-catch to onboardingStore AsyncStorage write~~ ✅
 - `src/store/onboardingStore.ts` line 37-39: `setCompleted()` calls `AsyncStorage.setItem()` without try-catch. If storage fails, the promise rejects silently. Should wrap in try-catch with `getErrorMessage()`.
-- **Effort:** ~5min
+- **Status:** Done — Wrapped AsyncStorage.setItem in try-catch with silent fail. State is set optimistically before the write so the user isn't stuck on onboarding if storage fails.

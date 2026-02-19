@@ -35,7 +35,11 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   },
 
   setCompleted: async () => {
-    await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETE, 'true');
     set({ hasCompleted: true });
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETE, 'true');
+    } catch {
+      // Silent fail — state is set optimistically; on restart, user may see onboarding again
+    }
   },
 }));
