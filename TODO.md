@@ -259,6 +259,10 @@ Do whatever you think is right.
 - Exercise and sleep screens called `loadSessions()`/`loadEntries()` (full re-fetch) on every date change, even though the data was already in Zustand state from the initial load.
 - **Status:** Done — removed redundant re-fetch from `handleDateChange` in exercise.tsx and sleep.tsx. `useMemo` already filters from in-memory state. Initial load fetches all records once; pull-to-refresh handles forced reloads. SQLite handles local data volumes efficiently.
 
+### 82. ~~Add aiInsightsStore tests~~ ✅
+- Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
+- **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
+
 ### 81. ~~Add repository tests for sleep, exercise, and journal repos~~ ✅
 - Only `habitRepository` had tests. Other 3 repositories were untested.
 - **Status:** Done — sleepRepository (14 tests), exerciseRepository (14 tests), journalRepository (15 tests). Covers CRUD, date range queries, aggregates, search, tag deduplication. 215 total tests passing.
@@ -473,3 +477,6 @@ Do whatever you think is right.
 - [x] Added meal type selector to nutrition camera — no longer hardcodes 'snack' (TODO #79)
 - [x] Removed redundant full data re-fetch from exercise/sleep date change handlers (TODO #80)
 - [x] Added repository tests: sleepRepository (14), exerciseRepository (14), journalRepository (15) — 215 total tests (TODO #81)
+- [x] Not needed — tabs already default to today, users benefit from persisted date state (TODO #75)
+- [x] Removed false positive #76 — useEffect correctly fires on object reference change
+- [x] Added aiInsightsStore tests (12 tests): caching, errors, all fetch methods (TODO #82)
