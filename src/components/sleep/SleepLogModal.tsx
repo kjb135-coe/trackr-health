@@ -20,22 +20,52 @@ import { AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
 import { getDateString, getDurationMinutes } from '@/src/utils/date';
 import { getQualityColor } from '@/src/utils/constants';
+import { SleepEntry } from '@/src/types';
 
 interface SleepLogModalProps {
   visible: boolean;
   onClose: () => void;
+  editEntry?: SleepEntry;
 }
 
-export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
+export function SleepLogModal({ visible, onClose, editEntry }: SleepLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [bedtimeHour, setBedtimeHour] = useState('22');
-  const [bedtimeMin, setBedtimeMin] = useState('00');
-  const [wakeHour, setWakeHour] = useState('07');
-  const [wakeMin, setWakeMin] = useState('00');
-  const [quality, setQuality] = useState<1 | 2 | 3 | 4 | 5>(3);
 
-  const { createEntry } = useSleepStore();
+  const getInitialValues = () => {
+    if (editEntry) {
+      const bed = new Date(editEntry.bedtime);
+      const wake = new Date(editEntry.wakeTime);
+      return {
+        bh: bed.getHours().toString().padStart(2, '0'),
+        bm: bed.getMinutes().toString().padStart(2, '0'),
+        wh: wake.getHours().toString().padStart(2, '0'),
+        wm: wake.getMinutes().toString().padStart(2, '0'),
+        q: editEntry.quality,
+      };
+    }
+    return { bh: '22', bm: '00', wh: '07', wm: '00', q: 3 as const };
+  };
+
+  const initial = getInitialValues();
+  const [bedtimeHour, setBedtimeHour] = useState(initial.bh);
+  const [bedtimeMin, setBedtimeMin] = useState(initial.bm);
+  const [wakeHour, setWakeHour] = useState(initial.wh);
+  const [wakeMin, setWakeMin] = useState(initial.wm);
+  const [quality, setQuality] = useState<1 | 2 | 3 | 4 | 5>(initial.q);
+
+  // Reset form when editEntry changes
+  React.useEffect(() => {
+    const vals = getInitialValues();
+    setBedtimeHour(vals.bh);
+    setBedtimeMin(vals.bm);
+    setWakeHour(vals.wh);
+    setWakeMin(vals.wm);
+    setQuality(vals.q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editEntry]);
+
+  const { createEntry, updateEntry } = useSleepStore();
 
   const handleCreateEntry = async () => {
     const bh = parseInt(bedtimeHour, 10);
@@ -70,13 +100,22 @@ export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
 
     const durationMinutes = getDurationMinutes(bedtime, wakeTime);
 
-    await createEntry({
-      date: today,
-      bedtime: bedtime.toISOString(),
-      wakeTime: wakeTime.toISOString(),
-      durationMinutes,
-      quality,
-    });
+    if (editEntry) {
+      await updateEntry(editEntry.id, {
+        bedtime: bedtime.toISOString(),
+        wakeTime: wakeTime.toISOString(),
+        durationMinutes,
+        quality,
+      });
+    } else {
+      await createEntry({
+        date: today,
+        bedtime: bedtime.toISOString(),
+        wakeTime: wakeTime.toISOString(),
+        durationMinutes,
+        quality,
+      });
+    }
 
     onClose();
   };
@@ -98,7 +137,9 @@ export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Sleep</Text>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {editEntry ? 'Edit Sleep' : 'Log Sleep'}
+            </Text>
             <TouchableOpacity onPress={onClose}>
               <X color={colors.textPrimary} size={24} />
             </TouchableOpacity>
@@ -182,7 +223,11 @@ export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
             ))}
           </View>
 
-          <AnimatedButton title="Save Sleep Entry" onPress={handleCreateEntry} fullWidth />
+          <AnimatedButton
+            title={editEntry ? 'Update Sleep Entry' : 'Save Sleep Entry'}
+            onPress={handleCreateEntry}
+            fullWidth
+          />
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>

@@ -235,10 +235,9 @@ Do whatever you think is right.
 - ~~Trend data loads silently in background.~~
 - **Status:** Not needed — WeeklyInsights already gracefully degrades to today's data as fallback when trend data is null. Streak badge only renders when > 0. No blank space or loading issue.
 
-### 73. Add edit functionality to sleep and exercise entries
+### 73. ~~Add edit functionality to sleep and exercise entries~~ ✅
 - Users can create and delete entries but cannot edit existing ones. Long-press shows delete only.
-- Should add an "edit" option or tap to open the entry in the log modal with pre-filled values.
-- **Effort:** ~1-2h
+- **Status:** Done — tap on sleep entry or exercise session card opens the log modal with pre-filled values. Modals detect edit mode and call `updateEntry`/`updateSession` instead of create. Titles and button text update dynamically ("Edit Sleep" / "Edit Exercise").
 
 ### 74. ~~Memoize dashboard computed values~~ ✅
 - ~~Dashboard computed values re-calculated on every render.~~
@@ -449,3 +448,4 @@ Do whatever you think is right.
 - [x] Memoized filtered lists in sleep, exercise, and nutrition screens (TODO #71)
 - [x] Fixed dashboard test act() warnings + added streak badge test — 14 dashboard tests, 172 total (TODO #72)
 - [x] Memoized dashboard computed values with useMemo (TODO #74)
+- [x] Added edit functionality to sleep and exercise — tap card opens pre-filled modal (TODO #73)

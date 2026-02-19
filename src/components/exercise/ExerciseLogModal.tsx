@@ -21,7 +21,7 @@ import { AnimatedButton } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
-import { ExerciseType, ExerciseIntensity } from '@/src/types';
+import { ExerciseType, ExerciseIntensity, ExerciseSession } from '@/src/types';
 
 const EXERCISE_TYPES: ExerciseType[] = [
   'running',
@@ -46,17 +46,25 @@ interface ExerciseLogModalProps {
   visible: boolean;
   onClose: () => void;
   preFill?: ExercisePreFill | null;
+  editSession?: ExerciseSession;
 }
 
-export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModalProps) {
+export function ExerciseLogModal({
+  visible,
+  onClose,
+  preFill,
+  editSession,
+}: ExerciseLogModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const [selectedType, setSelectedType] = useState<ExerciseType>('running');
-  const [duration, setDuration] = useState('30');
-  const [intensity, setIntensity] = useState<ExerciseIntensity>('moderate');
-  const [calories, setCalories] = useState('');
+  const [selectedType, setSelectedType] = useState<ExerciseType>(editSession?.type || 'running');
+  const [duration, setDuration] = useState(editSession?.durationMinutes.toString() || '30');
+  const [intensity, setIntensity] = useState<ExerciseIntensity>(
+    editSession?.intensity || 'moderate',
+  );
+  const [calories, setCalories] = useState(editSession?.caloriesBurned?.toString() || '');
 
-  const { createSession } = useExerciseStore();
+  const { createSession, updateSession } = useExerciseStore();
 
   // Apply pre-fill values when modal opens
   useEffect(() => {
@@ -66,6 +74,21 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
       if (preFill.intensity) setIntensity(preFill.intensity);
     }
   }, [visible, preFill]);
+
+  // Reset form when editSession changes
+  useEffect(() => {
+    if (editSession) {
+      setSelectedType(editSession.type);
+      setDuration(editSession.durationMinutes.toString());
+      setIntensity(editSession.intensity);
+      setCalories(editSession.caloriesBurned?.toString() || '');
+    } else if (!preFill) {
+      setSelectedType('running');
+      setDuration('30');
+      setIntensity('moderate');
+      setCalories('');
+    }
+  }, [editSession, preFill]);
 
   const handleCreateSession = async () => {
     const durationMinutes = parseInt(duration, 10) || 0;
@@ -80,13 +103,22 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
       return;
     }
 
-    await createSession({
-      date: getDateString(),
-      type: selectedType,
-      durationMinutes,
-      intensity,
-      caloriesBurned: parsedCalories,
-    });
+    if (editSession) {
+      await updateSession(editSession.id, {
+        type: selectedType,
+        durationMinutes,
+        intensity,
+        caloriesBurned: parsedCalories,
+      });
+    } else {
+      await createSession({
+        date: getDateString(),
+        type: selectedType,
+        durationMinutes,
+        intensity,
+        caloriesBurned: parsedCalories,
+      });
+    }
 
     setDuration('30');
     setCalories('');
@@ -110,7 +142,9 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Exercise</Text>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {editSession ? 'Edit Exercise' : 'Log Exercise'}
+            </Text>
             <TouchableOpacity onPress={onClose}>
               <X color={colors.textPrimary} size={24} />
             </TouchableOpacity>
@@ -202,7 +236,11 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
             placeholderTextColor={colors.textTertiary}
           />
 
-          <AnimatedButton title="Save Workout" onPress={handleCreateSession} fullWidth />
+          <AnimatedButton
+            title={editSession ? 'Update Workout' : 'Save Workout'}
+            onPress={handleCreateSession}
+            fullWidth
+          />
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>

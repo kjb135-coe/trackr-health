@@ -28,11 +28,13 @@ import { subDays, format, parseISO } from 'date-fns';
 import { QUALITY_LABELS, getQualityColor } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
+import { SleepEntry } from '@/src/types';
 
 export default function SleepScreen() {
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editEntry, setEditEntry] = useState<SleepEntry | undefined>();
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
@@ -168,6 +170,10 @@ export default function SleepScreen() {
           <Animated.View entering={FadeInDown.duration(400)}>
             <AnimatedCard
               style={styles.entryCard}
+              onPress={() => {
+                setEditEntry(dateEntry);
+                setModalVisible(true);
+              }}
               onLongPress={() =>
                 handleDeleteEntry(dateEntry.id, getRelativeDateLabel(dateEntry.date))
               }
@@ -324,11 +330,21 @@ export default function SleepScreen() {
 
       <FAB
         color={colors.sleep}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          setEditEntry(undefined);
+          setModalVisible(true);
+        }}
         icon={<Plus color={colors.white} size={24} />}
       />
 
-      <SleepLogModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <SleepLogModal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          setEditEntry(undefined);
+        }}
+        editEntry={editEntry}
+      />
     </View>
   );
 }

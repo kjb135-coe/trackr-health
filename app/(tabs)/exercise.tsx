@@ -26,7 +26,7 @@ import { useExerciseStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
-import { ExerciseIntensity } from '@/src/types';
+import { ExerciseIntensity, ExerciseSession } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
 import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
 
@@ -35,6 +35,7 @@ export default function ExerciseScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPreFill, setModalPreFill] = useState<ExercisePreFill | null>(null);
+  const [editSession, setEditSession] = useState<ExerciseSession | undefined>();
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
@@ -82,6 +83,7 @@ export default function ExerciseScreen() {
   };
 
   const openModal = (preFill?: ExercisePreFill) => {
+    setEditSession(undefined);
     setModalPreFill(preFill || null);
     setModalVisible(true);
   };
@@ -180,6 +182,11 @@ export default function ExerciseScreen() {
               <AnimatedCard
                 style={styles.sessionCard}
                 delay={index * 50}
+                onPress={() => {
+                  setEditSession(session);
+                  setModalPreFill(null);
+                  setModalVisible(true);
+                }}
                 onLongPress={() =>
                   handleDeleteSession(
                     session.id,
@@ -327,8 +334,12 @@ export default function ExerciseScreen() {
 
       <ExerciseLogModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setEditSession(undefined);
+        }}
         preFill={modalPreFill}
+        editSession={editSession}
       />
     </View>
   );
