@@ -9,7 +9,7 @@ import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
-import { JournalEntryModal } from '@/src/components/journal/JournalEntryModal';
+import { JournalEntryModal } from '@/src/components/journal';
 
 export default function JournalScreen() {
   const { colors } = useTheme();

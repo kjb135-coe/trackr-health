@@ -19,7 +19,7 @@ import { formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
 import { ExerciseIntensity } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
-import { ExerciseLogModal, ExercisePreFill } from '@/src/components/exercise/ExerciseLogModal';
+import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
 
 export default function ExerciseScreen() {
   const { colors } = useTheme();

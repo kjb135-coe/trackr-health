@@ -18,7 +18,7 @@ import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel } from '@/src/utils/date';
 import { QUALITY_LABELS } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
-import { SleepLogModal } from '@/src/components/sleep/SleepLogModal';
+import { SleepLogModal } from '@/src/components/sleep';
 
 export default function SleepScreen() {
   const { colors } = useTheme();

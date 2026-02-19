@@ -9,7 +9,7 @@ import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
-import { NutritionLogModal } from '@/src/components/nutrition/NutritionLogModal';
+import { NutritionLogModal } from '@/src/components/nutrition';
 
 export default function NutritionScreen() {
   const { colors } = useTheme();
