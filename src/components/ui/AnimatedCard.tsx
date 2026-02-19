@@ -24,6 +24,7 @@ interface AnimatedCardProps {
   style?: StyleProp<ViewStyle>;
   haptic?: boolean;
   delay?: number;
+  accessibilityLabel?: string;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -37,6 +38,7 @@ export function AnimatedCard({
   style,
   haptic = true,
   delay = 0,
+  accessibilityLabel,
 }: AnimatedCardProps) {
   const { colors, isDark } = useTheme();
   const scale = useSharedValue(1);
@@ -116,6 +118,8 @@ export function AnimatedCard({
         entering={entering}
         exiting={exiting}
         style={[cardStyle, animatedStyle, style]}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
       >
         {children}
       </AnimatedPressable>
