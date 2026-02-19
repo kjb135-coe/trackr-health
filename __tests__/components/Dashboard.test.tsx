@@ -78,9 +78,12 @@ jest.mock('@/src/database', () => ({
   getDatabase: jest.fn().mockResolvedValue({}),
 }));
 
+const mockGetTrendData = jest.fn().mockResolvedValue(null);
+const mockGetDailyStreak = jest.fn().mockResolvedValue(0);
+
 jest.mock('@/src/services/insights', () => ({
-  getTrendData: jest.fn().mockResolvedValue(null),
-  getDailyStreak: jest.fn().mockResolvedValue(0),
+  getTrendData: (...args: unknown[]) => mockGetTrendData(...args),
+  getDailyStreak: (...args: unknown[]) => mockGetDailyStreak(...args),
 }));
 
 jest.mock('@/src/utils/demoData', () => ({
@@ -95,6 +98,15 @@ jest.mock('@/src/components/dashboard', () => ({
 
 function renderWithTheme(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>);
+}
+
+async function renderDashboard() {
+  const result = renderWithTheme(<DashboardScreen />);
+  // Wait for all async effects (db init, data loading, trend data) to settle
+  await waitFor(() => {
+    expect(mockGetDailyStreak).toHaveBeenCalled();
+  });
+  return result;
 }
 
 function resetStores() {
@@ -119,10 +131,12 @@ describe('DashboardScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetStores();
+    mockGetTrendData.mockResolvedValue(null);
+    mockGetDailyStreak.mockResolvedValue(0);
   });
 
   it('renders all dashboard cards', async () => {
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('Habits')).toBeTruthy();
     expect(await findByText('Sleep')).toBeTruthy();
     expect(await findByText('Exercise')).toBeTruthy();
@@ -134,12 +148,12 @@ describe('DashboardScreen', () => {
     mockHabitStore.habits = [{ id: 'h1', name: 'Read', color: '#FF0000' }] as never[];
     mockHabitStore.todayCompletions = new Map([['h1', { completed: true }]]) as never;
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('1/1')).toBeTruthy();
   });
 
   it('shows dashes when no data exists', async () => {
-    const { findAllByText } = renderWithTheme(<DashboardScreen />);
+    const { findAllByText } = await renderDashboard();
     const dashes = await findAllByText('—');
     expect(dashes.length).toBeGreaterThanOrEqual(2);
   });
@@ -147,12 +161,12 @@ describe('DashboardScreen', () => {
   it('shows error banner when a store has an error', async () => {
     mockHabitStore.error = 'Failed to load habits';
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('Failed to load habits')).toBeTruthy();
   });
 
   it('shows demo section when no habits exist', async () => {
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('Welcome to Trackr')).toBeTruthy();
     expect(await findByText('Load Demo Data')).toBeTruthy();
   });
@@ -160,34 +174,30 @@ describe('DashboardScreen', () => {
   it('hides demo section when habits exist', async () => {
     mockHabitStore.habits = [{ id: 'h1', name: 'Read', color: '#FF0000' }] as never[];
 
-    const { queryByText } = renderWithTheme(<DashboardScreen />);
-    await waitFor(() => {
-      expect(queryByText('Welcome to Trackr')).toBeNull();
-    });
+    const { queryByText } = await renderDashboard();
+    expect(queryByText('Welcome to Trackr')).toBeNull();
   });
 
   it('shows no entries text for journal', async () => {
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('No entries yet')).toBeTruthy();
   });
 
   it('loads all data on mount', async () => {
-    renderWithTheme(<DashboardScreen />);
+    await renderDashboard();
 
-    await waitFor(() => {
-      expect(mockLoadHabits).toHaveBeenCalled();
-      expect(mockLoadTodayCompletions).toHaveBeenCalled();
-      expect(mockLoadSleep).toHaveBeenCalled();
-      expect(mockLoadExercise).toHaveBeenCalled();
-      expect(mockLoadDailyTotals).toHaveBeenCalled();
-      expect(mockLoadJournal).toHaveBeenCalled();
-    });
+    expect(mockLoadHabits).toHaveBeenCalled();
+    expect(mockLoadTodayCompletions).toHaveBeenCalled();
+    expect(mockLoadSleep).toHaveBeenCalled();
+    expect(mockLoadExercise).toHaveBeenCalled();
+    expect(mockLoadDailyTotals).toHaveBeenCalled();
+    expect(mockLoadJournal).toHaveBeenCalled();
   });
 
   it('shows nutrition calories when available', async () => {
     mockNutritionStore.dailyTotals = { calories: 1850, protein: 80, carbs: 200, fat: 60 };
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('1850')).toBeTruthy();
     expect(await findByText('calories')).toBeTruthy();
   });
@@ -202,7 +212,7 @@ describe('DashboardScreen', () => {
       },
     ] as never[];
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('1 workout')).toBeTruthy();
   });
 
@@ -213,7 +223,7 @@ describe('DashboardScreen', () => {
       { id: 'j2', date: today, content: 'Test2', title: 'Entry 2' },
     ] as never[];
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('2 entries')).toBeTruthy();
   });
 
@@ -221,7 +231,7 @@ describe('DashboardScreen', () => {
     const { populateDemoData } = jest.requireMock('@/src/utils/demoData');
     jest.spyOn(Alert, 'alert');
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     const button = await findByText('Load Demo Data');
     fireEvent.press(button);
 
@@ -233,7 +243,14 @@ describe('DashboardScreen', () => {
   it('shows error from any store', async () => {
     mockNutritionStore.error = 'Network error loading meals';
 
-    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const { findByText } = await renderDashboard();
     expect(await findByText('Network error loading meals')).toBeTruthy();
+  });
+
+  it('shows streak badge when streak > 0', async () => {
+    mockGetDailyStreak.mockResolvedValue(5);
+
+    const { findByText } = await renderDashboard();
+    expect(await findByText('5 days')).toBeTruthy();
   });
 });
