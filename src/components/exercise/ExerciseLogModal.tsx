@@ -1,0 +1,273 @@
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from 'react-native';
+import { X } from 'lucide-react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '@/src/theme/ThemeContext';
+import { spacing, borderRadius } from '@/src/theme';
+import { AnimatedButton } from '@/src/components/ui';
+import { useExerciseStore } from '@/src/store';
+import { getDateString } from '@/src/utils/date';
+import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
+import { ExerciseType, ExerciseIntensity } from '@/src/types';
+
+const EXERCISE_TYPES: ExerciseType[] = [
+  'running',
+  'walking',
+  'cycling',
+  'swimming',
+  'weight_training',
+  'yoga',
+  'hiit',
+  'cardio',
+];
+
+const INTENSITIES: ExerciseIntensity[] = ['low', 'moderate', 'high', 'very_high'];
+
+export interface ExercisePreFill {
+  duration?: string;
+  calories?: string;
+  intensity?: ExerciseIntensity;
+}
+
+interface ExerciseLogModalProps {
+  visible: boolean;
+  onClose: () => void;
+  preFill?: ExercisePreFill | null;
+}
+
+export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModalProps) {
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [selectedType, setSelectedType] = useState<ExerciseType>('running');
+  const [duration, setDuration] = useState('30');
+  const [intensity, setIntensity] = useState<ExerciseIntensity>('moderate');
+  const [calories, setCalories] = useState('');
+
+  const { createSession } = useExerciseStore();
+
+  // Apply pre-fill values when modal opens
+  useEffect(() => {
+    if (visible && preFill) {
+      if (preFill.duration) setDuration(preFill.duration);
+      if (preFill.calories) setCalories(preFill.calories);
+      if (preFill.intensity) setIntensity(preFill.intensity);
+    }
+  }, [visible, preFill]);
+
+  const handleCreateSession = async () => {
+    const durationMinutes = parseInt(duration) || 0;
+    if (durationMinutes <= 0) {
+      Alert.alert('Invalid duration', 'Please enter a duration greater than 0 minutes.');
+      return;
+    }
+
+    const parsedCalories = calories ? parseInt(calories) : undefined;
+    if (parsedCalories !== undefined && (isNaN(parsedCalories) || parsedCalories <= 0)) {
+      Alert.alert('Invalid calories', 'Calories must be a positive number.');
+      return;
+    }
+
+    await createSession({
+      date: getDateString(),
+      type: selectedType,
+      durationMinutes,
+      intensity,
+      caloriesBurned: parsedCalories,
+    });
+
+    setDuration('30');
+    setCalories('');
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.modalOverlay}
+      >
+        <Animated.View
+          entering={FadeInDown.duration(300)}
+          style={[
+            styles.modalContent,
+            {
+              backgroundColor: colors.surface,
+              paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
+            },
+          ]}
+        >
+          <View style={styles.modalHeader}>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Exercise</Text>
+            <TouchableOpacity onPress={onClose}>
+              <X color={colors.textPrimary} size={24} />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Exercise Type</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
+            {EXERCISE_TYPES.map((type) => (
+              <TouchableOpacity
+                key={type}
+                style={[
+                  styles.typeOption,
+                  { backgroundColor: colors.surfaceSecondary },
+                  selectedType === type && { backgroundColor: colors.exercise },
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSelectedType(type);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.typeText,
+                    { color: colors.textSecondary },
+                    selectedType === type && { color: '#FFFFFF', fontWeight: '600' },
+                  ]}
+                >
+                  {EXERCISE_TYPE_LABELS[type]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+            Duration (minutes)
+          </Text>
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+            ]}
+            value={duration}
+            onChangeText={setDuration}
+            keyboardType="number-pad"
+            placeholder="30"
+            placeholderTextColor={colors.textTertiary}
+          />
+
+          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Intensity</Text>
+          <View style={styles.intensityRow}>
+            {INTENSITIES.map((int) => (
+              <TouchableOpacity
+                key={int}
+                style={[
+                  styles.intensityOption,
+                  { backgroundColor: colors.surfaceSecondary },
+                  intensity === int && { backgroundColor: colors.exercise },
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setIntensity(int);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.intensityText,
+                    { color: colors.textSecondary },
+                    intensity === int && { color: '#FFFFFF', fontWeight: '600' },
+                  ]}
+                >
+                  {INTENSITY_LABELS[int]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
+            Calories Burned (optional)
+          </Text>
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+            ]}
+            value={calories}
+            onChangeText={setCalories}
+            keyboardType="number-pad"
+            placeholder="200"
+            placeholderTextColor={colors.textTertiary}
+          />
+
+          <AnimatedButton title="Save Workout" onPress={handleCreateSession} fullWidth />
+        </Animated.View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: borderRadius.xl,
+    borderTopRightRadius: borderRadius.xl,
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  inputLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: spacing.sm,
+  },
+  input: {
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontSize: 16,
+    marginBottom: spacing.lg,
+  },
+  typeScroll: {
+    marginBottom: spacing.lg,
+  },
+  typeOption: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    marginRight: spacing.sm,
+  },
+  typeText: {
+    fontSize: 14,
+  },
+  intensityRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: spacing.lg,
+  },
+  intensityOption: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    marginHorizontal: 2,
+    alignItems: 'center',
+  },
+  intensityText: {
+    fontSize: 12,
+  },
+});
