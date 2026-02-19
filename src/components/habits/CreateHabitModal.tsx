@@ -9,6 +9,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Switch,
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -20,6 +21,7 @@ import { useHabitStore } from '@/src/store';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
 import { Habit } from '@/src/types';
+import { scheduleHabitReminder, cancelHabitReminder } from '@/src/services/notifications';
 
 interface CreateHabitModalProps {
   visible: boolean;
@@ -32,6 +34,9 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
   const insets = useSafeAreaInsets();
   const [newHabitName, setNewHabitName] = useState('');
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderHour, setReminderHour] = useState('09');
+  const [reminderMinute, setReminderMinute] = useState('00');
   const [saving, setSaving] = useState(false);
 
   const { createHabit, updateHabit } = useHabitStore();
@@ -40,14 +45,38 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
     if (editHabit) {
       setNewHabitName(editHabit.name);
       setSelectedColor(editHabit.color);
+      if (editHabit.reminderTime) {
+        setReminderEnabled(true);
+        const [h, m] = editHabit.reminderTime.split(':');
+        setReminderHour(h);
+        setReminderMinute(m);
+      } else {
+        setReminderEnabled(false);
+        setReminderHour('09');
+        setReminderMinute('00');
+      }
     } else {
       setNewHabitName('');
       setSelectedColor(HABIT_COLORS[0]);
+      setReminderEnabled(false);
+      setReminderHour('09');
+      setReminderMinute('00');
     }
   }, [editHabit]);
 
   const handleSave = async () => {
     if (!newHabitName.trim()) return;
+
+    const h = parseInt(reminderHour, 10);
+    const m = parseInt(reminderMinute, 10);
+    if (reminderEnabled && (isNaN(h) || h < 0 || h > 23 || isNaN(m) || m < 0 || m > 59)) {
+      Alert.alert('Invalid time', 'Hours must be 0-23 and minutes 0-59.');
+      return;
+    }
+
+    const reminderTime = reminderEnabled
+      ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+      : null;
 
     setSaving(true);
     try {
@@ -55,17 +84,32 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
         await updateHabit(editHabit.id, {
           name: newHabitName.trim(),
           color: selectedColor,
+          reminderTime,
         });
+        // Update notification schedule
+        if (reminderTime) {
+          await scheduleHabitReminder({ ...editHabit, name: newHabitName.trim(), reminderTime });
+        } else {
+          await cancelHabitReminder(editHabit.id);
+        }
       } else {
-        await createHabit({
+        const created = await createHabit({
           name: newHabitName.trim(),
           color: selectedColor,
           frequency: 'daily',
+          reminderTime,
         });
+        // Schedule notification for new habit
+        if (reminderTime && created) {
+          await scheduleHabitReminder(created);
+        }
       }
 
       setNewHabitName('');
       setSelectedColor(HABIT_COLORS[0]);
+      setReminderEnabled(false);
+      setReminderHour('09');
+      setReminderMinute('00');
       onClose();
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
@@ -121,6 +165,49 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
             ))}
           </View>
 
+          <View style={styles.reminderRow}>
+            <Text style={[styles.colorLabel, { color: colors.textSecondary, marginBottom: 0 }]}>
+              Daily Reminder
+            </Text>
+            <Switch
+              testID="reminder-toggle"
+              value={reminderEnabled}
+              onValueChange={setReminderEnabled}
+              trackColor={{ false: colors.borderLight, true: colors.primary + '80' }}
+              thumbColor={reminderEnabled ? colors.primary : colors.textTertiary}
+            />
+          </View>
+
+          {reminderEnabled && (
+            <View style={styles.timeRow}>
+              <TextInput
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
+                value={reminderHour}
+                onChangeText={setReminderHour}
+                keyboardType="number-pad"
+                maxLength={2}
+                placeholder="HH"
+                placeholderTextColor={colors.textTertiary}
+              />
+              <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
+              <TextInput
+                style={[
+                  styles.timeInput,
+                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                ]}
+                value={reminderMinute}
+                onChangeText={setReminderMinute}
+                keyboardType="number-pad"
+                maxLength={2}
+                placeholder="MM"
+                placeholderTextColor={colors.textTertiary}
+              />
+            </View>
+          )}
+
           <AnimatedButton
             title={editHabit ? 'Update Habit' : 'Create Habit'}
             onPress={handleSave}
@@ -166,5 +253,28 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+  },
+  reminderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.md,
+  },
+  timeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
+  timeInput: {
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    fontSize: 18,
+    textAlign: 'center',
+    width: 52,
+  },
+  timeSeparator: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginHorizontal: spacing.xs,
   },
 });

@@ -22,6 +22,13 @@ jest.mock('@/src/store', () => ({
   }),
 }));
 
+const mockScheduleHabitReminder = jest.fn();
+const mockCancelHabitReminder = jest.fn();
+jest.mock('@/src/services/notifications', () => ({
+  scheduleHabitReminder: (...args: unknown[]) => mockScheduleHabitReminder(...args),
+  cancelHabitReminder: (...args: unknown[]) => mockCancelHabitReminder(...args),
+}));
+
 jest.spyOn(Alert, 'alert');
 
 function renderWithTheme(ui: React.ReactElement) {
@@ -70,6 +77,7 @@ describe('CreateHabitModal', () => {
         expect.objectContaining({
           name: 'New habit',
           frequency: 'daily',
+          reminderTime: null,
         }),
       );
     });
@@ -133,6 +141,7 @@ describe('CreateHabitModal', () => {
       expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
         name: 'Meditate',
         color: '#8B5CF6',
+        reminderTime: null,
       });
     });
 
@@ -154,5 +163,134 @@ describe('CreateHabitModal', () => {
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Save error');
     });
+  });
+
+  it('renders daily reminder toggle', async () => {
+    const { findByText } = renderWithTheme(<CreateHabitModal visible={true} onClose={() => {}} />);
+    await findByText('Daily Reminder');
+  });
+
+  it('shows time inputs when reminder is enabled', async () => {
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      reminderTime: '09:30',
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByDisplayValue } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} editHabit={editHabit} />,
+    );
+
+    await findByDisplayValue('09');
+    await findByDisplayValue('30');
+  });
+
+  it('schedules reminder when creating habit with reminder enabled', async () => {
+    const created = {
+      id: 'h-new',
+      name: 'Read',
+      color: '#10B981',
+      frequency: 'daily',
+      reminderTime: '09:00',
+      createdAt: '2026-02-19T00:00:00.000Z',
+      updatedAt: '2026-02-19T00:00:00.000Z',
+    };
+    mockCreateHabit.mockResolvedValue(created);
+    const onClose = jest.fn();
+
+    const { findByPlaceholderText, findByText, findByTestId } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={onClose} />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Habit name'), 'Read');
+
+    // Enable reminder toggle
+    const toggle = await findByTestId('reminder-toggle');
+    fireEvent(toggle, 'valueChange', true);
+
+    fireEvent.press(await findByText('Create Habit'));
+
+    await waitFor(() => {
+      expect(mockCreateHabit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Read',
+          reminderTime: '09:00',
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(mockScheduleHabitReminder).toHaveBeenCalledWith(created);
+    });
+  });
+
+  it('cancels reminder when editing habit to disable reminder', async () => {
+    mockUpdateHabit.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      reminderTime: '09:30',
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText, findByTestId } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={onClose} editHabit={editHabit} />,
+    );
+
+    // Disable reminder toggle
+    const toggle = await findByTestId('reminder-toggle');
+    fireEvent(toggle, 'valueChange', false);
+
+    fireEvent.press(await findByText('Update Habit'));
+
+    await waitFor(() => {
+      expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
+        name: 'Meditate',
+        color: '#8B5CF6',
+        reminderTime: null,
+      });
+    });
+
+    await waitFor(() => {
+      expect(mockCancelHabitReminder).toHaveBeenCalledWith('h1');
+    });
+  });
+
+  it('shows alert for invalid reminder time', async () => {
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      reminderTime: '09:30',
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByDisplayValue, findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} editHabit={editHabit} />,
+    );
+
+    const hourInput = await findByDisplayValue('09');
+    fireEvent.changeText(hourInput, '25');
+
+    fireEvent.press(await findByText('Update Habit'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Invalid time',
+        'Hours must be 0-23 and minutes 0-59.',
+      );
+    });
+    expect(mockUpdateHabit).not.toHaveBeenCalled();
   });
 });

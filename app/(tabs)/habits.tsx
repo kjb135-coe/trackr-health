@@ -35,6 +35,7 @@ import { Habit } from '@/src/types';
 import { TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { cancelHabitReminder } from '@/src/services/notifications';
 
 export default function HabitsScreen() {
   const { colors } = useTheme();
@@ -108,7 +109,10 @@ export default function HabitsScreen() {
       {
         text: 'Delete',
         style: 'destructive',
-        onPress: () => deleteHabit(habit.id),
+        onPress: async () => {
+          await cancelHabitReminder(habit.id);
+          deleteHabit(habit.id);
+        },
       },
     ]);
   };

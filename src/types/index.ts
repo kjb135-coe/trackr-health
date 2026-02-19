@@ -7,7 +7,7 @@ export interface Habit {
   color: string;
   frequency: 'daily' | 'weekly' | 'custom';
   targetDaysPerWeek?: number;
-  reminderTime?: string;
+  reminderTime?: string | null;
   createdAt: string;
   updatedAt: string;
 }
