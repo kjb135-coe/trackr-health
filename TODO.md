@@ -1037,6 +1037,15 @@ Yes
 - `src/services/auth/authService.ts` exports 11 functions for Firebase auth but has no tests. Only the mock service and error messages are tested.
 - **Status:** Done — 19 tests covering all Firebase auth functions: getCurrentUser (2), onAuthStateChange (4), signUp (3), signIn (1), signInWithGoogle (1), signOut (1), sendVerificationEmail (2), sendPasswordReset (1), updateUserProfile (2), reloadUser (2). Used `require()` after `jest.mock` to ensure Firebase config mock applies before module evaluation. 716 total tests.
 
-### 200. Add settings screen tests
+### ~~200. Add settings screen tests~~ ✅
 - `app/settings.tsx` has no screen-level test coverage. Tests should cover: theme toggle, API key input, data export, demo data loading, version display.
-- **Effort:** ~20min
+- **Status:** Already done — `__tests__/screens/settings.test.tsx` already exists with 17 tests covering all settings sections.
+
+### 201. Fix missing null guard in authService.signUp credential.user
+- `src/services/auth/authService.ts` line 60: `sendEmailVerification(credential.user)` is called without a null check, but `updateProfile` on line 56 does check. If `credential.user` is somehow null, it crashes.
+- Add null guard and a test for the edge case.
+- **Effort:** ~10min
+
+### 202. Add firebase config initialization tests
+- `src/services/firebase/config.ts` (43 lines) has zero tests. Test `isConfigured` with/without env vars, hot-reload recovery, null exports when unconfigured.
+- **Effort:** ~15min
