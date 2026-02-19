@@ -18,6 +18,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
 import { HABIT_COLORS } from '@/src/utils/constants';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface HabitSuggestionsModalProps {
   visible: boolean;
@@ -86,16 +87,20 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
                       variant="secondary"
                       onPress={async () => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                        await createHabit({
-                          name: suggestion.name,
-                          description: suggestion.description,
-                          color: HABIT_COLORS[index % HABIT_COLORS.length],
-                          frequency: suggestion.frequency,
-                        });
-                        Alert.alert(
-                          'Success',
-                          `"${suggestion.name}" has been added to your habits!`,
-                        );
+                        try {
+                          await createHabit({
+                            name: suggestion.name,
+                            description: suggestion.description,
+                            color: HABIT_COLORS[index % HABIT_COLORS.length],
+                            frequency: suggestion.frequency,
+                          });
+                          Alert.alert(
+                            'Success',
+                            `"${suggestion.name}" has been added to your habits!`,
+                          );
+                        } catch (error) {
+                          Alert.alert('Save failed', getErrorMessage(error));
+                        }
                       }}
                       style={{ marginTop: spacing.sm }}
                     />

@@ -19,7 +19,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
 import { parseISO } from 'date-fns';
-import { getDateString, getDurationMinutes } from '@/src/utils/date';
+import { getDateString, getDurationMinutes, getErrorMessage } from '@/src/utils/date';
 import { getQualityColor } from '@/src/utils/constants';
 import { SleepEntry } from '@/src/types';
 
@@ -105,24 +105,28 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
 
     const durationMinutes = getDurationMinutes(bedtime, wakeTime);
 
-    if (editEntry) {
-      await updateEntry(editEntry.id, {
-        bedtime: bedtime.toISOString(),
-        wakeTime: wakeTime.toISOString(),
-        durationMinutes,
-        quality,
-      });
-    } else {
-      await createEntry({
-        date: entryDate,
-        bedtime: bedtime.toISOString(),
-        wakeTime: wakeTime.toISOString(),
-        durationMinutes,
-        quality,
-      });
-    }
+    try {
+      if (editEntry) {
+        await updateEntry(editEntry.id, {
+          bedtime: bedtime.toISOString(),
+          wakeTime: wakeTime.toISOString(),
+          durationMinutes,
+          quality,
+        });
+      } else {
+        await createEntry({
+          date: entryDate,
+          bedtime: bedtime.toISOString(),
+          wakeTime: wakeTime.toISOString(),
+          durationMinutes,
+          quality,
+        });
+      }
 
-    onClose();
+      onClose();
+    } catch (error) {
+      Alert.alert('Save failed', getErrorMessage(error));
+    }
   };
 
   return (

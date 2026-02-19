@@ -21,7 +21,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { JournalEntry } from '@/src/types';
 
 interface JournalEntryModalProps {
@@ -157,24 +157,28 @@ export function JournalEntryModal({
       return;
     }
 
-    if (editEntry) {
-      await updateEntry(editEntry.id, {
-        title: title.trim() || undefined,
-        content: content.trim(),
-        mood: mood || undefined,
-      });
-    } else {
-      await createEntry({
-        date: date || getDateString(),
-        title: title.trim() || undefined,
-        content: content.trim(),
-        mood: mood || undefined,
-        isScanned: mode === 'scan' && !!scannedImage,
-        originalImageUri: scannedImage || undefined,
-      });
-    }
+    try {
+      if (editEntry) {
+        await updateEntry(editEntry.id, {
+          title: title.trim() || undefined,
+          content: content.trim(),
+          mood: mood || undefined,
+        });
+      } else {
+        await createEntry({
+          date: date || getDateString(),
+          title: title.trim() || undefined,
+          content: content.trim(),
+          mood: mood || undefined,
+          isScanned: mode === 'scan' && !!scannedImage,
+          originalImageUri: scannedImage || undefined,
+        });
+      }
 
-    resetAndClose();
+      resetAndClose();
+    } catch (error) {
+      Alert.alert('Save failed', getErrorMessage(error));
+    }
   };
 
   const resetAndClose = () => {

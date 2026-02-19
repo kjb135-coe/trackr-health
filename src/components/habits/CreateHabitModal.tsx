@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -18,6 +19,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useHabitStore } from '@/src/store';
 import { HABIT_COLORS } from '@/src/utils/constants';
+import { getErrorMessage } from '@/src/utils/date';
 
 interface CreateHabitModalProps {
   visible: boolean;
@@ -35,15 +37,19 @@ export function CreateHabitModal({ visible, onClose }: CreateHabitModalProps) {
   const handleCreateHabit = async () => {
     if (!newHabitName.trim()) return;
 
-    await createHabit({
-      name: newHabitName.trim(),
-      color: selectedColor,
-      frequency: 'daily',
-    });
+    try {
+      await createHabit({
+        name: newHabitName.trim(),
+        color: selectedColor,
+        frequency: 'daily',
+      });
 
-    setNewHabitName('');
-    setSelectedColor(HABIT_COLORS[0]);
-    onClose();
+      setNewHabitName('');
+      setSelectedColor(HABIT_COLORS[0]);
+      onClose();
+    } catch (error) {
+      Alert.alert('Save failed', getErrorMessage(error));
+    }
   };
 
   return (

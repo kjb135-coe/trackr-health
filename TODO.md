@@ -104,10 +104,9 @@ Do whatever you think is right.
 - `parseJsonFromResponse()` only used regex extraction. If Claude returned pure JSON, the regex still ran unnecessarily.
 - **Status:** Done — try `JSON.parse(text)` first for pure JSON, fall back to regex for markdown-wrapped responses. Added test for wrapped JSON path.
 
-### 94. Add try-catch to modal save operations
-- `NutritionLogModal.handleSaveMeal()` and `JournalEntryModal.handleSaveEntry()` call `createMeal()`/`updateMeal()`/`createEntry()`/`updateEntry()` without try-catch.
-- If the store call fails, the user gets no error feedback and the modal stays open.
-- **Effort:** 15min
+### 94. ~~Add try-catch to modal save operations~~ ✅
+- All modal save handlers lacked try-catch — failures gave no user feedback.
+- **Status:** Done — wrapped save operations in all 6 modal components (NutritionLogModal, JournalEntryModal, ExerciseLogModal, SleepLogModal, CreateHabitModal, HabitSuggestionsModal) with try-catch + `Alert.alert('Save failed', getErrorMessage(error))`.
 
 ---
 
@@ -541,3 +540,5 @@ Do whatever you think is right.
 - [x] Replaced N+1 habit completion queries with batch `getCompletionsForDateRange()` in healthInsightsAI (TODO #91)
 - [x] Added edit functionality to nutrition and journal — tap card opens pre-filled modal (TODO #92)
 - [x] Added NutritionLogModal tests (8) and JournalEntryModal tests (9) — 317 total tests (TODO #40 expanded)
+- [x] Improved foodRecognition JSON parsing — try direct parse first, regex fallback (TODO #93)
+- [x] Added try-catch to all 6 modal save handlers with error alerts (TODO #94)

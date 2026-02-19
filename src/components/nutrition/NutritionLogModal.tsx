@@ -21,7 +21,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
 import { Meal, MealType, FoodItem, DetectedFood } from '@/src/types';
 
@@ -171,31 +171,35 @@ export function NutritionLogModal({
       return;
     }
 
-    if (editMeal) {
-      await updateMeal(editMeal.id, {
-        mealType: selectedMealType,
-        name: foods.length === 1 ? foods[0].name : foods.map((f) => f.name).join(', '),
-        totalCalories,
-        totalProtein: totalProtein || undefined,
-        totalCarbs: totalCarbs || undefined,
-        totalFat: totalFat || undefined,
-      });
-    } else {
-      await createMeal(
-        {
-          date: today,
+    try {
+      if (editMeal) {
+        await updateMeal(editMeal.id, {
           mealType: selectedMealType,
+          name: foods.length === 1 ? foods[0].name : foods.map((f) => f.name).join(', '),
           totalCalories,
           totalProtein: totalProtein || undefined,
           totalCarbs: totalCarbs || undefined,
           totalFat: totalFat || undefined,
-          photoUri: capturedImage || undefined,
-        },
-        foods,
-      );
-    }
+        });
+      } else {
+        await createMeal(
+          {
+            date: today,
+            mealType: selectedMealType,
+            totalCalories,
+            totalProtein: totalProtein || undefined,
+            totalCarbs: totalCarbs || undefined,
+            totalFat: totalFat || undefined,
+            photoUri: capturedImage || undefined,
+          },
+          foods,
+        );
+      }
 
-    resetAndClose();
+      resetAndClose();
+    } catch (error) {
+      Alert.alert('Save failed', getErrorMessage(error));
+    }
   };
 
   const resetAndClose = () => {

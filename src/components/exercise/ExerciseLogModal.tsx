@@ -19,7 +19,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
 import { ExerciseType, ExerciseIntensity, ExerciseSession } from '@/src/types';
 
@@ -105,26 +105,30 @@ export function ExerciseLogModal({
       return;
     }
 
-    if (editSession) {
-      await updateSession(editSession.id, {
-        type: selectedType,
-        durationMinutes,
-        intensity,
-        caloriesBurned: parsedCalories,
-      });
-    } else {
-      await createSession({
-        date: date || getDateString(),
-        type: selectedType,
-        durationMinutes,
-        intensity,
-        caloriesBurned: parsedCalories,
-      });
-    }
+    try {
+      if (editSession) {
+        await updateSession(editSession.id, {
+          type: selectedType,
+          durationMinutes,
+          intensity,
+          caloriesBurned: parsedCalories,
+        });
+      } else {
+        await createSession({
+          date: date || getDateString(),
+          type: selectedType,
+          durationMinutes,
+          intensity,
+          caloriesBurned: parsedCalories,
+        });
+      }
 
-    setDuration('30');
-    setCalories('');
-    onClose();
+      setDuration('30');
+      setCalories('');
+      onClose();
+    } catch (error) {
+      Alert.alert('Save failed', getErrorMessage(error));
+    }
   };
 
   return (
