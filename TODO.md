@@ -248,6 +248,15 @@ Do whatever you think is right.
 - Currently uses `router.push('/(tabs)/sleep')` with no params.
 - **Effort:** ~30min
 
+### 76. Exercise modal doesn't reset form after editing different sessions
+- When tapping to edit session A, then closing, then tapping session B, the form may show stale values from session A because the `useEffect` that resets the form depends on `editSession` identity which may not change if both are truthy.
+- The `preFill` effect and `editSession` effect can conflict — if preFill is also set, the preFill effect runs too.
+- **Effort:** ~30min
+
+### 77. Sleep modal date is always "today" when editing past entries
+- `SleepLogModal` uses `getDateString()` for the date field when creating, and the `editEntry.date` when editing. But the bedtime/wakeTime reconstruction uses `new Date()` (today) and `yesterday`, not the entry's actual date. Editing a past entry would save it with today's date.
+- **Effort:** ~30min
+
 ### 71. ~~Memoize filtered/mapped lists in tab screens~~ ✅
 - ~~Multiple tab screens filter data on every render without `useMemo`.~~
 - **Status:** Done — wrapped `dateEntry`/`weekEntries` in sleep, `dateSessions`/`weekSessions` in exercise, and `dateMeals`/`isViewingToday` in nutrition with `useMemo`.
