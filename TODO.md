@@ -190,6 +190,10 @@ Yes
 ### ~~183. Extract shared useImagePicker hook from nutrition and journal modals~~ — Skipped
 - Structural similarity but every configurable detail differs (camera options, permission messages, AI service, error messages, no-API-key behavior). A parametrized hook would be more complex than the two inlined versions. Per CLAUDE.md: "three similar lines of code is better than a premature abstraction."
 
+### ~~186. Add onboarding screen tests~~ ✅
+- `app/onboarding.tsx` (241 lines) had zero test coverage despite being the critical first-run flow.
+- **Status:** Done — 6 tests: first slide render, description, Skip/Next buttons, skip completes onboarding + navigates, all 6 slide titles. 624 total tests.
+
 ### ~~185. Fix unsafe cast, dedup AICoaching, memoize slides/entries~~ ✅
 - (a) Replaced unsafe `as { id_token?: string }` cast in login.tsx with type-safe property access.
 - (b) Replaced duplicate `hasKey` state + `checkApiKey` effect in AICoaching with shared `useApiKeyExists` hook.
@@ -982,3 +986,4 @@ Yes
 - [x] Added zod validation to 6 healthInsightsAI JSON.parse() casts — 7 schemas, 1 new test, 601 total (TODO #182)
 - [x] Added settings screen tests (17): API key management, sign out, export, clear data, theme, privacy — 618 total (TODO #184)
 - [x] Fixed unsafe cast in login, dedup AICoaching hasKey, memoized onboarding slides + journal entries (TODO #185)
+- [x] Added onboarding screen tests (6): slide rendering, Skip/Next, navigation, all 6 slide titles — 624 total (TODO #186)
