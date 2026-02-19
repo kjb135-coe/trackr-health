@@ -242,7 +242,7 @@ export default function SleepScreen() {
         style={[styles.fab, { backgroundColor: colors.sleep }]}
         onPress={() => setModalVisible(true)}
       >
-        <Plus color="#FFFFFF" size={24} />
+        <Plus color={colors.white} size={24} />
       </TouchableOpacity>
 
       <SleepLogModal visible={modalVisible} onClose={() => setModalVisible(false)} />

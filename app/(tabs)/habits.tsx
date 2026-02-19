@@ -157,7 +157,7 @@ export default function HabitsScreen() {
                     ]}
                     onPress={() => handleToggle(habit.id)}
                   >
-                    {isCompleted && <Check color="#FFFFFF" size={16} />}
+                    {isCompleted && <Check color={colors.white} size={16} />}
                   </TouchableOpacity>
 
                   <View style={styles.habitInfo}>
@@ -216,7 +216,7 @@ export default function HabitsScreen() {
         style={[styles.fab, { backgroundColor: colors.habits }]}
         onPress={() => setModalVisible(true)}
       >
-        <Plus color="#FFFFFF" size={24} />
+        <Plus color={colors.white} size={24} />
       </TouchableOpacity>
 
       <CreateHabitModal visible={modalVisible} onClose={() => setModalVisible(false)} />

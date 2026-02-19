@@ -135,7 +135,7 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
                   style={[
                     styles.typeText,
                     { color: colors.textSecondary },
-                    selectedType === type && { color: '#FFFFFF', fontWeight: '600' },
+                    selectedType === type && { color: colors.white, fontWeight: '600' },
                   ]}
                 >
                   {EXERCISE_TYPE_LABELS[type]}
@@ -178,7 +178,7 @@ export function ExerciseLogModal({ visible, onClose, preFill }: ExerciseLogModal
                   style={[
                     styles.intensityText,
                     { color: colors.textSecondary },
-                    intensity === int && { color: '#FFFFFF', fontWeight: '600' },
+                    intensity === int && { color: colors.white, fontWeight: '600' },
                   ]}
                 >
                   {INTENSITY_LABELS[int]}

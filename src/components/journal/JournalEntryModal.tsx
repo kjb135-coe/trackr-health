@@ -199,12 +199,12 @@ export function JournalEntryModal({
                 setMode('text');
               }}
             >
-              <Edit3 color={mode === 'text' ? '#FFFFFF' : colors.textSecondary} size={16} />
+              <Edit3 color={mode === 'text' ? colors.white : colors.textSecondary} size={16} />
               <Text
                 style={[
                   styles.modeText,
                   { color: colors.textSecondary },
-                  mode === 'text' && { color: '#FFFFFF', fontWeight: '600' },
+                  mode === 'text' && { color: colors.white, fontWeight: '600' },
                 ]}
               >
                 Type
@@ -217,12 +217,12 @@ export function JournalEntryModal({
                 setMode('scan');
               }}
             >
-              <Camera color={mode === 'scan' ? '#FFFFFF' : colors.textSecondary} size={16} />
+              <Camera color={mode === 'scan' ? colors.white : colors.textSecondary} size={16} />
               <Text
                 style={[
                   styles.modeText,
                   { color: colors.textSecondary },
-                  mode === 'scan' && { color: '#FFFFFF', fontWeight: '600' },
+                  mode === 'scan' && { color: colors.white, fontWeight: '600' },
                 ]}
               >
                 Scan

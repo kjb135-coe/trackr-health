@@ -214,10 +214,9 @@ Do whatever you think is right.
 - ~~`app/(tabs)/sleep.tsx` and `src/components/sleep/SleepLogModal.tsx` both define `getQualityColor()` with identical logic but different signatures.~~
 - **Status:** Done — extracted to `src/utils/constants.ts` as `getQualityColor(quality, colors)`. Both files now import the shared function.
 
-### 39. Replace hardcoded `#FFFFFF` with `colors.white` in extracted modals
-- 11 instances of hardcoded `'#FFFFFF'` across newly extracted modal components and other UI files.
-- Should use `colors.white` from theme for consistency, even though white-on-color is visually the same.
-- **Effort:** ~15min
+### 39. ~~Replace hardcoded `#FFFFFF` with `colors.white` in extracted modals~~ ✅
+- ~~11 instances of hardcoded `'#FFFFFF'` across newly extracted modal components and other UI files.~~
+- **Status:** Done — replaced inline `#FFFFFF` with `colors.white` in 8 component files. Static StyleSheet values kept as-is (can't reference theme).
 
 ### 40. Add tests for extracted modal components
 - Newly extracted modals (SleepLogModal, ExerciseLogModal, JournalEntryModal, NutritionLogModal, CreateHabitModal, HabitSuggestionsModal) have no test coverage.
@@ -277,3 +276,4 @@ Do whatever you think is right.
 - [x] Extracted CreateHabitModal + HabitSuggestionsModal from habits.tsx (555 → 316 lines) (TODO #36 partial)
 - [x] Added barrel exports (index.ts) to sleep, exercise, journal, nutrition component dirs (TODO #37)
 - [x] Extracted duplicate `getQualityColor()` into shared `constants.ts` utility (TODO #38)
+- [x] Replaced inline `#FFFFFF` with `colors.white` in 8 component files (TODO #39)

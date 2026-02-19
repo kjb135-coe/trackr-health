@@ -118,7 +118,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
                 }}
               >
                 <Text style={styles.setupButtonText}>Set Up API Key</Text>
-                <ChevronRight color="#FFFFFF" size={16} />
+                <ChevronRight color={colors.white} size={16} />
               </TouchableOpacity>
             )}
           </View>

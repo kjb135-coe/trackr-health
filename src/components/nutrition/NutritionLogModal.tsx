@@ -221,7 +221,7 @@ export function NutritionLogModal({ visible, onClose, apiKeyExists }: NutritionL
                   style={[
                     styles.mealTypeText,
                     { color: colors.textSecondary },
-                    selectedMealType === type && { color: '#FFFFFF', fontWeight: '600' },
+                    selectedMealType === type && { color: colors.white, fontWeight: '600' },
                   ]}
                 >
                   {MEAL_TYPE_LABELS[type]}

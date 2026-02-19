@@ -163,7 +163,7 @@ export default function NutritionScreen() {
         style={[styles.fab, { backgroundColor: colors.nutrition }]}
         onPress={() => setModalVisible(true)}
       >
-        <Plus color="#FFFFFF" size={24} />
+        <Plus color={colors.white} size={24} />
       </TouchableOpacity>
 
       <NutritionLogModal

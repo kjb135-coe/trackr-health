@@ -173,7 +173,7 @@ export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {
                   style={[
                     styles.qualityOptionText,
                     { color: colors.textSecondary },
-                    quality === q && { color: '#FFFFFF' },
+                    quality === q && { color: colors.white },
                   ]}
                 >
                   {q}

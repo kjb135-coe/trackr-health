@@ -132,7 +132,7 @@ export default function JournalScreen() {
           style={[styles.fab, { backgroundColor: colors.journal }]}
           onPress={() => openModal('text')}
         >
-          <Plus color="#FFFFFF" size={24} />
+          <Plus color={colors.white} size={24} />
         </TouchableOpacity>
       </View>
 

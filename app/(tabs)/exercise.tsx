@@ -232,7 +232,7 @@ export default function ExerciseScreen() {
         style={[styles.fab, { backgroundColor: colors.exercise }]}
         onPress={() => openModal()}
       >
-        <Plus color="#FFFFFF" size={24} />
+        <Plus color={colors.white} size={24} />
       </TouchableOpacity>
 
       <ExerciseLogModal
