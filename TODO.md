@@ -242,6 +242,10 @@ Do whatever you think is right.
 - ~~`src/services/export/dataExport.ts` line 40 hardcodes `'1.6.0'` but package.json says `1.0.0`~~
 - **Status:** Done — replaced with `Constants.expoConfig?.version ?? '1.0.0'`.
 
+### 47. ~~Add journal search and tag display~~ ✅
+- ~~Journal store has `search()` and `getAllTags()` methods but no UI calls them. Tags stored but never displayed.~~
+- **Status:** Done — added search bar to journal screen (filters entries via `journalRepository.search()`). Added tag badges on journal entry cards.
+
 ### 46. ~~Optimize N+1 query in getWeeklyStats()~~ ✅
 - ~~`src/services/insights/healthInsights.ts` getWeeklyStats() loops over all habits calling `getCompletionsForHabit()` once per habit~~
 - **Status:** Done — replaced N+1 loop with batch `getCompletionsForDateRange()` + parallel `Promise.all()` for all 5 data sources. Added `getMealsByDateRange()` to nutritionRepository and `getCompletionsForDateRange()` to habitRepository.
@@ -309,3 +313,5 @@ Do whatever you think is right.
 - [x] Optimized getWeeklyStats(): batch queries via Promise.all() instead of N+1 per-habit loop (TODO #46)
 - [x] Added `getCompletionsForDateRange()` to habitRepository and `getMealsByDateRange()` to nutritionRepository
 - [x] Added healthInsights test suite (11 tests): weekly stats, daily streak, trend data — 131 total tests
+- [x] Added journal search bar — filters entries via existing `journalRepository.search()` (TODO #47)
+- [x] Added tag display on journal entry cards — shows tag badges below content (TODO #47)

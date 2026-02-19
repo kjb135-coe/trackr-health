@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
-import { Plus, Camera, X, BookOpen } from 'lucide-react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  TextInput,
+} from 'react-native';
+import { Plus, Camera, X, BookOpen, Search } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -8,6 +16,7 @@ import { AnimatedCard } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
+import { JournalEntry } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
 import { JournalEntryModal } from '@/src/components/journal';
 
@@ -17,8 +26,10 @@ export default function JournalScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState<'text' | 'scan'>('text');
   const [apiKeyExists, setApiKeyExists] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
 
-  const { entries, error, loadEntries, clearError } = useJournalStore();
+  const { entries, error, loadEntries, search, clearError } = useJournalStore();
 
   useEffect(() => {
     loadEntries();
@@ -36,6 +47,21 @@ export default function JournalScreen() {
     await loadEntries();
     setRefreshing(false);
   };
+
+  const handleSearch = useCallback(
+    async (query: string) => {
+      setSearchQuery(query);
+      if (query.trim().length === 0) {
+        setSearchResults(null);
+        return;
+      }
+      const results = await search(query.trim());
+      setSearchResults(results);
+    },
+    [search],
+  );
+
+  const displayedEntries = searchResults ?? entries;
 
   const openModal = (mode: 'text' | 'scan') => {
     setModalMode(mode);
@@ -65,18 +91,39 @@ export default function JournalScreen() {
           </TouchableOpacity>
         )}
 
-        {entries.length === 0 ? (
+        {entries.length > 0 && (
+          <View style={[styles.searchContainer, { backgroundColor: colors.surfaceSecondary }]}>
+            <Search color={colors.textTertiary} size={18} />
+            <TextInput
+              style={[styles.searchInput, { color: colors.textPrimary }]}
+              placeholder="Search entries..."
+              placeholderTextColor={colors.textTertiary}
+              value={searchQuery}
+              onChangeText={handleSearch}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => handleSearch('')}>
+                <X color={colors.textTertiary} size={18} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
+        {displayedEntries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              No journal entries yet
+              {searchQuery ? 'No matching entries' : 'No journal entries yet'}
             </Text>
             <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              Start writing or scan a handwritten entry
+              {searchQuery
+                ? 'Try a different search term'
+                : 'Start writing or scan a handwritten entry'}
             </Text>
           </View>
         ) : (
-          entries.map((entry, index) => (
+          displayedEntries.map((entry, index) => (
             <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
               <AnimatedCard style={styles.entryCard} delay={index * 50}>
                 <View style={styles.entryHeader}>
@@ -108,6 +155,18 @@ export default function JournalScreen() {
                     <Text style={[styles.scannedText, { color: colors.textTertiary }]}>
                       Scanned
                     </Text>
+                  </View>
+                )}
+                {entry.tags && entry.tags.length > 0 && (
+                  <View style={styles.tagsRow}>
+                    {entry.tags.map((tag) => (
+                      <View
+                        key={tag}
+                        style={[styles.tagBadge, { backgroundColor: colors.journal + '15' }]}
+                      >
+                        <Text style={[styles.tagText, { color: colors.journal }]}>{tag}</Text>
+                      </View>
+                    ))}
                   </View>
                 )}
               </AnimatedCard>
@@ -153,6 +212,20 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.md,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    marginLeft: spacing.sm,
+    paddingVertical: 2,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -220,6 +293,21 @@ const styles = StyleSheet.create({
   scannedText: {
     fontSize: 12,
     marginLeft: 4,
+  },
+  tagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: spacing.sm,
+    gap: spacing.xs,
+  },
+  tagBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+  },
+  tagText: {
+    fontSize: 11,
+    fontWeight: '500',
   },
   fabContainer: {
     position: 'absolute',
