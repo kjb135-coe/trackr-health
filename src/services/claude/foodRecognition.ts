@@ -21,6 +21,12 @@ const FoodAnalysisSchema = z.object({
 });
 
 function parseJsonFromResponse(text: string): unknown {
+  // Try direct parse first (response may be pure JSON)
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Fall back to regex extraction if wrapped in markdown/text
+  }
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error('Could not find JSON in response');

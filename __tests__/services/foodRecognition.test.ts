@@ -115,6 +115,31 @@ describe('analyzeFoodImage', () => {
     await expect(resultPromise).rejects.toThrow();
   });
 
+  it('parses JSON wrapped in markdown/text', async () => {
+    const wrappedJson = `Here is the analysis:\n${JSON.stringify({
+      foods: [
+        {
+          name: 'Banana',
+          portion: '1 medium',
+          calories: 105,
+          confidence: 0.85,
+        },
+      ],
+      totalCalories: 105,
+    })}`;
+
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: wrappedJson }],
+    });
+
+    const resultPromise = analyzeFoodImage('test.jpg');
+    jest.runAllTimers();
+    const result = await resultPromise;
+
+    expect(result.detectedFoods).toHaveLength(1);
+    expect(result.detectedFoods[0].name).toBe('Banana');
+  });
+
   it('maps macros correctly when present', async () => {
     mockCreate.mockResolvedValue(validResponse);
 

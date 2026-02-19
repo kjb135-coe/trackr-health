@@ -100,10 +100,9 @@ Do whatever you think is right.
 - `app/settings.tsx` line 535 shows `v1.5.0` but `package.json` says `1.0.0`.
 - **Status:** Fixed in this cleanup to read from `Constants.expoConfig?.version`.
 
-### 93. Fix greedy regex bug in foodRecognition.ts JSON parsing
-- `parseJsonFromResponse()` uses `/\{[\s\S]*\}/` (greedy) which matches from the first `{` to the LAST `}`, potentially failing with multi-object responses.
-- Should be `/\{[\s\S]*?\}/` (non-greedy) or better nested-brace-aware parsing.
-- **Effort:** 15min
+### 93. ~~Improve JSON parsing in foodRecognition.ts~~ ✅
+- `parseJsonFromResponse()` only used regex extraction. If Claude returned pure JSON, the regex still ran unnecessarily.
+- **Status:** Done — try `JSON.parse(text)` first for pure JSON, fall back to regex for markdown-wrapped responses. Added test for wrapped JSON path.
 
 ### 94. Add try-catch to modal save operations
 - `NutritionLogModal.handleSaveMeal()` and `JournalEntryModal.handleSaveEntry()` call `createMeal()`/`updateMeal()`/`createEntry()`/`updateEntry()` without try-catch.
