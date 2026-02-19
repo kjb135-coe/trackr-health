@@ -16,6 +16,7 @@ import { Plus, Camera, X, UtensilsCrossed } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
@@ -29,6 +30,7 @@ const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
 export default function NutritionScreen() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
@@ -330,7 +332,13 @@ export default function NutritionScreen() {
         <View style={styles.modalOverlay}>
           <Animated.View
             entering={FadeInDown.duration(300)}
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: colors.surface,
+                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
+              },
+            ]}
           >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Meal</Text>

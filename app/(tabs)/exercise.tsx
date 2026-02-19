@@ -13,6 +13,7 @@ import {
 import { Plus, Dumbbell, X, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
@@ -37,6 +38,7 @@ const INTENSITIES: ExerciseIntensity[] = ['low', 'moderate', 'high', 'very_high'
 
 export default function ExerciseScreen() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<ExerciseType>('running');
@@ -271,7 +273,13 @@ export default function ExerciseScreen() {
         <View style={styles.modalOverlay}>
           <Animated.View
             entering={FadeInDown.duration(300)}
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: colors.surface,
+                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
+              },
+            ]}
           >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>Log Exercise</Text>

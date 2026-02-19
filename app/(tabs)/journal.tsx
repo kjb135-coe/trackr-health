@@ -16,6 +16,7 @@ import { Plus, Camera, X, BookOpen, Edit3 } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
@@ -26,6 +27,7 @@ import { hasApiKey } from '@/src/services/claude';
 
 export default function JournalScreen() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [mode, setMode] = useState<'text' | 'scan'>('text');
@@ -254,7 +256,13 @@ export default function JournalScreen() {
         <View style={styles.modalOverlay}>
           <Animated.View
             entering={FadeInDown.duration(300)}
-            style={[styles.modalContent, { backgroundColor: colors.surface }]}
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: colors.surface,
+                paddingBottom: Math.max(spacing.xxl, insets.bottom + spacing.md),
+              },
+            ]}
           >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>

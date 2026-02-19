@@ -164,10 +164,9 @@ Do whatever you think is right.
 - ~~Nutrition screen has no error display — if loading fails, user sees nothing~~
 - **Status:** Done — added dismissable error banners to nutrition and journal screens. Both destructure `error` + `clearError` from store and show a tappable banner when errors occur.
 
-### 28. Add SafeAreaView to modal overlays
-- All tab screen modals (habits, sleep, exercise, nutrition, journal) use View instead of SafeAreaView
-- Content can be cut off on devices with notches
-- **Effort:** ~30min
+### 28. ~~Add SafeAreaView to modal overlays~~ ✅
+- ~~All tab screen modals (habits, sleep, exercise, nutrition, journal) use View instead of SafeAreaView~~
+- **Status:** Done — added `useSafeAreaInsets()` to all 5 tab screens. Modal content uses `Math.max(spacing.xxl, insets.bottom + spacing.md)` for bottom padding. 6 modal views updated across 5 files.
 
 ---
 
@@ -203,3 +202,4 @@ Do whatever you think is right.
 - [x] Fixed N+1 query in nutritionRepository: batch food item loading with IN clause (TODO #25)
 - [x] Optimized streak calculation: single SQL query instead of N-query loop (TODO #26)
 - [x] Added dismissable error banners to nutrition and journal screens (TODO #27)
+- [x] Added safe area insets to all 6 modal overlays across 5 tab screens (TODO #28)
