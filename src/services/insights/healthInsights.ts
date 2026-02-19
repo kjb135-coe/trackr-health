@@ -102,11 +102,16 @@ export async function getTrendData(): Promise<TrendData> {
 }
 
 export async function getDailyStreak(): Promise<number> {
-  // Fetch all data once, then count consecutive days in JS
+  // Fetch last 90 days of data (bounded query instead of full table scan)
+  const today = new Date();
+  const ninetyDaysAgo = subDays(today, 90);
+  const todayStr = format(today, 'yyyy-MM-dd');
+  const startStr = format(ninetyDaysAgo, 'yyyy-MM-dd');
+
   const [sleepEntries, exerciseEntries, meals] = await Promise.all([
-    sleepRepository.getAll(),
-    exerciseRepository.getAll(),
-    nutritionRepository.getAllMeals(),
+    sleepRepository.getByDateRange(startStr, todayStr),
+    exerciseRepository.getByDateRange(startStr, todayStr),
+    nutritionRepository.getMealsByDateRange(startStr, todayStr),
   ]);
 
   const activeDates = new Set([

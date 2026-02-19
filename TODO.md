@@ -583,6 +583,10 @@ Yes
 - `getAll()` on sleep, exercise, nutrition, and journal repos fetches entire tables, then filters to 7 days in JS.
 - **Status:** Done — replaced 4 unbounded `getAll()` calls with `getByDateRange(weekAgo, today)` variants. Database now returns only the 7-day window instead of full table scans.
 
+### ~~158. getDailyStreak() uses unbounded getAll() queries on 3 tables~~ ✅
+- `healthInsights.ts` `getDailyStreak()` called `getAll()` on sleep, exercise, and nutrition repos — full table scans to count consecutive days.
+- **Status:** Done — replaced with `getByDateRange()` / `getMealsByDateRange()` bounded to 90-day window. Sufficient for any realistic streak while preventing full table scans.
+
 ### ~~152. Improve AnimatedButton coverage — pressIn/pressOut, secondary variant, sizes~~ ✅
 - `AnimatedButton.tsx` at 82.85% — missing pressIn/pressOut handler tests, secondary variant, sm/lg sizes.
 - **Status:** Done — 4 new tests (pressIn/pressOut, secondary, sm, lg). 13 total tests.
@@ -836,3 +840,4 @@ Yes
 - [x] Added type safety to goals.tsx — `keyof Goals` instead of string (TODO #155)
 - [x] Replaced hardcoded storage key in goalsStore with STORAGE_KEYS.GOALS constant (TODO #156)
 - [x] Optimized healthInsightsAI: replaced 4 unbounded getAll() with getByDateRange() (TODO #157)
+- [x] Optimized getDailyStreak(): replaced unbounded getAll() with 90-day bounded getByDateRange() (TODO #158)

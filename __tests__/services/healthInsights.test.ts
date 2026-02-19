@@ -9,11 +9,8 @@ import { subDays } from 'date-fns';
 const mockGetAllHabits = jest.fn();
 const mockGetCompletionsForDateRange = jest.fn();
 const mockGetByDateRangeSleep = jest.fn();
-const mockGetAllSleep = jest.fn();
 const mockGetByDateRangeExercise = jest.fn();
-const mockGetAllExercise = jest.fn();
 const mockGetMealsByDateRange = jest.fn();
-const mockGetAllMeals = jest.fn();
 
 jest.mock('@/src/database/repositories', () => ({
   habitRepository: {
@@ -22,15 +19,12 @@ jest.mock('@/src/database/repositories', () => ({
   },
   sleepRepository: {
     getByDateRange: (...args: unknown[]) => mockGetByDateRangeSleep(...args),
-    getAll: (...args: unknown[]) => mockGetAllSleep(...args),
   },
   exerciseRepository: {
     getByDateRange: (...args: unknown[]) => mockGetByDateRangeExercise(...args),
-    getAll: (...args: unknown[]) => mockGetAllExercise(...args),
   },
   nutritionRepository: {
     getMealsByDateRange: (...args: unknown[]) => mockGetMealsByDateRange(...args),
-    getAllMeals: (...args: unknown[]) => mockGetAllMeals(...args),
   },
 }));
 
@@ -39,11 +33,8 @@ beforeEach(() => {
   mockGetAllHabits.mockResolvedValue([]);
   mockGetCompletionsForDateRange.mockResolvedValue([]);
   mockGetByDateRangeSleep.mockResolvedValue([]);
-  mockGetAllSleep.mockResolvedValue([]);
   mockGetByDateRangeExercise.mockResolvedValue([]);
-  mockGetAllExercise.mockResolvedValue([]);
   mockGetMealsByDateRange.mockResolvedValue([]);
-  mockGetAllMeals.mockResolvedValue([]);
 });
 
 describe('getWeeklyStats', () => {
@@ -128,24 +119,24 @@ describe('getDailyStreak', () => {
     const today = new Date();
     const dates = Array.from({ length: 5 }, (_, i) => getDateString(subDays(today, i)));
 
-    mockGetAllSleep.mockResolvedValue(dates.map((date) => ({ date })));
+    mockGetByDateRangeSleep.mockResolvedValue(dates.map((date) => ({ date })));
 
     const streak = await getDailyStreak();
 
     expect(streak).toBe(5);
   });
 
-  it('fetches all data only once (no repeated queries)', async () => {
+  it('fetches data with bounded date range (no full table scan)', async () => {
     await getDailyStreak();
 
-    expect(mockGetAllSleep).toHaveBeenCalledTimes(1);
-    expect(mockGetAllExercise).toHaveBeenCalledTimes(1);
-    expect(mockGetAllMeals).toHaveBeenCalledTimes(1);
+    expect(mockGetByDateRangeSleep).toHaveBeenCalledTimes(1);
+    expect(mockGetByDateRangeExercise).toHaveBeenCalledTimes(1);
+    expect(mockGetMealsByDateRange).toHaveBeenCalledTimes(1);
   });
 
   it('breaks streak when a day has no activity', async () => {
     const todayStr = getDateString(new Date());
-    mockGetAllExercise.mockResolvedValue([{ date: todayStr }]);
+    mockGetByDateRangeExercise.mockResolvedValue([{ date: todayStr }]);
 
     const streak = await getDailyStreak();
 
@@ -156,7 +147,7 @@ describe('getDailyStreak', () => {
     const today = new Date();
     const dates = Array.from({ length: 3 }, (_, i) => getDateString(subDays(today, i)));
 
-    mockGetAllMeals.mockResolvedValue(dates.map((date) => ({ date, totalCalories: 500 })));
+    mockGetMealsByDateRange.mockResolvedValue(dates.map((date) => ({ date, totalCalories: 500 })));
 
     const streak = await getDailyStreak();
 
