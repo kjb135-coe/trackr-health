@@ -10,18 +10,44 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Light: 'light' },
 }));
 
+// Builder pattern mock for layout animations
+const createLayoutAnimationMock = () => {
+  const builder = {
+    duration: () => builder,
+    delay: () => builder,
+    springify: () => builder,
+    damping: () => builder,
+    stiffness: () => builder,
+  };
+  return builder;
+};
+
 jest.mock('react-native-reanimated', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
-  const createAnimatedComponent = (comp: unknown) => comp;
+  const React = require('react'); // eslint-disable-line @typescript-eslint/no-require-imports
+
+  // Strip reanimated-specific props before passing to RN components
+  const stripAnimatedProps = (comp: React.ComponentType) =>
+    // eslint-disable-next-line react/display-name
+    React.forwardRef((props: Record<string, unknown>, ref: unknown) => {
+      const { entering, exiting, ...rest } = props;
+      return React.createElement(comp, { ...rest, ref });
+    });
+
   return {
     __esModule: true,
-    default: { createAnimatedComponent, View },
-    createAnimatedComponent,
-    useSharedValue: () => ({ value: 0 }),
+    default: {
+      createAnimatedComponent: stripAnimatedProps,
+      View: stripAnimatedProps(View),
+    },
+    createAnimatedComponent: stripAnimatedProps,
+    useSharedValue: (v: number) => ({ value: v }),
     useAnimatedStyle: () => ({}),
     withSpring: (v: number) => v,
     withTiming: (v: number) => v,
+    FadeInDown: createLayoutAnimationMock(),
+    FadeOut: createLayoutAnimationMock(),
   };
 });
 
@@ -121,7 +147,6 @@ describe('AnimatedCard', () => {
         <Text>Static card</Text>
       </AnimatedCard>,
     );
-    // Should render without error and show content
     expect(await findByText('Static card')).toBeTruthy();
   });
 });

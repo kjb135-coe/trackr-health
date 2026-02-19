@@ -6,12 +6,18 @@ import { Skeleton, SkeletonCard } from '@/src/components/ui';
 jest.mock('react-native-reanimated', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
-  const createAnimatedComponent = (comp: unknown) => comp;
+  const React = require('react'); // eslint-disable-line @typescript-eslint/no-require-imports
+  const stripAnimatedProps = (comp: React.ComponentType) =>
+    // eslint-disable-next-line react/display-name
+    React.forwardRef((props: Record<string, unknown>, ref: unknown) => {
+      const { entering, exiting, ...rest } = props;
+      return React.createElement(comp, { ...rest, ref });
+    });
   return {
     __esModule: true,
-    default: { View, createAnimatedComponent },
-    createAnimatedComponent,
-    useSharedValue: () => ({ value: 0 }),
+    default: { View: stripAnimatedProps(View), createAnimatedComponent: stripAnimatedProps },
+    createAnimatedComponent: stripAnimatedProps,
+    useSharedValue: (v: number) => ({ value: v }),
     useAnimatedStyle: () => ({}),
     withRepeat: (v: number) => v,
     withTiming: (v: number) => v,

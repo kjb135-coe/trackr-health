@@ -13,12 +13,18 @@ jest.mock('expo-haptics', () => ({
 jest.mock('react-native-reanimated', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
-  const createAnimatedComponent = (comp: unknown) => comp;
+  const React = require('react'); // eslint-disable-line @typescript-eslint/no-require-imports
+  const stripAnimatedProps = (comp: React.ComponentType) =>
+    // eslint-disable-next-line react/display-name
+    React.forwardRef((props: Record<string, unknown>, ref: unknown) => {
+      const { entering, exiting, ...rest } = props;
+      return React.createElement(comp, { ...rest, ref });
+    });
   return {
     __esModule: true,
-    default: { createAnimatedComponent, View },
-    createAnimatedComponent,
-    useSharedValue: () => ({ value: 1 }),
+    default: { createAnimatedComponent: stripAnimatedProps, View: stripAnimatedProps(View) },
+    createAnimatedComponent: stripAnimatedProps,
+    useSharedValue: (v: number) => ({ value: v }),
     useAnimatedStyle: () => ({}),
     withSpring: (v: number) => v,
     withSequence: (...args: number[]) => args[0],

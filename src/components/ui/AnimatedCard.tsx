@@ -10,13 +10,7 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import {
-  ANIMATION_DURATION,
-  STAGGER_DELAY,
-  SPRING_CONFIG,
-  SCALE,
-  TRANSLATE,
-} from '@/src/utils/animations';
+import { ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 type CardVariant = 'elevated' | 'outlined' | 'filled';
 type CardPadding = 'none' | 'sm' | 'md' | 'lg';

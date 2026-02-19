@@ -907,3 +907,4 @@ Yes
 - [x] Extracted useApiKeyExists hook, replaced 5 copy-pasted checkApiKey patterns across tab screens (TODO #168)
 - [x] Replaced hardcoded max_tokens and paddingBottom with named constants (TODO #169)
 - [x] Extracted useApiKeyExists hook, removed 5 copy-pasted checkApiKey patterns from tab screens (TODO #168)
+- [x] Fixed screen transition glitching + polished animations app-wide: centralized constants, navigation guard, AnimatedCard entering/exiting, tab crossfade, StreakCelebration reanimated migration, exit animations everywhere (TODO #170)
