@@ -190,6 +190,13 @@ Yes
 ### ~~183. Extract shared useImagePicker hook from nutrition and journal modals~~ — Skipped
 - Structural similarity but every configurable detail differs (camera options, permission messages, AI service, error messages, no-API-key behavior). A parametrized hook would be more complex than the two inlined versions. Per CLAUDE.md: "three similar lines of code is better than a premature abstraction."
 
+### ~~185. Fix unsafe cast, dedup AICoaching, memoize slides/entries~~ ✅
+- (a) Replaced unsafe `as { id_token?: string }` cast in login.tsx with type-safe property access.
+- (b) Replaced duplicate `hasKey` state + `checkApiKey` effect in AICoaching with shared `useApiKeyExists` hook.
+- (c) Memoized 6-element `slides` array in onboarding.tsx (prevents FlatList re-renders on state change).
+- (d) Memoized `filteredByTag` and `displayedEntries` in journal.tsx (prevents filter on every keystroke).
+- **Status:** Done — 4 files fixed, all 618 tests pass.
+
 ### ~~184. Add settings screen tests~~ ✅
 - `app/settings.tsx` (716 lines) has zero test coverage. Contains critical paths: API key management, data export, account deletion, and theme switching.
 - **Status:** Done — 17 tests: section titles, user info, API key save/empty/configured, sign out, goals navigation, export all/CSV/fail, clear data confirm, theme picker, privacy policy. 618 total tests.
@@ -974,3 +981,4 @@ Yes
 - [x] Fixed setSaving(false) leak in 3 modal save handlers — moved to finally block (TODO #181)
 - [x] Added zod validation to 6 healthInsightsAI JSON.parse() casts — 7 schemas, 1 new test, 601 total (TODO #182)
 - [x] Added settings screen tests (17): API key management, sign out, export, clear data, theme, privacy — 618 total (TODO #184)
+- [x] Fixed unsafe cast in login, dedup AICoaching hasKey, memoized onboarding slides + journal entries (TODO #185)
