@@ -1041,10 +1041,9 @@ Yes
 - `app/settings.tsx` has no screen-level test coverage. Tests should cover: theme toggle, API key input, data export, demo data loading, version display.
 - **Status:** Already done — `__tests__/screens/settings.test.tsx` already exists with 17 tests covering all settings sections.
 
-### 201. Fix missing null guard in authService.signUp credential.user
-- `src/services/auth/authService.ts` line 60: `sendEmailVerification(credential.user)` is called without a null check, but `updateProfile` on line 56 does check. If `credential.user` is somehow null, it crashes.
-- Add null guard and a test for the edge case.
-- **Effort:** ~10min
+### ~~201. Fix inconsistent credential.user handling in authService.signUp~~ ✅
+- `src/services/auth/authService.ts` line 60: `sendEmailVerification(credential.user)` was called without a null check, but `updateProfile` on line 56 did check.
+- **Status:** Done — destructured `const { user } = credential` and used `user` consistently throughout the method. Removed the redundant `credential.user` null check from the `displayName` condition (since `createUserWithEmailAndPassword` always returns a user).
 
 ### 202. Add firebase config initialization tests
 - `src/services/firebase/config.ts` (43 lines) has zero tests. Test `isConfigured` with/without env vars, hot-reload recovery, null exports when unconfigured.

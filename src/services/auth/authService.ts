@@ -52,13 +52,14 @@ const firebaseAuthService = {
 
   async signUp(email: string, password: string, displayName?: string): Promise<AuthUser> {
     const credential = await createUserWithEmailAndPassword(auth!, email, password);
+    const { user } = credential;
 
-    if (displayName && credential.user) {
-      await updateProfile(credential.user, { displayName });
+    if (displayName) {
+      await updateProfile(user, { displayName });
     }
 
-    await sendEmailVerification(credential.user);
-    return mapFirebaseUser(credential.user);
+    await sendEmailVerification(user);
+    return mapFirebaseUser(user);
   },
 
   async signIn(email: string, password: string): Promise<AuthUser> {
