@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import { Plus, Dumbbell, Sparkles, Flame, Clock, Zap, X } from 'lucide-react-native';
+import { Plus, Dumbbell, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -20,6 +20,7 @@ import {
   DateNavigator,
   FAB,
   SkeletonCard,
+  ErrorBanner,
 } from '@/src/components/ui';
 import { useExerciseStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, getDateString } from '@/src/utils/date';
@@ -114,15 +115,7 @@ export default function ExerciseScreen() {
       >
         <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
 
-        {error && (
-          <TouchableOpacity
-            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
-            onPress={clearError}
-          >
-            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
-            <X color={colors.error} size={16} />
-          </TouchableOpacity>
-        )}
+        {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {weekSessions.length > 0 && (
           <Animated.View entering={FadeInDown.duration(400)}>
@@ -340,19 +333,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.sm,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: spacing.sm,
   },
   summaryCard: {
     padding: spacing.md,

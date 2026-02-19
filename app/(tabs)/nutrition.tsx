@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { Plus, X, UtensilsCrossed } from 'lucide-react-native';
+import { Plus, UtensilsCrossed } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
-import { AnimatedCard, DateNavigator, FAB, SkeletonCard } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB, SkeletonCard, ErrorBanner } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -100,15 +92,7 @@ export default function NutritionScreen() {
       >
         <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
 
-        {error && (
-          <TouchableOpacity
-            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
-            onPress={clearError}
-          >
-            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
-            <X color={colors.error} size={16} />
-          </TouchableOpacity>
-        )}
+        {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {/* Daily Summary */}
         <Animated.View entering={FadeInDown.duration(400)}>
@@ -231,19 +215,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.sm,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: spacing.sm,
   },
   summaryCard: {
     padding: spacing.md,

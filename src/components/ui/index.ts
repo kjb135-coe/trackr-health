@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { Input } from './Input';
 export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorBanner } from './ErrorBanner';
 export { DateNavigator } from './DateNavigator';
 export { FAB, SecondaryFAB, FABGroup } from './FAB';
 

@@ -14,7 +14,14 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, FAB, SecondaryFAB, FABGroup, SkeletonCard } from '@/src/components/ui';
+import {
+  AnimatedCard,
+  FAB,
+  SecondaryFAB,
+  FABGroup,
+  SkeletonCard,
+  ErrorBanner,
+} from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
@@ -108,15 +115,7 @@ export default function JournalScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {error && (
-          <TouchableOpacity
-            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
-            onPress={clearError}
-          >
-            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
-            <X color={colors.error} size={16} />
-          </TouchableOpacity>
-        )}
+        {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {entries.length > 0 && (
           <View style={[styles.searchContainer, { backgroundColor: colors.surfaceSecondary }]}>
@@ -306,19 +305,6 @@ const styles = StyleSheet.create({
   tagFilterText: {
     fontSize: 13,
     fontWeight: '500',
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.sm,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: spacing.sm,
   },
   emptyState: {
     alignItems: 'center',
