@@ -70,6 +70,17 @@ export default function SleepScreen() {
 
   const recentEntries = entries.slice(0, 7);
 
+  const avgDuration =
+    recentEntries.length > 0
+      ? Math.round(
+          recentEntries.reduce((sum, e) => sum + e.durationMinutes, 0) / recentEntries.length,
+        )
+      : 0;
+  const avgQuality =
+    recentEntries.length > 0
+      ? (recentEntries.reduce((sum, e) => sum + e.quality, 0) / recentEntries.length).toFixed(1)
+      : '—';
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
@@ -83,7 +94,41 @@ export default function SleepScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        <Animated.View entering={FadeInDown.duration(400)}>
+        {recentEntries.length > 0 && (
+          <Animated.View entering={FadeInDown.duration(400)}>
+            <AnimatedCard style={styles.summaryCard}>
+              <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
+                7-Day Average
+              </Text>
+              <View style={styles.summaryRow}>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>
+                    {formatDuration(avgDuration)}
+                  </Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                    Duration
+                  </Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>{avgQuality}</Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                    Quality /5
+                  </Text>
+                </View>
+                <View style={styles.summaryItem}>
+                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>
+                    {recentEntries.length}
+                  </Text>
+                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Nights</Text>
+                </View>
+              </View>
+            </AnimatedCard>
+          </Animated.View>
+        )}
+
+        <Animated.View
+          entering={FadeInDown.duration(400).delay(recentEntries.length > 0 ? 100 : 0)}
+        >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Recent Sleep</Text>
         </Animated.View>
 
@@ -276,6 +321,30 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
+  },
+  summaryCard: {
+    padding: spacing.md,
+    marginBottom: spacing.md,
+  },
+  summaryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  summaryItem: {
+    alignItems: 'center',
+  },
+  summaryValue: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  summaryLabel: {
+    fontSize: 12,
+    marginTop: 2,
   },
   sectionTitle: {
     fontSize: 18,

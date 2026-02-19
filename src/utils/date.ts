@@ -6,7 +6,6 @@ import {
   differenceInMinutes,
   isToday,
   isYesterday,
-  subDays,
 } from 'date-fns';
 
 export function formatDate(date: Date | string, formatStr: string = 'yyyy-MM-dd'): string {
@@ -54,14 +53,6 @@ export function getRelativeDateLabel(date: Date | string): string {
   if (isToday(d)) return 'Today';
   if (isYesterday(d)) return 'Yesterday';
   return format(d, 'EEEE, MMM d');
-}
-
-export function getWeekDates(referenceDate: Date = new Date()): Date[] {
-  const dates: Date[] = [];
-  for (let i = 6; i >= 0; i--) {
-    dates.push(subDays(referenceDate, i));
-  }
-  return dates;
 }
 
 export function generateId(): string {
