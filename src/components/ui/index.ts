@@ -10,5 +10,5 @@ export { FAB, SecondaryFAB, FABGroup } from './FAB';
 export { AnimatedCard } from './AnimatedCard';
 export { AnimatedButton } from './AnimatedButton';
 
-// Animation utilities
-export * from './animations';
+// Loading & animation utilities
+export { Skeleton, SkeletonCard } from './animations';
