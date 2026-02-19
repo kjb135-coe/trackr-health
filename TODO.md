@@ -7,19 +7,13 @@
 
 ## P0 - Critical / Blocking
 
-### 1. No test suite
+### ~~1. No test suite~~ ✅
 - Zero tests exist. No test runner configured.
-- **Effort:** ~4h for initial setup + first tests
-- `[Q]` Which test framework? **Jest + React Native Testing Library** / **Vitest** / **Other:**
-Up to you
+- **Status:** 518+ tests across 49 suites with Jest + React Native Testing Library.
 
-### 2. No linting or formatting
+### ~~2. No linting or formatting~~ ✅
 - No ESLint or Prettier config. No pre-commit hooks.
-- **Effort:** ~1h setup
-- `[Q]` Set up ESLint + Prettier with Expo recommended config? **Yes** / **No** / **Other:**
-Up to you
-- `[Q]` Add Husky pre-commit hook for lint-staged? **Yes** / **No**
-Up to you
+- **Status:** ESLint + Prettier configured with Expo recommended config. Husky pre-commit hooks with lint-staged active.
 ---
 
 ## P1 - Should Fix Soon
@@ -36,21 +30,21 @@ Up to you
   - **Your answer:**
 Don't touch auth or hosting right now.
 
-### 4. Dark mode broken on several screens
+### ~~4. Dark mode broken on several screens~~ ✅
 - `app/auth/login.tsx`, `app/auth/signup.tsx`, `app/auth/forgot-password.tsx`, `app/auth/verify-email.tsx` use hardcoded light colors (e.g., `#f5f5f5`, `#333`, `white` backgrounds)
 - `app/onboarding.tsx` has similar issues
 - `app/goals.tsx` partially broken
+- **Status:** All screens now use `useTheme()` with `createStyles(colors)` pattern.
 - **Effort:** ~2h to fix all screens
 - `[Q]` Fix dark mode on auth screens? **Yes** / **Skip for now** (auth is mock anyway)
 Yes
 - `[Q]` Fix dark mode on onboarding? **Yes** / **Skip for now**
 Yes, fix everywhere. 
 
-### 5. StreakBadge & StreakCelebration components unused
+### ~~5. StreakBadge & StreakCelebration components unused~~ ✅
 - `src/components/habits/StreakBadge.tsx` and `src/components/habits/StreakCelebration.tsx` exist but are never rendered.
 - They appear to be finished components waiting to be integrated into the habits screen.
-- **Effort:** 30min to integrate, 5min to delete
-- `[Q]` **Integrate** into habits screen or **Remove**? Integrate
+- **Status:** Both integrated into habits.tsx with streak milestones.
 
 ### 6. Accessibility is zero
 - No `accessibilityLabel`, `accessibilityRole`, or `accessibilityHint` on any interactive element.
@@ -68,24 +62,20 @@ Keep
 
 ## P2 - Nice to Have
 
-### 8. No CI/CD pipeline
+### ~~8. No CI/CD pipeline~~ ✅
 - No GitHub Actions, no automated checks on PRs.
 - **Effort:** ~1-2h
 - `[Q]` Set up GitHub Actions with type-check + lint + test? **Yes** / **Later**
 Yes
+- **Status:** CI workflow already exists at `.github/workflows/ci.yml` with type check, lint, and test.
 
-### 18. Fix 14 ESLint errors across codebase
+### ~~18. Fix 14 ESLint errors across codebase~~ ✅
 - Unescaped JSX entities (`'` and `"`) in exercise, habits/new, goals, AICoaching, StreakCelebration screens
-- Firebase config has unresolved import (`@firebase/auth/react-native`)
-- **Effort:** ~30min
-- These block CI since `npm run lint` exits non-zero
+- **Status:** 0 ESLint errors, 0 warnings.
 
-### 9. `colors` vs `useTheme()` inconsistency
+### ~~9. `colors` vs `useTheme()` inconsistency~~ ✅
 - Some files import `colors` directly from `@/src/theme` (static light-only), while others properly use `useTheme()`.
-- Direct `colors` imports will break dark mode.
-- Already partially addressed (most screens use `useTheme()`), but worth auditing.
-- **Effort:** ~1h
-Do whatever you think is right.
+- **Status:** All components now use `useTheme()` hook. No direct `colors` imports remain.
 
 ### 10. Export service error handling
 - `app/settings.tsx` lines 252, 271 use `error: any` - should use `unknown` + `getErrorMessage()`.
@@ -128,16 +118,12 @@ Do whatever you think is right.
 
 ## P3 - Future / Low Priority
 
-### 19. Fix 74 ESLint warnings (unused imports, missing useEffect deps)
-- ~40 `@typescript-eslint/no-unused-vars` warnings across the codebase (unused imports, destructured vars)
-- ~15 `react-hooks/exhaustive-deps` warnings (missing dependencies in useEffect)
-- Cleaning these up improves code quality and prevents bugs from stale closures
+### ~~19. Fix 74 ESLint warnings (unused imports, missing useEffect deps)~~ ✅
+- **Status:** 0 ESLint warnings remaining.
 - **Effort:** ~1-2h
 
-### 20. Expand test coverage beyond initial smoke tests
-- Only 2 test files exist: `date.test.ts` (4 tests) and `Button.test.tsx` (4 tests)
-- Key untested areas: Zustand stores, database repositories, navigation flows, AI service mocks
-- **Effort:** ~4-6h for meaningful coverage
+### ~~20. Expand test coverage beyond initial smoke tests~~ ✅
+- **Status:** 518+ tests across 49 suites, 91%+ statement coverage.
 
 ### 22. ~~Add sleep, nutrition, and exercise store tests~~ ✅
 - ~~Only habitStore has tests. sleepStore, nutritionStore, and exerciseStore follow the same pattern and should be tested.~~
