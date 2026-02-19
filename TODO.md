@@ -1069,6 +1069,6 @@ Yes
 - `csvEscape()` in `dataExport.ts` is only indirectly tested via CSV generation. Add direct tests for edge cases: strings with internal double quotes, null/undefined, strings with commas, strings with newlines. Export the function or test via CSV rows containing these edge cases.
 - **Status:** Done — Added 3 new edge case tests: RFC 4180 double-quote escaping, null/undefined field handling, commas inside quoted fields. 13 tests in dataExport.test.ts, 744 total.
 
-### 208. Add animations.ts constant shape tests
+### ~~208. Add animations.ts constant shape tests~~ ✅
 - `src/utils/animations.ts` (75 lines) exports 5 constant objects (ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE, TRANSLATE) with no tests. Add structural tests verifying all expected keys exist and values are positive numbers.
-- **Effort:** ~10min
+- **Status:** Done — 15 tests covering all 5 constant objects: shape validation, positive values, ordering invariants (exit < entrance, initialOffset > listItem, press-in < 1, focused > unfocused). 759 total tests across 65 suites.
