@@ -43,10 +43,12 @@ export default function NutritionScreen() {
     dailyTotals,
     isLoading,
     isAnalyzing,
+    error,
     loadMealsForDate,
     loadDailyTotals,
     createMeal,
     analyzeImage,
+    clearError,
   } = useNutritionStore();
 
   const today = getDateString();
@@ -217,6 +219,16 @@ export default function NutritionScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
+        {error && (
+          <TouchableOpacity
+            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
+            onPress={clearError}
+          >
+            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+            <X color={colors.error} size={16} />
+          </TouchableOpacity>
+        )}
+
         {/* Daily Summary */}
         <Animated.View entering={FadeInDown.duration(400)}>
           <AnimatedCard style={styles.summaryCard}>
@@ -459,6 +471,19 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.md,
+  },
+  errorText: {
+    fontSize: 14,
+    flex: 1,
+    marginRight: spacing.sm,
   },
   summaryCard: {
     padding: spacing.md,

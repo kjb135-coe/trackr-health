@@ -160,10 +160,9 @@ Do whatever you think is right.
 - ~~`getStreak()` runs an infinite loop querying one day at a time~~
 - **Status:** Done — replaced N-query loop with single `SELECT date ... ORDER BY date DESC` query + JS consecutive counting. 1 query regardless of streak length.
 
-### 27. Add error state UI to nutrition and journal screens
-- Nutrition screen has no error display — if loading fails, user sees nothing
-- Journal modal doesn't show errors from scanImage/createEntry failures
-- **Effort:** ~30min
+### 27. ~~Add error state UI to nutrition and journal screens~~ ✅
+- ~~Nutrition screen has no error display — if loading fails, user sees nothing~~
+- **Status:** Done — added dismissable error banners to nutrition and journal screens. Both destructure `error` + `clearError` from store and show a tappable banner when errors occur.
 
 ### 28. Add SafeAreaView to modal overlays
 - All tab screen modals (habits, sleep, exercise, nutrition, journal) use View instead of SafeAreaView
@@ -203,3 +202,4 @@ Do whatever you think is right.
 - [x] Added habitRepository tests (13 tests) covering CRUD, completions, streak with mocked db — 96 total tests (TODO #24)
 - [x] Fixed N+1 query in nutritionRepository: batch food item loading with IN clause (TODO #25)
 - [x] Optimized streak calculation: single SQL query instead of N-query loop (TODO #26)
+- [x] Added dismissable error banners to nutrition and journal screens (TODO #27)

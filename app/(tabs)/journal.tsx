@@ -35,7 +35,8 @@ export default function JournalScreen() {
   const [scannedImage, setScannedImage] = useState<string | null>(null);
   const [apiKeyExists, setApiKeyExists] = useState(false);
 
-  const { entries, isLoading, isScanning, loadEntries, createEntry, scanImage } = useJournalStore();
+  const { entries, isLoading, isScanning, error, loadEntries, createEntry, scanImage, clearError } =
+    useJournalStore();
 
   useEffect(() => {
     loadEntries();
@@ -167,6 +168,16 @@ export default function JournalScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
+        {error && (
+          <TouchableOpacity
+            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
+            onPress={clearError}
+          >
+            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+            <X color={colors.error} size={16} />
+          </TouchableOpacity>
+        )}
+
         {entries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
@@ -419,6 +430,19 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.sm,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.md,
+  },
+  errorText: {
+    fontSize: 14,
+    flex: 1,
+    marginRight: spacing.sm,
   },
   emptyState: {
     alignItems: 'center',
