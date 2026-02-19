@@ -152,10 +152,9 @@ Do whatever you think is right.
 - ~~All store tests mock the repository layer. No tests verify actual SQLite queries.~~
 - **Status:** Added habitRepository tests (13 tests) covering getAll, getById, create, update, delete, completions, setCompletion, getStreak with mocked db. Other repos follow the same pattern.
 
-### 25. Fix N+1 query in nutritionRepository
-- `getAllMeals()` and `getMealsByDate()` fetch meals, then loop N times to fetch food items per meal
-- Should use a JOIN query to fetch meals + food items in one query, then group in JS
-- **Effort:** ~30min
+### 25. ~~Fix N+1 query in nutritionRepository~~ ✅
+- ~~`getAllMeals()` and `getMealsByDate()` fetch meals, then loop N times to fetch food items per meal~~
+- **Status:** Done — replaced N+1 loops with batch `SELECT ... WHERE meal_id IN (...)` + `groupFoodsByMealId()` helper. Now 2 queries instead of N+1.
 
 ### 26. Optimize streak calculation in habitRepository
 - `getStreak()` runs an infinite loop querying one day at a time
@@ -204,3 +203,4 @@ Do whatever you think is right.
 - [x] Migration system already exists: `migrations` table + `runMigrations()` in `src/database/index.ts` (TODO #13)
 - [x] Added image persistence: `persistImage()` copies photos to permanent `documentDirectory/images/` before saving meals/journal entries (TODO #16)
 - [x] Added habitRepository tests (13 tests) covering CRUD, completions, streak with mocked db — 96 total tests (TODO #24)
+- [x] Fixed N+1 query in nutritionRepository: batch food item loading with IN clause (TODO #25)

@@ -10,9 +10,17 @@ export const nutritionRepository = {
     );
     const meals = rows.map(mapRowToMeal);
 
-    // Load food items for each meal
-    for (const meal of meals) {
-      meal.foods = await this.getFoodItemsForMeal(meal.id);
+    if (meals.length > 0) {
+      const mealIds = meals.map((m) => m.id);
+      const placeholders = mealIds.map(() => '?').join(',');
+      const foodRows = await db.getAllAsync<any>(
+        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
+        ...mealIds,
+      );
+      const foodsByMeal = groupFoodsByMealId(foodRows);
+      for (const meal of meals) {
+        meal.foods = foodsByMeal.get(meal.id) ?? [];
+      }
     }
 
     return meals;
@@ -36,8 +44,17 @@ export const nutritionRepository = {
     );
     const meals = rows.map(mapRowToMeal);
 
-    for (const meal of meals) {
-      meal.foods = await this.getFoodItemsForMeal(meal.id);
+    if (meals.length > 0) {
+      const mealIds = meals.map((m) => m.id);
+      const placeholders = mealIds.map(() => '?').join(',');
+      const foodRows = await db.getAllAsync<any>(
+        `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
+        ...mealIds,
+      );
+      const foodsByMeal = groupFoodsByMealId(foodRows);
+      for (const meal of meals) {
+        meal.foods = foodsByMeal.get(meal.id) ?? [];
+      }
     }
 
     return meals;
@@ -263,6 +280,20 @@ function mapRowToMeal(row: any): Meal {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+function groupFoodsByMealId(rows: any[]): Map<string, FoodItem[]> {
+  const map = new Map<string, FoodItem[]>();
+  for (const row of rows) {
+    const food = mapRowToFoodItem(row);
+    const existing = map.get(food.mealId);
+    if (existing) {
+      existing.push(food);
+    } else {
+      map.set(food.mealId, [food]);
+    }
+  }
+  return map;
 }
 
 function mapRowToFoodItem(row: any): FoodItem {
