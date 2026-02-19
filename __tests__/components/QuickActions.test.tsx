@@ -13,26 +13,7 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Medium: 'medium' },
 }));
 
-jest.mock('react-native-reanimated', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View } = require('react-native');
-  const React = require('react'); // eslint-disable-line @typescript-eslint/no-require-imports
-  const stripAnimatedProps = (comp: React.ComponentType) =>
-    // eslint-disable-next-line react/display-name
-    React.forwardRef((props: Record<string, unknown>, ref: unknown) => {
-      const { entering, exiting, ...rest } = props;
-      return React.createElement(comp, { ...rest, ref });
-    });
-  return {
-    __esModule: true,
-    default: { createAnimatedComponent: stripAnimatedProps, View: stripAnimatedProps(View) },
-    createAnimatedComponent: stripAnimatedProps,
-    useSharedValue: (v: number) => ({ value: v }),
-    useAnimatedStyle: () => ({}),
-    withSpring: (v: number) => v,
-    withSequence: (...args: number[]) => args[0],
-  };
-});
+jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
 function renderWithTheme(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>);

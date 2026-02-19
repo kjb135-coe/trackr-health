@@ -3,15 +3,7 @@ import { render } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import { WeeklyInsights } from '@/src/components/dashboard/WeeklyInsights';
 
-jest.mock('react-native-reanimated', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View } = require('react-native');
-  return {
-    __esModule: true,
-    default: { View },
-    FadeIn: { duration: () => ({ delay: () => ({}) }) },
-  };
-});
+jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
 function renderWithTheme(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>);

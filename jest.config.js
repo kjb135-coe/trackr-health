@@ -7,5 +7,5 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/$1',
   },
   setupFiles: ['./jest.setup.js'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.expo/'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.expo/', '__tests__/helpers/'],
 };
