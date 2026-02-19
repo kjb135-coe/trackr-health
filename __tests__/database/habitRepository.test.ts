@@ -146,6 +146,25 @@ describe('habitRepository', () => {
       expect(sql).toContain('color = ?');
       expect(sql).toContain('updated_at = ?');
     });
+
+    it('updates all optional fields', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+
+      await habitRepository.update('h1', {
+        description: 'New desc',
+        icon: '🏃',
+        frequency: 'weekly',
+        targetDaysPerWeek: 5,
+        reminderTime: '09:00',
+      });
+
+      const [sql] = mockDb.runAsync.mock.calls[0];
+      expect(sql).toContain('description = ?');
+      expect(sql).toContain('icon = ?');
+      expect(sql).toContain('frequency = ?');
+      expect(sql).toContain('target_days_per_week = ?');
+      expect(sql).toContain('reminder_time = ?');
+    });
   });
 
   describe('delete', () => {
@@ -265,6 +284,131 @@ describe('habitRepository', () => {
       const result = await habitRepository.getStreak('h1');
 
       expect(result).toBe(1);
+    });
+  });
+
+  describe('getAllCompletions', () => {
+    it('returns all completions ordered by date DESC', async () => {
+      mockDb.getAllAsync.mockResolvedValue([
+        {
+          id: 'c1',
+          habit_id: 'h1',
+          date: '2026-02-18',
+          completed: 1,
+          completed_at: '2026-02-18T10:00:00.000Z',
+          notes: 'Good day',
+        },
+      ]);
+
+      const result = await habitRepository.getAllCompletions();
+
+      expect(result).toEqual([
+        {
+          id: 'c1',
+          habitId: 'h1',
+          date: '2026-02-18',
+          completed: true,
+          completedAt: '2026-02-18T10:00:00.000Z',
+          notes: 'Good day',
+        },
+      ]);
+      expect(mockDb.getAllAsync).toHaveBeenCalledWith(
+        'SELECT * FROM habit_completions ORDER BY date DESC',
+      );
+    });
+  });
+
+  describe('getCompletionsForHabit', () => {
+    it('returns completions for habit within date range', async () => {
+      mockDb.getAllAsync.mockResolvedValue([
+        {
+          id: 'c1',
+          habit_id: 'h1',
+          date: '2026-02-15',
+          completed: 1,
+          completed_at: '2026-02-15T10:00:00.000Z',
+          notes: null,
+        },
+      ]);
+
+      const result = await habitRepository.getCompletionsForHabit('h1', '2026-02-01', '2026-02-28');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].habitId).toBe('h1');
+      expect(mockDb.getAllAsync).toHaveBeenCalledWith(
+        expect.stringContaining('habit_id = ? AND date >= ? AND date <= ?'),
+        'h1',
+        '2026-02-01',
+        '2026-02-28',
+      );
+    });
+  });
+
+  describe('getCompletionsForDateRange', () => {
+    it('returns all completions within date range', async () => {
+      mockDb.getAllAsync.mockResolvedValue([
+        {
+          id: 'c1',
+          habit_id: 'h1',
+          date: '2026-02-15',
+          completed: 1,
+          completed_at: null,
+          notes: null,
+        },
+        {
+          id: 'c2',
+          habit_id: 'h2',
+          date: '2026-02-16',
+          completed: 0,
+          completed_at: null,
+          notes: null,
+        },
+      ]);
+
+      const result = await habitRepository.getCompletionsForDateRange('2026-02-01', '2026-02-28');
+
+      expect(result).toHaveLength(2);
+      expect(mockDb.getAllAsync).toHaveBeenCalledWith(
+        expect.stringContaining('date >= ? AND date <= ?'),
+        '2026-02-01',
+        '2026-02-28',
+      );
+    });
+  });
+
+  describe('getAllStreaks', () => {
+    it('returns empty map for empty habit list', async () => {
+      const result = await habitRepository.getAllStreaks([]);
+
+      expect(result).toEqual(new Map());
+      expect(mockDb.getAllAsync).not.toHaveBeenCalled();
+    });
+
+    it('computes streaks for multiple habits', async () => {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const todayStr = today.toISOString().split('T')[0];
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      mockDb.getAllAsync.mockResolvedValue([
+        { habit_id: 'h1', date: todayStr },
+        { habit_id: 'h1', date: yesterdayStr },
+        { habit_id: 'h2', date: todayStr },
+      ]);
+
+      const result = await habitRepository.getAllStreaks(['h1', 'h2']);
+
+      expect(result.get('h1')).toBe(2);
+      expect(result.get('h2')).toBe(1);
+    });
+
+    it('returns 0 streak for habits with no completions', async () => {
+      mockDb.getAllAsync.mockResolvedValue([]);
+
+      const result = await habitRepository.getAllStreaks(['h1']);
+
+      expect(result.get('h1')).toBe(0);
     });
   });
 });

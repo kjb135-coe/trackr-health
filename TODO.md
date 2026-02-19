@@ -554,6 +554,14 @@ Do whatever you think is right.
 - `authStore.ts` at 86.66% line coverage. Missing tests for signInWithGoogle error, sendVerificationEmail error, sendPasswordReset error.
 - **Status:** Done — added 3 tests. 17 total tests.
 
+### 126. ~~Remove unused Expo dependencies~~ ✅
+- `expo-blur`, `expo-crypto`, `expo-image-manipulator` were in package.json but never imported anywhere.
+- **Status:** Done — removed 3 packages.
+
+### 127. ~~Improve habitRepository test coverage (55% → 90%+)~~ ✅
+- `habitRepository.ts` at 55.55% coverage — lowest of all repositories. Missing tests for update field branches, getAllCompletions, getCompletionsForHabit, getCompletionsForDateRange, getAllStreaks.
+- **Status:** Done — added 7 tests (update all fields, getAllCompletions, getCompletionsForHabit, getCompletionsForDateRange, getAllStreaks empty/multi/zero). 21 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -691,3 +699,5 @@ Do whatever you think is right.
 - [x] Improved healthInsights coverage — 4 new tests (trend detection + meals streak), 15 total (TODO #123)
 - [x] Improved journalStore coverage — 3 new tests (error paths + loadEntriesForDate), 20 total (TODO #124)
 - [x] Improved authStore coverage — 3 new tests (signInWithGoogle/sendVerification/sendPasswordReset errors), 17 total — 490 total tests (TODO #125)
+- [x] Removed unused deps: expo-blur, expo-crypto, expo-image-manipulator (TODO #126)
+- [x] Improved habitRepository coverage from 55% to 90%+ — 7 new tests (update fields, completions, streaks), 21 total — 497 total tests (TODO #127)
