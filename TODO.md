@@ -137,6 +137,16 @@ Yes
 - All data is local SQLite only. No cloud backup/sync.
 - Depends on auth decision (item #3).
 
+### 172. Deduplicate reanimated test mocks into shared helper
+- 7 test files each define identical `stripAnimatedProps` + layout animation mocks for `react-native-reanimated`. Any future animation changes require updating all 7 mocks.
+- Extract to `__tests__/helpers/reanimatedMock.ts` and import in each test file.
+- **Effort:** ~15min
+
+### 173. Add onboardingStore tests
+- New `src/store/onboardingStore.ts` was added for onboarding state management but has no test coverage.
+- Should test `setCompleted()`, `hasCompleted()`, and AsyncStorage persistence.
+- **Effort:** ~20min
+
 ### 15. No deep linking configuration
 - Expo Router supports it but no scheme is configured.
 - **Effort:** ~30min
@@ -908,3 +918,4 @@ Yes
 - [x] Replaced hardcoded max_tokens and paddingBottom with named constants (TODO #169)
 - [x] Extracted useApiKeyExists hook, removed 5 copy-pasted checkApiKey patterns from tab screens (TODO #168)
 - [x] Fixed screen transition glitching + polished animations app-wide: centralized constants, navigation guard, AnimatedCard entering/exiting, tab crossfade, StreakCelebration reanimated migration, exit animations everywhere (TODO #170)
+- [x] Fixed test suite after animation rewrite: updated 7 reanimated mocks to strip entering/exiting props, added Firebase ESM mocks to jest.setup.js, removed unused TRANSLATE import (TODO #171)
