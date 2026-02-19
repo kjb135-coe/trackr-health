@@ -24,6 +24,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
+import { estimateCalories } from '@/src/utils/constants';
 import { ExerciseType, ExerciseIntensity } from '@/src/types';
 
 const EXERCISE_TYPES: { id: ExerciseType; name: string; icon: string }[] = [
@@ -109,21 +110,7 @@ export default function LogExerciseScreen() {
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const estimateCalories = () => {
-    const baseCaloriesPerMinute = {
-      running: 11,
-      cycling: 8,
-      swimming: 10,
-      weight_training: 5,
-      yoga: 3,
-      hiit: 12,
-      walking: 4,
-      other: 6,
-    };
-    const base = baseCaloriesPerMinute[selectedType as keyof typeof baseCaloriesPerMinute] || 6;
-    const intensityMultiplier = 0.6 + (intensity / 5) * 0.8;
-    return Math.round(base * duration * intensityMultiplier);
-  };
+  const calories = estimateCalories(selectedType || 'other', duration, intensity);
 
   const handleSave = async () => {
     if (!selectedType) {
@@ -138,7 +125,7 @@ export default function LogExerciseScreen() {
         type: selectedType,
         durationMinutes: duration,
         intensity: INTENSITY_MAP[intensity],
-        caloriesBurned: estimateCalories(),
+        caloriesBurned: calories,
         notes: notes.trim() || undefined,
         distance: undefined,
       });
@@ -260,9 +247,7 @@ export default function LogExerciseScreen() {
           >
             <Flame color={colors.error} size={24} />
             <View style={styles.caloriesInfo}>
-              <Text style={[styles.caloriesValue, { color: colors.error }]}>
-                {estimateCalories()}
-              </Text>
+              <Text style={[styles.caloriesValue, { color: colors.error }]}>{calories}</Text>
               <Text style={[styles.caloriesLabel, { color: colors.textTertiary }]}>
                 estimated calories
               </Text>

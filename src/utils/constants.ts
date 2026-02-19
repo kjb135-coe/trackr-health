@@ -88,6 +88,24 @@ export const HABIT_COLORS = [
   '#4ECDC4',
 ];
 
+// Calorie estimation
+const BASE_CALORIES_PER_MINUTE: Record<string, number> = {
+  running: 11,
+  cycling: 8,
+  swimming: 10,
+  weight_training: 5,
+  yoga: 3,
+  hiit: 12,
+  walking: 4,
+  other: 6,
+};
+
+export function estimateCalories(type: string, durationMinutes: number, intensity: number): number {
+  const base = BASE_CALORIES_PER_MINUTE[type] || 6;
+  const intensityMultiplier = 0.6 + (intensity / 5) * 0.8;
+  return Math.round(base * durationMinutes * intensityMultiplier);
+}
+
 // AI Configuration
 export const AI_MODEL = 'claude-sonnet-4-20250514';
 export const AI_MAX_TOKENS = 1024;

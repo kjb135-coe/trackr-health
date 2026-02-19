@@ -485,6 +485,10 @@ Do whatever you think is right.
 - `src/components/dashboard/AICoaching.tsx` line 351: `color: '#FFFFFF'` in static StyleSheet.
 - **Status:** Not needed — static `StyleSheet.create()` can't reference dynamic theme colors. White text on `colors.primary` button is correct regardless of theme.
 
+### 109. ~~Extract estimateCalories utility from exercise log screen~~ ✅
+- `app/exercise/log.tsx` had a 15-line inline `estimateCalories()` function with hardcoded calorie-per-minute lookup table.
+- **Status:** Done — extracted to `src/utils/constants.ts` as shared `estimateCalories(type, durationMinutes, intensity)` function with `BASE_CALORIES_PER_MINUTE` lookup. Added 6 unit tests. 407 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -603,3 +607,4 @@ Do whatever you think is right.
 - [x] Added ErrorBanner (2) and DateNavigator (4) UI component tests — 334 total tests (TODO #97)
 - [x] Extracted reusable EmptyState component — replaced inline patterns in all 5 tab screens (TODO #98)
 - [x] Added EmptyState tests (3) + used HABIT_COLORS constant in demoData.ts — 337 total tests
+- [x] Extracted estimateCalories to constants.ts + 6 tests — 407 total tests (TODO #109)
