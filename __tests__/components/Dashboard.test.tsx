@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import DashboardScreen from '@/app/(tabs)/index';
 
@@ -181,5 +182,58 @@ describe('DashboardScreen', () => {
       expect(mockLoadDailyTotals).toHaveBeenCalled();
       expect(mockLoadJournal).toHaveBeenCalled();
     });
+  });
+
+  it('shows nutrition calories when available', async () => {
+    mockNutritionStore.dailyTotals = { calories: 1850, protein: 80, carbs: 200, fat: 60 };
+
+    const { findByText } = renderWithTheme(<DashboardScreen />);
+    expect(await findByText('1850')).toBeTruthy();
+    expect(await findByText('calories')).toBeTruthy();
+  });
+
+  it('shows exercise duration when sessions exist', async () => {
+    mockExerciseStore.sessions = [
+      {
+        id: 'e1',
+        date: new Date().toISOString().split('T')[0],
+        durationMinutes: 45,
+        type: 'running',
+      },
+    ] as never[];
+
+    const { findByText } = renderWithTheme(<DashboardScreen />);
+    expect(await findByText('1 workout')).toBeTruthy();
+  });
+
+  it('shows journal entry count when entries exist', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    mockJournalStore.entries = [
+      { id: 'j1', date: today, content: 'Test', title: 'Entry 1' },
+      { id: 'j2', date: today, content: 'Test2', title: 'Entry 2' },
+    ] as never[];
+
+    const { findByText } = renderWithTheme(<DashboardScreen />);
+    expect(await findByText('2 entries')).toBeTruthy();
+  });
+
+  it('loads demo data when button is pressed', async () => {
+    const { populateDemoData } = jest.requireMock('@/src/utils/demoData');
+    jest.spyOn(Alert, 'alert');
+
+    const { findByText } = renderWithTheme(<DashboardScreen />);
+    const button = await findByText('Load Demo Data');
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(populateDemoData).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error from any store', async () => {
+    mockNutritionStore.error = 'Network error loading meals';
+
+    const { findByText } = renderWithTheme(<DashboardScreen />);
+    expect(await findByText('Network error loading meals')).toBeTruthy();
   });
 });
