@@ -998,9 +998,9 @@ Yes
 - `app/(tabs)/nutrition.tsx` (314 lines) has zero screen-level test coverage. Contains calorie progress bar, daily summary, meal list, AI advice section, date navigation.
 - **Status:** Done — 8 tests: empty state, daily summary totals, meal card, multiple meals, error banner, mount loading, skeleton loading, section title. 640 total tests.
 
-### 190. Add sleep screen tests
+### ~~190. Add sleep screen tests~~ ✅
 - `app/(tabs)/sleep.tsx` has zero screen-level test coverage. Contains sleep entry display, 7-day summary, AI analysis section, date navigation.
-- **Effort:** ~30min
+- **Status:** Done — 7 tests: empty state, entry card with quality badge, 7-day summary, error banner, mount loading, skeleton loading, quality labels. 647 total tests.
 
 ### 191. Add exercise screen tests
 - `app/(tabs)/exercise.tsx` has zero screen-level test coverage. Contains workout cards, summary stats, AI recommendation section, date navigation.
