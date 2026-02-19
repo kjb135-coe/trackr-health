@@ -1,8 +1,6 @@
 export const colors = {
   // Primary
   primary: '#007AFF',
-  primaryLight: '#4DA3FF',
-  primaryDark: '#0055CC',
 
   // Semantic
   success: '#34C759',

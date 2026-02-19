@@ -10,6 +10,7 @@ import {
   getErrorMessage,
   getRelativeDateLabel,
   generateId,
+  safeJsonParse,
 } from '@/src/utils/date';
 import { subDays } from 'date-fns';
 
@@ -153,5 +154,23 @@ describe('generateId', () => {
     const id1 = generateId();
     const id2 = generateId();
     expect(id1).not.toBe(id2);
+  });
+});
+
+describe('safeJsonParse', () => {
+  it('parses valid JSON', () => {
+    expect(safeJsonParse<string[]>('["a","b"]')).toEqual(['a', 'b']);
+  });
+
+  it('returns undefined for null', () => {
+    expect(safeJsonParse(null)).toBeUndefined();
+  });
+
+  it('returns undefined for empty string', () => {
+    expect(safeJsonParse('')).toBeUndefined();
+  });
+
+  it('returns undefined for invalid JSON', () => {
+    expect(safeJsonParse('{not json}')).toBeUndefined();
   });
 });

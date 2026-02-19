@@ -1017,9 +1017,9 @@ Yes
 ### ~~194. Remove unused react-dom and react-native-web dependencies~~ — Skipped
 - Both are in package.json but never directly imported. However, `app.json` has a `web` config section and `npm run web` is a configured script. Expo needs `react-native-web` + `react-dom` for web builds. Not safe to remove.
 
-### 195. Add safeJsonParse test + remove unused theme color properties
+### ~~195. Add safeJsonParse test + remove unused theme color properties~~ ✅
 - `safeJsonParse<T>` in `src/utils/date.ts` (used by 3 repositories) has no test. Also `primaryLight`, `primaryDark`, and `surfaceElevated` are defined in ThemeContext but never used anywhere.
-- **Effort:** ~15min
+- **Status:** Done — 4 tests for safeJsonParse (valid JSON, null, empty string, invalid JSON). Removed 3 unused color properties from ThemeColors interface, lightColors, darkColors, and colors.ts. 675 total tests.
 
 ### 196. DRY up nutrition camera macro calculation — single-pass reduce
 - `app/nutrition/camera.tsx` runs 4 separate `.reduce()` calls for protein/carbs/fat/calories on `detectedFoods`. Same pattern as the NutritionLogModal fix (TODO #162).

@@ -8,8 +8,6 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 export interface ThemeColors {
   // Primary
   primary: string;
-  primaryLight: string;
-  primaryDark: string;
 
   // Semantic
   success: string;
@@ -32,7 +30,6 @@ export interface ThemeColors {
   background: string;
   surface: string;
   surfaceSecondary: string;
-  surfaceElevated: string;
 
   // Text
   textPrimary: string;
@@ -51,8 +48,6 @@ export interface ThemeColors {
 
 export const lightColors: ThemeColors = {
   primary: '#007AFF',
-  primaryLight: '#4DA3FF',
-  primaryDark: '#0055CC',
 
   success: '#34C759',
   warning: '#FF9500',
@@ -71,7 +66,6 @@ export const lightColors: ThemeColors = {
   background: '#F2F2F7',
   surface: '#FFFFFF',
   surfaceSecondary: '#F2F2F7',
-  surfaceElevated: '#FFFFFF',
 
   textPrimary: '#000000',
   textSecondary: '#3C3C43',
@@ -87,8 +81,6 @@ export const lightColors: ThemeColors = {
 
 export const darkColors: ThemeColors = {
   primary: '#0A84FF',
-  primaryLight: '#409CFF',
-  primaryDark: '#0066CC',
 
   success: '#30D158',
   warning: '#FF9F0A',
@@ -107,7 +99,6 @@ export const darkColors: ThemeColors = {
   background: '#000000',
   surface: '#1C1C1E',
   surfaceSecondary: '#2C2C2E',
-  surfaceElevated: '#2C2C2E',
 
   textPrimary: '#FFFFFF',
   textSecondary: '#EBEBF5',
