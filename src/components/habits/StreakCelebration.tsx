@@ -1,9 +1,18 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Modal, Animated, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Modal, Pressable } from 'react-native';
 import { Flame, Award, Crown, Zap, X, PartyPopper } from 'lucide-react-native';
+import ReanimatedAnimated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
+import { SPRING_CONFIG } from '@/src/utils/animations';
 
 interface StreakCelebrationProps {
   visible: boolean;
@@ -17,44 +26,30 @@ const MILESTONES = [7, 14, 21, 30, 60, 90, 100, 180, 365];
 export function StreakCelebration({ visible, streak, habitName, onClose }: StreakCelebrationProps) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const scaleValue = useSharedValue(0);
+  const rotateValue = useSharedValue(0);
 
   useEffect(() => {
     if (visible) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Animated.sequence([
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-        Animated.loop(
-          Animated.sequence([
-            Animated.timing(rotateAnim, {
-              toValue: 1,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(rotateAnim, {
-              toValue: -1,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(rotateAnim, {
-              toValue: 0,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-          ]),
+      scaleValue.value = withSpring(1, SPRING_CONFIG.celebration);
+      rotateValue.value = withRepeat(
+        withSequence(
+          withTiming(5, { duration: 1000 }),
+          withTiming(-5, { duration: 1000 }),
+          withTiming(0, { duration: 1000 }),
         ),
-      ]).start();
+        -1,
+      );
     } else {
-      scaleAnim.setValue(0);
-      rotateAnim.setValue(0);
+      scaleValue.value = 0;
+      rotateValue.value = 0;
     }
-  }, [visible, scaleAnim, rotateAnim]);
+  }, [visible, scaleValue, rotateValue]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleValue.value }, { rotate: `${rotateValue.value}deg` }],
+  }));
 
   const getStreakInfo = () => {
     if (streak >= 365)
@@ -86,24 +81,12 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
   const { icon: Icon, color, title, message } = getStreakInfo();
   const isMilestone = MILESTONES.includes(streak);
 
-  const rotate = rotateAnim.interpolate({
-    inputRange: [-1, 0, 1],
-    outputRange: ['-5deg', '0deg', '5deg'],
-  });
-
   if (!isMilestone) return null;
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={[styles.overlay, { backgroundColor: colors.overlay }]} onPress={onClose}>
-        <Animated.View
-          style={[
-            styles.container,
-            {
-              transform: [{ scale: scaleAnim }, { rotate }],
-            },
-          ]}
-        >
+        <ReanimatedAnimated.View style={[styles.container, animatedStyle]}>
           <Pressable onPress={(e) => e.stopPropagation()}>
             <View style={styles.closeButton}>
               <Pressable onPress={onClose} hitSlop={20}>
@@ -128,7 +111,7 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
 
             <Button title="Keep Going!" onPress={onClose} style={styles.button} />
           </Pressable>
-        </Animated.View>
+        </ReanimatedAnimated.View>
       </Pressable>
     </Modal>
   );

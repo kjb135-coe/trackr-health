@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { Plus, Dumbbell, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -34,6 +34,7 @@ import {
 import { ExerciseIntensity, ExerciseSession } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function ExerciseScreen() {
   const { colors } = useTheme();
@@ -126,39 +127,31 @@ export default function ExerciseScreen() {
         {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {weekSessions.length > 0 && (
-          <Animated.View entering={FadeInDown.duration(400)}>
-            <AnimatedCard style={styles.summaryCard}>
-              <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
-                7-Day Activity
-              </Text>
-              <View style={styles.summaryRow}>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
-                    {weekSessions.length}
-                  </Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
-                    Workouts
-                  </Text>
-                </View>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
-                    {formatDuration(totalMinutes)}
-                  </Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
-                    Total Time
-                  </Text>
-                </View>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.exercise }]}>
-                    {totalCalories.toLocaleString()}
-                  </Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
-                    Calories
-                  </Text>
-                </View>
+          <AnimatedCard style={styles.summaryCard}>
+            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>7-Day Activity</Text>
+            <View style={styles.summaryRow}>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                  {weekSessions.length}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Workouts</Text>
               </View>
-            </AnimatedCard>
-          </Animated.View>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                  {formatDuration(totalMinutes)}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                  Total Time
+                </Text>
+              </View>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.exercise }]}>
+                  {totalCalories.toLocaleString()}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Calories</Text>
+              </View>
+            </View>
+          </AnimatedCard>
         )}
 
         {isLoading && sessions.length === 0 ? (
@@ -174,62 +167,59 @@ export default function ExerciseScreen() {
           />
         ) : (
           dateSessions.map((session, index) => (
-            <Animated.View key={session.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard
-                style={styles.sessionCard}
-                delay={index * 50}
-                onPress={() => {
-                  setEditSession(session);
-                  setModalPreFill(null);
-                  setModalVisible(true);
-                }}
-                onLongPress={() =>
-                  handleDeleteSession(
-                    session.id,
-                    EXERCISE_TYPE_LABELS[session.type] || session.type,
-                  )
-                }
-              >
-                <View style={styles.sessionHeader}>
-                  <Text style={[styles.sessionType, { color: colors.textPrimary }]}>
-                    {EXERCISE_TYPE_LABELS[session.type] || session.type}
-                  </Text>
-                </View>
+            <AnimatedCard
+              key={session.id}
+              style={styles.sessionCard}
+              delay={index * STAGGER_DELAY.listItem}
+              onPress={() => {
+                setEditSession(session);
+                setModalPreFill(null);
+                setModalVisible(true);
+              }}
+              onLongPress={() =>
+                handleDeleteSession(session.id, EXERCISE_TYPE_LABELS[session.type] || session.type)
+              }
+            >
+              <View style={styles.sessionHeader}>
+                <Text style={[styles.sessionType, { color: colors.textPrimary }]}>
+                  {EXERCISE_TYPE_LABELS[session.type] || session.type}
+                </Text>
+              </View>
 
-                <View style={styles.sessionStats}>
-                  <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.exercise }]}>
-                      {formatDuration(session.durationMinutes)}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
-                  </View>
-                  <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.exercise }]}>
-                      {INTENSITY_LABELS[session.intensity]}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>
-                      Intensity
-                    </Text>
-                  </View>
-                  {session.caloriesBurned && (
-                    <View style={styles.stat}>
-                      <Text style={[styles.statValue, { color: colors.exercise }]}>
-                        {session.caloriesBurned}
-                      </Text>
-                      <Text style={[styles.statLabel, { color: colors.textTertiary }]}>
-                        Calories
-                      </Text>
-                    </View>
-                  )}
+              <View style={styles.sessionStats}>
+                <View style={styles.stat}>
+                  <Text style={[styles.statValue, { color: colors.exercise }]}>
+                    {formatDuration(session.durationMinutes)}
+                  </Text>
+                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
                 </View>
-              </AnimatedCard>
-            </Animated.View>
+                <View style={styles.stat}>
+                  <Text style={[styles.statValue, { color: colors.exercise }]}>
+                    {INTENSITY_LABELS[session.intensity]}
+                  </Text>
+                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Intensity</Text>
+                </View>
+                {session.caloriesBurned && (
+                  <View style={styles.stat}>
+                    <Text style={[styles.statValue, { color: colors.exercise }]}>
+                      {session.caloriesBurned}
+                    </Text>
+                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Calories</Text>
+                  </View>
+                )}
+              </View>
+            </AnimatedCard>
           ))
         )}
 
         {/* AI Exercise Recommendation */}
         {apiKeyExists && (
-          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          >
             {!showRecommendation ? (
               <TouchableOpacity
                 style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}
@@ -285,7 +275,7 @@ export default function ExerciseScreen() {
                     </View>
 
                     <Text style={[styles.recReason, { color: colors.textSecondary }]}>
-                      💡 {exerciseRecommendation.reason}
+                      {exerciseRecommendation.reason}
                     </Text>
 
                     <View style={styles.recButtons}>

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Plus, UtensilsCrossed, Sparkles } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
@@ -30,6 +30,7 @@ import { MEAL_TYPE_LABELS, TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/consta
 import { useApiKeyExists } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
 import { Meal } from '@/src/types';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function NutritionScreen() {
   const { colors } = useTheme();
@@ -120,52 +121,55 @@ export default function NutritionScreen() {
         {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {/* Daily Summary */}
-        <Animated.View entering={FadeInDown.duration(400)}>
-          <AnimatedCard style={styles.summaryCard}>
-            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
-              {isViewingToday ? "Today's Nutrition" : 'Daily Nutrition'}
+        <AnimatedCard style={styles.summaryCard}>
+          <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
+            {isViewingToday ? "Today's Nutrition" : 'Daily Nutrition'}
+          </Text>
+          <View style={styles.calorieRow}>
+            <Text style={[styles.calorieValue, { color: colors.nutrition }]}>
+              {dailyTotals.calories}
             </Text>
-            <View style={styles.calorieRow}>
-              <Text style={[styles.calorieValue, { color: colors.nutrition }]}>
-                {dailyTotals.calories}
+            <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>
+              / {calorieGoal} cal
+            </Text>
+          </View>
+          <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${calorieProgress * 100}%`, backgroundColor: colors.nutrition },
+                calorieProgress > 1 && { backgroundColor: colors.warning },
+              ]}
+            />
+          </View>
+          <View style={styles.macroRow}>
+            <View style={styles.macro}>
+              <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                {Math.round(dailyTotals.protein)}g
               </Text>
-              <Text style={[styles.calorieLabel, { color: colors.textSecondary }]}>
-                / {calorieGoal} cal
+              <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
+            </View>
+            <View style={styles.macro}>
+              <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                {Math.round(dailyTotals.carbs)}g
               </Text>
+              <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
             </View>
-            <View style={[styles.progressBar, { backgroundColor: colors.border }]}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${calorieProgress * 100}%`, backgroundColor: colors.nutrition },
-                  calorieProgress > 1 && { backgroundColor: colors.warning },
-                ]}
-              />
+            <View style={styles.macro}>
+              <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
+                {Math.round(dailyTotals.fat)}g
+              </Text>
+              <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
             </View>
-            <View style={styles.macroRow}>
-              <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                  {Math.round(dailyTotals.protein)}g
-                </Text>
-                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Protein</Text>
-              </View>
-              <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                  {Math.round(dailyTotals.carbs)}g
-                </Text>
-                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Carbs</Text>
-              </View>
-              <View style={styles.macro}>
-                <Text style={[styles.macroValue, { color: colors.textPrimary }]}>
-                  {Math.round(dailyTotals.fat)}g
-                </Text>
-                <Text style={[styles.macroLabel, { color: colors.textTertiary }]}>Fat</Text>
-              </View>
-            </View>
-          </AnimatedCard>
-        </Animated.View>
+          </View>
+        </AnimatedCard>
 
-        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+        >
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
             {isViewingToday ? "Today's Meals" : 'Meals'}
           </Text>
@@ -184,42 +188,43 @@ export default function NutritionScreen() {
           />
         ) : (
           dateMeals.map((meal, index) => (
-            <Animated.View
+            <AnimatedCard
               key={meal.id}
-              entering={FadeInDown.duration(400).delay(150 + index * 50)}
+              style={styles.mealCard}
+              delay={STAGGER_DELAY.section + index * STAGGER_DELAY.listItem}
+              onPress={() => {
+                setEditMeal(meal);
+                setModalVisible(true);
+              }}
+              onLongPress={() =>
+                handleDeleteMeal(meal.id, MEAL_TYPE_LABELS[meal.mealType] || meal.mealType)
+              }
             >
-              <AnimatedCard
-                style={styles.mealCard}
-                delay={index * 50}
-                onPress={() => {
-                  setEditMeal(meal);
-                  setModalVisible(true);
-                }}
-                onLongPress={() =>
-                  handleDeleteMeal(meal.id, MEAL_TYPE_LABELS[meal.mealType] || meal.mealType)
-                }
-              >
-                <View style={styles.mealHeader}>
-                  <Text style={[styles.mealType, { color: colors.textPrimary }]}>
-                    {MEAL_TYPE_LABELS[meal.mealType]}
-                  </Text>
-                  <Text style={[styles.mealCalories, { color: colors.nutrition }]}>
-                    {meal.totalCalories} cal
-                  </Text>
-                </View>
-                {meal.foods.map((food) => (
-                  <Text key={food.id} style={[styles.foodItem, { color: colors.textSecondary }]}>
-                    {food.name} - {food.calories} cal
-                  </Text>
-                ))}
-              </AnimatedCard>
-            </Animated.View>
+              <View style={styles.mealHeader}>
+                <Text style={[styles.mealType, { color: colors.textPrimary }]}>
+                  {MEAL_TYPE_LABELS[meal.mealType]}
+                </Text>
+                <Text style={[styles.mealCalories, { color: colors.nutrition }]}>
+                  {meal.totalCalories} cal
+                </Text>
+              </View>
+              {meal.foods.map((food) => (
+                <Text key={food.id} style={[styles.foodItem, { color: colors.textSecondary }]}>
+                  {food.name} - {food.calories} cal
+                </Text>
+              ))}
+            </AnimatedCard>
           ))
         )}
 
         {/* AI Nutrition Advice */}
         {apiKeyExists && meals.length >= 3 && (
-          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          >
             {!showNutritionAdvice ? (
               <TouchableOpacity
                 style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}

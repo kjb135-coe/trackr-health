@@ -11,6 +11,7 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
+import { SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -30,18 +31,18 @@ function QuickActionButton({ label, Icon, color, onPress }: QuickActionButtonPro
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(SCALE.quickActionPressIn, SPRING_CONFIG.pressIn);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
   };
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     scale.value = withSequence(
-      withSpring(0.85, { damping: 15, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 300 }),
+      withSpring(SCALE.quickActionBounce, SPRING_CONFIG.pressIn),
+      withSpring(1, SPRING_CONFIG.bounce),
     );
     onPress();
   };

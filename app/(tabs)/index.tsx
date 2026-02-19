@@ -10,7 +10,7 @@ import {
   Sparkles,
   Flame,
 } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -27,6 +27,7 @@ import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils
 import { getDatabase } from '@/src/database';
 import { populateDemoData } from '@/src/utils/demoData';
 import { getTrendData, getDailyStreak, type TrendData } from '@/src/services/insights';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 interface DashboardCardProps {
   title: string;
@@ -236,14 +237,20 @@ export default function DashboardScreen() {
     >
       <View style={styles.headerRow}>
         <Animated.Text
-          entering={FadeInDown.duration(400).delay(100)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
           style={[styles.dateLabel, { color: colors.textSecondary }]}
         >
           {getRelativeDateLabel(new Date())}
         </Animated.Text>
         {dailyStreak > 0 && (
           <Animated.View
-            entering={FadeInDown.duration(400).delay(150)}
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
             style={[styles.streakBadge, { backgroundColor: colors.warning + '20' }]}
           >
             <Flame color={colors.warning} size={14} />
@@ -264,7 +271,7 @@ export default function DashboardScreen() {
           Icon={Target}
           onPress={() => router.push('/(tabs)/habits')}
           progress={habitProgress}
-          delay={50}
+          delay={STAGGER_DELAY.listItem}
         />
 
         <DashboardCard
@@ -274,7 +281,7 @@ export default function DashboardScreen() {
           color={colors.sleep}
           Icon={Moon}
           onPress={() => router.push('/(tabs)/sleep')}
-          delay={100}
+          delay={STAGGER_DELAY.listItem * 2}
         />
 
         <DashboardCard
@@ -288,7 +295,7 @@ export default function DashboardScreen() {
           color={colors.exercise}
           Icon={Dumbbell}
           onPress={() => router.push('/(tabs)/exercise')}
-          delay={150}
+          delay={STAGGER_DELAY.listItem * 3}
         />
 
         <DashboardCard
@@ -298,38 +305,51 @@ export default function DashboardScreen() {
           color={colors.nutrition}
           Icon={UtensilsCrossed}
           onPress={() => router.push('/(tabs)/nutrition')}
-          delay={200}
+          delay={STAGGER_DELAY.listItem * 4}
         />
       </View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(250)}>
-        <AnimatedCard
-          style={styles.journalCard}
-          onPress={() => router.push('/(tabs)/journal')}
-          delay={250}
-          haptic
-        >
-          <View style={[styles.iconContainer, { backgroundColor: colors.journal + '20' }]}>
-            <BookOpen color={colors.journal} size={24} />
-          </View>
-          <Text style={[styles.cardTitle, { color: colors.textSecondary }]}>Journal</Text>
-          <Text style={[styles.cardValue, { color: colors.textPrimary }]}>
-            {todayJournalCount > 0
-              ? `${todayJournalCount} entr${todayJournalCount !== 1 ? 'ies' : 'y'}`
-              : 'No entries yet'}
-          </Text>
-        </AnimatedCard>
-      </Animated.View>
+      <AnimatedCard
+        style={styles.journalCard}
+        onPress={() => router.push('/(tabs)/journal')}
+        delay={STAGGER_DELAY.listItem * 5}
+        haptic
+      >
+        <View style={[styles.iconContainer, { backgroundColor: colors.journal + '20' }]}>
+          <BookOpen color={colors.journal} size={24} />
+        </View>
+        <Text style={[styles.cardTitle, { color: colors.textSecondary }]}>Journal</Text>
+        <Text style={[styles.cardValue, { color: colors.textPrimary }]}>
+          {todayJournalCount > 0
+            ? `${todayJournalCount} entr${todayJournalCount !== 1 ? 'ies' : 'y'}`
+            : 'No entries yet'}
+        </Text>
+      </AnimatedCard>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 5,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <QuickActions />
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(350)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 6,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <AICoaching onSetupApiKey={() => router.push('/settings')} />
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(400)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 7,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <WeeklyInsights
           insights={[
             {
@@ -370,7 +390,10 @@ export default function DashboardScreen() {
 
       {habits.length === 0 && (
         <Animated.View
-          entering={FadeInDown.duration(400).delay(450)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 8,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
           style={[styles.demoSection, { backgroundColor: colors.surfaceSecondary }]}
         >
           <Sparkles color={colors.primary} size={32} style={{ marginBottom: spacing.sm }} />

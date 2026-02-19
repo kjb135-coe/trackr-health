@@ -10,7 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { Plus, Moon, Sparkles, TrendingUp, TrendingDown, Minus, Clock } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -30,6 +30,7 @@ import { QUALITY_LABELS, getQualityColor, TAB_CONTENT_PADDING_BOTTOM } from '@/s
 import { useApiKeyExists } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
 import { SleepEntry } from '@/src/types';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function SleepScreen() {
   const { colors } = useTheme();
@@ -119,35 +120,29 @@ export default function SleepScreen() {
         {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {weekEntries.length > 0 && (
-          <Animated.View entering={FadeInDown.duration(400)}>
-            <AnimatedCard style={styles.summaryCard}>
-              <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
-                7-Day Average
-              </Text>
-              <View style={styles.summaryRow}>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>
-                    {formatDuration(avgDuration)}
-                  </Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
-                    Duration
-                  </Text>
-                </View>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>{avgQuality}</Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
-                    Quality /5
-                  </Text>
-                </View>
-                <View style={styles.summaryItem}>
-                  <Text style={[styles.summaryValue, { color: colors.sleep }]}>
-                    {weekEntries.length}
-                  </Text>
-                  <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Nights</Text>
-                </View>
+          <AnimatedCard style={styles.summaryCard}>
+            <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>7-Day Average</Text>
+            <View style={styles.summaryRow}>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.sleep }]}>
+                  {formatDuration(avgDuration)}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Duration</Text>
               </View>
-            </AnimatedCard>
-          </Animated.View>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.sleep }]}>{avgQuality}</Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
+                  Quality /5
+                </Text>
+              </View>
+              <View style={styles.summaryItem}>
+                <Text style={[styles.summaryValue, { color: colors.sleep }]}>
+                  {weekEntries.length}
+                </Text>
+                <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Nights</Text>
+              </View>
+            </View>
+          </AnimatedCard>
         )}
 
         {isLoading && entries.length === 0 ? (
@@ -159,60 +154,63 @@ export default function SleepScreen() {
             subtitle="Tap + to log your sleep"
           />
         ) : (
-          <Animated.View entering={FadeInDown.duration(400)}>
-            <AnimatedCard
-              style={styles.entryCard}
-              onPress={() => {
-                setEditEntry(dateEntry);
-                setModalVisible(true);
-              }}
-              onLongPress={() =>
-                handleDeleteEntry(dateEntry.id, getRelativeDateLabel(dateEntry.date))
-              }
-            >
-              <View style={styles.entryHeader}>
-                <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
-                  {getRelativeDateLabel(dateEntry.date)}
+          <AnimatedCard
+            style={styles.entryCard}
+            onPress={() => {
+              setEditEntry(dateEntry);
+              setModalVisible(true);
+            }}
+            onLongPress={() =>
+              handleDeleteEntry(dateEntry.id, getRelativeDateLabel(dateEntry.date))
+            }
+          >
+            <View style={styles.entryHeader}>
+              <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
+                {getRelativeDateLabel(dateEntry.date)}
+              </Text>
+              <View
+                style={[
+                  styles.qualityBadge,
+                  { backgroundColor: getQualityColor(dateEntry.quality, colors) },
+                ]}
+              >
+                <Text style={[styles.qualityText, { color: colors.white }]}>
+                  {QUALITY_LABELS[dateEntry.quality]}
                 </Text>
-                <View
-                  style={[
-                    styles.qualityBadge,
-                    { backgroundColor: getQualityColor(dateEntry.quality, colors) },
-                  ]}
-                >
-                  <Text style={[styles.qualityText, { color: colors.white }]}>
-                    {QUALITY_LABELS[dateEntry.quality]}
-                  </Text>
-                </View>
               </View>
+            </View>
 
-              <View style={styles.entryStats}>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                    {formatDuration(dateEntry.durationMinutes)}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                    {formatTime(dateEntry.bedtime)}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Bedtime</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                    {formatTime(dateEntry.wakeTime)}
-                  </Text>
-                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Wake</Text>
-                </View>
+            <View style={styles.entryStats}>
+              <View style={styles.stat}>
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  {formatDuration(dateEntry.durationMinutes)}
+                </Text>
+                <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
               </View>
-            </AnimatedCard>
-          </Animated.View>
+              <View style={styles.stat}>
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  {formatTime(dateEntry.bedtime)}
+                </Text>
+                <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Bedtime</Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                  {formatTime(dateEntry.wakeTime)}
+                </Text>
+                <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Wake</Text>
+              </View>
+            </View>
+          </AnimatedCard>
         )}
 
         {/* AI Sleep Analysis */}
         {apiKeyExists && entries.length >= 3 && (
-          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          >
             {!showAnalysis ? (
               <TouchableOpacity
                 style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}

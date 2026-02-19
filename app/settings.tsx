@@ -32,6 +32,7 @@ import {
 } from 'lucide-react-native';
 import Animated, {
   FadeInDown,
+  FadeOut,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
@@ -47,6 +48,7 @@ import { APP_LINKS } from '@/src/utils/constants';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
+import { ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 interface SettingRowProps {
   icon: React.ReactNode;
@@ -78,12 +80,12 @@ function SettingRow({
 
   const handlePressIn = () => {
     if (onPress) {
-      scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
+      scale.value = withSpring(SCALE.settingRow, SPRING_CONFIG.pressIn);
     }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
   };
 
   return (
@@ -313,7 +315,12 @@ export default function SettingsScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* Profile Section */}
-      <Animated.View entering={FadeInDown.duration(400).delay(50)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Account</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           {user ? (
@@ -348,7 +355,12 @@ export default function SettingsScreen() {
       </Animated.View>
 
       {/* AI Features */}
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>AI Features</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <SettingRow
@@ -392,7 +404,12 @@ export default function SettingsScreen() {
       </Animated.View>
 
       {/* Appearance */}
-      <Animated.View entering={FadeInDown.duration(400).delay(150)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Appearance</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <View style={styles.settingRow}>
@@ -411,7 +428,12 @@ export default function SettingsScreen() {
       </Animated.View>
 
       {/* Preferences */}
-      <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Preferences</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <SettingRow
@@ -443,7 +465,12 @@ export default function SettingsScreen() {
       </Animated.View>
 
       {/* Data */}
-      <Animated.View entering={FadeInDown.duration(400).delay(250)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 4,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Data</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <SettingRow
@@ -477,7 +504,12 @@ export default function SettingsScreen() {
       </Animated.View>
 
       {/* Support */}
-      <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 5,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Support</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <SettingRow
@@ -527,7 +559,12 @@ export default function SettingsScreen() {
 
       {/* Sign Out */}
       {user && (
-        <Animated.View entering={FadeInDown.duration(400).delay(350)}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 6,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+        >
           <View
             style={[styles.section, styles.signOutSection, { backgroundColor: colors.surface }]}
           >

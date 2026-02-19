@@ -21,7 +21,7 @@ import {
   TrendingDown,
   Minus,
 } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -41,6 +41,7 @@ import { MOOD_LABELS, TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { JournalEntry } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { JournalEntryModal } from '@/src/components/journal';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function JournalScreen() {
   const { colors } = useTheme();
@@ -203,68 +204,70 @@ export default function JournalScreen() {
           />
         ) : (
           displayedEntries.map((entry, index) => (
-            <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard
-                style={styles.entryCard}
-                delay={index * 50}
-                onPress={() => {
-                  setEditEntry(entry);
-                  setModalMode('text');
-                  setModalVisible(true);
-                }}
-                onLongPress={() => handleDeleteEntry(entry.id, entry.title ?? '')}
-              >
-                <View style={styles.entryHeader}>
-                  <Text style={[styles.entryDate, { color: colors.textSecondary }]}>
-                    {getRelativeDateLabel(entry.date)}
-                  </Text>
-                  {entry.mood && (
-                    <View style={[styles.moodBadge, { backgroundColor: colors.journal + '20' }]}>
-                      <Text style={[styles.moodText, { color: colors.journal }]}>
-                        {MOOD_LABELS[entry.mood]}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-                {entry.title && (
-                  <Text style={[styles.entryTitle, { color: colors.textPrimary }]}>
-                    {entry.title}
-                  </Text>
-                )}
-                <Text
-                  style={[styles.entryContent, { color: colors.textSecondary }]}
-                  numberOfLines={3}
-                >
-                  {entry.content}
+            <AnimatedCard
+              key={entry.id}
+              style={styles.entryCard}
+              delay={index * STAGGER_DELAY.listItem}
+              onPress={() => {
+                setEditEntry(entry);
+                setModalMode('text');
+                setModalVisible(true);
+              }}
+              onLongPress={() => handleDeleteEntry(entry.id, entry.title ?? '')}
+            >
+              <View style={styles.entryHeader}>
+                <Text style={[styles.entryDate, { color: colors.textSecondary }]}>
+                  {getRelativeDateLabel(entry.date)}
                 </Text>
-                {entry.isScanned && (
-                  <View style={styles.scannedBadge}>
-                    <Camera color={colors.textTertiary} size={12} />
-                    <Text style={[styles.scannedText, { color: colors.textTertiary }]}>
-                      Scanned
+                {entry.mood && (
+                  <View style={[styles.moodBadge, { backgroundColor: colors.journal + '20' }]}>
+                    <Text style={[styles.moodText, { color: colors.journal }]}>
+                      {MOOD_LABELS[entry.mood]}
                     </Text>
                   </View>
                 )}
-                {entry.tags && entry.tags.length > 0 && (
-                  <View style={styles.tagsRow}>
-                    {entry.tags.map((tag) => (
-                      <View
-                        key={tag}
-                        style={[styles.tagBadge, { backgroundColor: colors.journal + '15' }]}
-                      >
-                        <Text style={[styles.tagText, { color: colors.journal }]}>{tag}</Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </AnimatedCard>
-            </Animated.View>
+              </View>
+              {entry.title && (
+                <Text style={[styles.entryTitle, { color: colors.textPrimary }]}>
+                  {entry.title}
+                </Text>
+              )}
+              <Text
+                style={[styles.entryContent, { color: colors.textSecondary }]}
+                numberOfLines={3}
+              >
+                {entry.content}
+              </Text>
+              {entry.isScanned && (
+                <View style={styles.scannedBadge}>
+                  <Camera color={colors.textTertiary} size={12} />
+                  <Text style={[styles.scannedText, { color: colors.textTertiary }]}>Scanned</Text>
+                </View>
+              )}
+              {entry.tags && entry.tags.length > 0 && (
+                <View style={styles.tagsRow}>
+                  {entry.tags.map((tag) => (
+                    <View
+                      key={tag}
+                      style={[styles.tagBadge, { backgroundColor: colors.journal + '15' }]}
+                    >
+                      <Text style={[styles.tagText, { color: colors.journal }]}>{tag}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </AnimatedCard>
           ))
         )}
 
         {/* AI Mood Analysis */}
         {apiKeyExists && entries.length >= 2 && (
-          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          >
             {!showMoodAnalysis ? (
               <TouchableOpacity
                 style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}

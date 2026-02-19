@@ -4,11 +4,19 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  withTiming,
+  FadeInDown,
+  FadeOut,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
+import {
+  ANIMATION_DURATION,
+  STAGGER_DELAY,
+  SPRING_CONFIG,
+  SCALE,
+  TRANSLATE,
+} from '@/src/utils/animations';
 
 type CardVariant = 'elevated' | 'outlined' | 'filled';
 type CardPadding = 'none' | 'sm' | 'md' | 'lg';
@@ -38,23 +46,13 @@ export function AnimatedCard({
 }: AnimatedCardProps) {
   const { colors, isDark } = useTheme();
   const scale = useSharedValue(1);
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      opacity.value = withTiming(1, { duration: 400 });
-      translateY.value = withSpring(0, { damping: 20, stiffness: 90 });
-    }, delay);
-    return () => clearTimeout(timeout);
-  }, [delay, opacity, translateY]);
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(SCALE.cardPressIn, SPRING_CONFIG.pressIn);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
   };
 
   const handlePress = () => {
@@ -65,8 +63,7 @@ export function AnimatedCard({
   };
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }, { translateY: translateY.value }],
-    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
   }));
 
   const paddingMap = {
@@ -109,6 +106,12 @@ export function AnimatedCard({
     ...getVariantStyle(),
   };
 
+  const entering = FadeInDown.duration(ANIMATION_DURATION.cardEntrance)
+    .delay(STAGGER_DELAY.initialOffset + delay)
+    .springify();
+
+  const exiting = FadeOut.duration(ANIMATION_DURATION.exit);
+
   if (onPress || onLongPress) {
     return (
       <AnimatedPressable
@@ -116,6 +119,8 @@ export function AnimatedCard({
         onLongPress={onLongPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        entering={entering}
+        exiting={exiting}
         style={[cardStyle, animatedStyle, style]}
       >
         {children}
@@ -123,5 +128,9 @@ export function AnimatedCard({
     );
   }
 
-  return <Animated.View style={[cardStyle, animatedStyle, style]}>{children}</Animated.View>;
+  return (
+    <Animated.View entering={entering} exiting={exiting} style={[cardStyle, animatedStyle, style]}>
+      {children}
+    </Animated.View>
+  );
 }

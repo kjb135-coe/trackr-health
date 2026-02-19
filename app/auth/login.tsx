@@ -10,10 +10,12 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 import { useGoogleAuth } from '@/src/services/auth';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -27,10 +29,12 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (response && 'type' in response && response.type === 'success' && 'params' in response) {
-      const { id_token } = (response as any).params;
-      signInWithGoogle(id_token).catch((err) => {
-        Alert.alert('Error', err.message);
-      });
+      const params = response.params as { id_token?: string };
+      if (params.id_token) {
+        signInWithGoogle(params.id_token).catch((err: unknown) => {
+          Alert.alert('Error', err instanceof Error ? err.message : 'Google sign-in failed');
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
@@ -63,10 +67,32 @@ export default function LoginScreen() {
       style={styles.container}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue tracking your health</Text>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.title}
+        >
+          Welcome Back
+        </Animated.Text>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.subtitle}
+        >
+          Sign in to continue tracking your health
+        </Animated.Text>
 
-        <View style={styles.form}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.form}
+        >
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -110,14 +136,20 @@ export default function LoginScreen() {
           >
             <Text style={styles.googleButtonText}>Continue with Google</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
-        <View style={styles.footer}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.footer}
+        >
           <Text style={styles.footerText}>{"Don't have an account? "}</Text>
           <TouchableOpacity onPress={() => router.push('/auth/signup')}>
             <Text style={styles.footerLink}>Sign Up</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </View>
     </KeyboardAvoidingView>
   );

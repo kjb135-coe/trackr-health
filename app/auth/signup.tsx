@@ -11,9 +11,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -68,10 +70,32 @@ export default function SignUpScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Start your health tracking journey</Text>
+          <Animated.Text
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+            style={styles.title}
+          >
+            Create Account
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+            style={styles.subtitle}
+          >
+            Start your health tracking journey
+          </Animated.Text>
 
-          <View style={styles.form}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+            style={styles.form}
+          >
             <TextInput
               style={styles.input}
               placeholder="Full Name"
@@ -121,14 +145,20 @@ export default function SignUpScreen() {
               loading={isLoading}
               style={styles.button}
             />
-          </View>
+          </Animated.View>
 
-          <View style={styles.footer}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+            style={styles.footer}
+          >
             <Text style={styles.footerText}>Already have an account? </Text>
             <TouchableOpacity onPress={() => router.push('/auth/login')}>
               <Text style={styles.footerLink}>Sign In</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

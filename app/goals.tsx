@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useRouter } from 'expo-router';
 import Slider from '@react-native-community/slider';
 import { X, Moon, Dumbbell, UtensilsCrossed, Target, BookOpen } from 'lucide-react-native';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
-import { Card, Button } from '@/src/components/ui';
+import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useGoalsStore } from '@/src/store';
 import { Goals } from '@/src/store/goalsStore';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function GoalsScreen() {
   const router = useRouter();
@@ -37,20 +39,27 @@ export default function GoalsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
-          <X color={colors.textSecondary} size={24} />
-        </TouchableOpacity>
-        <Text style={styles.title}>Your Goals</Text>
-        <View style={styles.placeholder} />
-      </View>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+          STAGGER_DELAY.initialOffset,
+        )}
+        exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+            <X color={colors.textSecondary} size={24} />
+          </TouchableOpacity>
+          <Text style={styles.title}>Your Goals</Text>
+          <View style={styles.placeholder} />
+        </View>
 
-      <Text style={styles.description}>
-        Set personalized targets for each area of your health journey.
-      </Text>
+        <Text style={styles.description}>
+          Set personalized targets for each area of your health journey.
+        </Text>
+      </Animated.View>
 
       {/* Sleep Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.sleep + '20' }]}>
             <Moon color={colors.sleep} size={24} />
@@ -75,10 +84,10 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>5 hrs</Text>
           <Text style={styles.sliderLabel}>12 hrs</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
       {/* Exercise Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem * 2}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.exercise + '20' }]}>
             <Dumbbell color={colors.exercise} size={24} />
@@ -103,10 +112,10 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>30 min</Text>
           <Text style={styles.sliderLabel}>10 hrs</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
       {/* Calories Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem * 3}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.nutrition + '20' }]}>
             <UtensilsCrossed color={colors.nutrition} size={24} />
@@ -131,10 +140,10 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>1200</Text>
           <Text style={styles.sliderLabel}>4000</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
       {/* Protein Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem * 4}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.success + '20' }]}>
             <Target color={colors.success} size={24} />
@@ -159,10 +168,10 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>20g</Text>
           <Text style={styles.sliderLabel}>200g</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
       {/* Habits Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem * 5}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.habits + '20' }]}>
             <Target color={colors.habits} size={24} />
@@ -187,10 +196,10 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>1</Text>
           <Text style={styles.sliderLabel}>20</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
       {/* Journal Goal */}
-      <Card style={styles.goalCard}>
+      <AnimatedCard style={styles.goalCard} delay={STAGGER_DELAY.listItem * 6}>
         <View style={styles.goalHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.journal + '20' }]}>
             <BookOpen color={colors.journal} size={24} />
@@ -215,9 +224,9 @@ export default function GoalsScreen() {
           <Text style={styles.sliderLabel}>1</Text>
           <Text style={styles.sliderLabel}>14</Text>
         </View>
-      </Card>
+      </AnimatedCard>
 
-      <Button
+      <AnimatedButton
         title="Save Goals"
         onPress={handleSave}
         loading={isLoading}

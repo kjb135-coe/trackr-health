@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { Plus, Check, Trash2, Sparkles, ChevronRight } from 'lucide-react-native';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
@@ -34,6 +34,7 @@ import { getDateString } from '@/src/utils/date';
 import { Habit } from '@/src/types';
 import { TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function HabitsScreen() {
   const { colors } = useTheme();
@@ -165,73 +166,80 @@ export default function HabitsScreen() {
             const streak = streaks.get(habit.id) || 0;
 
             return (
-              <Animated.View key={habit.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-                <AnimatedCard style={styles.habitCard} delay={index * 50}>
-                  <TouchableOpacity
-                    style={[
-                      styles.checkbox,
-                      { borderColor: habit.color },
-                      isCompleted && { backgroundColor: habit.color },
-                    ]}
-                    onPress={() => handleToggle(habit.id)}
-                  >
-                    {isCompleted && <Check color={colors.white} size={16} />}
-                  </TouchableOpacity>
+              <AnimatedCard
+                key={habit.id}
+                style={styles.habitCard}
+                delay={index * STAGGER_DELAY.listItem}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    { borderColor: habit.color },
+                    isCompleted && { backgroundColor: habit.color },
+                  ]}
+                  onPress={() => handleToggle(habit.id)}
+                >
+                  {isCompleted && <Check color={colors.white} size={16} />}
+                </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={styles.habitInfo}
-                    onPress={() => {
-                      setEditingHabit(habit);
-                      setModalVisible(true);
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.habitNameRow}>
-                      <Text
-                        style={[
-                          styles.habitName,
-                          { color: colors.textPrimary },
-                          isCompleted && {
-                            textDecorationLine: 'line-through',
-                            color: colors.textTertiary,
-                          },
-                        ]}
-                      >
-                        {habit.name}
-                      </Text>
-                      {streak > 0 && <StreakBadge streak={streak} size="sm" />}
-                    </View>
-                    <View style={styles.weekDots}>
-                      {weekDates.map((date) => {
-                        const done = weeklyCompletions.get(habit.id)?.has(date);
-                        return (
-                          <View
-                            key={date}
-                            style={[
-                              styles.dot,
-                              { backgroundColor: done ? habit.color : colors.border },
-                            ]}
-                          />
-                        );
-                      })}
-                    </View>
-                  </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.habitInfo}
+                  onPress={() => {
+                    setEditingHabit(habit);
+                    setModalVisible(true);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.habitNameRow}>
+                    <Text
+                      style={[
+                        styles.habitName,
+                        { color: colors.textPrimary },
+                        isCompleted && {
+                          textDecorationLine: 'line-through',
+                          color: colors.textTertiary,
+                        },
+                      ]}
+                    >
+                      {habit.name}
+                    </Text>
+                    {streak > 0 && <StreakBadge streak={streak} size="sm" />}
+                  </View>
+                  <View style={styles.weekDots}>
+                    {weekDates.map((date) => {
+                      const done = weeklyCompletions.get(habit.id)?.has(date);
+                      return (
+                        <View
+                          key={date}
+                          style={[
+                            styles.dot,
+                            { backgroundColor: done ? habit.color : colors.border },
+                          ]}
+                        />
+                      );
+                    })}
+                  </View>
+                </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleDeleteHabit(habit)}
-                  >
-                    <Trash2 color={colors.textTertiary} size={18} />
-                  </TouchableOpacity>
-                </AnimatedCard>
-              </Animated.View>
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleDeleteHabit(habit)}
+                >
+                  <Trash2 color={colors.textTertiary} size={18} />
+                </TouchableOpacity>
+              </AnimatedCard>
             );
           })
         )}
 
         {/* AI Suggestions Section */}
         {apiKeyExists && (
-          <Animated.View entering={FadeInDown.duration(400).delay(habits.length * 50 + 100)}>
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + habits.length * STAGGER_DELAY.listItem + 100,
+            )}
+            exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          >
             <TouchableOpacity
               style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}
               onPress={() => {

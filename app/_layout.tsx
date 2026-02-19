@@ -7,16 +7,15 @@ import {
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ThemeProvider, useTheme, lightColors, darkColors } from '@/src/theme';
-import { useAuthStore } from '@/src/store';
+import { useAuthStore, useOnboardingStore } from '@/src/store';
 import { getDatabase } from '@/src/database';
-import { ONBOARDING_KEY } from './onboarding';
 import { ErrorBoundary as AppErrorBoundary } from '@/src/components/ui';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -60,6 +59,7 @@ export default function RootLayout() {
   });
 
   const { initialize, isInitialized } = useAuthStore();
+  const { hasCompleted: hasCompletedOnboarding, initialize: initOnboarding } = useOnboardingStore();
 
   useEffect(() => {
     // Initialize database
@@ -67,6 +67,10 @@ export default function RootLayout() {
 
     // Initialize auth listener
     const unsubscribe = initialize();
+
+    // Initialize onboarding state
+    initOnboarding();
+
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,12 +80,12 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    if (loaded && isInitialized) {
+    if (loaded && isInitialized && hasCompletedOnboarding !== null) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isInitialized]);
+  }, [loaded, isInitialized, hasCompletedOnboarding]);
 
-  if (!loaded || !isInitialized) {
+  if (!loaded || !isInitialized || hasCompletedOnboarding === null) {
     return null;
   }
 
@@ -97,32 +101,26 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const { isDark, colors } = useTheme();
   const { user } = useAuthStore();
+  const { hasCompleted: hasCompletedOnboarding } = useOnboardingStore();
   const segments = useSegments();
   const router = useRouter();
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    checkOnboarding();
-  }, []);
-
-  const checkOnboarding = async () => {
-    const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-    setHasCompletedOnboarding(completed === 'true');
-  };
+  const isNavigating = useRef(false);
 
   useEffect(() => {
     if (hasCompletedOnboarding === null) return;
+    if (isNavigating.current) return;
 
     const inAuthGroup = segments[0] === 'auth';
     const inOnboarding = segments[0] === 'onboarding';
 
+    let shouldNavigate = false;
+
     // First time user - show onboarding
     if (!hasCompletedOnboarding && !inOnboarding) {
+      isNavigating.current = true;
       router.replace('/onboarding');
-      return;
-    }
-
-    if (!user && !inAuthGroup && !inOnboarding) {
+      shouldNavigate = true;
+    } else if (!user && !inAuthGroup && !inOnboarding) {
       // User is not signed in, redirect to login
       // For now, let's allow unauthenticated access but show login option
       // router.replace('/auth/login');
@@ -131,7 +129,15 @@ function RootLayoutNav() {
       // router.replace('/auth/verify-email');
     } else if (user && user.emailVerified && inAuthGroup) {
       // User is signed in and verified, redirect to app
+      isNavigating.current = true;
       router.replace('/(tabs)');
+      shouldNavigate = true;
+    }
+
+    if (shouldNavigate) {
+      setTimeout(() => {
+        isNavigating.current = false;
+      }, ANIMATION_DURATION.screenTransition + 50);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, hasCompletedOnboarding]);
@@ -150,16 +156,32 @@ function RootLayoutNav() {
             backgroundColor: colors.background,
           },
           animation: 'slide_from_right',
+          animationDuration: ANIMATION_DURATION.screenTransition,
         }}
       >
-        <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'fade' }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="onboarding"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+            animationDuration: ANIMATION_DURATION.fadeTransition,
+          }}
+        />
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+            animationDuration: ANIMATION_DURATION.fadeTransition,
+          }}
+        />
         <Stack.Screen
           name="auth/login"
           options={{
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -168,6 +190,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -176,6 +199,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -184,6 +208,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -192,6 +217,7 @@ function RootLayoutNav() {
             title: 'Settings',
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -200,6 +226,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -208,6 +235,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -216,6 +244,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'fullScreenModal',
             animation: 'fade',
+            animationDuration: ANIMATION_DURATION.fadeTransition,
           }}
         />
         <Stack.Screen
@@ -224,6 +253,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
         <Stack.Screen
@@ -232,6 +262,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'fullScreenModal',
             animation: 'fade',
+            animationDuration: ANIMATION_DURATION.fadeTransition,
           }}
         />
         <Stack.Screen
@@ -240,6 +271,7 @@ function RootLayoutNav() {
             headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
+            animationDuration: ANIMATION_DURATION.modalTransition,
           }}
         />
       </Stack>

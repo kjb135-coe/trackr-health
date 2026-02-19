@@ -14,6 +14,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing } from '@/src/theme';
+import { SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 function SettingsButton() {
   const router = useRouter();
@@ -25,11 +26,11 @@ function SettingsButton() {
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(SCALE.quickActionPressIn, SPRING_CONFIG.pressIn);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
   };
 
   const handlePress = () => {
@@ -59,10 +60,13 @@ interface TabIconProps {
 }
 
 function AnimatedTabIcon({ color, size, focused, Icon }: TabIconProps) {
-  const scale = useSharedValue(focused ? 1 : 0.9);
+  const scale = useSharedValue(focused ? SCALE.tabIconFocused : SCALE.tabIconUnfocused);
 
   React.useEffect(() => {
-    scale.value = withSpring(focused ? 1.1 : 1, { damping: 15, stiffness: 300 });
+    scale.value = withSpring(
+      focused ? SCALE.tabIconFocused : SCALE.tabIconUnfocused,
+      SPRING_CONFIG.tabIcon,
+    );
   }, [focused, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -117,6 +121,7 @@ export default function TabLayout() {
         headerTitleAlign: 'left',
         headerShadowVisible: false,
         headerRight: () => <SettingsButton />,
+        animation: 'fade',
       }}
     >
       <Tabs.Screen

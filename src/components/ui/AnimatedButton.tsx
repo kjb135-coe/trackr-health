@@ -9,6 +9,7 @@ import Animated, {
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
+import { SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -46,12 +47,12 @@ export function AnimatedButton({
 
   const handlePressIn = () => {
     if (!isDisabled) {
-      scale.value = withSpring(0.95, { damping: 15, stiffness: 400 });
+      scale.value = withSpring(SCALE.buttonPressIn, SPRING_CONFIG.pressIn);
     }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
   };
 
   const handlePress = () => {
@@ -63,8 +64,8 @@ export function AnimatedButton({
 
     // Bounce animation on press
     scale.value = withSequence(
-      withSpring(0.92, { damping: 15, stiffness: 400 }),
-      withSpring(1, { damping: 10, stiffness: 300 }),
+      withSpring(SCALE.buttonBounce, SPRING_CONFIG.pressIn),
+      withSpring(1, SPRING_CONFIG.bounce),
     );
 
     onPress();
