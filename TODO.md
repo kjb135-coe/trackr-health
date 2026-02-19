@@ -1045,6 +1045,6 @@ Yes
 - `src/services/auth/authService.ts` line 60: `sendEmailVerification(credential.user)` was called without a null check, but `updateProfile` on line 56 did check.
 - **Status:** Done — destructured `const { user } = credential` and used `user` consistently throughout the method. Removed the redundant `credential.user` null check from the `displayName` condition (since `createUserWithEmailAndPassword` always returns a user).
 
-### 202. Add firebase config initialization tests
+### ~~202. Add firebase config initialization tests~~ ✅
 - `src/services/firebase/config.ts` (43 lines) has zero tests. Test `isConfigured` with/without env vars, hot-reload recovery, null exports when unconfigured.
-- **Effort:** ~15min
+- **Status:** Done — 8 tests: isConfigured false (no vars, partial vars), isConfigured true (all vars), null exports when unconfigured, no initializeApp when unconfigured, initializes new app, reuses existing app, hot-reload fallback to getAuth. Also added missing `getAuth` mock to jest.setup.js. 724 total tests.

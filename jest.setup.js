@@ -15,6 +15,7 @@ jest.mock('firebase/auth', () => ({
   signInWithCredential: jest.fn(),
   getReactNativePersistence: jest.fn(),
   initializeAuth: jest.fn(),
+  getAuth: jest.fn(),
 }));
 
 // Mock firebase/app
