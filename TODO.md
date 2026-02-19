@@ -100,6 +100,16 @@ Do whatever you think is right.
 - `app/settings.tsx` line 535 shows `v1.5.0` but `package.json` says `1.0.0`.
 - **Status:** Fixed in this cleanup to read from `Constants.expoConfig?.version`.
 
+### 93. Fix greedy regex bug in foodRecognition.ts JSON parsing
+- `parseJsonFromResponse()` uses `/\{[\s\S]*\}/` (greedy) which matches from the first `{` to the LAST `}`, potentially failing with multi-object responses.
+- Should be `/\{[\s\S]*?\}/` (non-greedy) or better nested-brace-aware parsing.
+- **Effort:** 15min
+
+### 94. Add try-catch to modal save operations
+- `NutritionLogModal.handleSaveMeal()` and `JournalEntryModal.handleSaveEntry()` call `createMeal()`/`updateMeal()`/`createEntry()`/`updateEntry()` without try-catch.
+- If the store call fails, the user gets no error feedback and the modal stays open.
+- **Effort:** 15min
+
 ---
 
 ## P3 - Future / Low Priority
@@ -363,7 +373,7 @@ Do whatever you think is right.
 
 ### 40. ~~Add tests for extracted modal components~~ ✅
 - ~~Newly extracted modals (SleepLogModal, ExerciseLogModal, JournalEntryModal, NutritionLogModal, CreateHabitModal, HabitSuggestionsModal) have no test coverage.~~
-- **Status:** Done — added 17 tests across 3 modal components: CreateHabitModal (5 tests), SleepLogModal (6 tests), ExerciseLogModal (6 tests). Tests cover rendering, form submission, validation alerts, and preFill behavior. 120 total tests passing.
+- **Status:** Done — added tests for all 5 extracted modal components: CreateHabitModal (5 tests), SleepLogModal (6 tests), ExerciseLogModal (6 tests), NutritionLogModal (8 tests), JournalEntryModal (9 tests). Tests cover rendering, form submission, validation, edit mode, and mode toggles. 317 total tests passing.
 
 ### 41. ~~Fix ErrorBoundary hardcoded colors and console.error~~ ✅
 - ~~`src/components/ui/ErrorBoundary.tsx` uses hardcoded hex colors (#F8F9FA, #1A1A2E, #6366F1) in StyleSheet — breaks dark mode.~~
@@ -531,3 +541,4 @@ Do whatever you think is right.
 - [x] Fixed exercise calorie estimation: `weights` → `weight_training` key mismatch (TODO #90)
 - [x] Replaced N+1 habit completion queries with batch `getCompletionsForDateRange()` in healthInsightsAI (TODO #91)
 - [x] Added edit functionality to nutrition and journal — tap card opens pre-filled modal (TODO #92)
+- [x] Added NutritionLogModal tests (8) and JournalEntryModal tests (9) — 317 total tests (TODO #40 expanded)
