@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/src/theme/ThemeContext';
 import { WeeklyInsights } from '@/src/components/dashboard/WeeklyInsights';
 
 jest.mock('react-native-reanimated', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
   return {
     __esModule: true,

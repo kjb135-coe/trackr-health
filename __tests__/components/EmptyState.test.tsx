@@ -26,7 +26,7 @@ describe('EmptyState', () => {
   });
 
   it('renders without icon when not provided', async () => {
-    const { findByText, queryByText } = renderWithTheme(
+    const { findByText } = renderWithTheme(
       <EmptyState title="No data" subtitle="Come back later" />,
     );
     expect(await findByText('No data')).toBeTruthy();

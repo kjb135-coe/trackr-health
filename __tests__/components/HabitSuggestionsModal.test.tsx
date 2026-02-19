@@ -31,6 +31,7 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 jest.mock('react-native-reanimated', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
   const createAnimatedComponent = (comp: unknown) => comp;
   return {
