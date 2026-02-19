@@ -250,6 +250,10 @@ Do whatever you think is right.
 - ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
 - **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
+### 49. ~~Fix empty Privacy Policy handler in settings~~ ✅
+- ~~Privacy Policy button in settings had an empty `onPress={() => {}}` — clicking did nothing.~~
+- **Status:** Done — shows an alert explaining that all data is stored locally on device. AI features only send data when explicitly triggered.
+
 ### 46. ~~Optimize N+1 query in getWeeklyStats()~~ ✅
 - ~~`src/services/insights/healthInsights.ts` getWeeklyStats() loops over all habits calling `getCompletionsForHabit()` once per habit~~
 - **Status:** Done — replaced N+1 loop with batch `getCompletionsForDateRange()` + parallel `Promise.all()` for all 5 data sources. Added `getMealsByDateRange()` to nutritionRepository and `getCompletionsForDateRange()` to habitRepository.
@@ -320,3 +324,4 @@ Do whatever you think is right.
 - [x] Added journal search bar — filters entries via existing `journalRepository.search()` (TODO #47)
 - [x] Added tag display on journal entry cards — shows tag badges below content (TODO #47)
 - [x] Added long-press delete to all 4 data screens: exercise, nutrition, sleep, journal (TODO #48)
+- [x] Fixed empty Privacy Policy handler — shows local storage info alert (TODO #49)

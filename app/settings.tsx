@@ -514,7 +514,12 @@ export default function SettingsScreen() {
             iconBg={colors.surfaceSecondary}
             title="Privacy Policy"
             subtitle="How we handle your data"
-            onPress={() => {}}
+            onPress={() =>
+              Alert.alert(
+                'Privacy Policy',
+                'All your data is stored locally on your device. Trackr does not collect, transmit, or share any personal information. AI features send data only to the Claude API when explicitly triggered by you.',
+              )
+            }
           />
         </View>
       </Animated.View>
