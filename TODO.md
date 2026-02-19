@@ -188,10 +188,9 @@ Do whatever you think is right.
 - ~~Nutrition and habits screens have `DateNavigator` for browsing past dates, but sleep screen still only shows all entries in a flat list.~~
 - **Status:** Done — added `DateNavigator` to sleep screen. Shows single sleep entry for selected date or empty state. 7-day summary card adapts to the selected date window.
 
-### 58. Add date navigation to exercise screen
-- Exercise is the only tab screen without `DateNavigator`. Habits, nutrition, and sleep all have date browsing.
-- Should filter sessions by selected date and adapt summary card to the date window.
-- **Effort:** ~30min
+### 58. ~~Add date navigation to exercise screen~~ ✅
+- ~~Exercise is the only tab screen without `DateNavigator`. Habits, nutrition, and sleep all have date browsing.~~
+- **Status:** Done — added `DateNavigator` to exercise screen. Shows workouts for selected date with 7-day summary window. All 4 data tab screens now have consistent date navigation.
 
 ### 59. Extract reusable FAB component
 - All 5 tab screens (habits, sleep, exercise, nutrition, journal) define identical FAB styles (position, size, shadow, borderRadius).
@@ -370,3 +369,4 @@ Do whatever you think is right.
 - [x] Added weekly completion dots (7-day visual) to habit cards with batch loading (TODO #55)
 - [x] Batch streak loading: single getAllStreaks() query replaces N sequential getStreak() calls (TODO #56)
 - [x] Added date navigation to sleep screen with per-date view + 7-day summary (TODO #57)
+- [x] Added date navigation to exercise screen — all 4 data tabs now have DateNavigator (TODO #58)
