@@ -250,6 +250,10 @@ Do whatever you think is right.
 - ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
 - **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
+### 51. ~~Add date navigation to nutrition screen~~ ✅
+- ~~Users could only view today's nutrition data. No way to browse past dates.~~
+- **Status:** Done — created reusable `DateNavigator` component (left/right arrows + tap to return to today). Added to nutrition screen — users can now browse meals and daily totals for any past date.
+
 ### 50. ~~Show daily streak on dashboard~~ ✅
 - ~~`getDailyStreak()` was optimized (TODO #44) but never displayed in any UI.~~
 - **Status:** Done — added streak badge next to date label on dashboard. Shows flame icon + "X days" when streak > 0. Fetched in parallel with trend data via `Promise.all()`.
@@ -330,3 +334,4 @@ Do whatever you think is right.
 - [x] Added long-press delete to all 4 data screens: exercise, nutrition, sleep, journal (TODO #48)
 - [x] Fixed empty Privacy Policy handler — shows local storage info alert (TODO #49)
 - [x] Added daily streak badge to dashboard header with flame icon (TODO #50)
+- [x] Created DateNavigator component and added date browsing to nutrition screen (TODO #51)

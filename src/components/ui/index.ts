@@ -2,6 +2,7 @@ export { Button } from './Button';
 export { Card } from './Card';
 export { Input } from './Input';
 export { ErrorBoundary } from './ErrorBoundary';
+export { DateNavigator } from './DateNavigator';
 
 // Animated components
 export { AnimatedCard } from './AnimatedCard';

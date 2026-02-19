@@ -13,7 +13,8 @@ import { Plus, X, UtensilsCrossed } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard } from '@/src/components/ui';
+import { isToday, parseISO } from 'date-fns';
+import { AnimatedCard, DateNavigator } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -25,21 +26,25 @@ export default function NutritionScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [apiKeyExists, setApiKeyExists] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(getDateString());
 
   const { meals, dailyTotals, error, loadMealsForDate, loadDailyTotals, deleteMeal, clearError } =
     useNutritionStore();
 
-  const today = getDateString();
-
   useEffect(() => {
-    loadData();
+    loadData(selectedDate);
     checkApiKey();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadData = async () => {
-    await loadMealsForDate(today);
-    await loadDailyTotals(today);
+  const loadData = async (date: string) => {
+    await loadMealsForDate(date);
+    await loadDailyTotals(date);
+  };
+
+  const handleDateChange = async (date: string) => {
+    setSelectedDate(date);
+    await loadData(date);
   };
 
   const checkApiKey = async () => {
@@ -49,7 +54,7 @@ export default function NutritionScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadData();
+    await loadData(selectedDate);
     setRefreshing(false);
   };
 
@@ -61,7 +66,7 @@ export default function NutritionScreen() {
         style: 'destructive',
         onPress: async () => {
           await deleteMeal(id);
-          await loadDailyTotals(today);
+          await loadDailyTotals(selectedDate);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         },
       },
@@ -69,7 +74,8 @@ export default function NutritionScreen() {
   };
 
   const calorieProgress = Math.min(dailyTotals.calories / DEFAULT_CALORIE_GOAL, 1);
-  const todayMeals = meals.filter((m) => m.date === today);
+  const dateMeals = meals.filter((m) => m.date === selectedDate);
+  const isViewingToday = isToday(parseISO(selectedDate));
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -84,6 +90,8 @@ export default function NutritionScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
+        <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
+
         {error && (
           <TouchableOpacity
             style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
@@ -98,7 +106,7 @@ export default function NutritionScreen() {
         <Animated.View entering={FadeInDown.duration(400)}>
           <AnimatedCard style={styles.summaryCard}>
             <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
-              {"Today's Nutrition"}
+              {isViewingToday ? "Today's Nutrition" : 'Daily Nutrition'}
             </Text>
             <View style={styles.calorieRow}>
               <Text style={[styles.calorieValue, { color: colors.nutrition }]}>
@@ -142,11 +150,11 @@ export default function NutritionScreen() {
 
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-            {"Today's Meals"}
+            {isViewingToday ? "Today's Meals" : 'Meals'}
           </Text>
         </Animated.View>
 
-        {todayMeals.length === 0 ? (
+        {dateMeals.length === 0 ? (
           <View style={styles.emptyState}>
             <UtensilsCrossed color={colors.nutrition} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
@@ -157,7 +165,7 @@ export default function NutritionScreen() {
             </Text>
           </View>
         ) : (
-          todayMeals.map((meal, index) => (
+          dateMeals.map((meal, index) => (
             <Animated.View
               key={meal.id}
               entering={FadeInDown.duration(400).delay(150 + index * 50)}
