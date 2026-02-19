@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Plus, UtensilsCrossed } from 'lucide-react-native';
@@ -74,8 +74,11 @@ export default function NutritionScreen() {
   };
 
   const calorieProgress = Math.min(dailyTotals.calories / DEFAULT_CALORIE_GOAL, 1);
-  const dateMeals = meals.filter((m) => m.date === selectedDate);
-  const isViewingToday = isToday(parseISO(selectedDate));
+  const dateMeals = useMemo(
+    () => meals.filter((m) => m.date === selectedDate),
+    [meals, selectedDate],
+  );
+  const isViewingToday = useMemo(() => isToday(parseISO(selectedDate)), [selectedDate]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

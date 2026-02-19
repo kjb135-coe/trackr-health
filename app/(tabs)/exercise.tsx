@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -92,14 +92,21 @@ export default function ExerciseScreen() {
   };
 
   // Filter sessions for selected date
-  const dateSessions = sessions.filter((s) => s.date === selectedDate);
+  const dateSessions = useMemo(
+    () => sessions.filter((s) => s.date === selectedDate),
+    [sessions, selectedDate],
+  );
 
   // 7-day window for summary
-  const weekStart = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
-  const weekSessions = sessions.filter((s) => s.date >= weekStart && s.date <= selectedDate);
-
-  const totalMinutes = weekSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
-  const totalCalories = weekSessions.reduce((sum, s) => sum + (s.caloriesBurned || 0), 0);
+  const { weekSessions, totalMinutes, totalCalories } = useMemo(() => {
+    const start = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
+    const week = sessions.filter((s) => s.date >= start && s.date <= selectedDate);
+    return {
+      weekSessions: week,
+      totalMinutes: week.reduce((sum, s) => sum + s.durationMinutes, 0),
+      totalCalories: week.reduce((sum, s) => sum + (s.caloriesBurned || 0), 0),
+    };
+  }, [sessions, selectedDate]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

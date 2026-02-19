@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -83,20 +83,27 @@ export default function SleepScreen() {
   };
 
   // Filter entries for selected date
-  const dateEntry = entries.find((e) => e.date === selectedDate);
+  const dateEntry = useMemo(
+    () => entries.find((e) => e.date === selectedDate),
+    [entries, selectedDate],
+  );
 
   // 7-day window ending on selected date for summary
-  const weekStart = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
-  const weekEntries = entries.filter((e) => e.date >= weekStart && e.date <= selectedDate);
-
-  const avgDuration =
-    weekEntries.length > 0
-      ? Math.round(weekEntries.reduce((sum, e) => sum + e.durationMinutes, 0) / weekEntries.length)
-      : 0;
-  const avgQuality =
-    weekEntries.length > 0
-      ? (weekEntries.reduce((sum, e) => sum + e.quality, 0) / weekEntries.length).toFixed(1)
-      : '—';
+  const { weekEntries, avgDuration, avgQuality } = useMemo(() => {
+    const start = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
+    const week = entries.filter((e) => e.date >= start && e.date <= selectedDate);
+    return {
+      weekEntries: week,
+      avgDuration:
+        week.length > 0
+          ? Math.round(week.reduce((sum, e) => sum + e.durationMinutes, 0) / week.length)
+          : 0,
+      avgQuality:
+        week.length > 0
+          ? (week.reduce((sum, e) => sum + e.quality, 0) / week.length).toFixed(1)
+          : '—',
+    };
+  }, [entries, selectedDate]);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
