@@ -118,6 +118,15 @@ describe('nutritionStore', () => {
       expect(nutritionRepository.getMealsByDate).toHaveBeenCalledWith('2026-02-18');
       expect(useNutritionStore.getState().meals).toEqual([mockMeal]);
     });
+
+    it('sets error on failure', async () => {
+      nutritionRepository.getMealsByDate.mockRejectedValue(new Error('Date error'));
+
+      await useNutritionStore.getState().loadMealsForDate('2026-02-18');
+
+      expect(useNutritionStore.getState().error).toBe('Date error');
+      expect(useNutritionStore.getState().isLoading).toBe(false);
+    });
   });
 
   describe('loadDailyTotals', () => {
@@ -173,6 +182,30 @@ describe('nutritionStore', () => {
       expect(useNutritionStore.getState().meals).toContain(mockMeal);
     });
 
+    it('sorts meals by date descending', async () => {
+      const olderMeal: Meal = {
+        ...mockMeal,
+        id: 'm0',
+        date: '2026-02-17',
+      };
+      useNutritionStore.setState({ meals: [olderMeal] });
+      nutritionRepository.createMeal.mockResolvedValue(mockMeal);
+      nutritionRepository.getDailyTotals.mockResolvedValue({
+        calories: 105,
+        protein: 1.3,
+        carbs: 27,
+        fat: 0.4,
+      });
+
+      await useNutritionStore
+        .getState()
+        .createMeal({ date: '2026-02-18', mealType: 'breakfast', totalCalories: 105 }, []);
+
+      const meals = useNutritionStore.getState().meals;
+      expect(meals[0].id).toBe('m1'); // newer first
+      expect(meals[1].id).toBe('m0');
+    });
+
     it('throws on failure', async () => {
       nutritionRepository.createMeal.mockRejectedValue(new Error('Create failed'));
 
@@ -181,6 +214,52 @@ describe('nutritionStore', () => {
           .getState()
           .createMeal({ date: '2026-02-18', mealType: 'breakfast', totalCalories: 0 }, []),
       ).rejects.toThrow('Create failed');
+    });
+  });
+
+  describe('updateMeal', () => {
+    it('updates meal in state', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.updateMeal.mockResolvedValue(undefined);
+      nutritionRepository.getDailyTotals.mockResolvedValue({
+        calories: 200,
+        protein: 5,
+        carbs: 40,
+        fat: 2,
+      });
+
+      await useNutritionStore.getState().updateMeal('m1', { name: 'Updated meal' });
+
+      const meal = useNutritionStore.getState().meals[0];
+      expect(meal.name).toBe('Updated meal');
+      expect(useNutritionStore.getState().isLoading).toBe(false);
+    });
+
+    it('reloads daily totals after update', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.updateMeal.mockResolvedValue(undefined);
+      nutritionRepository.getDailyTotals.mockResolvedValue({
+        calories: 200,
+        protein: 5,
+        carbs: 40,
+        fat: 2,
+      });
+
+      await useNutritionStore.getState().updateMeal('m1', { totalCalories: 200 });
+
+      expect(nutritionRepository.getDailyTotals).toHaveBeenCalledWith('2026-02-18');
+    });
+
+    it('sets error and throws on failure', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.updateMeal.mockRejectedValue(new Error('Update failed'));
+
+      await expect(useNutritionStore.getState().updateMeal('m1', { name: 'fail' })).rejects.toThrow(
+        'Update failed',
+      );
+
+      expect(useNutritionStore.getState().error).toBe('Update failed');
+      expect(useNutritionStore.getState().isLoading).toBe(false);
     });
   });
 
@@ -198,6 +277,16 @@ describe('nutritionStore', () => {
       await useNutritionStore.getState().deleteMeal('m1');
 
       expect(useNutritionStore.getState().meals).toEqual([]);
+    });
+
+    it('sets error and throws on failure', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.deleteMeal.mockRejectedValue(new Error('Delete failed'));
+
+      await expect(useNutritionStore.getState().deleteMeal('m1')).rejects.toThrow('Delete failed');
+
+      expect(useNutritionStore.getState().error).toBe('Delete failed');
+      expect(useNutritionStore.getState().isLoading).toBe(false);
     });
   });
 
@@ -233,6 +322,23 @@ describe('nutritionStore', () => {
       const meal = useNutritionStore.getState().meals.find((m) => m.id === 'm1');
       expect(meal?.foods).toHaveLength(2);
     });
+
+    it('sets error and throws on failure', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.addFoodItem.mockRejectedValue(new Error('Add food failed'));
+
+      await expect(
+        useNutritionStore.getState().addFoodItem('m1', {
+          name: 'Apple',
+          quantity: 1,
+          unit: 'medium',
+          calories: 95,
+          isAIGenerated: false,
+        }),
+      ).rejects.toThrow('Add food failed');
+
+      expect(useNutritionStore.getState().error).toBe('Add food failed');
+    });
   });
 
   describe('deleteFoodItem', () => {
@@ -250,6 +356,17 @@ describe('nutritionStore', () => {
 
       const meal = useNutritionStore.getState().meals.find((m) => m.id === 'm1');
       expect(meal?.foods).toHaveLength(0);
+    });
+
+    it('sets error and throws on failure', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.deleteFoodItem.mockRejectedValue(new Error('Delete food failed'));
+
+      await expect(useNutritionStore.getState().deleteFoodItem('f1', 'm1')).rejects.toThrow(
+        'Delete food failed',
+      );
+
+      expect(useNutritionStore.getState().error).toBe('Delete food failed');
     });
   });
 
