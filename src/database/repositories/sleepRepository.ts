@@ -1,6 +1,6 @@
 import { getDatabase } from '../index';
 import { SleepEntry } from '@/src/types';
-import { generateId } from '@/src/utils/date';
+import { generateId, safeJsonParse } from '@/src/utils/date';
 
 // Database row types for type-safe SQL queries
 interface SleepEntryRow {
@@ -138,15 +138,6 @@ export const sleepRepository = {
     return result?.avg ?? null;
   },
 };
-
-function safeJsonParse<T>(value: string | null): T | undefined {
-  if (!value) return undefined;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return undefined;
-  }
-}
 
 function mapRowToSleepEntry(row: SleepEntryRow): SleepEntry {
   return {

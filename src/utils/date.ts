@@ -64,3 +64,12 @@ export function getErrorMessage(error: unknown): string {
   if (typeof error === 'string') return error;
   return 'An unexpected error occurred';
 }
+
+export function safeJsonParse<T>(value: string | null): T | undefined {
+  if (!value) return undefined;
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return undefined;
+  }
+}

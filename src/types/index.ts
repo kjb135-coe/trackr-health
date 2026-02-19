@@ -142,6 +142,3 @@ export interface OCRResult {
   processingTimeMs: number;
   rawResponse: string;
 }
-
-// Utility Types
-export type DateString = string; // YYYY-MM-DD format

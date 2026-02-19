@@ -95,7 +95,7 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <Pressable style={styles.overlay} onPress={onClose}>
+      <Pressable style={[styles.overlay, { backgroundColor: colors.overlay }]} onPress={onClose}>
         <Animated.View
           style={[
             styles.container,
@@ -138,7 +138,6 @@ const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.6)',
       justifyContent: 'center',
       alignItems: 'center',
       padding: spacing.lg,

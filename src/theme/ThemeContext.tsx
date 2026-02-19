@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/src/utils/constants';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -129,8 +130,6 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = '@trackr_theme_mode';
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
   const [mode, setModeState] = useState<ThemeMode>('system');
@@ -142,7 +141,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const loadThemeMode = async () => {
     try {
-      const savedMode = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+      const savedMode = await AsyncStorage.getItem(STORAGE_KEYS.THEME_MODE);
       if (savedMode && ['light', 'dark', 'system'].includes(savedMode)) {
         setModeState(savedMode as ThemeMode);
       }
@@ -155,14 +154,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setMode = async (newMode: ThemeMode) => {
     setModeState(newMode);
     try {
-      await AsyncStorage.setItem(THEME_STORAGE_KEY, newMode);
+      await AsyncStorage.setItem(STORAGE_KEYS.THEME_MODE, newMode);
     } catch {
       // Silent fail - theme applied but not persisted
     }
   };
 
-  const isDark =
-    mode === 'dark' || (mode === 'system' && systemColorScheme === 'dark');
+  const isDark = mode === 'dark' || (mode === 'system' && systemColorScheme === 'dark');
 
   const colors = isDark ? darkColors : lightColors;
 

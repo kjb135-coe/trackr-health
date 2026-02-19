@@ -1,6 +1,6 @@
 import { getDatabase } from '../index';
 import { Meal, FoodItem } from '@/src/types';
-import { generateId } from '@/src/utils/date';
+import { generateId, safeJsonParse } from '@/src/utils/date';
 
 // Database row types for type-safe SQL queries
 interface MealRow {
@@ -308,15 +308,6 @@ async function attachFoodsToMeals(
     meal.foods = foodsByMeal.get(meal.id) ?? [];
   }
   return meals;
-}
-
-function safeJsonParse<T>(value: string | null): T | undefined {
-  if (!value) return undefined;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return undefined;
-  }
 }
 
 function mapRowToMeal(row: MealRow): Meal {

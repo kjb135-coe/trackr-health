@@ -130,12 +130,13 @@ export default function DashboardScreen() {
   }, []);
 
   const loadAll = async () => {
+    const currentDate = getDateString();
     await Promise.all([
       loadHabits(),
       loadTodayCompletions(),
       loadSleep(),
       loadExercise(),
-      loadDailyTotals(today),
+      loadDailyTotals(currentDate),
       loadJournal(),
     ]);
     try {

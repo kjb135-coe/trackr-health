@@ -186,7 +186,9 @@ export default function SleepScreen() {
                     { backgroundColor: getQualityColor(dateEntry.quality, colors) },
                   ]}
                 >
-                  <Text style={styles.qualityText}>{QUALITY_LABELS[dateEntry.quality]}</Text>
+                  <Text style={[styles.qualityText, { color: colors.white }]}>
+                    {QUALITY_LABELS[dateEntry.quality]}
+                  </Text>
                 </View>
               </View>
 
@@ -401,7 +403,6 @@ const styles = StyleSheet.create({
   },
   qualityText: {
     fontSize: 12,
-    color: '#FFFFFF',
     fontWeight: '600',
   },
   entryStats: {

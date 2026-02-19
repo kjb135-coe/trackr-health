@@ -595,6 +595,15 @@ Yes
 - Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
 - **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
 
+### ~~167. Code quality batch: stale date fix, DRY safeJsonParse, theme consistency~~ ✅
+- Dashboard `loadAll` closed over stale `today` from mount — app staying open past midnight used wrong date on refresh.
+- `safeJsonParse<T>` was copy-pasted in 3 repositories (sleep, journal, nutrition).
+- 7 modals used hardcoded `rgba(0,0,0,0.5)` instead of `colors.overlay` from theme.
+- `ThemeContext.tsx` defined `THEME_STORAGE_KEY` locally instead of importing `STORAGE_KEYS.THEME_MODE`.
+- `sleep.tsx` had hardcoded `#FFFFFF` instead of `colors.white`.
+- Unused `DateString` type alias in `types/index.ts`.
+- **Status:** Done — fixed stale date, extracted safeJsonParse to `src/utils/date.ts`, updated 7 modals to use `colors.overlay`, unified theme storage key, fixed sleep color, removed dead type.
+
 ### ~~166. Fix missing exercise types in calorie estimation + edge case tests~~ ✅
 - `BASE_CALORIES_PER_MINUTE` was missing sports, cardio, and stretching entries present in `EXERCISE_TYPE_LABELS` — these fell through to default 6 cal/min.
 - habitStore `toggleCompletion` error path untested. mockAuthService `updateUserProfile` edge cases untested.
@@ -881,3 +890,4 @@ Yes
 - [x] Improved store branch coverage to 100% for exercise, sleep, journal, nutrition stores (TODO #164)
 - [x] Added 5 non-text response tests for healthInsightsAI — 575 total tests (TODO #165)
 - [x] Added missing sports/cardio/stretching to calorie estimation, toggleCompletion error test, updateUserProfile edge cases — 578 total tests (TODO #166)
+- [x] Fixed stale date in dashboard, extracted safeJsonParse, used colors.overlay in 7 modals, unified theme key, fixed sleep #FFFFFF, removed dead DateString type (TODO #167)

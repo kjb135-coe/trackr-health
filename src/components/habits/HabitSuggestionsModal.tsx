@@ -33,7 +33,7 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalOverlay}>
+      <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
         <Animated.View
           entering={FadeInDown.duration(300)}
           style={[
@@ -136,7 +136,6 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
   modalContent: {

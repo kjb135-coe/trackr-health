@@ -1,6 +1,6 @@
 import { getDatabase } from '../index';
 import { JournalEntry } from '@/src/types';
-import { generateId } from '@/src/utils/date';
+import { generateId, safeJsonParse } from '@/src/utils/date';
 
 // Database row types for type-safe SQL queries
 interface JournalEntryRow {
@@ -176,15 +176,6 @@ export const journalRepository = {
     return Array.from(tagSet).sort();
   },
 };
-
-function safeJsonParse<T>(value: string | null): T | undefined {
-  if (!value) return undefined;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return undefined;
-  }
-}
 
 function mapRowToEntry(row: JournalEntryRow): JournalEntry {
   return {

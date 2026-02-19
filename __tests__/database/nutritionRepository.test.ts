@@ -11,6 +11,7 @@ jest.mock('@/src/database/index', () => ({
 }));
 
 jest.mock('@/src/utils/date', () => ({
+  ...jest.requireActual('@/src/utils/date'),
   generateId: jest.fn(() => 'test-id'),
 }));
 
