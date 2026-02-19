@@ -74,18 +74,18 @@ export default function OnboardingScreen() {
     },
   ];
 
-  const handleNext = () => {
+  const handleNext = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (currentIndex < slides.length - 1) {
       flatListRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
-      completeOnboarding();
+      await completeOnboarding();
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    completeOnboarding();
+    await completeOnboarding();
   };
 
   const completeOnboarding = async () => {

@@ -150,6 +150,10 @@ Yes
 - Also duplicate error code extraction pattern: `err && typeof err === 'object' && 'code' in err ? String(err.code) : ''`.
 - **Status:** Done — created `getAuthErrorMessage(error)` in `src/services/auth/errorMessages.ts`. Consolidates 7 Firebase error codes + handles unknown error extraction. Replaced local functions in all 3 auth screens. 4 tests, 589 total.
 
+### ~~177. Fix missing await in onboarding navigation handlers~~ ✅
+- `handleNext` and `handleSkip` called async `completeOnboarding()` without awaiting — fire-and-forget pattern causes unhandled promise rejections if `setCompleted()` throws.
+- **Status:** Done — made both handlers async and added await.
+
 ### ~~176. Fix auth code consistency: storage key, error handling, polling interval~~ ✅
 - mockAuthService used hardcoded `AUTH_STORAGE_KEY` instead of `STORAGE_KEYS.AUTH_USER`. login.tsx had inconsistent error handling (manual checks vs `getAuthErrorMessage`). verify-email.tsx had hardcoded 5000ms polling interval.
 - **Status:** Done — replaced local constant with `STORAGE_KEYS.AUTH_USER`, unified all error handlers to use `getAuthErrorMessage()`, extracted `EMAIL_VERIFICATION_POLL_MS` constant.
