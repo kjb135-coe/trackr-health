@@ -211,6 +211,15 @@ describe('healthInsightsAI', () => {
       expect(result).toHaveLength(1);
       expect(result[0].name).toBe('Morning Stretch');
     });
+
+    it('throws on non-text response', async () => {
+      mockCreate.mockResolvedValue(makeNonTextResponse());
+
+      const resultPromise = generateHabitSuggestions();
+      jest.runAllTimers();
+
+      await expect(resultPromise).rejects.toThrow('Unexpected response type');
+    });
   });
 
   describe('analyzeSleepPatterns', () => {
@@ -255,6 +264,15 @@ describe('healthInsightsAI', () => {
       expect(result.pattern).toBe('Variable sleep schedule');
       expect(result.qualityTrend).toBe('stable');
     });
+
+    it('throws on non-text response', async () => {
+      mockCreate.mockResolvedValue(makeNonTextResponse());
+
+      const resultPromise = analyzeSleepPatterns();
+      jest.runAllTimers();
+
+      await expect(resultPromise).rejects.toThrow('Unexpected response type');
+    });
   });
 
   describe('getExerciseRecommendation', () => {
@@ -285,6 +303,15 @@ describe('healthInsightsAI', () => {
 
       expect(result.type).toBe('Walking');
       expect(result.intensity).toBe('low');
+    });
+
+    it('throws on non-text response', async () => {
+      mockCreate.mockResolvedValue(makeNonTextResponse());
+
+      const resultPromise = getExerciseRecommendation();
+      jest.runAllTimers();
+
+      await expect(resultPromise).rejects.toThrow('Unexpected response type');
     });
   });
 
@@ -330,6 +357,15 @@ describe('healthInsightsAI', () => {
       expect(result.overallMood).toBe('Varied emotions throughout the week');
       expect(result.moodTrend).toBe('stable');
     });
+
+    it('throws on non-text response', async () => {
+      mockCreate.mockResolvedValue(makeNonTextResponse());
+
+      const resultPromise = analyzeJournalMood();
+      jest.runAllTimers();
+
+      await expect(resultPromise).rejects.toThrow('Unexpected response type');
+    });
   });
 
   describe('getNutritionAdvice', () => {
@@ -371,6 +407,15 @@ describe('healthInsightsAI', () => {
 
       expect(result.advice).toContain('balanced meals');
       expect(result.suggestions).toHaveLength(2);
+    });
+
+    it('throws on non-text response', async () => {
+      mockCreate.mockResolvedValue(makeNonTextResponse());
+
+      const resultPromise = getNutritionAdvice();
+      jest.runAllTimers();
+
+      await expect(resultPromise).rejects.toThrow('Unexpected response type');
     });
   });
 });

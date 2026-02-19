@@ -595,6 +595,10 @@ Yes
 - Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
 - **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
 
+### ~~165. Improve healthInsightsAI branch coverage — non-text response tests~~ ✅
+- `healthInsightsAI.ts` at 58% branch coverage. Lines 246, 295, 338, 387, 443 (non-text response guards) untested.
+- **Status:** Done — added 5 non-text response tests for generateHabitSuggestions, analyzeSleepPatterns, getExerciseRecommendation, analyzeJournalMood, getNutritionAdvice. 100% statement/line/function coverage. 575 total tests.
+
 ### ~~164. Improve store branch coverage from 50% to 100%~~ ✅
 - exerciseStore, sleepStore, journalStore, and nutritionStore had 50-56% branch coverage due to uncovered ternary branches in `.map()` calls and `if (meal)` null checks.
 - **Status:** Done — added multi-item state tests to cover `.map()` ternary branches + null meal guard tests for nutritionStore. All 4 stores now at 100% branch coverage. 570 total tests.
@@ -870,3 +874,4 @@ Yes
 - [x] Consolidated 4 food macro reduce() calls into single for..of loop (TODO #162)
 - [x] Added ModalHeader component tests (2 tests), removed unused DEFAULT_CALORIE_GOAL constant (TODO #163)
 - [x] Improved store branch coverage to 100% for exercise, sleep, journal, nutrition stores (TODO #164)
+- [x] Added 5 non-text response tests for healthInsightsAI — 575 total tests (TODO #165)
