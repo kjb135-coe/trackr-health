@@ -1028,3 +1028,13 @@ Yes
 ### ~~197. Fix setSaving(false) leak in 5 app screen save handlers~~ ✅
 - Same bug as TODO #181 (fixed for modals) but in app-level screens: `nutrition/camera.tsx`, `exercise/log.tsx`, `sleep/log.tsx`, `journal/new.tsx`, `journal/scan.tsx`. `setSaving(false)` is after try/catch instead of in `finally`.
 - **Status:** Done — moved `setSaving(false)` to `finally` block in all 5 files. 675 tests passing.
+
+### 198. Add auth screen tests (login, signup, forgot-password, verify-email)
+- 4 auth screens in `app/auth/` have zero test coverage. These are critical user-facing flows handling form validation, error display, and navigation.
+- Mock `useAuthStore`, `useRouter`. Test: renders form fields, validation errors, submit success/failure, navigation links.
+- **Effort:** ~30min
+
+### 199. Add authService.ts tests (Firebase auth service)
+- `src/services/auth/authService.ts` exports 11 functions for Firebase auth but has no tests. Only the mock service and error messages are tested.
+- Mock Firebase `auth` module. Test all functions: signUp, signIn, signOut, sendPasswordReset, etc. Test both configured and unconfigured states.
+- **Effort:** ~20min
