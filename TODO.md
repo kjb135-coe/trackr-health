@@ -210,10 +210,9 @@ Do whatever you think is right.
 - ~~`src/components/sleep/`, `exercise/`, `journal/`, `nutrition/` lack `index.ts` barrel exports.~~
 - **Status:** Done — created `index.ts` in all 4 directories, updated imports in tab screens to use barrel exports.
 
-### 38. Extract duplicate `getQualityColor()` into shared utility
-- `app/(tabs)/sleep.tsx` and `src/components/sleep/SleepLogModal.tsx` both define `getQualityColor()` with identical logic but different signatures.
-- Should extract to a shared utility or constants file that accepts both quality level and colors.
-- **Effort:** ~10min
+### 38. ~~Extract duplicate `getQualityColor()` into shared utility~~ ✅
+- ~~`app/(tabs)/sleep.tsx` and `src/components/sleep/SleepLogModal.tsx` both define `getQualityColor()` with identical logic but different signatures.~~
+- **Status:** Done — extracted to `src/utils/constants.ts` as `getQualityColor(quality, colors)`. Both files now import the shared function.
 
 ---
 
@@ -267,3 +266,4 @@ Do whatever you think is right.
 - [x] Extracted ExerciseLogModal from exercise.tsx (600 → 391 lines) (TODO #36 partial)
 - [x] Extracted CreateHabitModal + HabitSuggestionsModal from habits.tsx (555 → 316 lines) (TODO #36 partial)
 - [x] Added barrel exports (index.ts) to sleep, exercise, journal, nutrition component dirs (TODO #37)
+- [x] Extracted duplicate `getQualityColor()` into shared `constants.ts` utility (TODO #38)

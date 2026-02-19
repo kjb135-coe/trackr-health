@@ -19,27 +19,11 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
 import { getDateString, getDurationMinutes } from '@/src/utils/date';
+import { getQualityColor } from '@/src/utils/constants';
 
 interface SleepLogModalProps {
   visible: boolean;
   onClose: () => void;
-}
-
-function getQualityColor(q: number, colors: ReturnType<typeof useTheme>['colors']): string {
-  switch (q) {
-    case 1:
-      return colors.error;
-    case 2:
-      return colors.warning;
-    case 3:
-      return colors.info;
-    case 4:
-      return colors.success;
-    case 5:
-      return colors.sleep;
-    default:
-      return colors.textTertiary;
-  }
 }
 
 export function SleepLogModal({ visible, onClose }: SleepLogModalProps) {

@@ -1,3 +1,5 @@
+import { ThemeColors } from '@/src/theme/ThemeContext';
+
 // Exercise type labels
 export const EXERCISE_TYPE_LABELS: Record<string, string> = {
   running: 'Running',
@@ -34,6 +36,23 @@ export const QUALITY_LABELS: Record<number, string> = {
   4: 'Very Good',
   5: 'Excellent',
 };
+
+export function getQualityColor(quality: number, colors: ThemeColors): string {
+  switch (quality) {
+    case 1:
+      return colors.error;
+    case 2:
+      return colors.warning;
+    case 3:
+      return colors.info;
+    case 4:
+      return colors.success;
+    case 5:
+      return colors.sleep;
+    default:
+      return colors.textTertiary;
+  }
+}
 
 export const MOOD_LABELS: Record<number, string> = {
   1: 'Terrible',

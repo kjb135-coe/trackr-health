@@ -16,7 +16,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel } from '@/src/utils/date';
-import { QUALITY_LABELS } from '@/src/utils/constants';
+import { QUALITY_LABELS, getQualityColor } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
 
@@ -29,23 +29,6 @@ export default function SleepScreen() {
 
   const { entries, loadEntries } = useSleepStore();
   const { sleepAnalysis, isLoadingSleep, fetchSleepAnalysis } = useAIInsightsStore();
-
-  const getQualityColor = (q: number): string => {
-    switch (q) {
-      case 1:
-        return colors.error;
-      case 2:
-        return colors.warning;
-      case 3:
-        return colors.info;
-      case 4:
-        return colors.success;
-      case 5:
-        return colors.sleep;
-      default:
-        return colors.textTertiary;
-    }
-  };
 
   useEffect(() => {
     loadEntries();
@@ -110,7 +93,7 @@ export default function SleepScreen() {
                   <View
                     style={[
                       styles.qualityBadge,
-                      { backgroundColor: getQualityColor(entry.quality) },
+                      { backgroundColor: getQualityColor(entry.quality, colors) },
                     ]}
                   >
                     <Text style={styles.qualityText}>{QUALITY_LABELS[entry.quality]}</Text>
