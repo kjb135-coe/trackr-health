@@ -194,6 +194,25 @@ describe('journalRepository', () => {
       expect(sql).toContain('updated_at = ?');
     });
 
+    it('updates all optional fields', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+
+      await journalRepository.update('j1', {
+        date: '2026-02-19',
+        title: 'New Title',
+        isScanned: true,
+        originalImageUri: 'file:///image.jpg',
+        ocrConfidence: 0.95,
+      });
+
+      const [sql] = mockDb.runAsync.mock.calls[0];
+      expect(sql).toContain('date = ?');
+      expect(sql).toContain('title = ?');
+      expect(sql).toContain('is_scanned = ?');
+      expect(sql).toContain('original_image_uri = ?');
+      expect(sql).toContain('ocr_confidence = ?');
+    });
+
     it('serializes tags in update', async () => {
       mockDb.runAsync.mockResolvedValue(undefined);
 

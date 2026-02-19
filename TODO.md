@@ -562,6 +562,10 @@ Do whatever you think is right.
 - `habitRepository.ts` at 55.55% coverage — lowest of all repositories. Missing tests for update field branches, getAllCompletions, getCompletionsForHabit, getCompletionsForDateRange, getAllStreaks.
 - **Status:** Done — added 7 tests (update all fields, getAllCompletions, getCompletionsForHabit, getCompletionsForDateRange, getAllStreaks empty/multi/zero). 21 total tests.
 
+### 128. ~~Improve repository update field coverage across all 4 repos~~ ✅
+- exerciseRepository (73%), sleepRepository (85%), journalRepository (85%), nutritionRepository (86%) all had uncovered update field branches.
+- **Status:** Done — added "updates all optional fields" tests to exercise, sleep, journal, and nutrition repos. Also added multi-food grouping test for nutritionRepository. 502 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -701,3 +705,4 @@ Do whatever you think is right.
 - [x] Improved authStore coverage — 3 new tests (signInWithGoogle/sendVerification/sendPasswordReset errors), 17 total — 490 total tests (TODO #125)
 - [x] Removed unused deps: expo-blur, expo-crypto, expo-image-manipulator (TODO #126)
 - [x] Improved habitRepository coverage from 55% to 90%+ — 7 new tests (update fields, completions, streaks), 21 total — 497 total tests (TODO #127)
+- [x] Improved all 4 repository update field coverage — exercise, sleep, journal, nutrition repos + multi-food grouping test — 502 total tests (TODO #128)

@@ -165,6 +165,23 @@ describe('sleepRepository', () => {
       expect(sql).toContain('updated_at = ?');
     });
 
+    it('updates all optional fields', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+
+      await sleepRepository.update('s1', {
+        date: '2026-02-19',
+        bedtime: '2026-02-18T23:00:00.000Z',
+        wakeTime: '2026-02-19T07:00:00.000Z',
+        durationMinutes: 480,
+      });
+
+      const [sql] = mockDb.runAsync.mock.calls[0];
+      expect(sql).toContain('date = ?');
+      expect(sql).toContain('bedtime = ?');
+      expect(sql).toContain('wake_time = ?');
+      expect(sql).toContain('duration_minutes = ?');
+    });
+
     it('serializes factors in update', async () => {
       mockDb.runAsync.mockResolvedValue(undefined);
 

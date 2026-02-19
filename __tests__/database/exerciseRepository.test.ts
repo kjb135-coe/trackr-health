@@ -172,6 +172,33 @@ describe('exerciseRepository', () => {
       expect(sql).toContain('intensity = ?');
       expect(sql).toContain('updated_at = ?');
     });
+
+    it('updates all optional fields', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+
+      await exerciseRepository.update('e1', {
+        date: '2026-02-19',
+        type: 'cycling',
+        customType: 'Mountain',
+        caloriesBurned: 600,
+        notes: 'Great ride',
+        heartRateAvg: 150,
+        heartRateMax: 180,
+        distance: 25,
+        distanceUnit: 'km',
+      });
+
+      const [sql] = mockDb.runAsync.mock.calls[0];
+      expect(sql).toContain('date = ?');
+      expect(sql).toContain('type = ?');
+      expect(sql).toContain('custom_type = ?');
+      expect(sql).toContain('calories_burned = ?');
+      expect(sql).toContain('notes = ?');
+      expect(sql).toContain('heart_rate_avg = ?');
+      expect(sql).toContain('heart_rate_max = ?');
+      expect(sql).toContain('distance = ?');
+      expect(sql).toContain('distance_unit = ?');
+    });
   });
 
   describe('delete', () => {

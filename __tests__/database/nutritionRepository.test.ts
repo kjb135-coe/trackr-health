@@ -66,6 +66,27 @@ describe('nutritionRepository', () => {
       expect(meals[0].foods[0].isAIGenerated).toBe(true);
     });
 
+    it('groups multiple foods to the same meal', async () => {
+      const secondFood = {
+        ...mockFoodItemRow,
+        id: 'f2',
+        name: 'Rice',
+        calories: 200,
+        protein: 4,
+        carbs: 45,
+        fat: 0.5,
+      };
+      mockDb.getAllAsync
+        .mockResolvedValueOnce([mockMealRow])
+        .mockResolvedValueOnce([mockFoodItemRow, secondFood]);
+
+      const meals = await nutritionRepository.getAllMeals();
+
+      expect(meals[0].foods).toHaveLength(2);
+      expect(meals[0].foods[0].name).toBe('Chicken Breast');
+      expect(meals[0].foods[1].name).toBe('Rice');
+    });
+
     it('returns empty array when no meals exist', async () => {
       mockDb.getAllAsync.mockResolvedValueOnce([]);
 
@@ -223,6 +244,29 @@ describe('nutritionRepository', () => {
       expect(query).toContain('name = ?');
       expect(query).toContain('total_calories = ?');
       expect(query).toContain('updated_at = ?');
+    });
+
+    it('updates all optional fields', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
+
+      await nutritionRepository.updateMeal('m1', {
+        date: '2026-02-19',
+        mealType: 'dinner',
+        totalProtein: 30,
+        totalCarbs: 50,
+        totalFat: 15,
+        totalFiber: 8,
+        photoUri: 'file:///photo.jpg',
+      });
+
+      const [sql] = mockDb.runAsync.mock.calls[0];
+      expect(sql).toContain('date = ?');
+      expect(sql).toContain('meal_type = ?');
+      expect(sql).toContain('total_protein = ?');
+      expect(sql).toContain('total_carbs = ?');
+      expect(sql).toContain('total_fat = ?');
+      expect(sql).toContain('total_fiber = ?');
+      expect(sql).toContain('photo_uri = ?');
     });
 
     it('serializes aiAnalysis to JSON', async () => {
