@@ -14,9 +14,10 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
+import { AnimatedCard, AnimatedButton, DateNavigator } from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
-import { formatDuration, formatTime, getRelativeDateLabel } from '@/src/utils/date';
+import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
+import { subDays, format, parseISO } from 'date-fns';
 import { QUALITY_LABELS, getQualityColor } from '@/src/utils/constants';
 import { hasApiKey } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
@@ -27,6 +28,7 @@ export default function SleepScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(getDateString());
 
   const { entries, loadEntries, deleteEntry } = useSleepStore();
   const { sleepAnalysis, isLoadingSleep, fetchSleepAnalysis } = useAIInsightsStore();
@@ -68,17 +70,24 @@ export default function SleepScreen() {
     ]);
   };
 
-  const recentEntries = entries.slice(0, 7);
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+  };
+
+  // Filter entries for selected date
+  const dateEntry = entries.find((e) => e.date === selectedDate);
+
+  // 7-day window ending on selected date for summary
+  const weekStart = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
+  const weekEntries = entries.filter((e) => e.date >= weekStart && e.date <= selectedDate);
 
   const avgDuration =
-    recentEntries.length > 0
-      ? Math.round(
-          recentEntries.reduce((sum, e) => sum + e.durationMinutes, 0) / recentEntries.length,
-        )
+    weekEntries.length > 0
+      ? Math.round(weekEntries.reduce((sum, e) => sum + e.durationMinutes, 0) / weekEntries.length)
       : 0;
   const avgQuality =
-    recentEntries.length > 0
-      ? (recentEntries.reduce((sum, e) => sum + e.quality, 0) / recentEntries.length).toFixed(1)
+    weekEntries.length > 0
+      ? (weekEntries.reduce((sum, e) => sum + e.quality, 0) / weekEntries.length).toFixed(1)
       : '—';
 
   return (
@@ -94,7 +103,9 @@ export default function SleepScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {recentEntries.length > 0 && (
+        <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
+
+        {weekEntries.length > 0 && (
           <Animated.View entering={FadeInDown.duration(400)}>
             <AnimatedCard style={styles.summaryCard}>
               <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
@@ -117,7 +128,7 @@ export default function SleepScreen() {
                 </View>
                 <View style={styles.summaryItem}>
                   <Text style={[styles.summaryValue, { color: colors.sleep }]}>
-                    {recentEntries.length}
+                    {weekEntries.length}
                   </Text>
                   <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>Nights</Text>
                 </View>
@@ -126,67 +137,58 @@ export default function SleepScreen() {
           </Animated.View>
         )}
 
-        <Animated.View
-          entering={FadeInDown.duration(400).delay(recentEntries.length > 0 ? 100 : 0)}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Recent Sleep</Text>
-        </Animated.View>
-
-        {recentEntries.length === 0 ? (
+        {!dateEntry ? (
           <View style={styles.emptyState}>
             <Moon color={colors.sleep} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              No sleep data yet
-            </Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No sleep logged</Text>
             <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
               Tap + to log your sleep
             </Text>
           </View>
         ) : (
-          recentEntries.map((entry, index) => (
-            <Animated.View key={entry.id} entering={FadeInDown.duration(400).delay(index * 50)}>
-              <AnimatedCard
-                style={styles.entryCard}
-                delay={index * 50}
-                onLongPress={() => handleDeleteEntry(entry.id, getRelativeDateLabel(entry.date))}
-              >
-                <View style={styles.entryHeader}>
-                  <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
-                    {getRelativeDateLabel(entry.date)}
-                  </Text>
-                  <View
-                    style={[
-                      styles.qualityBadge,
-                      { backgroundColor: getQualityColor(entry.quality, colors) },
-                    ]}
-                  >
-                    <Text style={styles.qualityText}>{QUALITY_LABELS[entry.quality]}</Text>
-                  </View>
+          <Animated.View entering={FadeInDown.duration(400)}>
+            <AnimatedCard
+              style={styles.entryCard}
+              onLongPress={() =>
+                handleDeleteEntry(dateEntry.id, getRelativeDateLabel(dateEntry.date))
+              }
+            >
+              <View style={styles.entryHeader}>
+                <Text style={[styles.entryDate, { color: colors.textPrimary }]}>
+                  {getRelativeDateLabel(dateEntry.date)}
+                </Text>
+                <View
+                  style={[
+                    styles.qualityBadge,
+                    { backgroundColor: getQualityColor(dateEntry.quality, colors) },
+                  ]}
+                >
+                  <Text style={styles.qualityText}>{QUALITY_LABELS[dateEntry.quality]}</Text>
                 </View>
+              </View>
 
-                <View style={styles.entryStats}>
-                  <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {formatDuration(entry.durationMinutes)}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
-                  </View>
-                  <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {formatTime(entry.bedtime)}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Bedtime</Text>
-                  </View>
-                  <View style={styles.stat}>
-                    <Text style={[styles.statValue, { color: colors.textPrimary }]}>
-                      {formatTime(entry.wakeTime)}
-                    </Text>
-                    <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Wake</Text>
-                  </View>
+              <View style={styles.entryStats}>
+                <View style={styles.stat}>
+                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                    {formatDuration(dateEntry.durationMinutes)}
+                  </Text>
+                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Duration</Text>
                 </View>
-              </AnimatedCard>
-            </Animated.View>
-          ))
+                <View style={styles.stat}>
+                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                    {formatTime(dateEntry.bedtime)}
+                  </Text>
+                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Bedtime</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={[styles.statValue, { color: colors.textPrimary }]}>
+                    {formatTime(dateEntry.wakeTime)}
+                  </Text>
+                  <Text style={[styles.statLabel, { color: colors.textTertiary }]}>Wake</Text>
+                </View>
+              </View>
+            </AnimatedCard>
+          </Animated.View>
         )}
 
         {/* AI Sleep Analysis */}
@@ -345,11 +347,6 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 12,
     marginTop: 2,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: spacing.md,
   },
   emptyState: {
     alignItems: 'center',
