@@ -1,3 +1,3 @@
-// Use mock auth service for now - swap to './authService' when Firebase is configured
-export { authService, useGoogleAuth } from './mockAuthService';
-export type { AuthUser } from './mockAuthService';
+// Auth service with automatic Firebase/mock fallback based on configuration
+export { authService, useGoogleAuth } from './authService';
+export type { AuthUser } from './authService';

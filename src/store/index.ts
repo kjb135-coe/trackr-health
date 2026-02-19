@@ -6,3 +6,4 @@ export { useJournalStore } from './journalStore';
 export { useAuthStore } from './authStore';
 export { useGoalsStore } from './goalsStore';
 export { useAIInsightsStore } from './aiInsightsStore';
+export { useOnboardingStore } from './onboardingStore';

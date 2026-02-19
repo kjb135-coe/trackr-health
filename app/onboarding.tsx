@@ -11,13 +11,11 @@ import {
 import { useRouter } from 'expo-router';
 import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
+import { useOnboardingStore } from '@/src/store';
 
 const { width } = Dimensions.get('window');
-
-const ONBOARDING_KEY = 'hasCompletedOnboarding';
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -26,6 +24,7 @@ export default function OnboardingScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
+  const { setCompleted } = useOnboardingStore();
 
   const slides = [
     {
@@ -90,7 +89,7 @@ export default function OnboardingScreen() {
   };
 
   const completeOnboarding = async () => {
-    await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+    await setCompleted();
     router.replace('/(tabs)');
   };
 
@@ -239,5 +238,3 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: spacing.md,
     },
   });
-
-export { ONBOARDING_KEY };
