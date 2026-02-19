@@ -13,6 +13,7 @@ import {
   AI_MAX_TOKENS_BRIEF,
   withTimeout,
 } from '@/src/utils/constants';
+import { z } from 'zod';
 
 export interface AIInsight {
   category: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal' | 'overall';
@@ -110,6 +111,58 @@ const DEFAULT_NUTRITION_ADVICE = {
   suggestions: ['Include vegetables with each meal', 'Stay hydrated'],
 };
 
+// Zod schemas for validating AI JSON responses
+const AIInsightSchema = z.object({
+  category: z.enum(['habits', 'sleep', 'exercise', 'nutrition', 'journal', 'overall']),
+  title: z.string(),
+  insight: z.string(),
+  suggestion: z.string(),
+  priority: z.enum(['low', 'medium', 'high']),
+});
+
+const DailyCoachingSchema = z.object({
+  greeting: z.string(),
+  insights: z.array(AIInsightSchema),
+  dailyTip: z.string(),
+  motivationalMessage: z.string(),
+});
+
+const HabitSuggestionSchema = z.array(
+  z.object({
+    name: z.string(),
+    description: z.string(),
+    frequency: z.enum(['daily', 'weekly']),
+    reason: z.string(),
+  }),
+);
+
+const SleepAnalysisSchema = z.object({
+  pattern: z.string(),
+  qualityTrend: z.enum(['improving', 'declining', 'stable']),
+  recommendations: z.array(z.string()),
+  optimalBedtime: z.string(),
+});
+
+const ExerciseRecommendationSchema = z.object({
+  type: z.string(),
+  duration: z.number(),
+  intensity: z.enum(['low', 'medium', 'high']),
+  reason: z.string(),
+  targetCalories: z.number(),
+});
+
+const MoodAnalysisSchema = z.object({
+  overallMood: z.string(),
+  commonThemes: z.array(z.string()),
+  moodTrend: z.enum(['improving', 'declining', 'stable']),
+  suggestions: z.array(z.string()),
+});
+
+const NutritionAdviceSchema = z.object({
+  advice: z.string(),
+  suggestions: z.array(z.string()),
+});
+
 // Gather recent data for AI analysis
 async function gatherHealthData() {
   const today = new Date();
@@ -202,7 +255,7 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   }
 
   try {
-    return JSON.parse(content.text) as DailyAICoaching;
+    return DailyCoachingSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_COACHING;
   }
@@ -253,7 +306,7 @@ Suggest habits that fill gaps in their routine. Be specific and practical.`;
   }
 
   try {
-    return JSON.parse(content.text) as HabitSuggestion[];
+    return HabitSuggestionSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_HABIT_SUGGESTIONS;
   }
@@ -302,7 +355,7 @@ Be specific and reference their actual data.`;
   }
 
   try {
-    return JSON.parse(content.text) as SleepAnalysis;
+    return SleepAnalysisSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_SLEEP_ANALYSIS;
   }
@@ -345,7 +398,7 @@ Consider their recent activity level and suggest variety. If they're tired (low 
   }
 
   try {
-    return JSON.parse(content.text) as ExerciseRecommendation;
+    return ExerciseRecommendationSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_EXERCISE_RECOMMENDATION;
   }
@@ -394,7 +447,7 @@ Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
   }
 
   try {
-    return JSON.parse(content.text) as MoodAnalysis;
+    return MoodAnalysisSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_MOOD_ANALYSIS;
   }
@@ -450,7 +503,7 @@ Be practical and encouraging.`;
   }
 
   try {
-    return JSON.parse(content.text);
+    return NutritionAdviceSchema.parse(JSON.parse(content.text));
   } catch {
     return DEFAULT_NUTRITION_ADVICE;
   }

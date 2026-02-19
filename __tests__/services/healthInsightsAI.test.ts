@@ -176,6 +176,17 @@ describe('healthInsightsAI', () => {
       expect(result.insights[0].category).toBe('overall');
     });
 
+    it('returns default coaching on valid JSON with wrong shape', async () => {
+      mockCreate.mockResolvedValue(makeTextResponse('{"foo": "bar"}'));
+
+      const resultPromise = generateDailyCoaching();
+      jest.runAllTimers();
+      const result = await resultPromise;
+
+      expect(result.greeting).toContain('Good morning');
+      expect(result.insights).toHaveLength(1);
+    });
+
     it('throws on non-text response', async () => {
       mockCreate.mockResolvedValue(makeNonTextResponse());
 
