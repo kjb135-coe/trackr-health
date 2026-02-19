@@ -517,6 +517,10 @@ Do whatever you think is right.
 - Skeleton shimmer animation and SkeletonCard loading placeholder used across all 5 data screens. Zero test coverage.
 - **Status:** Done — 4 tests: dimension/percentage rendering, default and custom line counts. Also fixed redundant isDark ternaries in AnimatedCard/AnimatedButton. 445 total tests.
 
+### 117. ~~Add ErrorBoundary component tests~~ ✅
+- ErrorBoundary class component wrapping root layout. Zero test coverage.
+- **Status:** Done — 5 tests: normal rendering, error catch + display, retry button, custom fallback, default error message. 450 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -643,3 +647,4 @@ Do whatever you think is right.
 - [x] Added AnimatedCard tests (6) + removed unused AI_TIMEOUT_MS export — 441 total tests (TODO #115)
 - [x] Fixed redundant isDark ternaries in AnimatedCard and AnimatedButton + removed unused isDark
 - [x] Added Skeleton (2) and SkeletonCard (2) tests — 445 total tests (TODO #116)
+- [x] Added ErrorBoundary tests (5) — 450 total tests (TODO #117)
