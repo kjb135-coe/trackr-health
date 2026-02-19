@@ -1088,3 +1088,7 @@ Yes
 ### ~~212. Memoize DateNavigator and stabilize onDateChange callbacks~~ ✅
 - `DateNavigator` is a pure presentational component used on 4 tab screens but isn't wrapped in `React.memo()`. The `handleDateChange` callbacks in habits, sleep, exercise, and nutrition tabs are recreated every render, causing unnecessary DateNavigator re-renders. Wrap DateNavigator in `React.memo` and add `useCallback` to the 4 handleDateChange handlers.
 - **Status:** Done — Wrapped DateNavigator in React.memo. Added useCallback to handleDateChange in habits, sleep, exercise, and nutrition tabs with proper dependency arrays.
+
+### ~~213. Replace hardcoded animation values in log screens with constants~~ ✅
+- `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` all have identical button animation: `withSpring(0.9, { damping: 15, stiffness: 400 })` and `setTimeout(..., 100)`. These should use `SCALE.quickActionPressIn`, `SPRING_CONFIG.pressIn`, and a named constant for the 100ms delay.
+- **Status:** Done — Added `ANIMATION_DURATION.pressRelease` constant (100ms). Replaced hardcoded scale/spring/timeout values with `SCALE.quickActionPressIn`, `SPRING_CONFIG.pressIn/pressOut`, and `ANIMATION_DURATION.pressRelease` in all 3 files.

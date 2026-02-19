@@ -19,6 +19,8 @@ export const ANIMATION_DURATION = {
   modalTransition: 350,
   /** Fade transition (camera, tab switch) */
   fadeTransition: 250,
+  /** Delay before releasing press-in scale back to 1 */
+  pressRelease: 100,
 } as const;
 
 /** Stagger delay values in milliseconds */

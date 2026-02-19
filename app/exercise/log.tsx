@@ -25,6 +25,7 @@ import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { estimateCalories } from '@/src/utils/constants';
+import { ANIMATION_DURATION, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 import { ExerciseType, ExerciseIntensity } from '@/src/types';
 
 const EXERCISE_TYPES: { id: ExerciseType; name: string; icon: string }[] = [
@@ -73,10 +74,10 @@ function ExerciseTypeButton({
   return (
     <AnimatedPressable
       onPress={() => {
-        scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
+        scale.value = withSpring(SCALE.quickActionPressIn, SPRING_CONFIG.pressIn);
         setTimeout(() => {
-          scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-        }, 100);
+          scale.value = withSpring(1, SPRING_CONFIG.pressOut);
+        }, ANIMATION_DURATION.pressRelease);
         onPress();
       }}
       style={[

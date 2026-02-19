@@ -24,6 +24,7 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { ANIMATION_DURATION, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 const SLEEP_FACTORS = ['Caffeine', 'Alcohol', 'Exercise', 'Screen time', 'Stress', 'Nap'];
 
@@ -50,10 +51,10 @@ function FactorChip({
   return (
     <AnimatedPressable
       onPress={() => {
-        scale.value = withSpring(0.9, { damping: 15, stiffness: 400 });
+        scale.value = withSpring(SCALE.quickActionPressIn, SPRING_CONFIG.pressIn);
         setTimeout(() => {
-          scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-        }, 100);
+          scale.value = withSpring(1, SPRING_CONFIG.pressOut);
+        }, ANIMATION_DURATION.pressRelease);
         onPress();
       }}
       style={[
