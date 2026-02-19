@@ -119,10 +119,9 @@ Do whatever you think is right.
 - ~~Only habitStore has tests. sleepStore, nutritionStore, and exerciseStore follow the same pattern and should be tested.~~
 - **Status:** Done — sleepStore (12 tests), exerciseStore (12 tests), nutritionStore (16 tests) added. 83 total tests passing.
 
-### 21. Several `catch (err: any)` patterns remain in auth screens
-- `app/auth/login.tsx` and `app/auth/signup.tsx` still use `catch (err: any)` with `err.code` access
-- These should use `unknown` type + proper type narrowing per CLAUDE.md guidelines
-- **Effort:** ~15min
+### 21. ~~Several `catch (err: any)` patterns remain in auth screens~~ ✅
+- ~~`app/auth/login.tsx` and `app/auth/signup.tsx` still use `catch (err: any)` with `err.code` access~~
+- **Status:** Already fixed — all auth screen catch blocks use `catch (err: unknown)` with proper type narrowing.
 
 ### 13. ~~No data migration strategy~~ ✅
 - ~~SQLite schema changes will break existing data without migrations.~~
@@ -195,6 +194,10 @@ Do whatever you think is right.
 ### 59. ~~Extract reusable FAB component~~ ✅
 - ~~All 5 tab screens define identical FAB styles.~~
 - **Status:** Done — created `FAB`, `SecondaryFAB`, and `FABGroup` components in `src/components/ui/`. All 5 tab screens updated to use shared components. ~100 lines of duplicate styles removed.
+
+### 61. ~~Add error banners to habits, sleep, and exercise screens~~ ✅
+- ~~Only nutrition and journal had dismissable error banners. Habits, sleep, and exercise screens silently swallowed store errors.~~
+- **Status:** Done — all 5 tab screens now consistently show dismissable error banners when store errors occur.
 
 ### 60. Add pull-to-refresh on date change for sleep and exercise
 - Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
@@ -375,3 +378,4 @@ Do whatever you think is right.
 - [x] Added date navigation to sleep screen with per-date view + 7-day summary (TODO #57)
 - [x] Added date navigation to exercise screen — all 4 data tabs now have DateNavigator (TODO #58)
 - [x] Extracted reusable FAB, SecondaryFAB, FABGroup components — removed ~100 lines of duplicate styles (TODO #59)
+- [x] Added dismissable error banners to habits, sleep, and exercise screens (TODO #61)
