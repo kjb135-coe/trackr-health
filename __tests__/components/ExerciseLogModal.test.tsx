@@ -14,9 +14,11 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 const mockCreateSession = jest.fn();
+const mockUpdateSession = jest.fn();
 jest.mock('@/src/store', () => ({
   useExerciseStore: () => ({
     createSession: mockCreateSession,
+    updateSession: mockUpdateSession,
   }),
 }));
 
@@ -120,6 +122,95 @@ describe('ExerciseLogModal', () => {
           caloriesBurned: 300,
         }),
       );
+    });
+  });
+
+  it('shows alert for invalid calories', async () => {
+    const { findByText, findByDisplayValue, findByPlaceholderText } = renderWithTheme(
+      <ExerciseLogModal visible={true} onClose={() => {}} />,
+    );
+
+    const caloriesInput = await findByPlaceholderText('200');
+    fireEvent.changeText(caloriesInput, '-50');
+
+    fireEvent.press(await findByText('Save Workout'));
+
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Invalid calories',
+      'Calories must be a positive number.',
+    );
+    expect(mockCreateSession).not.toHaveBeenCalled();
+  });
+
+  it('shows edit title and pre-fills form when editSession is provided', async () => {
+    const editSession = {
+      id: 'session-1',
+      date: '2026-02-18',
+      type: 'cycling' as const,
+      durationMinutes: 60,
+      intensity: 'high' as const,
+      caloriesBurned: 500,
+      createdAt: '2026-02-18T08:00:00.000Z',
+      updatedAt: '2026-02-18T08:00:00.000Z',
+    };
+
+    const { findByText, findByDisplayValue } = renderWithTheme(
+      <ExerciseLogModal visible={true} onClose={() => {}} editSession={editSession} />,
+    );
+
+    expect(await findByText('Edit Exercise')).toBeTruthy();
+    expect(await findByText('Update Workout')).toBeTruthy();
+    expect(await findByDisplayValue('60')).toBeTruthy();
+    expect(await findByDisplayValue('500')).toBeTruthy();
+  });
+
+  it('calls updateSession when saving in edit mode', async () => {
+    mockUpdateSession.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editSession = {
+      id: 'session-1',
+      date: '2026-02-18',
+      type: 'running' as const,
+      durationMinutes: 30,
+      intensity: 'moderate' as const,
+      caloriesBurned: 250,
+      createdAt: '2026-02-18T08:00:00.000Z',
+      updatedAt: '2026-02-18T08:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <ExerciseLogModal visible={true} onClose={onClose} editSession={editSession} />,
+    );
+
+    fireEvent.press(await findByText('Update Workout'));
+
+    await waitFor(() => {
+      expect(mockUpdateSession).toHaveBeenCalledWith(
+        'session-1',
+        expect.objectContaining({
+          type: 'running',
+          durationMinutes: 30,
+          intensity: 'moderate',
+          caloriesBurned: 250,
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error alert when save fails', async () => {
+    mockCreateSession.mockRejectedValueOnce(new Error('Network error'));
+
+    const { findByText } = renderWithTheme(<ExerciseLogModal visible={true} onClose={() => {}} />);
+
+    fireEvent.press(await findByText('Save Workout'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Network error');
     });
   });
 });

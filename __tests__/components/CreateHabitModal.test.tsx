@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import { CreateHabitModal } from '@/src/components/habits/CreateHabitModal';
 
@@ -13,11 +14,15 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 const mockCreateHabit = jest.fn();
+const mockUpdateHabit = jest.fn();
 jest.mock('@/src/store', () => ({
   useHabitStore: () => ({
     createHabit: mockCreateHabit,
+    updateHabit: mockUpdateHabit,
   }),
 }));
+
+jest.spyOn(Alert, 'alert');
 
 function renderWithTheme(ui: React.ReactElement) {
   return render(<ThemeProvider>{ui}</ThemeProvider>);
@@ -84,5 +89,70 @@ describe('CreateHabitModal', () => {
 
     expect(mockCreateHabit).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('shows edit title and pre-fills name when editHabit is provided', async () => {
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText, findByDisplayValue } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} editHabit={editHabit} />,
+    );
+
+    expect(await findByText('Edit Habit')).toBeTruthy();
+    expect(await findByText('Update Habit')).toBeTruthy();
+    expect(await findByDisplayValue('Meditate')).toBeTruthy();
+  });
+
+  it('calls updateHabit when saving in edit mode', async () => {
+    mockUpdateHabit.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={onClose} editHabit={editHabit} />,
+    );
+
+    fireEvent.press(await findByText('Update Habit'));
+
+    await waitFor(() => {
+      expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
+        name: 'Meditate',
+        color: '#8B5CF6',
+      });
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error alert when save fails', async () => {
+    mockCreateHabit.mockRejectedValueOnce(new Error('Save error'));
+
+    const { findByPlaceholderText, findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Habit name'), 'Test');
+    fireEvent.press(await findByText('Create Habit'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Save error');
+    });
   });
 });
