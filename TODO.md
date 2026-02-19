@@ -231,9 +231,31 @@ Do whatever you think is right.
 - ~~Dashboard tests didn't cover refresh or demo data loading.~~
 - **Status:** Done — expanded dashboard tests to 13 tests covering nutrition display, exercise stats, journal count, demo data loading, and multi-store error display. 171 total tests passing.
 
-### 70. Add loading spinner suppression for dashboard trend data
-- `getTrendData()` and `getDailyStreak()` silently fail (caught in empty catch block), but they could be slow on first load. Consider adding a subtle loading indicator or ensuring the trend data section degrades gracefully when data is still loading.
-- **Effort:** ~20min
+### 70. ~~Add loading spinner suppression for dashboard trend data~~ ✅
+- ~~Trend data loads silently in background.~~
+- **Status:** Not needed — WeeklyInsights already gracefully degrades to today's data as fallback when trend data is null. Streak badge only renders when > 0. No blank space or loading issue.
+
+### 73. Add edit functionality to sleep and exercise entries
+- Users can create and delete entries but cannot edit existing ones. Long-press shows delete only.
+- Should add an "edit" option or tap to open the entry in the log modal with pre-filled values.
+- **Effort:** ~1-2h
+
+### 74. ~~Memoize dashboard computed values~~ ✅
+- ~~Dashboard computed values re-calculated on every render.~~
+- **Status:** Done — wrapped `completedHabits`, `todaySleep`, `todayExercise`, `totalExerciseMinutes`, `todayJournalCount` in `useMemo`.
+
+### 75. Add tap-to-navigate from dashboard cards to specific date
+- Dashboard cards navigate to tab screens but don't pass the current date context. E.g., tapping "Sleep" from the dashboard should navigate to the sleep tab with today's date already selected.
+- Currently uses `router.push('/(tabs)/sleep')` with no params.
+- **Effort:** ~30min
+
+### 71. ~~Memoize filtered/mapped lists in tab screens~~ ✅
+- ~~Multiple tab screens filter data on every render without `useMemo`.~~
+- **Status:** Done — wrapped `dateEntry`/`weekEntries` in sleep, `dateSessions`/`weekSessions` in exercise, and `dateMeals`/`isViewingToday` in nutrition with `useMemo`.
+
+### 72. ~~Fix dashboard test act() warnings~~ ✅
+- ~~Dashboard tests threw `act()` warnings from async state updates.~~
+- **Status:** Done — refactored tests with `renderDashboard()` helper that awaits all async effects. Added streak badge test. 14 dashboard tests, 172 total, zero warnings.
 
 ### 60. ~~Add pull-to-refresh on date change for sleep and exercise~~ ✅
 - ~~Sleep and exercise screens didn't re-fetch when navigating dates.~~
@@ -424,3 +446,6 @@ Do whatever you think is right.
 - [x] Added dashboard screen tests — 8 tests: cards, progress, errors, demo section, data loading (TODO #67)
 - [x] Expanded dashboard tests to 13 — nutrition display, exercise stats, journal count, demo data (TODO #69)
 - [x] Sleep and exercise screens now re-fetch data on date change (TODO #60)
+- [x] Memoized filtered lists in sleep, exercise, and nutrition screens (TODO #71)
+- [x] Fixed dashboard test act() warnings + added streak badge test — 14 dashboard tests, 172 total (TODO #72)
+- [x] Memoized dashboard computed values with useMemo (TODO #74)
