@@ -1002,9 +1002,9 @@ Yes
 - `app/(tabs)/sleep.tsx` has zero screen-level test coverage. Contains sleep entry display, 7-day summary, AI analysis section, date navigation.
 - **Status:** Done — 7 tests: empty state, entry card with quality badge, 7-day summary, error banner, mount loading, skeleton loading, quality labels. 647 total tests.
 
-### 191. Add exercise screen tests
+### ~~191. Add exercise screen tests~~ ✅
 - `app/(tabs)/exercise.tsx` has zero screen-level test coverage. Contains workout cards, summary stats, AI recommendation section, date navigation.
-- **Effort:** ~30min
+- **Status:** Done — 7 tests: empty state, workout card with type/stats, multiple workouts, 7-day summary, error banner, mount loading, skeleton loading. 654 total tests.
 
 ### 192. Add journal screen tests
 - `app/(tabs)/journal.tsx` has zero screen-level test coverage. Contains search, tag filtering, entry cards, mood analysis section.
