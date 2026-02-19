@@ -27,7 +27,7 @@ import { persistImage } from '@/src/utils/imagePersist';
 export default function JournalScanScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  const cameraRef = useRef<any>(null);
+  const cameraRef = useRef<CameraView>(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);

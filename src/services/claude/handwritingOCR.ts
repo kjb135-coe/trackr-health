@@ -1,7 +1,7 @@
 import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { OCRResult } from '@/src/types';
-import { AI_MODEL, OCR_CONFIDENCE } from '@/src/utils/constants';
+import { AI_MODEL, AI_OCR_MAX_TOKENS, OCR_CONFIDENCE } from '@/src/utils/constants';
 
 function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
   return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
@@ -30,7 +30,7 @@ export async function scanHandwrittenJournal(imageUri: string): Promise<OCRResul
 
   const response = await client.messages.create({
     model: AI_MODEL,
-    max_tokens: 4096,
+    max_tokens: AI_OCR_MAX_TOKENS,
     messages: [
       {
         role: 'user',
@@ -72,9 +72,7 @@ Confidence: [high/medium/low]`,
   let text = responseText;
   let confidence = OCR_CONFIDENCE.MEDIUM;
 
-  const confidenceMatch = responseText.match(
-    /---\s*Confidence:\s*(high|medium|low)/i
-  );
+  const confidenceMatch = responseText.match(/---\s*Confidence:\s*(high|medium|low)/i);
   if (confidenceMatch) {
     text = responseText.substring(0, confidenceMatch.index).trim();
     confidence = parseConfidenceLevel(confidenceMatch[1]);

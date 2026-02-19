@@ -72,6 +72,7 @@ export const HABIT_COLORS = [
 // AI Configuration
 export const AI_MODEL = 'claude-sonnet-4-20250514';
 export const AI_MAX_TOKENS = 1024;
+export const AI_OCR_MAX_TOKENS = 4096;
 export const AI_TIMEOUT_MS = 30000;
 
 // Storage keys
