@@ -203,9 +203,19 @@ Do whatever you think is right.
 - ~~`sleep.tsx` (677 → 451 lines)~~ ✅ Extracted `SleepLogModal` component.
 - ~~`exercise.tsx` (600 → 391 lines)~~ ✅ Extracted `ExerciseLogModal` component.
 - ~~`habits.tsx` (555 → 316 lines)~~ ✅ Extracted `CreateHabitModal` + `HabitSuggestionsModal` components.
-- `settings.tsx` (673 lines) still needs extraction.
-- Extract modal content, form sections, and list items into dedicated components.
-- **Effort:** ~1h remaining (1 screen)
+- `settings.tsx` (673 lines) — already well-structured with `SettingRow` and `ThemePicker` helper components. No modals to extract; handler methods share state so further splitting adds fragmentation without benefit.
+- **Status:** Done — 5 of 6 screens refactored. settings.tsx kept as-is (already clean architecture).
+
+### 37. Add barrel exports for new component subdirectories
+- `src/components/sleep/`, `exercise/`, `journal/`, `nutrition/` lack `index.ts` barrel exports.
+- Components are imported directly from file paths instead of through a clean barrel.
+- The `habits/` directory already has proper barrel exports as a pattern to follow.
+- **Effort:** ~10min
+
+### 38. Extract duplicate `getQualityColor()` into shared utility
+- `app/(tabs)/sleep.tsx` and `src/components/sleep/SleepLogModal.tsx` both define `getQualityColor()` with identical logic but different signatures.
+- Should extract to a shared utility or constants file that accepts both quality level and colors.
+- **Effort:** ~10min
 
 ---
 
