@@ -150,6 +150,10 @@ Yes
 - Also duplicate error code extraction pattern: `err && typeof err === 'object' && 'code' in err ? String(err.code) : ''`.
 - **Status:** Done — created `getAuthErrorMessage(error)` in `src/services/auth/errorMessages.ts`. Consolidates 7 Firebase error codes + handles unknown error extraction. Replaced local functions in all 3 auth screens. 4 tests, 589 total.
 
+### ~~178. Add demoData utility tests~~ ✅
+- `src/utils/demoData.ts` populates demo habits, sleep, exercise, meals, and journal entries but had zero test coverage.
+- **Status:** Done — 6 tests: habit creation (5 habits), completion seeding (35 calls), sleep entries (7 days), exercise sessions (randomized), meals (breakfast + lunch with food items), journal entries (3 entries with tags). 595 total tests.
+
 ### ~~177. Fix missing await in onboarding navigation handlers~~ ✅
 - `handleNext` and `handleSkip` called async `completeOnboarding()` without awaiting — fire-and-forget pattern causes unhandled promise rejections if `setCompleted()` throws.
 - **Status:** Done — made both handlers async and added await.
