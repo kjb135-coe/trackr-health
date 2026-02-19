@@ -24,7 +24,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -134,8 +134,8 @@ export default function NewJournalEntryScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch {
-      Alert.alert('Error', 'Failed to save journal entry');
+    } catch (error: unknown) {
+      Alert.alert('Error', getErrorMessage(error));
     }
     setSaving(false);
   };

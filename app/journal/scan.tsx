@@ -116,8 +116,8 @@ export default function JournalScanScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch {
-      Alert.alert('Error', 'Failed to save journal entry');
+    } catch (error: unknown) {
+      Alert.alert('Error', getErrorMessage(error));
     }
     setSaving(false);
   };

@@ -23,7 +23,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { estimateCalories } from '@/src/utils/constants';
 import { ExerciseType, ExerciseIntensity } from '@/src/types';
 
@@ -131,8 +131,8 @@ export default function LogExerciseScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch {
-      Alert.alert('Error', 'Failed to save exercise');
+    } catch (error: unknown) {
+      Alert.alert('Error', getErrorMessage(error));
     }
     setSaving(false);
   };

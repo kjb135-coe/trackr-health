@@ -193,8 +193,8 @@ export default function SettingsScreen() {
       setApiKeyInput('');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert('Success', 'API key saved successfully');
-    } catch {
-      Alert.alert('Error', 'Failed to save API key');
+    } catch (error: unknown) {
+      Alert.alert('Error', getErrorMessage(error));
     }
   };
 
@@ -297,8 +297,8 @@ export default function SettingsScreen() {
               `);
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               Alert.alert('Done', 'All data has been cleared.');
-            } catch {
-              Alert.alert('Error', 'Failed to clear data');
+            } catch (error: unknown) {
+              Alert.alert('Error', getErrorMessage(error));
             }
           },
         },

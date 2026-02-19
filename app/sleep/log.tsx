@@ -23,7 +23,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
-import { getDateString } from '@/src/utils/date';
+import { getDateString, getErrorMessage } from '@/src/utils/date';
 
 const SLEEP_FACTORS = ['Caffeine', 'Alcohol', 'Exercise', 'Screen time', 'Stress', 'Nap'];
 
@@ -120,9 +120,9 @@ export default function LogSleepScreen() {
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
-    } catch {
+    } catch (error: unknown) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert('Error', 'Failed to save sleep entry');
+      Alert.alert('Error', getErrorMessage(error));
     }
     setSaving(false);
   };
