@@ -8,12 +8,12 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import { Plus, Check, Trash2, Sparkles, ChevronRight, X } from 'lucide-react-native';
+import { Plus, Check, Trash2, Sparkles, ChevronRight } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, DateNavigator, FAB, SkeletonCard } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB, SkeletonCard, ErrorBanner } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
 import {
   StreakBadge,
@@ -146,15 +146,7 @@ export default function HabitsScreen() {
       >
         <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
 
-        {error && (
-          <TouchableOpacity
-            style={[styles.errorBanner, { backgroundColor: colors.error + '15' }]}
-            onPress={clearError}
-          >
-            <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
-            <X color={colors.error} size={16} />
-          </TouchableOpacity>
-        )}
+        {error && <ErrorBanner error={error} onDismiss={clearError} />}
 
         {isLoading && habits.length === 0 ? (
           <>
@@ -285,19 +277,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.md,
     paddingBottom: 100,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.sm,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.md,
-  },
-  errorText: {
-    fontSize: 14,
-    flex: 1,
-    marginRight: spacing.sm,
   },
   emptyState: {
     alignItems: 'center',
