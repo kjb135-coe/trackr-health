@@ -1033,10 +1033,9 @@ Yes
 - 4 auth screens in `app/auth/` have zero test coverage. These are critical user-facing flows handling form validation, error display, and navigation.
 - **Status:** Done — 22 tests across 4 auth screens: login (7 tests: title/fields, empty validation, signIn call, error alert, signup nav, forgot-password nav, Google button), signup (6 tests: title/fields, name validation, password mismatch, short password, signUp call, login nav), forgot-password (4 tests: title/input, empty validation, success flow, error alert), verify-email (5 tests: title/email, buttons, check verification, resend email, sign out). Also fixed reanimated mock to include Animated.Text/ScrollView/Image/Pressable. 697 total tests.
 
-### 199. Add authService.ts tests (Firebase auth service)
+### ~~199. Add authService.ts tests (Firebase auth service)~~ ✅
 - `src/services/auth/authService.ts` exports 11 functions for Firebase auth but has no tests. Only the mock service and error messages are tested.
-- Mock Firebase `auth` module. Test all functions: signUp, signIn, signOut, sendPasswordReset, etc. Test both configured and unconfigured states.
-- **Effort:** ~20min
+- **Status:** Done — 19 tests covering all Firebase auth functions: getCurrentUser (2), onAuthStateChange (4), signUp (3), signIn (1), signInWithGoogle (1), signOut (1), sendVerificationEmail (2), sendPasswordReset (1), updateUserProfile (2), reloadUser (2). Used `require()` after `jest.mock` to ensure Firebase config mock applies before module evaluation. 716 total tests.
 
 ### 200. Add settings screen tests
 - `app/settings.tsx` has no screen-level test coverage. Tests should cover: theme toggle, API key input, data export, demo data loading, version display.
