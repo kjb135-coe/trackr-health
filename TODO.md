@@ -582,6 +582,10 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~137. Add database initialization tests~~ ✅
+- `src/database/index.ts` at 11% coverage — lowest file in the project. Tests database open, migration execution, caching, migration skip, failure safety, and close.
+- **Status:** Done — 6 tests: open + run migrations, cached on second call, skip applied migrations, no cache on failure, closeDatabase, close no-op. 514 total tests.
+
 ### ~~136. Add loading spinner to sleep and exercise modal save buttons~~ ✅
 - SleepLogModal and ExerciseLogModal were missing `loading` state on save buttons. NutritionLogModal and JournalEntryModal already had it.
 - **Status:** Done — added `saving` state + `loading={saving}` prop to both modals. Users now see spinner feedback during save.
@@ -748,3 +752,4 @@ Do whatever you think is right.
 - [x] Added healthInsightsAI insufficient data tests (sleep/journal/nutrition) — 508 total tests (TODO #134)
 - [x] Replaced generic error messages with getErrorMessage() in 6 screen catch blocks (TODO #135)
 - [x] Added loading spinner to sleep and exercise modal save buttons (TODO #136)
+- [x] Added database initialization tests (6 tests): open, cache, migration skip, failure safety, close — 514 total tests (TODO #137)
