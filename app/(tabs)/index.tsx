@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton, SkeletonCard } from '@/src/components/ui';
+import { AnimatedCard, AnimatedButton, SkeletonCard, ErrorBanner } from '@/src/components/ui';
 import { QuickActions, WeeklyInsights, AICoaching } from '@/src/components/dashboard';
 import {
   useHabitStore,
@@ -84,11 +84,38 @@ export default function DashboardScreen() {
   const [trendData, setTrendData] = useState<TrendData | null>(null);
   const [dailyStreak, setDailyStreak] = useState(0);
 
-  const { habits, todayCompletions, loadHabits, loadTodayCompletions } = useHabitStore();
-  const { entries: sleepEntries, loadEntries: loadSleep } = useSleepStore();
-  const { sessions: exerciseSessions, loadSessions: loadExercise } = useExerciseStore();
-  const { dailyTotals, loadDailyTotals } = useNutritionStore();
-  const { entries: journalEntries, loadEntries: loadJournal } = useJournalStore();
+  const {
+    habits,
+    todayCompletions,
+    loadHabits,
+    loadTodayCompletions,
+    error: habitError,
+    clearError: clearHabitError,
+  } = useHabitStore();
+  const {
+    entries: sleepEntries,
+    loadEntries: loadSleep,
+    error: sleepError,
+    clearError: clearSleepError,
+  } = useSleepStore();
+  const {
+    sessions: exerciseSessions,
+    loadSessions: loadExercise,
+    error: exerciseError,
+    clearError: clearExerciseError,
+  } = useExerciseStore();
+  const {
+    dailyTotals,
+    loadDailyTotals,
+    error: nutritionError,
+    clearError: clearNutritionError,
+  } = useNutritionStore();
+  const {
+    entries: journalEntries,
+    loadEntries: loadJournal,
+    error: journalError,
+    clearError: clearJournalError,
+  } = useJournalStore();
 
   const today = getDateString();
 
@@ -151,6 +178,15 @@ export default function DashboardScreen() {
 
   const todayJournalCount = journalEntries.filter((e) => e.date === today).length;
 
+  const firstError = habitError || sleepError || exerciseError || nutritionError || journalError;
+  const clearAllErrors = () => {
+    clearHabitError();
+    clearSleepError();
+    clearExerciseError();
+    clearNutritionError();
+    clearJournalError();
+  };
+
   if (!dbReady) {
     return (
       <ScrollView
@@ -201,6 +237,8 @@ export default function DashboardScreen() {
           </Animated.View>
         )}
       </View>
+
+      {firstError && <ErrorBanner error={firstError} onDismiss={clearAllErrors} />}
 
       <View style={styles.grid}>
         <DashboardCard
