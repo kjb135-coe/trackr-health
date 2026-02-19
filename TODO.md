@@ -267,6 +267,10 @@ Do whatever you think is right.
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
 
+### 89. ~~Add healthInsightsAI service tests~~ ✅
+- All 6 AI functions (`generateDailyCoaching`, `generateHabitSuggestions`, `analyzeSleepPatterns`, `getExerciseRecommendation`, `analyzeJournalMood`, `getNutritionAdvice`) had no test coverage.
+- **Status:** Done — 13 tests covering API response parsing, JSON fallback defaults, non-text response error. 300 total tests.
+
 ### 88. ~~Add imagePersist and constants utility tests~~ ✅
 - `imagePersist.ts` and `getQualityColor()` in `constants.ts` had no test coverage.
 - **Status:** Done — imagePersist (4 tests): copy, dir creation, skip if exists, fallback on error. constants (6 tests): all 5 quality levels + out-of-range default. 287 total tests.
@@ -511,3 +515,4 @@ Do whatever you think is right.
 - [x] Added handwritingOCR tests (9 tests): transcription, confidence levels, timeout, media types (TODO #86)
 - [x] Added Claude client tests (11 tests): key storage, singleton, error handling — 277 total tests (TODO #87)
 - [x] Added imagePersist tests (4) and getQualityColor tests (6) — 287 total tests (TODO #88)
+- [x] Added healthInsightsAI tests (13): all 6 AI functions, JSON parsing, fallback defaults — 300 total tests (TODO #89)
