@@ -145,6 +145,17 @@ Do whatever you think is right.
 - No Sentry, Crashlytics, or similar.
 - `[Q]` Want crash reporting? **Sentry** / **Firebase Crashlytics** / **None for now**
 
+### 23. Use centralized `getErrorMessage()` in store error handlers
+- Several stores (nutritionStore, exerciseStore, sleepStore) use `(error as Error).message` for error extraction
+- Should use the centralized `getErrorMessage()` from `src/utils/date.ts` for consistent, safe error handling
+- **Effort:** ~15min
+
+### 24. Add database repository tests
+- All store tests mock the repository layer. No tests verify actual SQLite queries.
+- Would require an in-memory SQLite setup for testing
+- Key repos: habitRepository, sleepRepository, exerciseRepository, nutritionRepository
+- **Effort:** ~3-4h
+
 ---
 
 ## Completed in This Audit
