@@ -12,7 +12,7 @@
  */
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { View } = require('react-native');
+const { View, Text, ScrollView, Image, Pressable } = require('react-native');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const React = require('react');
 
@@ -40,6 +40,10 @@ export const reanimatedMock = {
   default: {
     createAnimatedComponent: stripAnimatedProps,
     View: stripAnimatedProps(View),
+    Text: stripAnimatedProps(Text),
+    ScrollView: stripAnimatedProps(ScrollView),
+    Image: stripAnimatedProps(Image),
+    Pressable: stripAnimatedProps(Pressable),
   },
   createAnimatedComponent: stripAnimatedProps,
   useSharedValue: (v: number) => ({ value: v }),

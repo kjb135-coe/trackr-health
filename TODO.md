@@ -1029,10 +1029,9 @@ Yes
 - Same bug as TODO #181 (fixed for modals) but in app-level screens: `nutrition/camera.tsx`, `exercise/log.tsx`, `sleep/log.tsx`, `journal/new.tsx`, `journal/scan.tsx`. `setSaving(false)` is after try/catch instead of in `finally`.
 - **Status:** Done — moved `setSaving(false)` to `finally` block in all 5 files. 675 tests passing.
 
-### 198. Add auth screen tests (login, signup, forgot-password, verify-email)
+### ~~198. Add auth screen tests (login, signup, forgot-password, verify-email)~~ ✅
 - 4 auth screens in `app/auth/` have zero test coverage. These are critical user-facing flows handling form validation, error display, and navigation.
-- Mock `useAuthStore`, `useRouter`. Test: renders form fields, validation errors, submit success/failure, navigation links.
-- **Effort:** ~30min
+- **Status:** Done — 22 tests across 4 auth screens: login (7 tests: title/fields, empty validation, signIn call, error alert, signup nav, forgot-password nav, Google button), signup (6 tests: title/fields, name validation, password mismatch, short password, signUp call, login nav), forgot-password (4 tests: title/input, empty validation, success flow, error alert), verify-email (5 tests: title/email, buttons, check verification, resend email, sign out). Also fixed reanimated mock to include Animated.Text/ScrollView/Image/Pressable. 697 total tests.
 
 ### 199. Add authService.ts tests (Firebase auth service)
 - `src/services/auth/authService.ts` exports 11 functions for Firebase auth but has no tests. Only the mock service and error messages are tested.
