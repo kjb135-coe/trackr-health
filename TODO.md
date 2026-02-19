@@ -250,6 +250,10 @@ Do whatever you think is right.
 - ~~Exercise, nutrition, sleep, and journal cards have no way to delete entries from the list screen.~~
 - **Status:** Done — added `onLongPress` prop to `AnimatedCard`, wired up delete handlers on all 4 screens (exercise, nutrition, sleep, journal) with Alert confirmation + haptic feedback. Daily totals refresh after meal deletion.
 
+### 54. ~~Add tag filter to journal screen~~ ✅
+- ~~Journal entries display tags but there's no way to filter by tag.~~
+- **Status:** Done — added horizontal scrollable tag filter pills below the search bar. Tapping a tag toggles filtering; tapping again clears filter. Tags are derived from loaded entries via `useMemo`. Works in combination with text search.
+
 ### 53. ~~Add summary cards to sleep and exercise screens~~ ✅
 - ~~Sleep and exercise screens show raw entries but no aggregated stats.~~
 - **Status:** Done — sleep shows 7-day average duration, quality, and nights tracked. Exercise shows total workouts, total time, and total calories burned. Also removed unused `getWeekDates()` from date utils.
@@ -340,3 +344,4 @@ Do whatever you think is right.
 - [x] Added daily streak badge to dashboard header with flame icon (TODO #50)
 - [x] Created DateNavigator component, added date browsing to nutrition and habits screens (TODO #51)
 - [x] Added summary cards to sleep (avg duration/quality) and exercise (total workouts/time/calories) screens (TODO #53)
+- [x] Added tag filter pills to journal screen — toggle filtering by tag (TODO #54)

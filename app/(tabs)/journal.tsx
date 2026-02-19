@@ -30,6 +30,7 @@ export default function JournalScreen() {
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const { entries, error, loadEntries, deleteEntry, search, clearError } = useJournalStore();
 
@@ -63,7 +64,16 @@ export default function JournalScreen() {
     [search],
   );
 
-  const displayedEntries = searchResults ?? entries;
+  const allTags = React.useMemo(() => {
+    const tagSet = new Set<string>();
+    entries.forEach((e) => e.tags?.forEach((t) => tagSet.add(t)));
+    return Array.from(tagSet).sort();
+  }, [entries]);
+
+  const filteredByTag = selectedTag
+    ? (searchResults ?? entries).filter((e) => e.tags?.includes(selectedTag))
+    : null;
+  const displayedEntries = filteredByTag ?? searchResults ?? entries;
 
   const handleDeleteEntry = (id: string, title: string) => {
     Alert.alert('Delete Entry', `Delete "${title || 'Untitled'}"?`, [
@@ -126,15 +136,49 @@ export default function JournalScreen() {
           </View>
         )}
 
+        {allTags.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.tagFilterContainer}
+            contentContainerStyle={styles.tagFilterContent}
+          >
+            {allTags.map((tag) => (
+              <TouchableOpacity
+                key={tag}
+                style={[
+                  styles.tagFilterPill,
+                  { backgroundColor: colors.journal + '15' },
+                  selectedTag === tag && { backgroundColor: colors.journal },
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSelectedTag(selectedTag === tag ? null : tag);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.tagFilterText,
+                    { color: colors.journal },
+                    selectedTag === tag && { color: colors.white },
+                  ]}
+                >
+                  {tag}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+
         {displayedEntries.length === 0 ? (
           <View style={styles.emptyState}>
             <BookOpen color={colors.journal} size={48} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              {searchQuery ? 'No matching entries' : 'No journal entries yet'}
+              {searchQuery || selectedTag ? 'No matching entries' : 'No journal entries yet'}
             </Text>
             <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
-              {searchQuery
-                ? 'Try a different search term'
+              {searchQuery || selectedTag
+                ? 'Try a different search term or tag'
                 : 'Start writing or scan a handwritten entry'}
             </Text>
           </View>
@@ -246,6 +290,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: spacing.sm,
     paddingVertical: 2,
+  },
+  tagFilterContainer: {
+    marginBottom: spacing.md,
+  },
+  tagFilterContent: {
+    gap: spacing.xs,
+  },
+  tagFilterPill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.lg,
+  },
+  tagFilterText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   errorBanner: {
     flexDirection: 'row',
