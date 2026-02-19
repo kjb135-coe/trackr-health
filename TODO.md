@@ -192,10 +192,14 @@ Do whatever you think is right.
 - ~~Exercise is the only tab screen without `DateNavigator`. Habits, nutrition, and sleep all have date browsing.~~
 - **Status:** Done — added `DateNavigator` to exercise screen. Shows workouts for selected date with 7-day summary window. All 4 data tab screens now have consistent date navigation.
 
-### 59. Extract reusable FAB component
-- All 5 tab screens (habits, sleep, exercise, nutrition, journal) define identical FAB styles (position, size, shadow, borderRadius).
-- Extract to a shared `FAB` component in `src/components/ui/` to eliminate ~20 lines of duplicate styles per screen.
-- **Effort:** ~30min
+### 59. ~~Extract reusable FAB component~~ ✅
+- ~~All 5 tab screens define identical FAB styles.~~
+- **Status:** Done — created `FAB`, `SecondaryFAB`, and `FABGroup` components in `src/components/ui/`. All 5 tab screens updated to use shared components. ~100 lines of duplicate styles removed.
+
+### 60. Add pull-to-refresh on date change for sleep and exercise
+- Sleep and exercise screens load all entries on mount but don't re-fetch when navigating dates via DateNavigator. Data is filtered client-side from the initial load.
+- For large datasets, should re-fetch only the relevant date range on date change instead of loading everything upfront.
+- **Effort:** ~20min
 
 ### 32. Refactor large tab screen components (500+ lines)
 - `nutrition.tsx` (680 lines), `settings.tsx` (673 lines), `sleep.tsx` (657 lines), `journal.tsx` (623 lines), `exercise.tsx` (585 lines), `habits.tsx` (550 lines) all exceed the 200-line guideline.
@@ -370,3 +374,4 @@ Do whatever you think is right.
 - [x] Batch streak loading: single getAllStreaks() query replaces N sequential getStreak() calls (TODO #56)
 - [x] Added date navigation to sleep screen with per-date view + 7-day summary (TODO #57)
 - [x] Added date navigation to exercise screen — all 4 data tabs now have DateNavigator (TODO #58)
+- [x] Extracted reusable FAB, SecondaryFAB, FABGroup components — removed ~100 lines of duplicate styles (TODO #59)
