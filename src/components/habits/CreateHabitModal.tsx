@@ -20,29 +20,50 @@ import { AnimatedButton } from '@/src/components/ui';
 import { useHabitStore } from '@/src/store';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
+import { Habit } from '@/src/types';
 
 interface CreateHabitModalProps {
   visible: boolean;
   onClose: () => void;
+  editHabit?: Habit;
 }
 
-export function CreateHabitModal({ visible, onClose }: CreateHabitModalProps) {
+export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitModalProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [newHabitName, setNewHabitName] = useState('');
   const [selectedColor, setSelectedColor] = useState(HABIT_COLORS[0]);
+  const [saving, setSaving] = useState(false);
 
-  const { createHabit } = useHabitStore();
+  const { createHabit, updateHabit } = useHabitStore();
 
-  const handleCreateHabit = async () => {
+  React.useEffect(() => {
+    if (editHabit) {
+      setNewHabitName(editHabit.name);
+      setSelectedColor(editHabit.color);
+    } else {
+      setNewHabitName('');
+      setSelectedColor(HABIT_COLORS[0]);
+    }
+  }, [editHabit]);
+
+  const handleSave = async () => {
     if (!newHabitName.trim()) return;
 
+    setSaving(true);
     try {
-      await createHabit({
-        name: newHabitName.trim(),
-        color: selectedColor,
-        frequency: 'daily',
-      });
+      if (editHabit) {
+        await updateHabit(editHabit.id, {
+          name: newHabitName.trim(),
+          color: selectedColor,
+        });
+      } else {
+        await createHabit({
+          name: newHabitName.trim(),
+          color: selectedColor,
+          frequency: 'daily',
+        });
+      }
 
       setNewHabitName('');
       setSelectedColor(HABIT_COLORS[0]);
@@ -50,6 +71,7 @@ export function CreateHabitModal({ visible, onClose }: CreateHabitModalProps) {
     } catch (error) {
       Alert.alert('Save failed', getErrorMessage(error));
     }
+    setSaving(false);
   };
 
   return (
@@ -69,7 +91,9 @@ export function CreateHabitModal({ visible, onClose }: CreateHabitModalProps) {
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>New Habit</Text>
+            <Text style={[styles.modalTitle, { color: colors.textPrimary }]}>
+              {editHabit ? 'Edit Habit' : 'New Habit'}
+            </Text>
             <TouchableOpacity onPress={onClose}>
               <X color={colors.textPrimary} size={24} />
             </TouchableOpacity>
@@ -106,8 +130,9 @@ export function CreateHabitModal({ visible, onClose }: CreateHabitModalProps) {
           </View>
 
           <AnimatedButton
-            title="Create Habit"
-            onPress={handleCreateHabit}
+            title={editHabit ? 'Update Habit' : 'Create Habit'}
+            onPress={handleSave}
+            loading={saving}
             disabled={!newHabitName.trim()}
             fullWidth
           />

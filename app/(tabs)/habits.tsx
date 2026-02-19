@@ -38,6 +38,7 @@ export default function HabitsScreen() {
   const { colors } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<Habit | undefined>(undefined);
   const [suggestionsVisible, setSuggestionsVisible] = useState(false);
   const [streaks, setStreaks] = useState<Map<string, number>>(new Map());
   const [weeklyCompletions, setWeeklyCompletions] = useState<Map<string, Set<string>>>(new Map());
@@ -182,7 +183,14 @@ export default function HabitsScreen() {
                     {isCompleted && <Check color={colors.white} size={16} />}
                   </TouchableOpacity>
 
-                  <View style={styles.habitInfo}>
+                  <TouchableOpacity
+                    style={styles.habitInfo}
+                    onPress={() => {
+                      setEditingHabit(habit);
+                      setModalVisible(true);
+                    }}
+                    activeOpacity={0.7}
+                  >
                     <View style={styles.habitNameRow}>
                       <Text
                         style={[
@@ -212,7 +220,7 @@ export default function HabitsScreen() {
                         );
                       })}
                     </View>
-                  </View>
+                  </TouchableOpacity>
 
                   <TouchableOpacity
                     style={styles.deleteButton}
@@ -255,7 +263,14 @@ export default function HabitsScreen() {
         icon={<Plus color={colors.white} size={24} />}
       />
 
-      <CreateHabitModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <CreateHabitModal
+        visible={modalVisible}
+        onClose={() => {
+          setModalVisible(false);
+          setEditingHabit(undefined);
+        }}
+        editHabit={editingHabit}
+      />
 
       <StreakCelebration
         visible={showCelebration}

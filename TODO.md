@@ -582,6 +582,10 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~140. Add habit editing — tap to edit name and color~~ ✅
+- `updateHabit()` existed in habitStore but was never called from UI. Users could create and delete habits but not edit them.
+- **Status:** Done — tap on habit name/info opens CreateHabitModal in edit mode. Modal detects edit vs create, pre-fills name and color, calls `updateHabit()` on save. Added loading spinner to save button.
+
 ### ~~139. Add AnimatedButton ghost/danger variant tests~~ ✅
 - AnimatedButton at 74% coverage — missing tests for ghost and danger variant rendering.
 - **Status:** Done — added 2 tests for ghost and danger variants. 518 total tests, 91.4% overall statement coverage.
@@ -763,3 +767,4 @@ Do whatever you think is right.
 - [x] Added database initialization tests (6 tests): open, cache, migration skip, failure safety, close — 514 total tests (TODO #137)
 - [x] Added DateNavigator arrow navigation tests + testIDs — 516 total tests (TODO #138)
 - [x] Added AnimatedButton ghost/danger variant tests — 518 total tests (TODO #139)
+- [x] Added habit editing — tap habit name opens edit modal with pre-filled name/color (TODO #140)
