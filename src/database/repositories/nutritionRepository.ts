@@ -2,10 +2,55 @@ import { getDatabase } from '../index';
 import { Meal, FoodItem } from '@/src/types';
 import { generateId } from '@/src/utils/date';
 
+// Database row types for type-safe SQL queries
+interface MealRow {
+  id: string;
+  date: string;
+  meal_type: string;
+  name: string | null;
+  total_calories: number;
+  total_protein: number | null;
+  total_carbs: number | null;
+  total_fat: number | null;
+  total_fiber: number | null;
+  photo_uri: string | null;
+  ai_analysis: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface FoodItemRow {
+  id: string;
+  meal_id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  calories: number;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  is_ai_generated: number;
+  confidence: number | null;
+}
+
+interface MealTotalsRow {
+  total_calories: number | null;
+  total_protein: number | null;
+  total_carbs: number | null;
+  total_fat: number | null;
+}
+
+interface DailyTotalsRow {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
 export const nutritionRepository = {
   async getAllMeals(): Promise<Meal[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<MealRow>(
       'SELECT * FROM meals ORDER BY date DESC, created_at DESC',
     );
     const meals = rows.map(mapRowToMeal);
@@ -13,7 +58,7 @@ export const nutritionRepository = {
     if (meals.length > 0) {
       const mealIds = meals.map((m) => m.id);
       const placeholders = mealIds.map(() => '?').join(',');
-      const foodRows = await db.getAllAsync<any>(
+      const foodRows = await db.getAllAsync<FoodItemRow>(
         `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
         ...mealIds,
       );
@@ -28,7 +73,7 @@ export const nutritionRepository = {
 
   async getMealById(id: string): Promise<Meal | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM meals WHERE id = ?', id);
+    const row = await db.getFirstAsync<MealRow>('SELECT * FROM meals WHERE id = ?', id);
     if (!row) return null;
 
     const meal = mapRowToMeal(row);
@@ -38,7 +83,7 @@ export const nutritionRepository = {
 
   async getMealsByDate(date: string): Promise<Meal[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<MealRow>(
       'SELECT * FROM meals WHERE date = ? ORDER BY created_at',
       date,
     );
@@ -47,7 +92,7 @@ export const nutritionRepository = {
     if (meals.length > 0) {
       const mealIds = meals.map((m) => m.id);
       const placeholders = mealIds.map(() => '?').join(',');
-      const foodRows = await db.getAllAsync<any>(
+      const foodRows = await db.getAllAsync<FoodItemRow>(
         `SELECT * FROM food_items WHERE meal_id IN (${placeholders})`,
         ...mealIds,
       );
@@ -62,7 +107,10 @@ export const nutritionRepository = {
 
   async getFoodItemsForMeal(mealId: string): Promise<FoodItem[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM food_items WHERE meal_id = ?', mealId);
+    const rows = await db.getAllAsync<FoodItemRow>(
+      'SELECT * FROM food_items WHERE meal_id = ?',
+      mealId,
+    );
     return rows.map(mapRowToFoodItem);
   },
 
@@ -131,7 +179,7 @@ export const nutritionRepository = {
     const now = new Date().toISOString();
 
     const fields: string[] = [];
-    const values: any[] = [];
+    const values: (string | number | null)[] = [];
 
     if (updates.date !== undefined) {
       fields.push('date = ?');
@@ -220,7 +268,7 @@ export const nutritionRepository = {
 
   async recalculateMealTotals(mealId: string): Promise<void> {
     const db = await getDatabase();
-    const result = await db.getFirstAsync<any>(
+    const result = await db.getFirstAsync<MealTotalsRow>(
       `SELECT
         SUM(calories) as total_calories,
         SUM(protein) as total_protein,
@@ -245,7 +293,7 @@ export const nutritionRepository = {
     date: string,
   ): Promise<{ calories: number; protein: number; carbs: number; fat: number }> {
     const db = await getDatabase();
-    const result = await db.getFirstAsync<any>(
+    const result = await db.getFirstAsync<DailyTotalsRow>(
       `SELECT
         COALESCE(SUM(total_calories), 0) as calories,
         COALESCE(SUM(total_protein), 0) as protein,
@@ -263,26 +311,26 @@ export const nutritionRepository = {
   },
 };
 
-function mapRowToMeal(row: any): Meal {
+function mapRowToMeal(row: MealRow): Meal {
   return {
     id: row.id,
     date: row.date,
-    mealType: row.meal_type,
-    name: row.name,
+    mealType: row.meal_type as Meal['mealType'],
+    name: row.name ?? undefined,
     foods: [],
     totalCalories: row.total_calories,
-    totalProtein: row.total_protein,
-    totalCarbs: row.total_carbs,
-    totalFat: row.total_fat,
-    totalFiber: row.total_fiber,
-    photoUri: row.photo_uri,
+    totalProtein: row.total_protein ?? undefined,
+    totalCarbs: row.total_carbs ?? undefined,
+    totalFat: row.total_fat ?? undefined,
+    totalFiber: row.total_fiber ?? undefined,
+    photoUri: row.photo_uri ?? undefined,
     aiAnalysis: row.ai_analysis ? JSON.parse(row.ai_analysis) : undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
 
-function groupFoodsByMealId(rows: any[]): Map<string, FoodItem[]> {
+function groupFoodsByMealId(rows: FoodItemRow[]): Map<string, FoodItem[]> {
   const map = new Map<string, FoodItem[]>();
   for (const row of rows) {
     const food = mapRowToFoodItem(row);
@@ -296,7 +344,7 @@ function groupFoodsByMealId(rows: any[]): Map<string, FoodItem[]> {
   return map;
 }
 
-function mapRowToFoodItem(row: any): FoodItem {
+function mapRowToFoodItem(row: FoodItemRow): FoodItem {
   return {
     id: row.id,
     mealId: row.meal_id,
@@ -304,10 +352,10 @@ function mapRowToFoodItem(row: any): FoodItem {
     quantity: row.quantity,
     unit: row.unit,
     calories: row.calories,
-    protein: row.protein,
-    carbs: row.carbs,
-    fat: row.fat,
+    protein: row.protein ?? undefined,
+    carbs: row.carbs ?? undefined,
+    fat: row.fat ?? undefined,
     isAIGenerated: Boolean(row.is_ai_generated),
-    confidence: row.confidence,
+    confidence: row.confidence ?? undefined,
   };
 }

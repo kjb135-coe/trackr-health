@@ -2,25 +2,44 @@ import { getDatabase } from '../index';
 import { SleepEntry } from '@/src/types';
 import { generateId } from '@/src/utils/date';
 
+// Database row types for type-safe SQL queries
+interface SleepEntryRow {
+  id: string;
+  date: string;
+  bedtime: string;
+  wake_time: string;
+  duration_minutes: number;
+  quality: number;
+  notes: string | null;
+  factors: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const sleepRepository = {
   async getAll(): Promise<SleepEntry[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM sleep_entries ORDER BY date DESC');
+    const rows = await db.getAllAsync<SleepEntryRow>(
+      'SELECT * FROM sleep_entries ORDER BY date DESC',
+    );
     return rows.map(mapRowToSleepEntry);
   },
 
   async getByDate(date: string): Promise<SleepEntry | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM sleep_entries WHERE date = ?', date);
+    const row = await db.getFirstAsync<SleepEntryRow>(
+      'SELECT * FROM sleep_entries WHERE date = ?',
+      date,
+    );
     return row ? mapRowToSleepEntry(row) : null;
   },
 
   async getByDateRange(startDate: string, endDate: string): Promise<SleepEntry[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<SleepEntryRow>(
       'SELECT * FROM sleep_entries WHERE date >= ? AND date <= ? ORDER BY date',
       startDate,
-      endDate
+      endDate,
     );
     return rows.map(mapRowToSleepEntry);
   },
@@ -42,18 +61,21 @@ export const sleepRepository = {
       entry.notes ?? null,
       entry.factors ? JSON.stringify(entry.factors) : null,
       now,
-      now
+      now,
     );
 
     return { ...entry, id, createdAt: now, updatedAt: now };
   },
 
-  async update(id: string, updates: Partial<Omit<SleepEntry, 'id' | 'createdAt' | 'updatedAt'>>): Promise<void> {
+  async update(
+    id: string,
+    updates: Partial<Omit<SleepEntry, 'id' | 'createdAt' | 'updatedAt'>>,
+  ): Promise<void> {
     const db = await getDatabase();
     const now = new Date().toISOString();
 
     const fields: string[] = [];
-    const values: any[] = [];
+    const values: (string | number | null)[] = [];
 
     if (updates.date !== undefined) {
       fields.push('date = ?');
@@ -88,10 +110,7 @@ export const sleepRepository = {
     values.push(now);
     values.push(id);
 
-    await db.runAsync(
-      `UPDATE sleep_entries SET ${fields.join(', ')} WHERE id = ?`,
-      ...values
-    );
+    await db.runAsync(`UPDATE sleep_entries SET ${fields.join(', ')} WHERE id = ?`, ...values);
   },
 
   async delete(id: string): Promise<void> {
@@ -104,7 +123,7 @@ export const sleepRepository = {
     const result = await db.getFirstAsync<{ avg: number | null }>(
       'SELECT AVG(quality) as avg FROM sleep_entries WHERE date >= ? AND date <= ?',
       startDate,
-      endDate
+      endDate,
     );
     return result?.avg ?? null;
   },
@@ -114,21 +133,21 @@ export const sleepRepository = {
     const result = await db.getFirstAsync<{ avg: number | null }>(
       'SELECT AVG(duration_minutes) as avg FROM sleep_entries WHERE date >= ? AND date <= ?',
       startDate,
-      endDate
+      endDate,
     );
     return result?.avg ?? null;
   },
 };
 
-function mapRowToSleepEntry(row: any): SleepEntry {
+function mapRowToSleepEntry(row: SleepEntryRow): SleepEntry {
   return {
     id: row.id,
     date: row.date,
     bedtime: row.bedtime,
     wakeTime: row.wake_time,
     durationMinutes: row.duration_minutes,
-    quality: row.quality,
-    notes: row.notes,
+    quality: row.quality as 1 | 2 | 3 | 4 | 5,
+    notes: row.notes ?? undefined,
     factors: row.factors ? JSON.parse(row.factors) : undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

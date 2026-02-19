@@ -203,3 +203,5 @@ Do whatever you think is right.
 - [x] Optimized streak calculation: single SQL query instead of N-query loop (TODO #26)
 - [x] Added dismissable error banners to nutrition and journal screens (TODO #27)
 - [x] Added safe area insets to all 6 modal overlays across 5 tab screens (TODO #28)
+- [x] Added typed row interfaces to all 4 remaining repositories — zero `any` in repos (sleep, exercise, nutrition, journal)
+- [x] Added saving state + loading spinner to nutrition camera Save Meal button

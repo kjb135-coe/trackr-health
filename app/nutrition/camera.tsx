@@ -31,6 +31,7 @@ export default function NutritionCameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AIFoodAnalysis | null>(null);
   const { createMeal } = useNutritionStore();
 
@@ -94,8 +95,9 @@ export default function NutritionCameraScreen() {
   };
 
   const handleSaveMeal = async () => {
-    if (!analysisResult) return;
+    if (!analysisResult || saving) return;
 
+    setSaving(true);
     const foods = analysisResult.detectedFoods;
     const totalCalories = foods.reduce((sum, f) => sum + f.calorieEstimate, 0);
     const totalProtein = foods.reduce((sum, f) => sum + (f.macroEstimates?.protein || 0), 0);
@@ -133,6 +135,7 @@ export default function NutritionCameraScreen() {
     } catch {
       Alert.alert('Error', 'Failed to save meal');
     }
+    setSaving(false);
   };
 
   if (!permission) {
@@ -251,6 +254,7 @@ export default function NutritionCameraScreen() {
                 <AnimatedButton
                   title="Save Meal"
                   onPress={handleSaveMeal}
+                  loading={saving}
                   style={styles.actionButton}
                 />
               </View>
