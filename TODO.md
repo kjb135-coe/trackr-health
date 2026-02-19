@@ -267,6 +267,14 @@ Do whatever you think is right.
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
 
+### 86. ~~Add handwritingOCR service tests~~ ✅
+- Only AI service file without tests (foodRecognition had 6 tests).
+- **Status:** Done — 9 tests covering transcription, confidence levels (high/medium/low/missing), timeout, non-text response, media type detection, multiline text preservation. 266 total tests.
+
+### 87. ~~Add Claude client tests~~ ✅
+- Core API infrastructure (key storage, client singleton, error handling) was untested.
+- **Status:** Done — 11 tests covering secure storage read/write/delete, hasApiKey, client creation, singleton caching, missing key error. 277 total tests.
+
 ### 84. ~~DRY up nutritionRepository food-loading duplication~~ ✅
 - `getAllMeals`, `getMealsByDate`, `getMealsByDateRange` had identical 8-line food-loading blocks.
 - **Status:** Done — extracted `attachFoodsToMeals()` helper. 3 methods now each call the shared helper.
@@ -496,3 +504,5 @@ Do whatever you think is right.
 - [x] Replaced hardcoded #FFFFFF with colors.white in journal scan screen close button
 - [x] DRY'd nutritionRepository — extracted attachFoodsToMeals() helper for 3 methods (TODO #84)
 - [x] Added nutritionRepository tests (20 tests): CRUD, totals, food items, JSON serialization — 257 total tests (TODO #85)
+- [x] Added handwritingOCR tests (9 tests): transcription, confidence levels, timeout, media types (TODO #86)
+- [x] Added Claude client tests (11 tests): key storage, singleton, error handling — 277 total tests (TODO #87)
