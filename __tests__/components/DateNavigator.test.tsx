@@ -18,7 +18,7 @@ describe('DateNavigator', () => {
   it('renders "Today" label for current date', async () => {
     const today = getDateString();
     const { findByText } = renderWithTheme(<DateNavigator date={today} onDateChange={() => {}} />);
-    expect(await findByText('Today')).toBeTruthy();
+    await findByText('Today');
   });
 
   it('renders "Yesterday" for previous day', async () => {
@@ -26,7 +26,7 @@ describe('DateNavigator', () => {
     const { findByText } = renderWithTheme(
       <DateNavigator date={yesterday} onDateChange={() => {}} />,
     );
-    expect(await findByText('Yesterday')).toBeTruthy();
+    await findByText('Yesterday');
   });
 
   it('calls onDateChange when date label pressed on past date', async () => {

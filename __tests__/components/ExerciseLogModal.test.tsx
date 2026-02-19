@@ -35,19 +35,19 @@ describe('ExerciseLogModal', () => {
 
   it('renders modal title when visible', async () => {
     const { findByText } = renderWithTheme(<ExerciseLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Log Exercise')).toBeTruthy();
+    await findByText('Log Exercise');
   });
 
   it('renders exercise type and intensity labels', async () => {
     const { findByText } = renderWithTheme(<ExerciseLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Exercise Type')).toBeTruthy();
-    expect(await findByText('Intensity')).toBeTruthy();
-    expect(await findByText('Duration (minutes)')).toBeTruthy();
+    await findByText('Exercise Type');
+    await findByText('Intensity');
+    await findByText('Duration (minutes)');
   });
 
   it('renders save button', async () => {
     const { findByText } = renderWithTheme(<ExerciseLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Save Workout')).toBeTruthy();
+    await findByText('Save Workout');
   });
 
   it('calls createSession and onClose when form is submitted', async () => {
@@ -108,8 +108,8 @@ describe('ExerciseLogModal', () => {
     );
 
     // Verify pre-fill values are applied
-    expect(await findByDisplayValue('45')).toBeTruthy();
-    expect(await findByDisplayValue('300')).toBeTruthy();
+    await findByDisplayValue('45');
+    await findByDisplayValue('300');
 
     const saveButton = await findByText('Save Workout');
     fireEvent.press(saveButton);
@@ -158,10 +158,10 @@ describe('ExerciseLogModal', () => {
       <ExerciseLogModal visible={true} onClose={() => {}} editSession={editSession} />,
     );
 
-    expect(await findByText('Edit Exercise')).toBeTruthy();
-    expect(await findByText('Update Workout')).toBeTruthy();
-    expect(await findByDisplayValue('60')).toBeTruthy();
-    expect(await findByDisplayValue('500')).toBeTruthy();
+    await findByText('Edit Exercise');
+    await findByText('Update Workout');
+    await findByDisplayValue('60');
+    await findByDisplayValue('500');
   });
 
   it('calls updateSession when saving in edit mode', async () => {

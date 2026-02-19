@@ -47,7 +47,7 @@ describe('HabitSuggestionsModal', () => {
     const { findByText } = renderWithTheme(
       <HabitSuggestionsModal visible={true} onClose={jest.fn()} />,
     );
-    expect(await findByText('AI Suggestions')).toBeTruthy();
+    await findByText('AI Suggestions');
   });
 
   it('shows loading state', async () => {
@@ -55,7 +55,7 @@ describe('HabitSuggestionsModal', () => {
     const { findByText } = renderWithTheme(
       <HabitSuggestionsModal visible={true} onClose={jest.fn()} />,
     );
-    expect(await findByText('Analyzing your routine...')).toBeTruthy();
+    await findByText('Analyzing your routine...');
   });
 
   it('shows no suggestions message when empty', async () => {
@@ -63,7 +63,7 @@ describe('HabitSuggestionsModal', () => {
     const { findByText } = renderWithTheme(
       <HabitSuggestionsModal visible={true} onClose={jest.fn()} />,
     );
-    expect(await findByText('No suggestions available. Try refreshing.')).toBeTruthy();
+    await findByText('No suggestions available. Try refreshing.');
   });
 
   it('renders suggestion cards', async () => {
@@ -84,9 +84,9 @@ describe('HabitSuggestionsModal', () => {
     const { findByText } = renderWithTheme(
       <HabitSuggestionsModal visible={true} onClose={jest.fn()} />,
     );
-    expect(await findByText('Morning Walk')).toBeTruthy();
-    expect(await findByText('30 min walk')).toBeTruthy();
-    expect(await findByText('Reading')).toBeTruthy();
+    await findByText('Morning Walk');
+    await findByText('30 min walk');
+    await findByText('Reading');
   });
 
   it('creates habit when Add This Habit is pressed', async () => {

@@ -26,15 +26,15 @@ describe('QuickActions', () => {
 
   it('renders all 4 action labels', async () => {
     const { findByText } = renderWithTheme(<QuickActions />);
-    expect(await findByText('Log Sleep')).toBeTruthy();
-    expect(await findByText('Workout')).toBeTruthy();
-    expect(await findByText('Scan Food')).toBeTruthy();
-    expect(await findByText('Journal')).toBeTruthy();
+    await findByText('Log Sleep');
+    await findByText('Workout');
+    await findByText('Scan Food');
+    await findByText('Journal');
   });
 
   it('renders section title', async () => {
     const { findByText } = renderWithTheme(<QuickActions />);
-    expect(await findByText('Quick Actions')).toBeTruthy();
+    await findByText('Quick Actions');
   });
 
   it('navigates to sleep log on press', async () => {

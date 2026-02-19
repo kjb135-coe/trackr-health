@@ -15,7 +15,7 @@ describe('Card', () => {
         <Text>Card content</Text>
       </Card>,
     );
-    expect(await findByText('Card content')).toBeTruthy();
+    await findByText('Card content');
   });
 
   it('renders as TouchableOpacity when onPress is provided', async () => {
@@ -37,6 +37,6 @@ describe('Card', () => {
         <Text>Static card</Text>
       </Card>,
     );
-    expect(await findByText('Static card')).toBeTruthy();
+    await findByText('Static card');
   });
 });

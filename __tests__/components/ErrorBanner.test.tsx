@@ -12,7 +12,7 @@ describe('ErrorBanner', () => {
     const { findByText } = renderWithTheme(
       <ErrorBanner error="Something went wrong" onDismiss={() => {}} />,
     );
-    expect(await findByText('Something went wrong')).toBeTruthy();
+    await findByText('Something went wrong');
   });
 
   it('calls onDismiss when pressed', async () => {

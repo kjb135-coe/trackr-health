@@ -13,23 +13,23 @@ describe('EmptyState', () => {
     const { findByText } = renderWithTheme(
       <EmptyState title="No items yet" subtitle="Tap + to add one" />,
     );
-    expect(await findByText('No items yet')).toBeTruthy();
-    expect(await findByText('Tap + to add one')).toBeTruthy();
+    await findByText('No items yet');
+    await findByText('Tap + to add one');
   });
 
   it('renders icon when provided', async () => {
     const { findByText } = renderWithTheme(
       <EmptyState icon={<Text>icon-element</Text>} title="Empty" subtitle="Nothing here" />,
     );
-    expect(await findByText('icon-element')).toBeTruthy();
-    expect(await findByText('Empty')).toBeTruthy();
+    await findByText('icon-element');
+    await findByText('Empty');
   });
 
   it('renders without icon when not provided', async () => {
     const { findByText } = renderWithTheme(
       <EmptyState title="No data" subtitle="Come back later" />,
     );
-    expect(await findByText('No data')).toBeTruthy();
-    expect(await findByText('Come back later')).toBeTruthy();
+    await findByText('No data');
+    await findByText('Come back later');
   });
 });

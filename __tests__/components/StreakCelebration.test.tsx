@@ -31,33 +31,33 @@ describe('StreakCelebration', () => {
 
   it('renders for 7-day milestone', async () => {
     const { findByText } = renderWithTheme(<StreakCelebration {...defaultProps} streak={7} />);
-    expect(await findByText('AMAZING!')).toBeTruthy();
-    expect(await findByText('One week streak!')).toBeTruthy();
-    expect(await findByText('7')).toBeTruthy();
-    expect(await findByText('day streak')).toBeTruthy();
+    await findByText('AMAZING!');
+    await findByText('One week streak!');
+    await findByText('7');
+    await findByText('day streak');
   });
 
   it('renders for 30-day milestone', async () => {
     const { findByText } = renderWithTheme(<StreakCelebration {...defaultProps} streak={30} />);
-    expect(await findByText('ON FIRE!')).toBeTruthy();
-    expect(await findByText('30 days of consistency!')).toBeTruthy();
+    await findByText('ON FIRE!');
+    await findByText('30 days of consistency!');
   });
 
   it('renders for 100-day milestone', async () => {
     const { findByText } = renderWithTheme(<StreakCelebration {...defaultProps} streak={100} />);
-    expect(await findByText('INCREDIBLE!')).toBeTruthy();
-    expect(await findByText('100 days strong!')).toBeTruthy();
+    await findByText('INCREDIBLE!');
+    await findByText('100 days strong!');
   });
 
   it('renders for 365-day milestone', async () => {
     const { findByText } = renderWithTheme(<StreakCelebration {...defaultProps} streak={365} />);
-    expect(await findByText('LEGENDARY!')).toBeTruthy();
-    expect(await findByText('A full year of dedication!')).toBeTruthy();
+    await findByText('LEGENDARY!');
+    await findByText('A full year of dedication!');
   });
 
   it('displays habit name', async () => {
     const { findByText } = renderWithTheme(<StreakCelebration {...defaultProps} />);
-    expect(await findByText('"Morning Meditation"')).toBeTruthy();
+    await findByText('"Morning Meditation"');
   });
 
   it('calls onClose when Keep Going button pressed', async () => {

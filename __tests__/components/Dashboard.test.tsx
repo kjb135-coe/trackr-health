@@ -142,11 +142,11 @@ describe('DashboardScreen', () => {
 
   it('renders all dashboard cards', async () => {
     const { findByText } = await renderDashboard();
-    expect(await findByText('Habits')).toBeTruthy();
-    expect(await findByText('Sleep')).toBeTruthy();
-    expect(await findByText('Exercise')).toBeTruthy();
-    expect(await findByText('Nutrition')).toBeTruthy();
-    expect(await findByText('Journal')).toBeTruthy();
+    await findByText('Habits');
+    await findByText('Sleep');
+    await findByText('Exercise');
+    await findByText('Nutrition');
+    await findByText('Journal');
   });
 
   it('shows habit progress when habits exist', async () => {
@@ -154,7 +154,7 @@ describe('DashboardScreen', () => {
     mockHabitStore.todayCompletions = new Map([['h1', { completed: true }]]) as never;
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('1/1')).toBeTruthy();
+    await findByText('1/1');
   });
 
   it('shows dashes when no data exists', async () => {
@@ -167,13 +167,13 @@ describe('DashboardScreen', () => {
     mockHabitStore.error = 'Failed to load habits';
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('Failed to load habits')).toBeTruthy();
+    await findByText('Failed to load habits');
   });
 
   it('shows demo section when no habits exist', async () => {
     const { findByText } = await renderDashboard();
-    expect(await findByText('Welcome to Trackr')).toBeTruthy();
-    expect(await findByText('Load Demo Data')).toBeTruthy();
+    await findByText('Welcome to Trackr');
+    await findByText('Load Demo Data');
   });
 
   it('hides demo section when habits exist', async () => {
@@ -185,7 +185,7 @@ describe('DashboardScreen', () => {
 
   it('shows no entries text for journal', async () => {
     const { findByText } = await renderDashboard();
-    expect(await findByText('No entries yet')).toBeTruthy();
+    await findByText('No entries yet');
   });
 
   it('loads all data on mount', async () => {
@@ -203,8 +203,8 @@ describe('DashboardScreen', () => {
     mockNutritionStore.dailyTotals = { calories: 1850, protein: 80, carbs: 200, fat: 60 };
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('1850')).toBeTruthy();
-    expect(await findByText('calories')).toBeTruthy();
+    await findByText('1850');
+    await findByText('calories');
   });
 
   it('shows exercise duration when sessions exist', async () => {
@@ -218,7 +218,7 @@ describe('DashboardScreen', () => {
     ] as never[];
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('1 workout')).toBeTruthy();
+    await findByText('1 workout');
   });
 
   it('shows journal entry count when entries exist', async () => {
@@ -229,7 +229,7 @@ describe('DashboardScreen', () => {
     ] as never[];
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('2 entries')).toBeTruthy();
+    await findByText('2 entries');
   });
 
   it('loads demo data when button is pressed', async () => {
@@ -249,14 +249,14 @@ describe('DashboardScreen', () => {
     mockNutritionStore.error = 'Network error loading meals';
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('Network error loading meals')).toBeTruthy();
+    await findByText('Network error loading meals');
   });
 
   it('shows streak badge when streak > 0', async () => {
     mockGetDailyStreak.mockResolvedValue(5);
 
     const { findByText } = await renderDashboard();
-    expect(await findByText('5 days')).toBeTruthy();
+    await findByText('5 days');
   });
 
   it('navigates to habits screen when habits card is pressed', async () => {

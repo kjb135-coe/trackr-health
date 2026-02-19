@@ -39,22 +39,22 @@ describe('WeeklyInsights', () => {
 
   it('renders title and subtitle', async () => {
     const { findByText } = renderWithTheme(<WeeklyInsights insights={baseInsights} />);
-    expect(await findByText('Weekly Progress')).toBeTruthy();
-    expect(await findByText('Compared to last week')).toBeTruthy();
+    await findByText('Weekly Progress');
+    await findByText('Compared to last week');
   });
 
   it('renders all insight labels', async () => {
     const { findByText } = renderWithTheme(<WeeklyInsights insights={baseInsights} />);
-    expect(await findByText('Habits')).toBeTruthy();
-    expect(await findByText('Sleep')).toBeTruthy();
-    expect(await findByText('Exercise')).toBeTruthy();
+    await findByText('Habits');
+    await findByText('Sleep');
+    await findByText('Exercise');
   });
 
   it('renders current values with units', async () => {
     const { findByText } = renderWithTheme(<WeeklyInsights insights={baseInsights} />);
-    expect(await findByText(/80%/)).toBeTruthy();
-    expect(await findByText(/7\.5h/)).toBeTruthy();
-    expect(await findByText(/150min/)).toBeTruthy();
+    await findByText(/80%/);
+    await findByText(/7\.5h/);
+    await findByText(/150min/);
   });
 
   it('shows positive trend for improvement (higherIsBetter)', async () => {
@@ -70,7 +70,7 @@ describe('WeeklyInsights', () => {
     ];
     const { findByText } = renderWithTheme(<WeeklyInsights insights={insights} />);
     // +100% change
-    expect(await findByText('+100%')).toBeTruthy();
+    await findByText('+100%');
   });
 
   it('shows negative trend for decline (higherIsBetter)', async () => {
@@ -86,7 +86,7 @@ describe('WeeklyInsights', () => {
     ];
     const { findByText } = renderWithTheme(<WeeklyInsights insights={insights} />);
     // -50% change
-    expect(await findByText('-50%')).toBeTruthy();
+    await findByText('-50%');
   });
 
   it('shows neutral trend for small changes (<5%)', async () => {
@@ -102,7 +102,7 @@ describe('WeeklyInsights', () => {
     ];
     const { findByText } = renderWithTheme(<WeeklyInsights insights={insights} />);
     // -1.4% rounds to -1%, which is < 5% so neutral
-    expect(await findByText(/-1%/)).toBeTruthy();
+    await findByText(/-1%/);
   });
 
   it('handles zero previous value gracefully', async () => {
@@ -118,6 +118,6 @@ describe('WeeklyInsights', () => {
     ];
     const { findByText } = renderWithTheme(<WeeklyInsights insights={insights} />);
     // previous=0 → neutral with 0%
-    expect(await findByText('0%')).toBeTruthy();
+    await findByText('0%');
   });
 });

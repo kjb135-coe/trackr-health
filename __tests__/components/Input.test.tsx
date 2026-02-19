@@ -10,17 +10,17 @@ function renderWithTheme(ui: React.ReactElement) {
 describe('Input', () => {
   it('renders with placeholder', async () => {
     const { findByPlaceholderText } = renderWithTheme(<Input placeholder="Enter text" />);
-    expect(await findByPlaceholderText('Enter text')).toBeTruthy();
+    await findByPlaceholderText('Enter text');
   });
 
   it('renders label when provided', async () => {
     const { findByText } = renderWithTheme(<Input label="Email" placeholder="email@example.com" />);
-    expect(await findByText('Email')).toBeTruthy();
+    await findByText('Email');
   });
 
   it('renders error message when provided', async () => {
     const { findByText } = renderWithTheme(<Input error="This field is required" />);
-    expect(await findByText('This field is required')).toBeTruthy();
+    await findByText('This field is required');
   });
 
   it('does not render label when not provided', async () => {

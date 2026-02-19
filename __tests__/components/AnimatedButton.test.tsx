@@ -21,7 +21,7 @@ describe('AnimatedButton', () => {
 
   it('renders title text', async () => {
     const { findByText } = renderWithTheme(<AnimatedButton title="Save" onPress={jest.fn()} />);
-    expect(await findByText('Save')).toBeTruthy();
+    await findByText('Save');
   });
 
   it('calls onPress when pressed', async () => {
@@ -52,8 +52,8 @@ describe('AnimatedButton', () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Add" onPress={jest.fn()} icon={<Text>+</Text>} />,
     );
-    expect(await findByText('+')).toBeTruthy();
-    expect(await findByText('Add')).toBeTruthy();
+    await findByText('+');
+    await findByText('Add');
   });
 
   it('triggers haptic feedback by default', async () => {
@@ -74,14 +74,14 @@ describe('AnimatedButton', () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Ghost" onPress={jest.fn()} variant="ghost" />,
     );
-    expect(await findByText('Ghost')).toBeTruthy();
+    await findByText('Ghost');
   });
 
   it('renders danger variant', async () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Delete" onPress={jest.fn()} variant="danger" />,
     );
-    expect(await findByText('Delete')).toBeTruthy();
+    await findByText('Delete');
   });
 
   it('handles pressIn and pressOut events', async () => {
@@ -98,20 +98,20 @@ describe('AnimatedButton', () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Secondary" onPress={jest.fn()} variant="secondary" />,
     );
-    expect(await findByText('Secondary')).toBeTruthy();
+    await findByText('Secondary');
   });
 
   it('renders with sm size', async () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Small" onPress={jest.fn()} size="sm" />,
     );
-    expect(await findByText('Small')).toBeTruthy();
+    await findByText('Small');
   });
 
   it('renders with lg size', async () => {
     const { findByText } = renderWithTheme(
       <AnimatedButton title="Large" onPress={jest.fn()} size="lg" />,
     );
-    expect(await findByText('Large')).toBeTruthy();
+    await findByText('Large');
   });
 });

@@ -137,6 +137,15 @@ Yes
 - All data is local SQLite only. No cloud backup/sync.
 - Depends on auth decision (item #3).
 
+### 179. Wire habitReminders notification service to habits UI
+- `src/services/notifications/habitReminders.ts` is fully built and tested (10 tests) but never imported in any screen code.
+- Needs: schedule reminder when habit is created, cancel when deleted, permission request, settings toggle.
+- **Effort:** ~1-2h
+
+### ~~180. Clean up redundant toBeTruthy() in component test assertions~~ ✅
+- 159 instances of `expect(await findByText('X')).toBeTruthy()` across 21 test files. Since `findByText` already throws if not found, the `.toBeTruthy()` is redundant.
+- **Status:** Done — replaced all 159 async `findBy*` assertions with bare `await findBy*()`. Kept 16 sync `getByText` and `toJSON` assertions (appropriate usage). 595 tests pass.
+
 ### ~~172. Deduplicate reanimated test mocks into shared helper~~ ✅
 - 7 test files each define identical `stripAnimatedProps` + layout animation mocks for `react-native-reanimated`. Any future animation changes require updating all 7 mocks.
 - **Status:** Done — extracted to `__tests__/helpers/reanimatedMock.ts`. All 7 test files import the shared mock.

@@ -56,7 +56,7 @@ describe('JournalEntryModal', () => {
         apiKeyExists={false}
       />,
     );
-    expect(await findByText('New Entry')).toBeTruthy();
+    await findByText('New Entry');
   });
 
   it('renders modal title for scan mode', async () => {
@@ -68,7 +68,7 @@ describe('JournalEntryModal', () => {
         apiKeyExists={false}
       />,
     );
-    expect(await findByText('Scan Journal')).toBeTruthy();
+    await findByText('Scan Journal');
   });
 
   it('renders form labels and inputs', async () => {
@@ -80,11 +80,11 @@ describe('JournalEntryModal', () => {
         apiKeyExists={false}
       />,
     );
-    expect(await findByText('Title (optional)')).toBeTruthy();
-    expect(await findByText('Content')).toBeTruthy();
-    expect(await findByText('How are you feeling?')).toBeTruthy();
-    expect(await findByPlaceholderText('Give your entry a title')).toBeTruthy();
-    expect(await findByPlaceholderText('Write your thoughts...')).toBeTruthy();
+    await findByText('Title (optional)');
+    await findByText('Content');
+    await findByText('How are you feeling?');
+    await findByPlaceholderText('Give your entry a title');
+    await findByPlaceholderText('Write your thoughts...');
   });
 
   it('renders save button', async () => {
@@ -96,7 +96,7 @@ describe('JournalEntryModal', () => {
         apiKeyExists={false}
       />,
     );
-    expect(await findByText('Save Entry')).toBeTruthy();
+    await findByText('Save Entry');
   });
 
   it('does not call createEntry when content is empty (button disabled)', async () => {
@@ -179,10 +179,10 @@ describe('JournalEntryModal', () => {
       />,
     );
 
-    expect(await findByText('Edit Entry')).toBeTruthy();
-    expect(await findByText('Update Entry')).toBeTruthy();
-    expect(await findByDisplayValue('My Day')).toBeTruthy();
-    expect(await findByDisplayValue('Some thoughts')).toBeTruthy();
+    await findByText('Edit Entry');
+    await findByText('Update Entry');
+    await findByDisplayValue('My Day');
+    await findByDisplayValue('Some thoughts');
   });
 
   it('renders mode toggle with Type and Scan options', async () => {
@@ -195,8 +195,8 @@ describe('JournalEntryModal', () => {
       />,
     );
 
-    expect(await findByText('Type')).toBeTruthy();
-    expect(await findByText('Scan')).toBeTruthy();
+    await findByText('Type');
+    await findByText('Scan');
   });
 
   it('shows camera buttons in scan mode', async () => {
@@ -209,8 +209,8 @@ describe('JournalEntryModal', () => {
       />,
     );
 
-    expect(await findByText('Take Photo')).toBeTruthy();
-    expect(await findByText('Gallery')).toBeTruthy();
+    await findByText('Take Photo');
+    await findByText('Gallery');
   });
 
   it('shows alert when camera permission is denied', async () => {
@@ -278,7 +278,7 @@ describe('JournalEntryModal', () => {
     await waitFor(() => {
       expect(mockScanImage).toHaveBeenCalledWith('file://scan.jpg');
     });
-    expect(await findByDisplayValue('Handwritten journal text here')).toBeTruthy();
+    await findByDisplayValue('Handwritten journal text here');
   });
 
   it('shows scan failed alert when OCR throws', async () => {
@@ -373,7 +373,7 @@ describe('JournalEntryModal', () => {
     await waitFor(() => {
       expect(mockScanImage).toHaveBeenCalledWith('file://gallery.jpg');
     });
-    expect(await findByDisplayValue('Gallery OCR text')).toBeTruthy();
+    await findByDisplayValue('Gallery OCR text');
   });
 
   it('shows scan failed alert when gallery OCR throws', async () => {
@@ -442,7 +442,7 @@ describe('JournalEntryModal', () => {
 
     // Switch to scan mode
     fireEvent.press(await findByText('Scan'));
-    expect(await findByText('Take Photo')).toBeTruthy();
+    await findByText('Take Photo');
 
     // Switch back to text mode
     fireEvent.press(await findByText('Type'));

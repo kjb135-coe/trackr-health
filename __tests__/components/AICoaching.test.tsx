@@ -59,8 +59,8 @@ describe('AICoaching', () => {
   it('shows API key setup prompt when no key exists', async () => {
     mockHasKey = false;
     const { findByText } = renderWithTheme(<AICoaching />);
-    expect(await findByText('AI Health Coach')).toBeTruthy();
-    expect(await findByText(/Add your Claude API key/)).toBeTruthy();
+    await findByText('AI Health Coach');
+    await findByText(/Add your Claude API key/);
   });
 
   it('shows Set Up API Key button when onSetupApiKey provided', async () => {
@@ -77,7 +77,7 @@ describe('AICoaching', () => {
     mockIsLoadingCoaching = true;
     mockDailyCoaching = null;
     const { findByText } = renderWithTheme(<AICoaching />);
-    expect(await findByText('Analyzing your health data...')).toBeTruthy();
+    await findByText('Analyzing your health data...');
   });
 
   it('shows error state when error occurs', async () => {
@@ -85,7 +85,7 @@ describe('AICoaching', () => {
     mockError = 'Network error';
     mockDailyCoaching = null;
     const { findByText } = renderWithTheme(<AICoaching />);
-    expect(await findByText('Network error')).toBeTruthy();
+    await findByText('Network error');
   });
 
   it('renders coaching data with greeting and insights', async () => {
@@ -112,10 +112,10 @@ describe('AICoaching', () => {
       motivationalMessage: 'Keep up the great work!',
     };
     const { findByText } = renderWithTheme(<AICoaching />);
-    expect(await findByText('Good morning! Here are your insights.')).toBeTruthy();
-    expect(await findByText('Habit Consistency')).toBeTruthy();
-    expect(await findByText('You completed 80% of habits')).toBeTruthy();
-    expect(await findByText('Sleep Quality')).toBeTruthy();
+    await findByText('Good morning! Here are your insights.');
+    await findByText('Habit Consistency');
+    await findByText('You completed 80% of habits');
+    await findByText('Sleep Quality');
   });
 
   it('renders daily tip and motivational message', async () => {
@@ -127,8 +127,8 @@ describe('AICoaching', () => {
       motivationalMessage: 'You are doing great!',
     };
     const { findByText } = renderWithTheme(<AICoaching />);
-    expect(await findByText('Take a walk after lunch')).toBeTruthy();
-    expect(await findByText('You are doing great!')).toBeTruthy();
+    await findByText('Take a walk after lunch');
+    await findByText('You are doing great!');
   });
 
   it('fetches coaching on mount when API key exists', async () => {

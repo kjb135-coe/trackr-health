@@ -51,22 +51,22 @@ describe('NutritionLogModal', () => {
     const { findByText } = renderWithTheme(
       <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={false} />,
     );
-    expect(await findByText('Log Meal')).toBeTruthy();
+    await findByText('Log Meal');
   });
 
   it('renders meal type and form labels', async () => {
     const { findByText } = renderWithTheme(
       <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={false} />,
     );
-    expect(await findByText('Meal Type')).toBeTruthy();
-    expect(await findByText('Or add manually')).toBeTruthy();
+    await findByText('Meal Type');
+    await findByText('Or add manually');
   });
 
   it('renders save button', async () => {
     const { findByText } = renderWithTheme(
       <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={false} />,
     );
-    expect(await findByText('Save Meal')).toBeTruthy();
+    await findByText('Save Meal');
   });
 
   it('does not call createMeal when no food info is provided (button disabled)', async () => {
@@ -163,10 +163,10 @@ describe('NutritionLogModal', () => {
       />,
     );
 
-    expect(await findByText('Edit Meal')).toBeTruthy();
-    expect(await findByText('Update Meal')).toBeTruthy();
-    expect(await findByDisplayValue('Oatmeal')).toBeTruthy();
-    expect(await findByDisplayValue('200')).toBeTruthy();
+    await findByText('Edit Meal');
+    await findByText('Update Meal');
+    await findByDisplayValue('Oatmeal');
+    await findByDisplayValue('200');
   });
 
   it('renders meal type selector with all 4 options', async () => {
@@ -174,10 +174,10 @@ describe('NutritionLogModal', () => {
       <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={false} />,
     );
 
-    expect(await findByText('Breakfast')).toBeTruthy();
-    expect(await findByText('Lunch')).toBeTruthy();
-    expect(await findByText('Dinner')).toBeTruthy();
-    expect(await findByText('Snack')).toBeTruthy();
+    await findByText('Breakfast');
+    await findByText('Lunch');
+    await findByText('Dinner');
+    await findByText('Snack');
   });
 
   it('shows alert when camera permission is denied', async () => {
@@ -240,8 +240,8 @@ describe('NutritionLogModal', () => {
     await waitFor(() => {
       expect(mockAnalyzeImage).toHaveBeenCalledWith('file://photo.jpg');
     });
-    expect(await findByText('Pizza')).toBeTruthy();
-    expect(await findByText('300 cal')).toBeTruthy();
+    await findByText('Pizza');
+    await findByText('300 cal');
   });
 
   it('saves detected foods from AI analysis', async () => {
@@ -373,8 +373,8 @@ describe('NutritionLogModal', () => {
     await waitFor(() => {
       expect(mockAnalyzeImage).toHaveBeenCalledWith('file://gallery.jpg');
     });
-    expect(await findByText('Sushi')).toBeTruthy();
-    expect(await findByText('400 cal')).toBeTruthy();
+    await findByText('Sushi');
+    await findByText('400 cal');
   });
 
   it('shows analysis failed alert when gallery AI analysis throws', async () => {

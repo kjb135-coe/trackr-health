@@ -10,7 +10,7 @@ function renderWithTheme(ui: React.ReactElement) {
 describe('Button', () => {
   it('renders the title text', async () => {
     const { findByText } = renderWithTheme(<Button title="Press me" onPress={() => {}} />);
-    expect(await findByText('Press me')).toBeTruthy();
+    await findByText('Press me');
   });
 
   it('calls onPress when tapped', async () => {

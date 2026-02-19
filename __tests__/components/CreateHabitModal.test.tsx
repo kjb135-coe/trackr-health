@@ -35,20 +35,20 @@ describe('CreateHabitModal', () => {
 
   it('renders modal title when visible', async () => {
     const { findByText } = renderWithTheme(<CreateHabitModal visible={true} onClose={() => {}} />);
-    expect(await findByText('New Habit')).toBeTruthy();
+    await findByText('New Habit');
   });
 
   it('renders habit name input and color label', async () => {
     const { findByPlaceholderText, findByText } = renderWithTheme(
       <CreateHabitModal visible={true} onClose={() => {}} />,
     );
-    expect(await findByPlaceholderText('Habit name')).toBeTruthy();
-    expect(await findByText('Color')).toBeTruthy();
+    await findByPlaceholderText('Habit name');
+    await findByText('Color');
   });
 
   it('renders create button as disabled when name is empty', async () => {
     const { findByText } = renderWithTheme(<CreateHabitModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Create Habit')).toBeTruthy();
+    await findByText('Create Habit');
   });
 
   it('calls createHabit and onClose when form is submitted', async () => {
@@ -105,9 +105,9 @@ describe('CreateHabitModal', () => {
       <CreateHabitModal visible={true} onClose={() => {}} editHabit={editHabit} />,
     );
 
-    expect(await findByText('Edit Habit')).toBeTruthy();
-    expect(await findByText('Update Habit')).toBeTruthy();
-    expect(await findByDisplayValue('Meditate')).toBeTruthy();
+    await findByText('Edit Habit');
+    await findByText('Update Habit');
+    await findByDisplayValue('Meditate');
   });
 
   it('calls updateHabit when saving in edit mode', async () => {

@@ -35,25 +35,25 @@ describe('SleepLogModal', () => {
 
   it('renders modal title when visible', async () => {
     const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Log Sleep')).toBeTruthy();
+    await findByText('Log Sleep');
   });
 
   it('renders bedtime and wake time labels', async () => {
     const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Bedtime')).toBeTruthy();
-    expect(await findByText('Wake Time')).toBeTruthy();
+    await findByText('Bedtime');
+    await findByText('Wake Time');
   });
 
   it('renders sleep quality label and quality options', async () => {
     const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Sleep Quality')).toBeTruthy();
-    expect(await findByText('1')).toBeTruthy();
-    expect(await findByText('5')).toBeTruthy();
+    await findByText('Sleep Quality');
+    await findByText('1');
+    await findByText('5');
   });
 
   it('renders save button', async () => {
     const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
-    expect(await findByText('Save Sleep Entry')).toBeTruthy();
+    await findByText('Save Sleep Entry');
   });
 
   it('calls createEntry and onClose when form is submitted with valid times', async () => {
@@ -132,8 +132,8 @@ describe('SleepLogModal', () => {
       <SleepLogModal visible={true} onClose={() => {}} editEntry={editEntry} />,
     );
 
-    expect(await findByText('Edit Sleep')).toBeTruthy();
-    expect(await findByText('Update Sleep Entry')).toBeTruthy();
+    await findByText('Edit Sleep');
+    await findByText('Update Sleep Entry');
   });
 
   it('calls updateEntry when saving in edit mode', async () => {

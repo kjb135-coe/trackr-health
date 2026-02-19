@@ -10,7 +10,7 @@ function renderWithTheme(ui: React.ReactElement) {
 describe('ModalHeader', () => {
   it('renders the title', async () => {
     const { findByText } = renderWithTheme(<ModalHeader title="Log Sleep" onClose={() => {}} />);
-    expect(await findByText('Log Sleep')).toBeTruthy();
+    await findByText('Log Sleep');
   });
 
   it('calls onClose when close button is pressed', async () => {

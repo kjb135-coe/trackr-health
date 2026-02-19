@@ -25,7 +25,7 @@ describe('AnimatedCard', () => {
         <Text>Card content</Text>
       </AnimatedCard>,
     );
-    expect(await findByText('Card content')).toBeTruthy();
+    await findByText('Card content');
   });
 
   it('calls onPress when pressed', async () => {
@@ -76,7 +76,7 @@ describe('AnimatedCard', () => {
         <Text>Outlined card</Text>
       </AnimatedCard>,
     );
-    expect(await findByText('Outlined card')).toBeTruthy();
+    await findByText('Outlined card');
   });
 
   it('renders with filled variant', async () => {
@@ -85,7 +85,7 @@ describe('AnimatedCard', () => {
         <Text>Filled card</Text>
       </AnimatedCard>,
     );
-    expect(await findByText('Filled card')).toBeTruthy();
+    await findByText('Filled card');
   });
 
   it('handles pressIn and pressOut events', async () => {
@@ -108,6 +108,6 @@ describe('AnimatedCard', () => {
         <Text>Static card</Text>
       </AnimatedCard>,
     );
-    expect(await findByText('Static card')).toBeTruthy();
+    await findByText('Static card');
   });
 });
