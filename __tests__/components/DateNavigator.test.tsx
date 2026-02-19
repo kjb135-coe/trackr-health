@@ -44,6 +44,32 @@ describe('DateNavigator', () => {
     expect(onDateChange).toHaveBeenCalledWith(today);
   });
 
+  it('navigates back one day when back arrow pressed', async () => {
+    const today = getDateString();
+    const onDateChange = jest.fn();
+    const { findByTestId } = renderWithTheme(
+      <DateNavigator date={today} onDateChange={onDateChange} />,
+    );
+
+    fireEvent.press(await findByTestId('date-nav-back'));
+
+    const yesterday = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+    expect(onDateChange).toHaveBeenCalledWith(yesterday);
+  });
+
+  it('navigates forward one day when forward arrow pressed on past date', async () => {
+    const twoDaysAgo = format(subDays(new Date(), 2), 'yyyy-MM-dd');
+    const onDateChange = jest.fn();
+    const { findByTestId } = renderWithTheme(
+      <DateNavigator date={twoDaysAgo} onDateChange={onDateChange} />,
+    );
+
+    fireEvent.press(await findByTestId('date-nav-forward'));
+
+    const oneDayAgo = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+    expect(onDateChange).toHaveBeenCalledWith(oneDayAgo);
+  });
+
   it('does not navigate forward when on today', async () => {
     const today = getDateString();
     const onDateChange = jest.fn();

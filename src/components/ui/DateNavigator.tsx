@@ -36,7 +36,7 @@ export function DateNavigator({ date, onDateChange }: DateNavigatorProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surfaceSecondary }]}>
-      <TouchableOpacity onPress={goBack} style={styles.arrow}>
+      <TouchableOpacity onPress={goBack} style={styles.arrow} testID="date-nav-back">
         <ChevronLeft color={colors.textPrimary} size={20} />
       </TouchableOpacity>
       <TouchableOpacity onPress={goToday} style={styles.labelContainer}>
@@ -44,7 +44,12 @@ export function DateNavigator({ date, onDateChange }: DateNavigatorProps) {
           {getRelativeDateLabel(date)}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={goForward} style={styles.arrow} disabled={isCurrentDay}>
+      <TouchableOpacity
+        onPress={goForward}
+        style={styles.arrow}
+        disabled={isCurrentDay}
+        testID="date-nav-forward"
+      >
         <ChevronRight color={isCurrentDay ? colors.textTertiary : colors.textPrimary} size={20} />
       </TouchableOpacity>
     </View>
