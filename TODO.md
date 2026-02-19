@@ -190,6 +190,10 @@ Yes
 ### ~~183. Extract shared useImagePicker hook from nutrition and journal modals~~ — Skipped
 - Structural similarity but every configurable detail differs (camera options, permission messages, AI service, error messages, no-API-key behavior). A parametrized hook would be more complex than the two inlined versions. Per CLAUDE.md: "three similar lines of code is better than a premature abstraction."
 
+### ~~187. Fix unawaited async calls in 3 tab screens~~ ✅
+- `nutrition.tsx` `handleGetNutritionAdvice` and `journal.tsx` `handleGetMoodAnalysis` called async store functions without await, silently dropping errors. `habits.tsx` `deleteHabit` was unawaited with no success haptic.
+- **Status:** Done — added async/await to all 3 handlers, added success haptic to habit deletion matching sleep/exercise pattern.
+
 ### ~~186. Add onboarding screen tests~~ ✅
 - `app/onboarding.tsx` (241 lines) had zero test coverage despite being the critical first-run flow.
 - **Status:** Done — 6 tests: first slide render, description, Skip/Next buttons, skip completes onboarding + navigates, all 6 slide titles. 624 total tests.
@@ -987,3 +991,4 @@ Yes
 - [x] Added settings screen tests (17): API key management, sign out, export, clear data, theme, privacy — 618 total (TODO #184)
 - [x] Fixed unsafe cast in login, dedup AICoaching hasKey, memoized onboarding slides + journal entries (TODO #185)
 - [x] Added onboarding screen tests (6): slide rendering, Skip/Next, navigation, all 6 slide titles — 624 total (TODO #186)
+- [x] Fixed 3 unawaited async calls: nutrition fetchAdvice, journal fetchMoodAnalysis, habits deleteHabit + added success haptic (TODO #187)
