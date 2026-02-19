@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -88,9 +88,9 @@ export default function ExerciseScreen() {
     setModalVisible(true);
   };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = useCallback((date: string) => {
     setSelectedDate(date);
-  };
+  }, []);
 
   // Filter sessions for selected date
   const dateSessions = useMemo(

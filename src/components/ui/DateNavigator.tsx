@@ -12,7 +12,10 @@ interface DateNavigatorProps {
   onDateChange: (date: string) => void;
 }
 
-export function DateNavigator({ date, onDateChange }: DateNavigatorProps) {
+export const DateNavigator = React.memo(function DateNavigator({
+  date,
+  onDateChange,
+}: DateNavigatorProps) {
   const { colors } = useTheme();
   const parsed = parseISO(date);
   const isCurrentDay = isToday(parsed);
@@ -54,7 +57,7 @@ export function DateNavigator({ date, onDateChange }: DateNavigatorProps) {
       </TouchableOpacity>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

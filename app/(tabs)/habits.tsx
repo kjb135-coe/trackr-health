@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -85,12 +85,15 @@ export default function HabitsScreen() {
     setWeeklyCompletions(weekly);
   };
 
-  const handleDateChange = async (date: string) => {
-    setSelectedDate(date);
-    await loadTodayCompletions(date);
-    const weekly = await getWeeklyCompletions(date);
-    setWeeklyCompletions(weekly);
-  };
+  const handleDateChange = useCallback(
+    async (date: string) => {
+      setSelectedDate(date);
+      await loadTodayCompletions(date);
+      const weekly = await getWeeklyCompletions(date);
+      setWeeklyCompletions(weekly);
+    },
+    [loadTodayCompletions, getWeeklyCompletions],
+  );
 
   const loadStreaks = async () => {
     const allStreaks = await getAllStreaks();

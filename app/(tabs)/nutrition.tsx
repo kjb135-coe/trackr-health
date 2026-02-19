@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -65,10 +65,14 @@ export default function NutritionScreen() {
     await loadDailyTotals(date);
   };
 
-  const handleDateChange = async (date: string) => {
-    setSelectedDate(date);
-    await loadData(date);
-  };
+  const handleDateChange = useCallback(
+    async (date: string) => {
+      setSelectedDate(date);
+      await loadMealsForDate(date);
+      await loadDailyTotals(date);
+    },
+    [loadMealsForDate, loadDailyTotals],
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);

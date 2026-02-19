@@ -413,7 +413,7 @@ Yes
 - ~~Sleep time inputs accept any text, nutrition calories has no positive number validation, exercise duration allows zero.~~
 - **Status:** Done — sleep validates hours (0-23) and minutes (0-59), exercise validates duration > 0 and calories > 0, nutrition validates calories > 0. All show Alert on invalid input.
 
-### 36. Refactor large tab screen components (500+ lines) — In Progress
+### ~~36. Refactor large tab screen components (500+ lines)~~ ✅
 - ~~`nutrition.tsx` (690 → 306 lines)~~ ✅ Extracted `NutritionLogModal` component.
 - ~~`journal.tsx` (629 → 257 lines)~~ ✅ Extracted `JournalEntryModal` component.
 - ~~`sleep.tsx` (677 → 451 lines)~~ ✅ Extracted `SleepLogModal` component.
@@ -1084,3 +1084,7 @@ Yes
 ### ~~211. Add accessibility support to AnimatedCard component~~ ✅
 - `AnimatedCard` is used throughout the app as an interactive card (onPress). Its internal `AnimatedPressable` lacks `accessibilityRole` and `accessibilityLabel`. Screen readers can't identify these as interactive elements. Add an optional `accessibilityLabel` prop and set `accessibilityRole="button"` when `onPress` is provided.
 - **Status:** Done — Added optional `accessibilityLabel` prop and `accessibilityRole="button"` to AnimatedPressable when card is interactive (has onPress/onLongPress).
+
+### ~~212. Memoize DateNavigator and stabilize onDateChange callbacks~~ ✅
+- `DateNavigator` is a pure presentational component used on 4 tab screens but isn't wrapped in `React.memo()`. The `handleDateChange` callbacks in habits, sleep, exercise, and nutrition tabs are recreated every render, causing unnecessary DateNavigator re-renders. Wrap DateNavigator in `React.memo` and add `useCallback` to the 4 handleDateChange handlers.
+- **Status:** Done — Wrapped DateNavigator in React.memo. Added useCallback to handleDateChange in habits, sleep, exercise, and nutrition tabs with proper dependency arrays.

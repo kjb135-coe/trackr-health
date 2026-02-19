@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -75,9 +75,9 @@ export default function SleepScreen() {
     ]);
   };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = useCallback((date: string) => {
     setSelectedDate(date);
-  };
+  }, []);
 
   // Filter entries for selected date
   const dateEntry = useMemo(
