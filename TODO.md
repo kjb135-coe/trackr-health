@@ -582,6 +582,10 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~139. Add AnimatedButton ghost/danger variant tests~~ ✅
+- AnimatedButton at 74% coverage — missing tests for ghost and danger variant rendering.
+- **Status:** Done — added 2 tests for ghost and danger variants. 518 total tests, 91.4% overall statement coverage.
+
 ### ~~138. Improve DateNavigator test coverage (67% → 100%)~~ ✅
 - Missing tests for goBack and goForward arrow press handlers.
 - **Status:** Done — added 2 tests with testID-based arrow selection. Added testIDs to DateNavigator arrows. 516 total tests.
@@ -758,3 +762,4 @@ Do whatever you think is right.
 - [x] Added loading spinner to sleep and exercise modal save buttons (TODO #136)
 - [x] Added database initialization tests (6 tests): open, cache, migration skip, failure safety, close — 514 total tests (TODO #137)
 - [x] Added DateNavigator arrow navigation tests + testIDs — 516 total tests (TODO #138)
+- [x] Added AnimatedButton ghost/danger variant tests — 518 total tests (TODO #139)

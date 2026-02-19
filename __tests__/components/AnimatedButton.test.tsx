@@ -82,4 +82,18 @@ describe('AnimatedButton', () => {
     fireEvent.press(await findByText('Tap'));
     expect(Haptics.impactAsync).not.toHaveBeenCalled();
   });
+
+  it('renders ghost variant', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedButton title="Ghost" onPress={jest.fn()} variant="ghost" />,
+    );
+    expect(await findByText('Ghost')).toBeTruthy();
+  });
+
+  it('renders danger variant', async () => {
+    const { findByText } = renderWithTheme(
+      <AnimatedButton title="Delete" onPress={jest.fn()} variant="danger" />,
+    );
+    expect(await findByText('Delete')).toBeTruthy();
+  });
 });
