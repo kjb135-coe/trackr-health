@@ -119,9 +119,9 @@ export default function JournalScreen() {
     setModalVisible(true);
   };
 
-  const handleGetMoodAnalysis = () => {
+  const handleGetMoodAnalysis = async () => {
     setShowMoodAnalysis(true);
-    fetchMoodAnalysis();
+    await fetchMoodAnalysis();
   };
 
   return (

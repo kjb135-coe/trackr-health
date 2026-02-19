@@ -111,7 +111,8 @@ export default function HabitsScreen() {
         style: 'destructive',
         onPress: async () => {
           await cancelHabitReminder(habit.id);
-          deleteHabit(habit.id);
+          await deleteHabit(habit.id);
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         },
       },
     ]);

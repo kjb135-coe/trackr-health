@@ -91,9 +91,9 @@ export default function NutritionScreen() {
     ]);
   };
 
-  const handleGetNutritionAdvice = () => {
+  const handleGetNutritionAdvice = async () => {
     setShowNutritionAdvice(true);
-    fetchNutritionAdvice();
+    await fetchNutritionAdvice();
   };
 
   const calorieProgress = Math.min(dailyTotals.calories / calorieGoal, 1);
