@@ -175,9 +175,25 @@ Yes
 - `login.tsx` and `signup.tsx` have `FadeInDown` entrance animations on title, subtitle, form, footer. `forgot-password.tsx` and `verify-email.tsx` have no entrance animations — inconsistent with the rest of the auth flow.
 - **Status:** Done — added staggered FadeInDown entrance + FadeOut exit animations to both screens. All 4 auth screens now have consistent animation patterns.
 
-### 15. No deep linking configuration
+### ~~15. No deep linking configuration~~ ✅
 - Expo Router supports it but no scheme is configured.
-- **Effort:** ~30min
+- **Status:** Already configured — `"scheme": "trackr"` in app.json, `expo-linking` v8 and `expo-router` v6 installed. URLs like `trackr://habits` work out of the box.
+
+### ~~181. Fix setSaving(false) leak in 3 modal save handlers~~ ✅
+- `setSaving(false)` was placed after `try/catch` instead of in a `finally` block in CreateHabitModal, ExerciseLogModal, and SleepLogModal. If catch re-throws, the save button stays stuck in loading state.
+- **Status:** Done — moved to `finally` block in all 3 modals.
+
+### 182. Add zod validation to 5 healthInsightsAI JSON.parse() casts
+- `healthInsightsAI.ts` uses `JSON.parse(content.text) as T` for DailyAICoaching, HabitSuggestion[], SleepAnalysis, ExerciseRecommendation, and NutritionAdvice. These are unsafe casts — structurally invalid JSON won't be caught until runtime. The codebase already uses zod for foodRecognition and handwritingOCR.
+- **Effort:** ~45min
+
+### 183. Extract shared useImagePicker hook from nutrition and journal modals
+- `NutritionLogModal.tsx` and `JournalEntryModal.tsx` both implement near-identical `handleTakePhoto`/`handlePickImage` with permission requests, launcher calls, and error handling. Only the AI service callback differs.
+- **Effort:** ~45min
+
+### 184. Add settings screen tests
+- `app/settings.tsx` (716 lines) has zero test coverage. Contains critical paths: API key management, data export, account deletion, and theme switching.
+- **Effort:** ~1h
 
 ### 16. ~~Image caching for food photos~~ ✅
 - ~~Food recognition camera captures photos but doesn't persist them to a gallery.~~
@@ -366,7 +382,7 @@ Yes
 - ~~Sleep and exercise screens didn't re-fetch when navigating dates.~~
 - **Status:** Done — `handleDateChange` now calls `loadEntries()`/`loadSessions()` on both screens, consistent with habits and nutrition.
 
-### 32. Refactor large tab screen components (500+ lines)
+### ~~32. Refactor large tab screen components (500+ lines)~~ ✅
 - `nutrition.tsx` (680 lines), `settings.tsx` (673 lines), `sleep.tsx` (657 lines), `journal.tsx` (623 lines), `exercise.tsx` (585 lines), `habits.tsx` (550 lines) all exceed the 200-line guideline.
 - Extract modal content, form sections, and list items into dedicated components.
 - **Effort:** ~4-6h (all screens)
@@ -956,3 +972,4 @@ Yes
 - [x] Added demoData tests (6): habit creation, completions, sleep, exercise, meals, journals — 595 total (TODO #178)
 - [x] Wired habitReminders to UI: reminder toggle + time picker in CreateHabitModal, cancel on delete, Habit type null support — 5 new tests, 600 total (TODO #179)
 - [x] Cleaned up 159 redundant toBeTruthy() assertions across 21 test files (TODO #180)
+- [x] Fixed setSaving(false) leak in 3 modal save handlers — moved to finally block (TODO #181)
