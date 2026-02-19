@@ -267,6 +267,14 @@ Do whatever you think is right.
 - Only untested Zustand store. Handles 6 AI service calls with loading states, caching, and error handling.
 - **Status:** Done — 12 tests covering all 6 fetch methods, caching logic, generic error fallback, and clearAll reset. 227 total tests passing.
 
+### 90. ~~Fix exercise calorie estimation key mismatch~~ ✅
+- `estimateCalories()` used `weights` key but exercise type ID is `weight_training`, causing wrong calorie estimate (6 default instead of 5 cal/min).
+- **Status:** Done — changed `weights` to `weight_training` in `baseCaloriesPerMinute` lookup.
+
+### 91. ~~Fix N+1 query in healthInsightsAI gatherHealthData~~ ✅
+- `gatherHealthData()` called `getCompletionsForHabit()` in a loop for each habit (N+1 pattern).
+- **Status:** Done — replaced with single `getCompletionsForDateRange()` call + JS filter. Same pattern already used in `healthInsights.ts`.
+
 ### 89. ~~Add healthInsightsAI service tests~~ ✅
 - All 6 AI functions (`generateDailyCoaching`, `generateHabitSuggestions`, `analyzeSleepPatterns`, `getExerciseRecommendation`, `analyzeJournalMood`, `getNutritionAdvice`) had no test coverage.
 - **Status:** Done — 13 tests covering API response parsing, JSON fallback defaults, non-text response error. 300 total tests.
@@ -516,3 +524,5 @@ Do whatever you think is right.
 - [x] Added Claude client tests (11 tests): key storage, singleton, error handling — 277 total tests (TODO #87)
 - [x] Added imagePersist tests (4) and getQualityColor tests (6) — 287 total tests (TODO #88)
 - [x] Added healthInsightsAI tests (13): all 6 AI functions, JSON parsing, fallback defaults — 300 total tests (TODO #89)
+- [x] Fixed exercise calorie estimation: `weights` → `weight_training` key mismatch (TODO #90)
+- [x] Replaced N+1 habit completion queries with batch `getCompletionsForDateRange()` in healthInsightsAI (TODO #91)
