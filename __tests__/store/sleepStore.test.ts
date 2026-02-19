@@ -1,0 +1,165 @@
+import { useSleepStore } from '@/src/store/sleepStore';
+import { SleepEntry } from '@/src/types';
+
+jest.mock('@/src/database/repositories', () => ({
+  sleepRepository: {
+    getAll: jest.fn(),
+    getByDateRange: jest.fn(),
+    getByDate: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    getAverageQuality: jest.fn(),
+    getAverageDuration: jest.fn(),
+  },
+}));
+
+const { sleepRepository } = jest.requireMock('@/src/database/repositories');
+
+const mockEntry: SleepEntry = {
+  id: 's1',
+  date: '2026-02-18',
+  bedtime: '2026-02-17T23:00:00.000Z',
+  wakeTime: '2026-02-18T07:00:00.000Z',
+  durationMinutes: 480,
+  quality: 4,
+  createdAt: '2026-02-18T07:30:00.000Z',
+  updatedAt: '2026-02-18T07:30:00.000Z',
+};
+
+function resetStore() {
+  useSleepStore.setState({
+    entries: [],
+    isLoading: false,
+    error: null,
+  });
+}
+
+beforeEach(() => {
+  resetStore();
+  jest.clearAllMocks();
+});
+
+describe('sleepStore', () => {
+  describe('initial state', () => {
+    it('starts with empty entries', () => {
+      expect(useSleepStore.getState().entries).toEqual([]);
+    });
+
+    it('starts without error', () => {
+      expect(useSleepStore.getState().error).toBeNull();
+    });
+  });
+
+  describe('loadEntries', () => {
+    it('loads entries from repository', async () => {
+      sleepRepository.getAll.mockResolvedValue([mockEntry]);
+
+      await useSleepStore.getState().loadEntries();
+
+      expect(useSleepStore.getState().entries).toEqual([mockEntry]);
+      expect(useSleepStore.getState().isLoading).toBe(false);
+    });
+
+    it('sets error on failure', async () => {
+      sleepRepository.getAll.mockRejectedValue(new Error('DB error'));
+
+      await useSleepStore.getState().loadEntries();
+
+      expect(useSleepStore.getState().error).toBe('DB error');
+    });
+  });
+
+  describe('loadEntriesForRange', () => {
+    it('loads entries for date range', async () => {
+      sleepRepository.getByDateRange.mockResolvedValue([mockEntry]);
+
+      await useSleepStore.getState().loadEntriesForRange('2026-02-01', '2026-02-28');
+
+      expect(sleepRepository.getByDateRange).toHaveBeenCalledWith('2026-02-01', '2026-02-28');
+      expect(useSleepStore.getState().entries).toEqual([mockEntry]);
+    });
+  });
+
+  describe('createEntry', () => {
+    it('creates entry and adds to state sorted by date', async () => {
+      sleepRepository.create.mockResolvedValue(mockEntry);
+
+      const result = await useSleepStore.getState().createEntry({
+        date: '2026-02-18',
+        bedtime: '2026-02-17T23:00:00.000Z',
+        wakeTime: '2026-02-18T07:00:00.000Z',
+        durationMinutes: 480,
+        quality: 4,
+      });
+
+      expect(result).toEqual(mockEntry);
+      expect(useSleepStore.getState().entries).toContain(mockEntry);
+    });
+
+    it('throws on failure', async () => {
+      sleepRepository.create.mockRejectedValue(new Error('Create failed'));
+
+      await expect(
+        useSleepStore.getState().createEntry({
+          date: '2026-02-18',
+          bedtime: '2026-02-17T23:00:00.000Z',
+          wakeTime: '2026-02-18T07:00:00.000Z',
+          durationMinutes: 480,
+          quality: 4,
+        }),
+      ).rejects.toThrow('Create failed');
+    });
+  });
+
+  describe('deleteEntry', () => {
+    it('removes entry from state', async () => {
+      useSleepStore.setState({ entries: [mockEntry] });
+      sleepRepository.delete.mockResolvedValue(undefined);
+
+      await useSleepStore.getState().deleteEntry('s1');
+
+      expect(useSleepStore.getState().entries).toEqual([]);
+    });
+  });
+
+  describe('getEntryByDate', () => {
+    it('delegates to repository', async () => {
+      sleepRepository.getByDate.mockResolvedValue(mockEntry);
+
+      const result = await useSleepStore.getState().getEntryByDate('2026-02-18');
+
+      expect(result).toEqual(mockEntry);
+    });
+  });
+
+  describe('getAverageQuality', () => {
+    it('delegates to repository', async () => {
+      sleepRepository.getAverageQuality.mockResolvedValue(3.5);
+
+      const result = await useSleepStore.getState().getAverageQuality('2026-02-01', '2026-02-28');
+
+      expect(result).toBe(3.5);
+    });
+  });
+
+  describe('getAverageDuration', () => {
+    it('delegates to repository', async () => {
+      sleepRepository.getAverageDuration.mockResolvedValue(450);
+
+      const result = await useSleepStore.getState().getAverageDuration('2026-02-01', '2026-02-28');
+
+      expect(result).toBe(450);
+    });
+  });
+
+  describe('clearError', () => {
+    it('clears error state', () => {
+      useSleepStore.setState({ error: 'something' });
+
+      useSleepStore.getState().clearError();
+
+      expect(useSleepStore.getState().error).toBeNull();
+    });
+  });
+});

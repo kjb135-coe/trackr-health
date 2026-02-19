@@ -115,9 +115,9 @@ Do whatever you think is right.
 - Key untested areas: Zustand stores, database repositories, navigation flows, AI service mocks
 - **Effort:** ~4-6h for meaningful coverage
 
-### 22. Add sleep, nutrition, and exercise store tests
-- Only habitStore has tests. sleepStore, nutritionStore, and exerciseStore follow the same pattern and should be tested.
-- **Effort:** ~2h (using habitStore test as template)
+### 22. ~~Add sleep, nutrition, and exercise store tests~~ ✅
+- ~~Only habitStore has tests. sleepStore, nutritionStore, and exerciseStore follow the same pattern and should be tested.~~
+- **Status:** Done — sleepStore (12 tests), exerciseStore (12 tests), nutritionStore (16 tests) added. 83 total tests passing.
 
 ### 21. Several `catch (err: any)` patterns remain in auth screens
 - `app/auth/login.tsx` and `app/auth/signup.tsx` still use `catch (err: any)` with `err.code` access
@@ -171,3 +171,4 @@ Do whatever you think is right.
 - [x] Expanded test coverage: habitStore (19 tests), Card (3 tests), Input (5 tests) — 41 total tests (TODO #20)
 - [x] Fixed catch (err: any) patterns in auth screens with proper unknown type narrowing (TODO #21)
 - [x] Deep linking already configured: scheme "trackr" in app.json + Expo Router auto-handles routes (TODO #15)
+- [x] Added sleep, nutrition, and exercise store tests: sleepStore (12), exerciseStore (12), nutritionStore (16) — 83 total tests (TODO #22)
