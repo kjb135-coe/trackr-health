@@ -187,13 +187,12 @@ Yes
 - `healthInsightsAI.ts` uses `JSON.parse(content.text) as T` for DailyAICoaching, HabitSuggestion[], SleepAnalysis, ExerciseRecommendation, MoodAnalysis, and NutritionAdvice. These are unsafe casts — structurally invalid JSON won't be caught until runtime.
 - **Status:** Done — added 7 zod schemas (AIInsight, DailyCoaching, HabitSuggestion, SleepAnalysis, ExerciseRecommendation, MoodAnalysis, NutritionAdvice). Replaced all 6 `as T` casts with `.parse()`. Added test for valid-JSON-wrong-shape fallback. 601 total tests.
 
-### 183. Extract shared useImagePicker hook from nutrition and journal modals
-- `NutritionLogModal.tsx` and `JournalEntryModal.tsx` both implement near-identical `handleTakePhoto`/`handlePickImage` with permission requests, launcher calls, and error handling. Only the AI service callback differs.
-- **Effort:** ~45min
+### ~~183. Extract shared useImagePicker hook from nutrition and journal modals~~ — Skipped
+- Structural similarity but every configurable detail differs (camera options, permission messages, AI service, error messages, no-API-key behavior). A parametrized hook would be more complex than the two inlined versions. Per CLAUDE.md: "three similar lines of code is better than a premature abstraction."
 
-### 184. Add settings screen tests
+### ~~184. Add settings screen tests~~ ✅
 - `app/settings.tsx` (716 lines) has zero test coverage. Contains critical paths: API key management, data export, account deletion, and theme switching.
-- **Effort:** ~1h
+- **Status:** Done — 17 tests: section titles, user info, API key save/empty/configured, sign out, goals navigation, export all/CSV/fail, clear data confirm, theme picker, privacy policy. 618 total tests.
 
 ### 16. ~~Image caching for food photos~~ ✅
 - ~~Food recognition camera captures photos but doesn't persist them to a gallery.~~
@@ -974,3 +973,4 @@ Yes
 - [x] Cleaned up 159 redundant toBeTruthy() assertions across 21 test files (TODO #180)
 - [x] Fixed setSaving(false) leak in 3 modal save handlers — moved to finally block (TODO #181)
 - [x] Added zod validation to 6 healthInsightsAI JSON.parse() casts — 7 schemas, 1 new test, 601 total (TODO #182)
+- [x] Added settings screen tests (17): API key management, sign out, export, clear data, theme, privacy — 618 total (TODO #184)
