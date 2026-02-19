@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import Slider from '@react-native-community/slider';
 import { X, Moon, Dumbbell, UtensilsCrossed, Target, BookOpen } from 'lucide-react-native';
@@ -7,6 +7,7 @@ import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
+import { getErrorMessage } from '@/src/utils/date';
 import { useGoalsStore } from '@/src/store';
 import { Goals } from '@/src/store/goalsStore';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
@@ -28,9 +29,13 @@ export default function GoalsScreen() {
   }, [goals]);
 
   const handleSave = async () => {
-    await updateGoals(localGoals);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.back();
+    try {
+      await updateGoals(localGoals);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      router.back();
+    } catch (error) {
+      Alert.alert('Save Failed', getErrorMessage(error));
+    }
   };
 
   const updateLocalGoal = (key: keyof Goals, value: number) => {

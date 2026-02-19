@@ -1010,9 +1010,9 @@ Yes
 - `app/(tabs)/journal.tsx` has zero screen-level test coverage. Contains search, tag filtering, entry cards, mood analysis section.
 - **Status:** Done — 10 tests: empty state, entry card, multiple entries, mood badge, search bar, tag filter pills, error banner, mount loading, skeleton loading, scanned badge. 664 total tests.
 
-### 193. Add goals screen tests + fix missing error handling
+### ~~193. Add goals screen tests + fix missing error handling~~ ✅
 - `app/goals.tsx` has zero screen-level test coverage. Also, `handleSave` lacks try-catch — if `updateGoals()` fails, users get no feedback.
-- **Effort:** ~30min
+- **Status:** Done — added try-catch with Alert to handleSave. 7 tests: title/description, 6 goal cards, goal values, mount loading, save button, save error alert, save success navigation. 671 total tests.
 
 ### 194. Remove unused react-dom and react-native-web dependencies
 - Both are in package.json but never imported anywhere in src/ or app/. Only needed for web builds, which this iOS-only project doesn't use.
