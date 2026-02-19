@@ -8,13 +8,25 @@ import {
   RefreshControl,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { Plus, Camera, X, BookOpen, Search } from 'lucide-react-native';
+import {
+  Plus,
+  Camera,
+  X,
+  BookOpen,
+  Search,
+  Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import {
+  AnimatedButton,
   AnimatedCard,
   FAB,
   SecondaryFAB,
@@ -23,7 +35,7 @@ import {
   ErrorBanner,
   EmptyState,
 } from '@/src/components/ui';
-import { useJournalStore } from '@/src/store';
+import { useJournalStore, useAIInsightsStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
 import { JournalEntry } from '@/src/types';
@@ -40,9 +52,11 @@ export default function JournalScreen() {
   const [searchResults, setSearchResults] = useState<JournalEntry[] | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [editEntry, setEditEntry] = useState<JournalEntry | undefined>();
+  const [showMoodAnalysis, setShowMoodAnalysis] = useState(false);
 
   const { entries, isLoading, error, loadEntries, deleteEntry, search, clearError } =
     useJournalStore();
+  const { moodAnalysis, isLoadingMood, fetchMoodAnalysis } = useAIInsightsStore();
 
   useEffect(() => {
     loadEntries();
@@ -103,6 +117,11 @@ export default function JournalScreen() {
     setEditEntry(undefined);
     setModalMode(mode);
     setModalVisible(true);
+  };
+
+  const handleGetMoodAnalysis = () => {
+    setShowMoodAnalysis(true);
+    fetchMoodAnalysis();
   };
 
   return (
@@ -248,6 +267,141 @@ export default function JournalScreen() {
             </Animated.View>
           ))
         )}
+
+        {/* AI Mood Analysis */}
+        {apiKeyExists && entries.length >= 2 && (
+          <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+            {!showMoodAnalysis ? (
+              <TouchableOpacity
+                style={[styles.aiSection, { backgroundColor: colors.surfaceSecondary }]}
+                onPress={handleGetMoodAnalysis}
+              >
+                <Sparkles color={colors.journal} size={20} />
+                <Text style={[styles.aiSectionText, { color: colors.textPrimary }]}>
+                  Get AI Mood Analysis
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <AnimatedCard style={styles.analysisCard} delay={100}>
+                <View style={styles.analysisHeader}>
+                  <Sparkles color={colors.journal} size={20} />
+                  <Text style={[styles.analysisTitle, { color: colors.textPrimary }]}>
+                    Mood Analysis
+                  </Text>
+                </View>
+
+                {isLoadingMood ? (
+                  <View style={styles.loadingContainer}>
+                    <ActivityIndicator color={colors.journal} />
+                    <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+                      Analyzing your mood patterns...
+                    </Text>
+                  </View>
+                ) : moodAnalysis ? (
+                  <>
+                    <Text style={[styles.patternText, { color: colors.textSecondary }]}>
+                      {moodAnalysis.overallMood}
+                    </Text>
+
+                    <View style={styles.trendRow}>
+                      <Text style={[styles.trendLabel, { color: colors.textSecondary }]}>
+                        Mood Trend:
+                      </Text>
+                      <View
+                        style={[
+                          styles.trendBadge,
+                          {
+                            backgroundColor:
+                              moodAnalysis.moodTrend === 'improving'
+                                ? colors.success + '20'
+                                : moodAnalysis.moodTrend === 'declining'
+                                  ? colors.error + '20'
+                                  : colors.info + '20',
+                          },
+                        ]}
+                      >
+                        {moodAnalysis.moodTrend === 'improving' && (
+                          <TrendingUp color={colors.success} size={14} />
+                        )}
+                        {moodAnalysis.moodTrend === 'declining' && (
+                          <TrendingDown color={colors.error} size={14} />
+                        )}
+                        {moodAnalysis.moodTrend === 'stable' && (
+                          <Minus color={colors.info} size={14} />
+                        )}
+                        <Text
+                          style={[
+                            styles.trendText,
+                            {
+                              color:
+                                moodAnalysis.moodTrend === 'improving'
+                                  ? colors.success
+                                  : moodAnalysis.moodTrend === 'declining'
+                                    ? colors.error
+                                    : colors.info,
+                            },
+                          ]}
+                        >
+                          {moodAnalysis.moodTrend.charAt(0).toUpperCase() +
+                            moodAnalysis.moodTrend.slice(1)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {moodAnalysis.commonThemes.length > 0 && (
+                      <View style={styles.themesContainer}>
+                        <Text style={[styles.themesTitle, { color: colors.textSecondary }]}>
+                          Common Themes:
+                        </Text>
+                        <View style={styles.themesRow}>
+                          {moodAnalysis.commonThemes.map((theme) => (
+                            <View
+                              key={theme}
+                              style={[
+                                styles.themeBadge,
+                                { backgroundColor: colors.journal + '15' },
+                              ]}
+                            >
+                              <Text style={[styles.themeText, { color: colors.journal }]}>
+                                {theme}
+                              </Text>
+                            </View>
+                          ))}
+                        </View>
+                      </View>
+                    )}
+
+                    {moodAnalysis.suggestions.length > 0 && (
+                      <>
+                        <Text style={[styles.suggestionsTitle, { color: colors.textSecondary }]}>
+                          Suggestions:
+                        </Text>
+                        {moodAnalysis.suggestions.map((suggestion) => (
+                          <View key={suggestion} style={styles.suggestionItem}>
+                            <Text style={[styles.suggestionBullet, { color: colors.journal }]}>
+                              •
+                            </Text>
+                            <Text style={[styles.suggestionText, { color: colors.textSecondary }]}>
+                              {suggestion}
+                            </Text>
+                          </View>
+                        ))}
+                      </>
+                    )}
+
+                    <AnimatedButton
+                      title="Refresh Analysis"
+                      variant="secondary"
+                      onPress={handleGetMoodAnalysis}
+                      loading={isLoadingMood}
+                      style={{ marginTop: spacing.md }}
+                    />
+                  </>
+                ) : null}
+              </AnimatedCard>
+            )}
+          </Animated.View>
+        )}
       </ScrollView>
 
       <FABGroup>
@@ -370,5 +524,104 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 11,
     fontWeight: '500',
+  },
+  aiSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    marginTop: spacing.md,
+  },
+  aiSectionText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '500',
+    marginLeft: spacing.sm,
+  },
+  analysisCard: {
+    padding: spacing.md,
+    marginTop: spacing.md,
+  },
+  analysisHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  analysisTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: spacing.sm,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  loadingText: {
+    fontSize: 14,
+  },
+  patternText: {
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: spacing.md,
+  },
+  trendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  trendLabel: {
+    fontSize: 14,
+    marginRight: spacing.sm,
+  },
+  trendBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
+    gap: 4,
+  },
+  trendText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  themesContainer: {
+    marginBottom: spacing.md,
+  },
+  themesTitle: {
+    fontSize: 14,
+    marginBottom: spacing.xs,
+  },
+  themesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  themeBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
+  },
+  themeText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  suggestionsTitle: {
+    fontSize: 14,
+    marginBottom: spacing.xs,
+  },
+  suggestionItem: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  suggestionBullet: {
+    fontSize: 14,
+    marginRight: spacing.xs,
+  },
+  suggestionText: {
+    fontSize: 14,
+    lineHeight: 22,
+    flex: 1,
   },
 });

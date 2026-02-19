@@ -582,6 +582,11 @@ Do whatever you think is right.
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~141. Wire fetchMoodAnalysis to journal screen~~ ✅
+- `fetchMoodAnalysis()` and `fetchNutritionAdvice()` exist in aiInsightsStore but are never called from UI.
+- Follow the same pattern as sleep screen's AI analysis section (trend, recommendations, refresh button).
+- **Effort:** ~30min per screen
+
 ### ~~140. Add habit editing — tap to edit name and color~~ ✅
 - `updateHabit()` existed in habitStore but was never called from UI. Users could create and delete habits but not edit them.
 - **Status:** Done — tap on habit name/info opens CreateHabitModal in edit mode. Modal detects edit vs create, pre-fills name and color, calls `updateHabit()` on save. Added loading spinner to save button.
@@ -768,3 +773,4 @@ Do whatever you think is right.
 - [x] Added DateNavigator arrow navigation tests + testIDs — 516 total tests (TODO #138)
 - [x] Added AnimatedButton ghost/danger variant tests — 518 total tests (TODO #139)
 - [x] Added habit editing — tap habit name opens edit modal with pre-filled name/color (TODO #140)
+- [x] Wired fetchMoodAnalysis to journal screen — AI mood analysis card with trend, themes, suggestions (TODO #141)
