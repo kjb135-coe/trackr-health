@@ -501,6 +501,14 @@ Do whatever you think is right.
 - `authStore` was the last untested Zustand store. All 7 methods untested.
 - **Status:** Done — 14 tests covering initialize, signUp/signIn (success + error), signInWithGoogle, signOut (success + error), sendVerificationEmail, sendPasswordReset, reloadUser (success + silent fail), clearError. 424 total tests.
 
+### 113. ~~Add AnimatedButton component tests~~ ✅
+- AnimatedButton (181 lines) with 4 variants, 3 sizes, loading/disabled states, haptic feedback. Zero test coverage.
+- **Status:** Done — 7 tests: title rendering, onPress, loading hides title, disabled blocks press, icon rendering, haptic feedback on/off. 435 total tests.
+
+### 114. ~~Add FAB component tests~~ ✅
+- FAB, SecondaryFAB, and FABGroup components used across all 5 tab screens. Zero test coverage.
+- **Status:** Done — 4 tests: FAB render + press, FAB grouped mode, SecondaryFAB render + press, FABGroup children. 435 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -623,3 +631,4 @@ Do whatever you think is right.
 - [x] Fixed 5 ESLint warnings in test files — 0 errors, 0 warnings (TODO #110)
 - [x] Extracted shared withTimeout utility + 3 tests — 410 total tests (TODO #111)
 - [x] Added authStore tests (14 tests) — 424 total tests (TODO #112)
+- [x] Added AnimatedButton (7) and FAB (4) component tests — 435 total tests (TODO #113-114)
