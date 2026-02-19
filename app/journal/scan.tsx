@@ -152,7 +152,7 @@ export default function JournalScanScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
-            <X color="#FFFFFF" size={24} />
+            <X color={colors.white} size={24} />
           </TouchableOpacity>
         </View>
 
