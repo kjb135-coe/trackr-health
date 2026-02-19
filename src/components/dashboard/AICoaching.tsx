@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {
   Sparkles,
@@ -49,50 +49,35 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
     await fetchDailyCoaching();
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'habits':
-        return <TrendingUp color={colors.habits} size={16} />;
-      case 'sleep':
-        return <Moon color={colors.sleep} size={16} />;
-      case 'exercise':
-        return <Dumbbell color={colors.exercise} size={16} />;
-      case 'nutrition':
-        return <Apple color={colors.nutrition} size={16} />;
-      case 'journal':
-        return <BookOpen color={colors.journal} size={16} />;
-      default:
-        return <Sparkles color={colors.primary} size={16} />;
-    }
-  };
+  const categoryIcons = useMemo<Record<string, React.ReactNode>>(
+    () => ({
+      habits: <TrendingUp color={colors.habits} size={16} />,
+      sleep: <Moon color={colors.sleep} size={16} />,
+      exercise: <Dumbbell color={colors.exercise} size={16} />,
+      nutrition: <Apple color={colors.nutrition} size={16} />,
+      journal: <BookOpen color={colors.journal} size={16} />,
+    }),
+    [colors],
+  );
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'habits':
-        return colors.habits;
-      case 'sleep':
-        return colors.sleep;
-      case 'exercise':
-        return colors.exercise;
-      case 'nutrition':
-        return colors.nutrition;
-      case 'journal':
-        return colors.journal;
-      default:
-        return colors.primary;
-    }
-  };
+  const categoryColors = useMemo<Record<string, string>>(
+    () => ({
+      habits: colors.habits,
+      sleep: colors.sleep,
+      exercise: colors.exercise,
+      nutrition: colors.nutrition,
+      journal: colors.journal,
+    }),
+    [colors],
+  );
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return colors.error;
-      case 'medium':
-        return colors.warning;
-      default:
-        return colors.textTertiary;
-    }
-  };
+  const priorityColors = useMemo<Record<string, string>>(
+    () => ({
+      high: colors.error,
+      medium: colors.warning,
+    }),
+    [colors],
+  );
 
   if (!hasKey) {
     return (
@@ -199,17 +184,20 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
         {dailyCoaching.insights.slice(0, 3).map((insight, index) => (
           <View
             key={index}
-            style={[styles.insightRow, { borderLeftColor: getCategoryColor(insight.category) }]}
+            style={[
+              styles.insightRow,
+              { borderLeftColor: categoryColors[insight.category] ?? colors.primary },
+            ]}
           >
             <View style={styles.insightHeader}>
-              {getCategoryIcon(insight.category)}
+              {categoryIcons[insight.category] ?? <Sparkles color={colors.primary} size={16} />}
               <Text style={[styles.insightTitle, { color: colors.textPrimary }]}>
                 {insight.title}
               </Text>
               <View
                 style={[
                   styles.priorityDot,
-                  { backgroundColor: getPriorityColor(insight.priority) },
+                  { backgroundColor: priorityColors[insight.priority] ?? colors.textTertiary },
                 ]}
               />
             </View>

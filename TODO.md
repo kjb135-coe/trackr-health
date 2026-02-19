@@ -108,6 +108,10 @@ Do whatever you think is right.
 - All modal save handlers lacked try-catch — failures gave no user feedback.
 - **Status:** Done — wrapped save operations in all 6 modal components (NutritionLogModal, JournalEntryModal, ExerciseLogModal, SleepLogModal, CreateHabitModal, HabitSuggestionsModal) with try-catch + `Alert.alert('Save failed', getErrorMessage(error))`.
 
+### 95. ~~Memoize AICoaching switch statements~~ ✅
+- Three helper functions (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) recreated on every render in `AICoaching.tsx`.
+- **Status:** Done — replaced with `useMemo` lookup objects. Icons and colors now cached between renders.
+
 ---
 
 ## P3 - Future / Low Priority
@@ -542,3 +546,4 @@ Do whatever you think is right.
 - [x] Added NutritionLogModal tests (8) and JournalEntryModal tests (9) — 317 total tests (TODO #40 expanded)
 - [x] Improved foodRecognition JSON parsing — try direct parse first, regex fallback (TODO #93)
 - [x] Added try-catch to all 6 modal save handlers with error alerts (TODO #94)
+- [x] Memoized AICoaching category/priority lookups with useMemo (TODO #95)
