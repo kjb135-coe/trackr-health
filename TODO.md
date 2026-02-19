@@ -1077,6 +1077,6 @@ Yes
 - `Button.tsx`, `Input.tsx`, `FAB.tsx` lack `accessibilityRole` and `accessibilityLabel`. Button should get `accessibilityRole="button"` and use `title` as label. Input should use the `label` prop as `accessibilityLabel`. FAB should accept an `accessibilityLabel` prop.
 - **Status:** Done — Button: added accessibilityRole="button", accessibilityLabel={title}, accessibilityState. Input: added accessibilityLabel={label || placeholder}. FAB/SecondaryFAB: added accessibilityRole="button" and optional accessibilityLabel prop.
 
-### 210. Add accessibility labels to modal form inputs
+### ~~210. Add accessibility labels to modal form inputs~~ ✅
 - TextInput fields in `CreateHabitModal`, `SleepLogModal`, `NutritionLogModal`, `ExerciseLogModal`, `JournalEntryModal` all lack `accessibilityLabel`. Screen readers can't describe field purpose.
-- **Effort:** ~20min
+- **Status:** Done — Added accessibilityLabel to all 13 raw TextInput fields across 5 modals: habit name/reminder time (3), bedtime/wake time (4), food name/calories (2), duration/calories burned (2), title/content (2).

@@ -184,6 +184,7 @@ export function ExerciseLogModal({
             Duration (minutes)
           </Text>
           <TextInput
+            accessibilityLabel="Duration in minutes"
             style={[
               styles.input,
               { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -227,6 +228,7 @@ export function ExerciseLogModal({
             Calories Burned (optional)
           </Text>
           <TextInput
+            accessibilityLabel="Calories burned"
             style={[
               styles.input,
               { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },

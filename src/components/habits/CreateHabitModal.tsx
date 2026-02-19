@@ -137,6 +137,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
           <ModalHeader title={editHabit ? 'Edit Habit' : 'New Habit'} onClose={onClose} />
 
           <TextInput
+            accessibilityLabel="Habit name"
             style={[
               styles.input,
               { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -182,6 +183,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
           {reminderEnabled && (
             <View style={styles.timeRow}>
               <TextInput
+                accessibilityLabel="Reminder hour"
                 style={[
                   styles.timeInput,
                   { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -195,6 +197,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
               />
               <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
               <TextInput
+                accessibilityLabel="Reminder minute"
                 style={[
                   styles.timeInput,
                   { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },

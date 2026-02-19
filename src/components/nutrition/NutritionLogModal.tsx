@@ -315,6 +315,7 @@ export function NutritionLogModal({
                 Or add manually
               </Text>
               <TextInput
+                accessibilityLabel="Food name"
                 style={[
                   styles.input,
                   { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -325,6 +326,7 @@ export function NutritionLogModal({
                 placeholderTextColor={colors.textTertiary}
               />
               <TextInput
+                accessibilityLabel="Calories"
                 style={[
                   styles.input,
                   { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },

@@ -283,6 +283,7 @@ export function JournalEntryModal({
 
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Title (optional)</Text>
           <TextInput
+            accessibilityLabel="Entry title"
             style={[
               styles.input,
               { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -295,6 +296,7 @@ export function JournalEntryModal({
 
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Content</Text>
           <TextInput
+            accessibilityLabel="Journal content"
             style={[
               styles.input,
               styles.contentInput,

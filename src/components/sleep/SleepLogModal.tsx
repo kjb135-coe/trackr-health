@@ -153,6 +153,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Bedtime</Text>
           <View style={styles.timeRow}>
             <TextInput
+              accessibilityLabel="Bedtime hour"
               style={[
                 styles.timeInput,
                 { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -164,6 +165,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
             />
             <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
             <TextInput
+              accessibilityLabel="Bedtime minute"
               style={[
                 styles.timeInput,
                 { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -178,6 +180,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Wake Time</Text>
           <View style={styles.timeRow}>
             <TextInput
+              accessibilityLabel="Wake time hour"
               style={[
                 styles.timeInput,
                 { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
@@ -189,6 +192,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
             />
             <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
             <TextInput
+              accessibilityLabel="Wake time minute"
               style={[
                 styles.timeInput,
                 { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
