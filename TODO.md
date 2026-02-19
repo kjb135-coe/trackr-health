@@ -150,9 +150,9 @@ Yes
 - Also duplicate error code extraction pattern: `err && typeof err === 'object' && 'code' in err ? String(err.code) : ''`.
 - **Status:** Done — created `getAuthErrorMessage(error)` in `src/services/auth/errorMessages.ts`. Consolidates 7 Firebase error codes + handles unknown error extraction. Replaced local functions in all 3 auth screens. 4 tests, 589 total.
 
-### 175. Add entrance animations to forgot-password and verify-email screens
+### ~~175. Add entrance animations to forgot-password and verify-email screens~~ ✅
 - `login.tsx` and `signup.tsx` have `FadeInDown` entrance animations on title, subtitle, form, footer. `forgot-password.tsx` and `verify-email.tsx` have no entrance animations — inconsistent with the rest of the auth flow.
-- **Effort:** ~15min
+- **Status:** Done — added staggered FadeInDown entrance + FadeOut exit animations to both screens. All 4 auth screens now have consistent animation patterns.
 
 ### 15. No deep linking configuration
 - Expo Router supports it but no scheme is configured.

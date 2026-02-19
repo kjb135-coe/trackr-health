@@ -10,11 +10,13 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { ArrowLeft } from 'lucide-react-native';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
 import { getAuthErrorMessage } from '@/src/services/auth';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -43,21 +45,39 @@ export default function ForgotPasswordScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.title}>Check Your Email</Text>
-          <Text style={styles.subtitle}>
+          <Animated.Text
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset,
+            )}
+            style={styles.title}
+          >
+            Check Your Email
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+            )}
+            style={styles.subtitle}
+          >
             {"We've sent a password reset link to "}
             {email}
-          </Text>
+          </Animated.Text>
 
-          <Button
-            title="Back to Login"
-            onPress={() => router.push('/auth/login')}
-            style={styles.button}
-          />
+          <Animated.View
+            entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+              STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+            )}
+          >
+            <Button
+              title="Back to Login"
+              onPress={() => router.push('/auth/login')}
+              style={styles.button}
+            />
 
-          <TouchableOpacity onPress={() => setSent(false)} style={styles.resendLink}>
-            <Text style={styles.resendText}>{"Didn't receive the email? Try again"}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSent(false)} style={styles.resendLink}>
+              <Text style={styles.resendText}>{"Didn't receive the email? Try again"}</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
       </View>
     );
@@ -73,12 +93,32 @@ export default function ForgotPasswordScreen() {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={styles.title}>Reset Password</Text>
-        <Text style={styles.subtitle}>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.title}
+        >
+          Reset Password
+        </Animated.Text>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.subtitle}
+        >
           {"Enter your email and we'll send you a link to reset your password"}
-        </Text>
+        </Animated.Text>
 
-        <View style={styles.form}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.form}
+        >
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -97,7 +137,7 @@ export default function ForgotPasswordScreen() {
             loading={isLoading}
             style={styles.button}
           />
-        </View>
+        </Animated.View>
       </View>
     </KeyboardAvoidingView>
   );

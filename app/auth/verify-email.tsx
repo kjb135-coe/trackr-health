@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { Mail } from 'lucide-react-native';
 import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function VerifyEmailScreen() {
   const router = useRouter();
@@ -57,24 +59,56 @@ export default function VerifyEmailScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.iconContainer}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.iconContainer}
+        >
           <Mail color={colors.primary} size={64} />
-        </View>
+        </Animated.View>
 
-        <Text style={styles.title}>Verify Your Email</Text>
-        <Text style={styles.subtitle}>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.title}
+        >
+          Verify Your Email
+        </Animated.Text>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.listItem * 2,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.subtitle}
+        >
           {"We've sent a verification email to"}
           {'\n'}
           <Text style={styles.email}>{user?.email}</Text>
-        </Text>
+        </Animated.Text>
 
-        <Text style={styles.instructions}>
+        <Animated.Text
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 2,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.instructions}
+        >
           {
             "Please click the link in the email to verify your account. If you don't see the email, check your spam folder."
           }
-        </Text>
+        </Animated.Text>
 
-        <View style={styles.buttons}>
+        <Animated.View
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(
+            STAGGER_DELAY.initialOffset + STAGGER_DELAY.section * 3,
+          )}
+          exiting={FadeOut.duration(ANIMATION_DURATION.exit)}
+          style={styles.buttons}
+        >
           <Button
             title="I've Verified My Email"
             onPress={handleCheckVerification}
@@ -91,7 +125,7 @@ export default function VerifyEmailScreen() {
           />
 
           <Button title="Sign Out" onPress={handleSignOut} variant="ghost" style={styles.button} />
-        </View>
+        </Animated.View>
       </View>
     </View>
   );
