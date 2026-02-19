@@ -563,6 +563,10 @@ Yes
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~147. Add SleepLogModal edit mode and error tests~~ ✅
+- `SleepLogModal.tsx` at 82.75% — missing tests for edit mode pre-fill, updateEntry path, save error handling, date reconstruction.
+- **Effort:** ~20min
+
 ### ~~145. Improve ExerciseLogModal test coverage (78% → 90%+)~~ ✅
 - Missing tests for edit mode save, save error path, calorie estimation triggers, duration format edge cases.
 - **Effort:** ~30min
@@ -781,3 +785,4 @@ Yes
 - [x] Improved JournalEntryModal coverage from 51% to ~80% — 7 new tests (camera/library permissions, OCR scan, scan fail, no API key, save error, edit mode update) — 532 total tests (TODO #144)
 - [x] Improved ExerciseLogModal coverage from 78% to ~90% — 4 new tests (invalid calories, edit mode pre-fill, updateSession, save error) — 536 total tests (TODO #145)
 - [x] Improved CreateHabitModal coverage from 76% to ~90% — 3 new tests (edit mode pre-fill, updateHabit, save error) — 539 total tests (TODO #146)
+- [x] Improved SleepLogModal coverage from 82% to ~90% — 4 new tests (invalid wake time, edit mode pre-fill, updateEntry, save error) — 543 total tests (TODO #147)

@@ -14,9 +14,11 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 const mockCreateEntry = jest.fn();
+const mockUpdateEntry = jest.fn();
 jest.mock('@/src/store', () => ({
   useSleepStore: () => ({
     createEntry: mockCreateEntry,
+    updateEntry: mockUpdateEntry,
   }),
 }));
 
@@ -96,5 +98,88 @@ describe('SleepLogModal', () => {
     );
     expect(mockCreateEntry).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('shows alert for invalid wake time', async () => {
+    const { findByText, findAllByDisplayValue } = renderWithTheme(
+      <SleepLogModal visible={true} onClose={() => {}} />,
+    );
+
+    const hourInputs = await findAllByDisplayValue('07');
+    fireEvent.changeText(hourInputs[0], '25');
+
+    fireEvent.press(await findByText('Save Sleep Entry'));
+
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Invalid wake time',
+      'Hours must be 0-23 and minutes 0-59.',
+    );
+  });
+
+  it('shows edit title and pre-fills values from editEntry', async () => {
+    const editEntry = {
+      id: 's1',
+      date: '2026-02-18',
+      bedtime: '2026-02-17T23:30:00.000Z',
+      wakeTime: '2026-02-18T06:45:00.000Z',
+      durationMinutes: 435,
+      quality: 4 as const,
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText, findByDisplayValue } = renderWithTheme(
+      <SleepLogModal visible={true} onClose={() => {}} editEntry={editEntry} />,
+    );
+
+    expect(await findByText('Edit Sleep')).toBeTruthy();
+    expect(await findByText('Update Sleep Entry')).toBeTruthy();
+  });
+
+  it('calls updateEntry when saving in edit mode', async () => {
+    mockUpdateEntry.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editEntry = {
+      id: 's1',
+      date: '2026-02-18',
+      bedtime: '2026-02-17T22:00:00.000Z',
+      wakeTime: '2026-02-18T07:00:00.000Z',
+      durationMinutes: 540,
+      quality: 3 as const,
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <SleepLogModal visible={true} onClose={onClose} editEntry={editEntry} />,
+    );
+
+    fireEvent.press(await findByText('Update Sleep Entry'));
+
+    await waitFor(() => {
+      expect(mockUpdateEntry).toHaveBeenCalledWith(
+        's1',
+        expect.objectContaining({
+          quality: 3,
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error alert when save fails', async () => {
+    mockCreateEntry.mockRejectedValueOnce(new Error('DB error'));
+
+    const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
+
+    fireEvent.press(await findByText('Save Sleep Entry'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
+    });
   });
 });
