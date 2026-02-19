@@ -513,6 +513,10 @@ Do whatever you think is right.
 - AnimatedCard (127 lines) with 3 variants, pressable/non-pressable modes, haptic feedback, long press. Zero test coverage.
 - **Status:** Done — 6 tests: children rendering, onPress, onLongPress, haptic on/off, static card mode. Also removed unused `AI_TIMEOUT_MS` export. 441 total tests.
 
+### 116. ~~Add Skeleton and SkeletonCard component tests~~ ✅
+- Skeleton shimmer animation and SkeletonCard loading placeholder used across all 5 data screens. Zero test coverage.
+- **Status:** Done — 4 tests: dimension/percentage rendering, default and custom line counts. Also fixed redundant isDark ternaries in AnimatedCard/AnimatedButton. 445 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -637,3 +641,5 @@ Do whatever you think is right.
 - [x] Added authStore tests (14 tests) — 424 total tests (TODO #112)
 - [x] Added AnimatedButton (7) and FAB (4) component tests — 435 total tests (TODO #113-114)
 - [x] Added AnimatedCard tests (6) + removed unused AI_TIMEOUT_MS export — 441 total tests (TODO #115)
+- [x] Fixed redundant isDark ternaries in AnimatedCard and AnimatedButton + removed unused isDark
+- [x] Added Skeleton (2) and SkeletonCard (2) tests — 445 total tests (TODO #116)
