@@ -14,9 +14,10 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
+import { AnimatedCard, AnimatedButton, DateNavigator } from '@/src/components/ui';
 import { useExerciseStore, useAIInsightsStore } from '@/src/store';
-import { formatDuration, getRelativeDateLabel } from '@/src/utils/date';
+import { formatDuration, getDateString } from '@/src/utils/date';
+import { subDays, format, parseISO } from 'date-fns';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
 import { ExerciseIntensity } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
@@ -29,6 +30,7 @@ export default function ExerciseScreen() {
   const [modalPreFill, setModalPreFill] = useState<ExercisePreFill | null>(null);
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [showRecommendation, setShowRecommendation] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(getDateString());
 
   const { sessions, loadSessions, deleteSession } = useExerciseStore();
   const { exerciseRecommendation, isLoadingExercise, fetchExerciseRecommendation } =
@@ -76,10 +78,19 @@ export default function ExerciseScreen() {
     setModalVisible(true);
   };
 
-  const recentSessions = sessions.slice(0, 10);
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+  };
 
-  const totalMinutes = recentSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
-  const totalCalories = recentSessions.reduce((sum, s) => sum + (s.caloriesBurned || 0), 0);
+  // Filter sessions for selected date
+  const dateSessions = sessions.filter((s) => s.date === selectedDate);
+
+  // 7-day window for summary
+  const weekStart = format(subDays(parseISO(selectedDate), 6), 'yyyy-MM-dd');
+  const weekSessions = sessions.filter((s) => s.date >= weekStart && s.date <= selectedDate);
+
+  const totalMinutes = weekSessions.reduce((sum, s) => sum + s.durationMinutes, 0);
+  const totalCalories = weekSessions.reduce((sum, s) => sum + (s.caloriesBurned || 0), 0);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -94,16 +105,18 @@ export default function ExerciseScreen() {
         }
         showsVerticalScrollIndicator={false}
       >
-        {recentSessions.length > 0 && (
+        <DateNavigator date={selectedDate} onDateChange={handleDateChange} />
+
+        {weekSessions.length > 0 && (
           <Animated.View entering={FadeInDown.duration(400)}>
             <AnimatedCard style={styles.summaryCard}>
               <Text style={[styles.summaryTitle, { color: colors.textPrimary }]}>
-                Recent Activity
+                7-Day Activity
               </Text>
               <View style={styles.summaryRow}>
                 <View style={styles.summaryItem}>
                   <Text style={[styles.summaryValue, { color: colors.exercise }]}>
-                    {recentSessions.length}
+                    {weekSessions.length}
                   </Text>
                   <Text style={[styles.summaryLabel, { color: colors.textTertiary }]}>
                     Workouts
@@ -130,22 +143,16 @@ export default function ExerciseScreen() {
           </Animated.View>
         )}
 
-        <Animated.View
-          entering={FadeInDown.duration(400).delay(recentSessions.length > 0 ? 100 : 0)}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Recent Workouts</Text>
-        </Animated.View>
-
-        {recentSessions.length === 0 ? (
+        {dateSessions.length === 0 ? (
           <View style={styles.emptyState}>
             <Dumbbell color={colors.exercise} size={48} />
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No workouts yet</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No workouts</Text>
             <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
               Tap + to log your exercise
             </Text>
           </View>
         ) : (
-          recentSessions.map((session, index) => (
+          dateSessions.map((session, index) => (
             <Animated.View key={session.id} entering={FadeInDown.duration(400).delay(index * 50)}>
               <AnimatedCard
                 style={styles.sessionCard}
@@ -160,9 +167,6 @@ export default function ExerciseScreen() {
                 <View style={styles.sessionHeader}>
                   <Text style={[styles.sessionType, { color: colors.textPrimary }]}>
                     {EXERCISE_TYPE_LABELS[session.type] || session.type}
-                  </Text>
-                  <Text style={[styles.sessionDate, { color: colors.textSecondary }]}>
-                    {getRelativeDateLabel(session.date)}
                   </Text>
                 </View>
 
@@ -341,11 +345,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: spacing.md,
-  },
   emptyState: {
     alignItems: 'center',
     paddingVertical: spacing.xxl,
@@ -372,9 +371,6 @@ const styles = StyleSheet.create({
   sessionType: {
     fontSize: 16,
     fontWeight: '600',
-  },
-  sessionDate: {
-    fontSize: 12,
   },
   sessionStats: {
     flexDirection: 'row',
