@@ -304,8 +304,8 @@ export default function SleepScreen() {
                     <Text style={[styles.recsTitle, { color: colors.textSecondary }]}>
                       Recommendations:
                     </Text>
-                    {sleepAnalysis.recommendations.map((rec, index) => (
-                      <View key={index} style={styles.recItem}>
+                    {sleepAnalysis.recommendations.map((rec) => (
+                      <View key={rec} style={styles.recItem}>
                         <Text style={[styles.recBullet, { color: colors.sleep }]}>•</Text>
                         <Text style={[styles.recText, { color: colors.textSecondary }]}>{rec}</Text>
                       </View>

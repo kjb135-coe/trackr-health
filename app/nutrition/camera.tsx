@@ -172,7 +172,7 @@ export default function NutritionCameraScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
-            <X color="#FFFFFF" size={24} />
+            <X color={colors.white} size={24} />
           </TouchableOpacity>
         </View>
 
@@ -203,8 +203,11 @@ export default function NutritionCameraScreen() {
               </View>
 
               <View style={styles.foodList}>
-                {analysisResult.detectedFoods.map((food, index) => (
-                  <View key={index} style={[styles.foodItem, { borderBottomColor: colors.border }]}>
+                {analysisResult.detectedFoods.map((food) => (
+                  <View
+                    key={food.name}
+                    style={[styles.foodItem, { borderBottomColor: colors.border }]}
+                  >
                     <Text style={[styles.foodName, { color: colors.textPrimary }]}>
                       {food.name}
                     </Text>

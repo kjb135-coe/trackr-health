@@ -296,8 +296,11 @@ export function NutritionLogModal({
               <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>
                 Detected Foods
               </Text>
-              {detectedFoods.map((food, idx) => (
-                <View key={idx} style={[styles.detectedItem, { borderBottomColor: colors.border }]}>
+              {detectedFoods.map((food) => (
+                <View
+                  key={food.name}
+                  style={[styles.detectedItem, { borderBottomColor: colors.border }]}
+                >
                   <Text style={[styles.detectedName, { color: colors.textPrimary }]}>
                     {food.name}
                   </Text>

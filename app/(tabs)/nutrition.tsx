@@ -194,8 +194,8 @@ export default function NutritionScreen() {
                     {meal.totalCalories} cal
                   </Text>
                 </View>
-                {meal.foods.map((food, idx) => (
-                  <Text key={idx} style={[styles.foodItem, { color: colors.textSecondary }]}>
+                {meal.foods.map((food) => (
+                  <Text key={food.id} style={[styles.foodItem, { color: colors.textSecondary }]}>
                     {food.name} - {food.calories} cal
                   </Text>
                 ))}
