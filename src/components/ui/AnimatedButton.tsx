@@ -40,7 +40,7 @@ export function AnimatedButton({
   haptic = true,
   fullWidth = false,
 }: AnimatedButtonProps) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const scale = useSharedValue(1);
   const isDisabled = disabled || loading;
 
@@ -82,7 +82,7 @@ export function AnimatedButton({
         };
       case 'secondary':
         return {
-          backgroundColor: isDark ? colors.surfaceSecondary : colors.surfaceSecondary,
+          backgroundColor: colors.surfaceSecondary,
           borderWidth: 1,
           borderColor: colors.border,
         };
