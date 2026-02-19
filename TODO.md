@@ -521,6 +521,10 @@ Do whatever you think is right.
 - ErrorBoundary class component wrapping root layout. Zero test coverage.
 - **Status:** Done — 5 tests: normal rendering, error catch + display, retry button, custom fallback, default error message. 450 total tests.
 
+### 118. ~~Add mockAuthService tests~~ ✅
+- `mockAuthService.ts` is the actual auth implementation used at runtime (mock Firebase). Zero test coverage.
+- **Status:** Done — 11 tests: signUp, signIn, signInWithGoogle, signOut, onAuthStateChange (stored + null), sendVerificationEmail, sendPasswordReset, reloadUser, updateUserProfile, useGoogleAuth. 461 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -648,3 +652,4 @@ Do whatever you think is right.
 - [x] Fixed redundant isDark ternaries in AnimatedCard and AnimatedButton + removed unused isDark
 - [x] Added Skeleton (2) and SkeletonCard (2) tests — 445 total tests (TODO #116)
 - [x] Added ErrorBoundary tests (5) — 450 total tests (TODO #117)
+- [x] Added mockAuthService tests (11) — 461 total tests (TODO #118)
