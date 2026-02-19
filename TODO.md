@@ -525,14 +525,22 @@ Do whatever you think is right.
 - `mockAuthService.ts` is the actual auth implementation used at runtime (mock Firebase). Zero test coverage.
 - **Status:** Done — 11 tests: signUp, signIn, signInWithGoogle, signOut, onAuthStateChange (stored + null), sendVerificationEmail, sendPasswordReset, reloadUser, updateUserProfile, useGoogleAuth. 461 total tests.
 
-### 119. Improve sleepStore test coverage (70% → 85%+)
-- `sleepStore.ts` at 70.27% line coverage — lowest of all stores. Missing tests for updateEntry, deleteEntry error paths.
-- **Effort:** ~30min
+### ~~119. Improve sleepStore test coverage (70% → 97%)~~ ✅
+- ~~`sleepStore.ts` at 70.27% line coverage — lowest of all stores. Missing tests for updateEntry, deleteEntry error paths.~~
+- **Status:** Done — added 4 tests (loadEntriesForRange error, updateEntry success/error, deleteEntry error). 16 total tests, 97.56% coverage.
 
 ### ~~120. Improve nutritionStore test coverage (75% → 85%+)~~
 - ~~`nutritionStore.ts` at 74.64% line coverage. Missing tests for updateMeal, deleteMeal, addFoodItem, updateFoodItem, deleteFoodItem error paths.~~
 - **Status:** Done — added 7 tests (loadMealsForDate error, createMeal sort, updateMeal success/error/totals-reload, deleteMeal error, addFoodItem error, deleteFoodItem error). 25 total tests, coverage improved significantly.
 - **Effort:** ~30min
+
+### 121. ~~Improve habitStore test coverage (75% → 95%+)~~ ✅
+- `habitStore.ts` at 75% line coverage. Missing tests for updateHabit error, getAllStreaks, getWeeklyCompletions.
+- **Status:** Done — added 3 tests (updateHabit error, getAllStreaks, getWeeklyCompletions) + strengthened deleteHabit error assertions. 22 total tests.
+
+### 122. ~~Improve exerciseStore test coverage (85% → 95%+)~~ ✅
+- `exerciseStore.ts` at 85.36% line coverage. Missing tests for loadSessionsForRange error, createSession sort, updateSession error, deleteSession error.
+- **Status:** Done — added 4 tests (loadSessionsForRange error, createSession sort, updateSession error, deleteSession error). 17 total tests.
 
 ---
 
@@ -666,3 +674,5 @@ Do whatever you think is right.
 - [x] Fixed remaining ESLint warnings — 0 errors, 0 warnings
 - [x] Improved sleepStore coverage from 70% to 97% — 4 new tests, 16 total (TODO #119)
 - [x] Improved nutritionStore coverage — 7 new tests (error paths + sort + updateMeal), 25 total — 473 total tests (TODO #120)
+- [x] Improved habitStore coverage from 75% to 95%+ — 3 new tests (updateHabit error, getAllStreaks, getWeeklyCompletions), 22 total (TODO #121)
+- [x] Improved exerciseStore coverage from 85% to 95%+ — 4 new tests (error paths + sort), 17 total — 480 total tests (TODO #122)

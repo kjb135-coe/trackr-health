@@ -10,6 +10,8 @@ jest.mock('@/src/database/repositories', () => ({
     getCompletionsForDate: jest.fn(),
     setCompletion: jest.fn(),
     getStreak: jest.fn(),
+    getAllStreaks: jest.fn(),
+    getCompletionsForDateRange: jest.fn(),
   },
 }));
 
@@ -161,6 +163,9 @@ describe('habitStore', () => {
       habitRepository.delete.mockRejectedValue(new Error('Delete failed'));
 
       await expect(useHabitStore.getState().deleteHabit('1')).rejects.toThrow('Delete failed');
+
+      expect(useHabitStore.getState().error).toBe('Delete failed');
+      expect(useHabitStore.getState().isLoading).toBe(false);
     });
   });
 
@@ -172,6 +177,18 @@ describe('habitStore', () => {
       await useHabitStore.getState().updateHabit('1', { name: 'Read 30 min' });
 
       expect(useHabitStore.getState().habits[0].name).toBe('Read 30 min');
+    });
+
+    it('sets error and throws on failure', async () => {
+      useHabitStore.setState({ habits: [mockHabit] });
+      habitRepository.update.mockRejectedValue(new Error('Update failed'));
+
+      await expect(useHabitStore.getState().updateHabit('1', { name: 'fail' })).rejects.toThrow(
+        'Update failed',
+      );
+
+      expect(useHabitStore.getState().error).toBe('Update failed');
+      expect(useHabitStore.getState().isLoading).toBe(false);
     });
   });
 
@@ -226,6 +243,40 @@ describe('habitStore', () => {
 
       expect(streak).toBe(7);
       expect(habitRepository.getStreak).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('getAllStreaks', () => {
+    it('delegates to repository with habit ids', async () => {
+      useHabitStore.setState({ habits: [mockHabit] });
+      const streakMap = new Map([['1', 5]]);
+      habitRepository.getAllStreaks.mockResolvedValue(streakMap);
+
+      const result = await useHabitStore.getState().getAllStreaks();
+
+      expect(result).toEqual(streakMap);
+      expect(habitRepository.getAllStreaks).toHaveBeenCalledWith(['1']);
+    });
+  });
+
+  describe('getWeeklyCompletions', () => {
+    it('returns map of habit completions for the week', async () => {
+      habitRepository.getCompletionsForDateRange.mockResolvedValue([
+        { habitId: '1', date: '2026-02-18', completed: true },
+        { habitId: '1', date: '2026-02-17', completed: true },
+        { habitId: '1', date: '2026-02-16', completed: false },
+      ]);
+
+      const result = await useHabitStore.getState().getWeeklyCompletions('2026-02-18');
+
+      expect(result.get('1')?.has('2026-02-18')).toBe(true);
+      expect(result.get('1')?.has('2026-02-17')).toBe(true);
+      // completed: false should not be included
+      expect(result.get('1')?.has('2026-02-16')).toBeFalsy();
+      expect(habitRepository.getCompletionsForDateRange).toHaveBeenCalledWith(
+        '2026-02-12',
+        '2026-02-18',
+      );
     });
   });
 

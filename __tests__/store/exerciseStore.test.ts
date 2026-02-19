@@ -79,6 +79,15 @@ describe('exerciseStore', () => {
       expect(exerciseRepository.getByDateRange).toHaveBeenCalledWith('2026-02-01', '2026-02-28');
       expect(useExerciseStore.getState().sessions).toEqual([mockSession]);
     });
+
+    it('sets error on failure', async () => {
+      exerciseRepository.getByDateRange.mockRejectedValue(new Error('Range error'));
+
+      await useExerciseStore.getState().loadSessionsForRange('2026-02-01', '2026-02-28');
+
+      expect(useExerciseStore.getState().error).toBe('Range error');
+      expect(useExerciseStore.getState().isLoading).toBe(false);
+    });
   });
 
   describe('loadSessionsForDate', () => {
@@ -107,6 +116,28 @@ describe('exerciseStore', () => {
       expect(useExerciseStore.getState().sessions).toContain(mockSession);
     });
 
+    it('sorts sessions by date descending', async () => {
+      const olderSession: ExerciseSession = {
+        ...mockSession,
+        id: 'e0',
+        date: '2026-02-17',
+      };
+      useExerciseStore.setState({ sessions: [olderSession] });
+      exerciseRepository.create.mockResolvedValue(mockSession);
+
+      await useExerciseStore.getState().createSession({
+        date: '2026-02-18',
+        type: 'running',
+        durationMinutes: 45,
+        intensity: 'moderate',
+        caloriesBurned: 400,
+      });
+
+      const sessions = useExerciseStore.getState().sessions;
+      expect(sessions[0].id).toBe('e1');
+      expect(sessions[1].id).toBe('e0');
+    });
+
     it('throws on failure', async () => {
       exerciseRepository.create.mockRejectedValue(new Error('Create failed'));
 
@@ -131,6 +162,18 @@ describe('exerciseStore', () => {
       const updated = useExerciseStore.getState().sessions.find((s) => s.id === 'e1');
       expect(updated?.durationMinutes).toBe(60);
     });
+
+    it('sets error and throws on failure', async () => {
+      useExerciseStore.setState({ sessions: [mockSession] });
+      exerciseRepository.update.mockRejectedValue(new Error('Update failed'));
+
+      await expect(
+        useExerciseStore.getState().updateSession('e1', { durationMinutes: 60 }),
+      ).rejects.toThrow('Update failed');
+
+      expect(useExerciseStore.getState().error).toBe('Update failed');
+      expect(useExerciseStore.getState().isLoading).toBe(false);
+    });
   });
 
   describe('deleteSession', () => {
@@ -141,6 +184,18 @@ describe('exerciseStore', () => {
       await useExerciseStore.getState().deleteSession('e1');
 
       expect(useExerciseStore.getState().sessions).toEqual([]);
+    });
+
+    it('sets error and throws on failure', async () => {
+      useExerciseStore.setState({ sessions: [mockSession] });
+      exerciseRepository.delete.mockRejectedValue(new Error('Delete failed'));
+
+      await expect(useExerciseStore.getState().deleteSession('e1')).rejects.toThrow(
+        'Delete failed',
+      );
+
+      expect(useExerciseStore.getState().error).toBe('Delete failed');
+      expect(useExerciseStore.getState().isLoading).toBe(false);
     });
   });
 
