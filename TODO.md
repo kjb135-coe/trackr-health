@@ -180,10 +180,9 @@ Do whatever you think is right.
 - ~~No error boundary exists anywhere. A crash in any component takes down the whole app.~~
 - **Status:** Done — created `ErrorBoundary` in `src/components/ui/` with retry button. Wraps root layout in `_layout.tsx`.
 
-### 56. Optimize N+1 streak loading in habits screen
-- `loadStreaks()` in `habits.tsx` loops over all habits calling `getStreak(habitId)` one at a time (N queries).
-- Should add a batch `getStreaksForAllHabits()` method to habitRepository that fetches streaks in fewer queries.
-- **Effort:** ~30min
+### 56. ~~Optimize N+1 streak loading in habits screen~~ ✅
+- ~~`loadStreaks()` in `habits.tsx` loops over all habits calling `getStreak(habitId)` one at a time (N queries).~~
+- **Status:** Done — added `getAllStreaks(habitIds)` to habitRepository that fetches all completions in a single query. Streaks computed in JS. Wired through store's `getAllStreaks()` method.
 
 ### 57. Add date navigation to sleep screen
 - Nutrition and habits screens have `DateNavigator` for browsing past dates, but sleep screen still only shows all entries in a flat list.
@@ -360,3 +359,4 @@ Do whatever you think is right.
 - [x] Added summary cards to sleep (avg duration/quality) and exercise (total workouts/time/calories) screens (TODO #53)
 - [x] Added tag filter pills to journal screen — toggle filtering by tag (TODO #54)
 - [x] Added weekly completion dots (7-day visual) to habit cards with batch loading (TODO #55)
+- [x] Batch streak loading: single getAllStreaks() query replaces N sequential getStreak() calls (TODO #56)
