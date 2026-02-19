@@ -6,6 +6,7 @@ import { Mail } from 'lucide-react-native';
 import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
+import { EMAIL_VERIFICATION_POLL_MS } from '@/src/utils/constants';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function VerifyEmailScreen() {
@@ -19,7 +20,7 @@ export default function VerifyEmailScreen() {
   useEffect(() => {
     const interval = setInterval(async () => {
       await reloadUser();
-    }, 5000);
+    }, EMAIL_VERIFICATION_POLL_MS);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps

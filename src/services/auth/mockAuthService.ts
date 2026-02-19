@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/src/utils/constants';
 
 export interface AuthUser {
   uid: string;
@@ -7,14 +8,12 @@ export interface AuthUser {
   photoURL: string | null;
   emailVerified: boolean;
 }
-
-const AUTH_STORAGE_KEY = 'trackr_auth_user';
 let authStateCallback: ((user: AuthUser | null) => void) | null = null;
 let currentUser: AuthUser | null = null;
 
 async function loadStoredUser(): Promise<AuthUser | null> {
   try {
-    const stored = await AsyncStorage.getItem(AUTH_STORAGE_KEY);
+    const stored = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_USER);
     if (stored) {
       currentUser = JSON.parse(stored);
       return currentUser;
@@ -28,9 +27,9 @@ async function loadStoredUser(): Promise<AuthUser | null> {
 async function saveUser(user: AuthUser | null): Promise<void> {
   currentUser = user;
   if (user) {
-    await AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+    await AsyncStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
   } else {
-    await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
+    await AsyncStorage.removeItem(STORAGE_KEYS.AUTH_USER);
   }
   authStateCallback?.(user);
 }

@@ -32,7 +32,7 @@ export default function LoginScreen() {
       const params = response.params as { id_token?: string };
       if (params.id_token) {
         signInWithGoogle(params.id_token).catch((err: unknown) => {
-          Alert.alert('Error', err instanceof Error ? err.message : 'Google sign-in failed');
+          Alert.alert('Error', getAuthErrorMessage(err));
         });
       }
     }
@@ -56,7 +56,7 @@ export default function LoginScreen() {
     try {
       await promptAsync();
     } catch (err: unknown) {
-      Alert.alert('Error', err instanceof Error ? err.message : 'An error occurred');
+      Alert.alert('Error', getAuthErrorMessage(err));
     }
   };
 

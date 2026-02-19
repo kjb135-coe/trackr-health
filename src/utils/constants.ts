@@ -117,6 +117,9 @@ const AI_TIMEOUT_MS = 30000;
 // Layout
 export const TAB_CONTENT_PADDING_BOTTOM = 100;
 
+// Polling
+export const EMAIL_VERIFICATION_POLL_MS = 5000;
+
 /** Race a promise against a timeout. Rejects with the given message if the timeout fires first. */
 export function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
   const timeout = new Promise<never>((_, reject) =>

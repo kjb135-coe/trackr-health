@@ -150,6 +150,10 @@ Yes
 - Also duplicate error code extraction pattern: `err && typeof err === 'object' && 'code' in err ? String(err.code) : ''`.
 - **Status:** Done — created `getAuthErrorMessage(error)` in `src/services/auth/errorMessages.ts`. Consolidates 7 Firebase error codes + handles unknown error extraction. Replaced local functions in all 3 auth screens. 4 tests, 589 total.
 
+### ~~176. Fix auth code consistency: storage key, error handling, polling interval~~ ✅
+- mockAuthService used hardcoded `AUTH_STORAGE_KEY` instead of `STORAGE_KEYS.AUTH_USER`. login.tsx had inconsistent error handling (manual checks vs `getAuthErrorMessage`). verify-email.tsx had hardcoded 5000ms polling interval.
+- **Status:** Done — replaced local constant with `STORAGE_KEYS.AUTH_USER`, unified all error handlers to use `getAuthErrorMessage()`, extracted `EMAIL_VERIFICATION_POLL_MS` constant.
+
 ### ~~175. Add entrance animations to forgot-password and verify-email screens~~ ✅
 - `login.tsx` and `signup.tsx` have `FadeInDown` entrance animations on title, subtitle, form, footer. `forgot-password.tsx` and `verify-email.tsx` have no entrance animations — inconsistent with the rest of the auth flow.
 - **Status:** Done — added staggered FadeInDown entrance + FadeOut exit animations to both screens. All 4 auth screens now have consistent animation patterns.
