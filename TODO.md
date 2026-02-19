@@ -200,9 +200,10 @@ Do whatever you think is right.
 ### 36. Refactor large tab screen components (500+ lines) — In Progress
 - ~~`nutrition.tsx` (690 → 306 lines)~~ ✅ Extracted `NutritionLogModal` component.
 - ~~`journal.tsx` (629 → 257 lines)~~ ✅ Extracted `JournalEntryModal` component.
-- `settings.tsx` (673 lines), `sleep.tsx` (670+ lines), `exercise.tsx` (600+ lines), `habits.tsx` (550+ lines) still need extraction.
+- ~~`sleep.tsx` (677 → 451 lines)~~ ✅ Extracted `SleepLogModal` component.
+- `settings.tsx` (673 lines), `exercise.tsx` (600+ lines), `habits.tsx` (550+ lines) still need extraction.
 - Extract modal content, form sections, and list items into dedicated components.
-- **Effort:** ~3h remaining (4 screens)
+- **Effort:** ~2.5h remaining (3 screens)
 
 ---
 
@@ -252,3 +253,4 @@ Do whatever you think is right.
 - [x] Added input validation: sleep (0-23h, 0-59m), exercise (duration > 0, calories > 0), nutrition (calories > 0) (TODO #35)
 - [x] Extracted NutritionLogModal from nutrition.tsx (690 → 306 lines) (TODO #36 partial)
 - [x] Extracted JournalEntryModal from journal.tsx (629 → 257 lines) (TODO #36 partial)
+- [x] Extracted SleepLogModal from sleep.tsx (677 → 451 lines) (TODO #36 partial)
