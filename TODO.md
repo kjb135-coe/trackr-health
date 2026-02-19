@@ -1053,6 +1053,6 @@ Yes
 - `constants.test.ts` only tests 3 exports (getQualityColor, estimateCalories, withTimeout) but `constants.ts` exports 13+: STORAGE_KEYS, QUALITY_LABELS, MOOD_LABELS, INTENSITY_LABELS, EXERCISE_TYPE_LABELS, MEAL_TYPE_LABELS, SLEEP_FACTORS, HABIT_COLORS, OCR_CONFIDENCE, AI_MODEL, AI_MAX_TOKENS, APP_LINKS, EMAIL_VERIFICATION_POLL_MS.
 - **Status:** Done — Added 20 new tests covering all untested exports: EXERCISE_TYPE_LABELS, INTENSITY_LABELS, MEAL_TYPE_LABELS, QUALITY_LABELS, MOOD_LABELS, SLEEP_FACTORS, HABIT_COLORS, AI constants, STORAGE_KEYS, OCR_CONFIDENCE, APP_LINKS, TAB_CONTENT_PADDING_BOTTOM, EMAIL_VERIFICATION_POLL_MS. 32 tests in constants.test.ts, 741 total.
 
-### 204. Remove duplicate feature color definitions from colors.ts
+### ~~204. Remove duplicate feature color definitions from colors.ts~~ ✅
 - Feature colors (habits, sleep, exercise, nutrition, journal) are defined in 3 places: `colors.ts`, `ThemeContext.tsx` (light+dark), and `constants.ts` (HABIT_COLORS). `colors.ts` is only used by ErrorBoundary. Remove duplicates.
-- **Effort:** ~10min
+- **Status:** Done — Deleted `src/theme/colors.ts` (dead code, never imported anywhere) and removed re-export from `src/theme/index.ts`. HABIT_COLORS left in place — it serves a distinct purpose as a color picker palette for habits, not a duplicate of feature colors.
