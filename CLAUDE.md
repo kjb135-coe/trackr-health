@@ -144,6 +144,7 @@ If something breaks, fix it immediately before moving on.
 - **Don't import `colors` directly** - Use `useTheme()` hook for dark mode support
 - **Don't hardcode values** - Use theme tokens for colors, spacing
 - **Don't ignore TypeScript errors** - Fix them, don't use `any` or `@ts-ignore`
+- **Don't use default `waitFor` timeout in component tests** - CI runners are slow; always pass `{ timeout: 5000 }` to `waitFor()` when awaiting multi-step async init chains (e.g., DB init → state update → data load). Default 1000ms causes flaky failures on GitHub Actions.
 
 ## Code Style
 
@@ -188,6 +189,16 @@ catch {
   // Silent fail - use default value
 }
 ```
+
+## Testing
+
+- **Reanimated mock**: Use the shared mock at `__tests__/helpers/reanimatedMock.ts` — don't inline reanimated mocks in test files. It strips `entering`/`exiting` layout animation props so they don't crash RN components.
+  ```typescript
+  jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
+  ```
+- **Firebase mock**: Firebase ESM modules don't work in Jest. Global mocks for `firebase/auth` and `firebase/app` are in `jest.setup.js`.
+- **`waitFor` timeout**: Always pass `{ timeout: 5000 }` when awaiting multi-step async chains in component tests. Default 1000ms is too short for CI.
+- **Animation constants**: Import from `src/utils/animations.ts` — centralized durations, spring configs, scales, stagger delays.
 
 ## Type Safety
 

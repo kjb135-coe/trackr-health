@@ -103,10 +103,14 @@ function renderWithTheme(ui: React.ReactElement) {
 
 async function renderDashboard() {
   const result = renderWithTheme(<DashboardScreen />);
-  // Wait for all async effects (db init, data loading, trend data) to settle
-  await waitFor(() => {
-    expect(mockGetDailyStreak).toHaveBeenCalled();
-  });
+  // Wait for all async effects (db init, data loading, trend data) to settle.
+  // Needs generous timeout — CI runners are slower than local machines.
+  await waitFor(
+    () => {
+      expect(mockGetDailyStreak).toHaveBeenCalled();
+    },
+    { timeout: 5000 },
+  );
   return result;
 }
 
