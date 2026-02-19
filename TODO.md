@@ -595,6 +595,11 @@ Yes
 - Each AI function has inline fallback objects for JSON parse failures. Extract to module-level constants for consistency and testability.
 - **Status:** Done — extracted 6 fallback constants (DEFAULT_COACHING, DEFAULT_HABIT_SUGGESTIONS, DEFAULT_SLEEP_ANALYSIS, DEFAULT_EXERCISE_RECOMMENDATION, DEFAULT_MOOD_ANALYSIS, DEFAULT_NUTRITION_ADVICE). ~50 lines consolidated.
 
+### ~~166. Fix missing exercise types in calorie estimation + edge case tests~~ ✅
+- `BASE_CALORIES_PER_MINUTE` was missing sports, cardio, and stretching entries present in `EXERCISE_TYPE_LABELS` — these fell through to default 6 cal/min.
+- habitStore `toggleCompletion` error path untested. mockAuthService `updateUserProfile` edge cases untested.
+- **Status:** Done — added 3 missing exercise types (sports: 7, cardio: 9, stretching: 2). Added toggleCompletion error test. Added 2 updateUserProfile edge case tests. 578 total tests.
+
 ### ~~165. Improve healthInsightsAI branch coverage — non-text response tests~~ ✅
 - `healthInsightsAI.ts` at 58% branch coverage. Lines 246, 295, 338, 387, 443 (non-text response guards) untested.
 - **Status:** Done — added 5 non-text response tests for generateHabitSuggestions, analyzeSleepPatterns, getExerciseRecommendation, analyzeJournalMood, getNutritionAdvice. 100% statement/line/function coverage. 575 total tests.
@@ -875,3 +880,4 @@ Yes
 - [x] Added ModalHeader component tests (2 tests), removed unused DEFAULT_CALORIE_GOAL constant (TODO #163)
 - [x] Improved store branch coverage to 100% for exercise, sleep, journal, nutrition stores (TODO #164)
 - [x] Added 5 non-text response tests for healthInsightsAI — 575 total tests (TODO #165)
+- [x] Added missing sports/cardio/stretching to calorie estimation, toggleCompletion error test, updateUserProfile edge cases — 578 total tests (TODO #166)

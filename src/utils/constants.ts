@@ -94,6 +94,9 @@ const BASE_CALORIES_PER_MINUTE: Record<string, number> = {
   yoga: 3,
   hiit: 12,
   walking: 4,
+  sports: 7,
+  cardio: 9,
+  stretching: 2,
   other: 6,
 };
 

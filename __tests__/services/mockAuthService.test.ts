@@ -102,6 +102,20 @@ describe('mockAuthService', () => {
     expect(user?.photoURL).toBe('https://photo.url');
   });
 
+  it('updateUserProfile preserves fields when params are undefined', async () => {
+    await authService.signIn('test@test.com', 'pass');
+    await authService.updateUserProfile(undefined, undefined);
+    const user = authService.getCurrentUser();
+    expect(user?.displayName).toBe('test');
+    expect(user?.photoURL).toBeNull();
+  });
+
+  it('updateUserProfile does nothing when not signed in', async () => {
+    await authService.signOut();
+    await authService.updateUserProfile('Name', 'photo.url');
+    expect(authService.getCurrentUser()).toBeNull();
+  });
+
   it('useGoogleAuth returns mock structure', () => {
     const result = useGoogleAuth();
     expect(result.request).toBeNull();

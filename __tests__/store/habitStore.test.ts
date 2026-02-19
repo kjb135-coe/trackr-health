@@ -233,6 +233,14 @@ describe('habitStore', () => {
 
       expect(habitRepository.setCompletion).toHaveBeenCalledWith('1', expect.any(String), false);
     });
+
+    it('sets error on failure', async () => {
+      habitRepository.setCompletion.mockRejectedValue(new Error('Toggle failed'));
+
+      await useHabitStore.getState().toggleCompletion('1');
+
+      expect(useHabitStore.getState().error).toBe('Toggle failed');
+    });
   });
 
   describe('getStreak', () => {
