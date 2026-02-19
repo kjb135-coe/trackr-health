@@ -15,6 +15,7 @@ import { X, Camera, RotateCcw, Image as ImageIcon, Utensils } from 'lucide-react
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, AnimatedCard } from '@/src/components/ui';
 import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
@@ -191,7 +192,10 @@ export default function NutritionCameraScreen() {
             <Text style={styles.analyzingText}>Analyzing your food...</Text>
           </View>
         ) : analysisResult ? (
-          <Animated.View entering={FadeInUp.duration(400)} style={styles.resultsContainer}>
+          <Animated.View
+            entering={FadeInUp.duration(ANIMATION_DURATION.screenEntrance)}
+            style={styles.resultsContainer}
+          >
             <AnimatedCard style={styles.resultsCard}>
               <View style={styles.resultsHeader}>
                 <Utensils color={colors.nutrition} size={24} />

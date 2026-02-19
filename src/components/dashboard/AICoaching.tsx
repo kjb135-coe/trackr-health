@@ -14,6 +14,7 @@ import {
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard } from '@/src/components/ui';
 import { useAIInsightsStore } from '@/src/store';
@@ -74,7 +75,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
 
   if (!hasKey) {
     return (
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
         <AnimatedCard style={styles.card} delay={100}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -107,7 +108,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
 
   if (isLoadingCoaching && !dailyCoaching) {
     return (
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
         <AnimatedCard style={styles.card} delay={100}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -128,7 +129,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
 
   if (error && !dailyCoaching) {
     return (
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
         <AnimatedCard style={styles.card} delay={100}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -148,7 +149,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
   if (!dailyCoaching) return null;
 
   return (
-    <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+    <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
       <AnimatedCard style={styles.card} delay={100}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>

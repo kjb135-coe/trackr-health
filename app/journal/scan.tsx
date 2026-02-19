@@ -17,6 +17,7 @@ import { X, Camera, RotateCcw, Image as ImageIcon, Edit3, FileText } from 'lucid
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
@@ -171,7 +172,10 @@ export default function JournalScanScreen() {
           <ScrollView style={[styles.resultContainer, { backgroundColor: colors.background }]}>
             <Image source={{ uri: capturedPhoto }} style={styles.resultImage} />
 
-            <Animated.View entering={FadeInDown.duration(400)} style={styles.resultContent}>
+            <Animated.View
+              entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance)}
+              style={styles.resultContent}
+            >
               <View style={styles.resultHeader}>
                 <FileText color={colors.journal} size={24} />
                 <Text style={[styles.resultTitle, { color: colors.textPrimary }]}>

@@ -1096,3 +1096,11 @@ Yes
 ### ~~214. Add animations.ts pressRelease constant to test file~~ ✅
 - Added `ANIMATION_DURATION.pressRelease` constant but the existing `__tests__/utils/animations.test.ts` only checks the 6 original duration keys. Update the test to verify pressRelease exists and is positive.
 - **Status:** Done — Added pressRelease to the shape check in animations.test.ts.
+
+### ~~215. Replace hardcoded FadeInDown durations with animation constants~~ ✅
+- Multiple modal and log screen files use hardcoded `FadeInDown.duration(300)` or `.duration(400)` instead of `ANIMATION_DURATION.screenEntrance`/`cardEntrance`. Files: 6 modal components (duration 300), 3 log screens + 2 camera screens (duration 400).
+- **Status:** Replaced all instances across 13 files: 6 modals (`.duration(300)` → `screenTransition`), 3 log screens + 2 camera screens + AICoaching + WeeklyInsights (`.duration(400)` → `screenEntrance`).
+
+### ~~216. Remove outdated eslint-disable comments in _layout.tsx~~ ✅
+- `app/_layout.tsx` has `eslint-disable-next-line react-hooks/exhaustive-deps` comments that may no longer be needed if dependencies are now properly listed.
+- **Status:** Verified — both comments are still needed. Line 75: stable Zustand functions don't need to be deps but eslint wants them. Line 142: `router` isn't stable. No changes needed.

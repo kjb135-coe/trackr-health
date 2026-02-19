@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { spacing, borderRadius } from '@/src/theme';
 
 interface InsightData {
@@ -51,7 +52,7 @@ export function WeeklyInsights({ insights }: WeeklyInsightsProps) {
 
   return (
     <Animated.View
-      entering={FadeIn.duration(400)}
+      entering={FadeIn.duration(ANIMATION_DURATION.screenEntrance)}
       style={[styles.container, { backgroundColor: colors.surface }]}
     >
       <Text style={[styles.title, { color: colors.textPrimary }]}>Weekly Progress</Text>
