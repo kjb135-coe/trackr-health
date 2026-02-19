@@ -994,9 +994,9 @@ Yes
 - [x] Fixed 3 unawaited async calls: nutrition fetchAdvice, journal fetchMoodAnalysis, habits deleteHabit + added success haptic (TODO #187)
 - [x] Added habits screen tests (8): empty state, habit rendering, error banner, mount loading, skeleton loading, streaks — 632 total (TODO #188)
 
-### 189. Add nutrition screen tests
+### ~~189. Add nutrition screen tests~~ ✅
 - `app/(tabs)/nutrition.tsx` (314 lines) has zero screen-level test coverage. Contains calorie progress bar, daily summary, meal list, AI advice section, date navigation.
-- **Effort:** ~30min
+- **Status:** Done — 8 tests: empty state, daily summary totals, meal card, multiple meals, error banner, mount loading, skeleton loading, section title. 640 total tests.
 
 ### 190. Add sleep screen tests
 - `app/(tabs)/sleep.tsx` has zero screen-level test coverage. Contains sleep entry display, 7-day summary, AI analysis section, date navigation.
