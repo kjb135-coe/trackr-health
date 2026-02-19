@@ -562,3 +562,4 @@ Do whatever you think is right.
 - [x] Added habitReminders tests (10): permissions, scheduling, cancellation, filtering, listeners — 328 total tests (TODO #96)
 - [x] Added ErrorBanner (2) and DateNavigator (4) UI component tests — 334 total tests (TODO #97)
 - [x] Extracted reusable EmptyState component — replaced inline patterns in all 5 tab screens (TODO #98)
+- [x] Added EmptyState tests (3) + used HABIT_COLORS constant in demoData.ts — 337 total tests

@@ -6,16 +6,17 @@ import {
   journalRepository,
 } from '@/src/database/repositories';
 import { getDateString } from './date';
+import { HABIT_COLORS } from './constants';
 import { subDays, format } from 'date-fns';
 
 export async function populateDemoData(): Promise<void> {
   // Create habits
   const habits = [
-    { name: 'Morning Meditation', color: '#845EF7', frequency: 'daily' as const },
-    { name: 'Exercise', color: '#20C997', frequency: 'daily' as const },
-    { name: 'Read 30 minutes', color: '#339AF0', frequency: 'daily' as const },
-    { name: 'Drink 8 glasses of water', color: '#4ECDC4', frequency: 'daily' as const },
-    { name: 'No social media before noon', color: '#FF6B6B', frequency: 'daily' as const },
+    { name: 'Morning Meditation', color: HABIT_COLORS[1], frequency: 'daily' as const },
+    { name: 'Exercise', color: HABIT_COLORS[2], frequency: 'daily' as const },
+    { name: 'Read 30 minutes', color: HABIT_COLORS[4], frequency: 'daily' as const },
+    { name: 'Drink 8 glasses of water', color: HABIT_COLORS[7], frequency: 'daily' as const },
+    { name: 'No social media before noon', color: HABIT_COLORS[0], frequency: 'daily' as const },
   ];
 
   const createdHabits = [];
