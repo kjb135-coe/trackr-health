@@ -1025,6 +1025,6 @@ Yes
 - `app/nutrition/camera.tsx` runs 4 separate `.reduce()` calls for protein/carbs/fat/calories on `detectedFoods`. Same pattern as the NutritionLogModal fix (TODO #162).
 - **Status:** Done — replaced 7 separate reduce calls (4 in handleSaveMeal, 3 in display JSX) with single memoized `macroTotals` computed via `for...of` loop. 1 pass instead of 7.
 
-### 197. Fix setSaving(false) leak in 5 app screen save handlers
+### ~~197. Fix setSaving(false) leak in 5 app screen save handlers~~ ✅
 - Same bug as TODO #181 (fixed for modals) but in app-level screens: `nutrition/camera.tsx`, `exercise/log.tsx`, `sleep/log.tsx`, `journal/new.tsx`, `journal/scan.tsx`. `setSaving(false)` is after try/catch instead of in `finally`.
-- **Effort:** ~10min
+- **Status:** Done — moved `setSaving(false)` to `finally` block in all 5 files. 675 tests passing.

@@ -118,8 +118,9 @@ export default function JournalScanScreen() {
       router.back();
     } catch (error: unknown) {
       Alert.alert('Error', getErrorMessage(error));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   if (!permission) {

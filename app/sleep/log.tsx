@@ -123,8 +123,9 @@ export default function LogSleepScreen() {
     } catch (error: unknown) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert('Error', getErrorMessage(error));
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (
