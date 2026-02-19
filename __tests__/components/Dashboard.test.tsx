@@ -11,9 +11,10 @@ jest.mock('expo-haptics', () => ({
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
 }));
 
+const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: mockPush,
   }),
 }));
 
@@ -252,5 +253,74 @@ describe('DashboardScreen', () => {
 
     const { findByText } = await renderDashboard();
     expect(await findByText('5 days')).toBeTruthy();
+  });
+
+  it('navigates to habits screen when habits card is pressed', async () => {
+    const { findByText } = await renderDashboard();
+    const habitsCard = await findByText('Habits');
+    fireEvent.press(habitsCard);
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/habits');
+  });
+
+  it('navigates to sleep screen when sleep card is pressed', async () => {
+    const { findByText } = await renderDashboard();
+    const sleepCard = await findByText('Sleep');
+    fireEvent.press(sleepCard);
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/sleep');
+  });
+
+  it('navigates to journal screen when journal card is pressed', async () => {
+    const { findByText } = await renderDashboard();
+    const journalCard = await findByText('Journal');
+    fireEvent.press(journalCard);
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/journal');
+  });
+
+  it('dismisses error banner and clears all errors', async () => {
+    mockHabitStore.error = 'Habit error';
+    mockSleepStore.error = 'Sleep error';
+
+    const { findByText } = await renderDashboard();
+    // Error banner shows first error — pressing the text dismisses it
+    const errorText = await findByText('Habit error');
+    fireEvent.press(errorText);
+
+    expect(mockClearHabitError).toHaveBeenCalled();
+    expect(mockClearSleepError).toHaveBeenCalled();
+    expect(mockClearExerciseError).toHaveBeenCalled();
+    expect(mockClearNutritionError).toHaveBeenCalled();
+    expect(mockClearJournalError).toHaveBeenCalled();
+  });
+
+  it('shows error alert when demo data fails to load', async () => {
+    const { populateDemoData } = jest.requireMock('@/src/utils/demoData');
+    populateDemoData.mockRejectedValueOnce(new Error('DB full'));
+    jest.spyOn(Alert, 'alert');
+
+    const { findByText } = await renderDashboard();
+    fireEvent.press(await findByText('Load Demo Data'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to load demo data');
+    });
+  });
+
+  it('reloads data on pull-to-refresh', async () => {
+    const { getByTestId, UNSAFE_getByType } = await renderDashboard();
+
+    jest.clearAllMocks();
+    mockGetTrendData.mockResolvedValue(null);
+    mockGetDailyStreak.mockResolvedValue(0);
+
+    // Find ScrollView and trigger its refreshControl onRefresh
+    const scrollView = UNSAFE_getByType(require('react-native').ScrollView);
+    const refreshControl = scrollView.props.refreshControl;
+    await waitFor(async () => {
+      await refreshControl.props.onRefresh();
+    });
+
+    expect(mockLoadHabits).toHaveBeenCalled();
+    expect(mockLoadSleep).toHaveBeenCalled();
+    expect(mockLoadExercise).toHaveBeenCalled();
   });
 });

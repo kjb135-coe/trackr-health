@@ -563,6 +563,10 @@ Yes
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~151. Improve Dashboard coverage — navigation, refresh, error dismiss, demo error~~ ✅
+- `app/(tabs)/index.tsx` at 76% — missing tests for card navigation (router.push), pull-to-refresh, error banner dismiss, demo data error path.
+- **Status:** Done — 6 new tests (card navigation ×3, error dismiss, demo error, pull-to-refresh). 20 total tests, 560 total tests passing.
+
 ### ~~148. Improve JournalEntryModal coverage — gallery OCR flow + mode toggle + mood~~ ✅
 - `JournalEntryModal.tsx` at 76.62% — missing gallery image OCR path, mode toggle press handlers, mood selection press handlers.
 - **Status:** Done — 5 new tests (gallery OCR success, gallery OCR failure, gallery no API key, mode toggle switch, mood selection). 21 total tests.
@@ -801,3 +805,4 @@ Yes
 - [x] Improved JournalEntryModal coverage from 76% to ~90% — 5 new tests (gallery OCR success/failure/no-api-key, mode toggle, mood selection) — 548 total tests (TODO #148)
 - [x] Improved NutritionLogModal coverage from 84% to ~90% — 3 new tests (gallery analysis success/failure, meal type switch) — 551 total tests (TODO #149)
 - [x] Improved AnimatedCard coverage from 84% to ~90% — 3 new tests (outlined/filled variants, pressIn/pressOut events) — 554 total tests (TODO #150)
+- [x] Improved Dashboard coverage from 76% to ~90% — 6 new tests (card navigation, error dismiss, demo error, pull-to-refresh) — 560 total tests (TODO #151)
