@@ -6,14 +6,7 @@ import {
   nutritionRepository,
   journalRepository,
 } from '@/src/database/repositories';
-import { AI_MODEL, AI_TIMEOUT_MS } from '@/src/utils/constants';
-
-function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error(message)), AI_TIMEOUT_MS),
-  );
-  return Promise.race([promise, timeout]);
-}
+import { AI_MODEL, withTimeout } from '@/src/utils/constants';
 
 export interface AIInsight {
   category: 'habits' | 'sleep' | 'exercise' | 'nutrition' | 'journal' | 'overall';

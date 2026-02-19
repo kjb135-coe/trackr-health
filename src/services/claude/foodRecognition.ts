@@ -2,7 +2,7 @@ import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { DetectedFood, AIFoodAnalysis } from '@/src/types';
 import { z } from 'zod';
-import { AI_MODEL, AI_MAX_TOKENS, AI_TIMEOUT_MS } from '@/src/utils/constants';
+import { AI_MODEL, AI_MAX_TOKENS, withTimeout } from '@/src/utils/constants';
 
 const FoodAnalysisSchema = z.object({
   foods: z.array(
@@ -95,14 +95,7 @@ Return ONLY the JSON object, no other text.`,
     ],
   });
 
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(
-      () => reject(new Error('Food analysis timed out. Please try again.')),
-      AI_TIMEOUT_MS,
-    ),
-  );
-
-  const response = await Promise.race([apiCall, timeout]);
+  const response = await withTimeout(apiCall, 'Food analysis timed out. Please try again.');
 
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {

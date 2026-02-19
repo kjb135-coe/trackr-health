@@ -493,6 +493,10 @@ Do whatever you think is right.
 - 4 `@typescript-eslint/no-require-imports` warnings in jest.mock factories (QuickActions, WeeklyInsights, AICoaching, HabitSuggestionsModal) + 1 unused `queryByText` in EmptyState test.
 - **Status:** Done — added eslint-disable comments for necessary require() in jest.mock (standard pattern), removed unused destructured variable. 0 ESLint errors, 0 warnings.
 
+### 111. ~~Extract shared withTimeout utility for AI services~~ ✅
+- 3 AI service files (healthInsightsAI, foodRecognition, handwritingOCR) had identical Promise.race + setTimeout timeout pattern.
+- **Status:** Done — extracted `withTimeout<T>(promise, message)` to `src/utils/constants.ts`. All 3 services now import the shared utility. Added 3 tests. 410 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -613,3 +617,4 @@ Do whatever you think is right.
 - [x] Added EmptyState tests (3) + used HABIT_COLORS constant in demoData.ts — 337 total tests
 - [x] Extracted estimateCalories to constants.ts + 6 tests — 407 total tests (TODO #109)
 - [x] Fixed 5 ESLint warnings in test files — 0 errors, 0 warnings (TODO #110)
+- [x] Extracted shared withTimeout utility + 3 tests — 410 total tests (TODO #111)

@@ -1,4 +1,4 @@
-import { getQualityColor, estimateCalories } from '@/src/utils/constants';
+import { getQualityColor, estimateCalories, withTimeout } from '@/src/utils/constants';
 
 const mockColors = {
   error: '#FF0000',
@@ -65,5 +65,27 @@ describe('estimateCalories', () => {
     const lowIntensity = estimateCalories('running', 30, 1);
     const highIntensity = estimateCalories('running', 30, 5);
     expect(highIntensity).toBeGreaterThan(lowIntensity);
+  });
+});
+
+describe('withTimeout', () => {
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => jest.useRealTimers());
+
+  it('resolves when promise completes before timeout', async () => {
+    const result = await withTimeout(Promise.resolve('ok'), 'timed out');
+    expect(result).toBe('ok');
+  });
+
+  it('rejects with timeout message when promise is slow', async () => {
+    const slow = new Promise<string>((resolve) => setTimeout(() => resolve('late'), 60000));
+    const promise = withTimeout(slow, 'Request timed out');
+    jest.advanceTimersByTime(30000);
+    await expect(promise).rejects.toThrow('Request timed out');
+  });
+
+  it('propagates original error when promise rejects before timeout', async () => {
+    const failing = Promise.reject(new Error('API error'));
+    await expect(withTimeout(failing, 'timed out')).rejects.toThrow('API error');
   });
 });

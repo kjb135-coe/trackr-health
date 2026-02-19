@@ -1,7 +1,7 @@
 import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { OCRResult } from '@/src/types';
-import { AI_MODEL, AI_OCR_MAX_TOKENS, AI_TIMEOUT_MS, OCR_CONFIDENCE } from '@/src/utils/constants';
+import { AI_MODEL, AI_OCR_MAX_TOKENS, OCR_CONFIDENCE, withTimeout } from '@/src/utils/constants';
 
 function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
   return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
@@ -63,14 +63,7 @@ Confidence: [high/medium/low]`,
     ],
   });
 
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(
-      () => reject(new Error('Handwriting scan timed out. Please try again.')),
-      AI_TIMEOUT_MS,
-    ),
-  );
-
-  const response = await Promise.race([apiCall, timeout]);
+  const response = await withTimeout(apiCall, 'Handwriting scan timed out. Please try again.');
 
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {
