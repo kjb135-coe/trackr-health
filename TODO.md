@@ -477,6 +477,10 @@ Do whatever you think is right.
 - `src/utils/date.ts` exports 11 functions but only 4 were tested.
 - **Status:** Done — added tests for `formatDate` (3), `parseDate` (1), `getStartOfDay` (1), `getEndOfDay` (1), `getDurationMinutes` (2), `formatTime` (2), `getRelativeDateLabel` expanded (3 more), `generateId` (2). Date tests: 9 → 25. 393 total tests.
 
+### 108. ~~Add ThemeContext tests~~ ✅
+- `ThemeProvider` and `useTheme` hook had zero test coverage despite being used in every component.
+- **Status:** Done — 8 tests: default system mode, light/dark switching, AsyncStorage persistence, saved mode loading, invalid mode handling, storage error resilience, useTheme-outside-provider error. 401 total tests.
+
 ### 106. ~~Replace hardcoded `#FFFFFF` in AICoaching setupButtonText style~~ ✅
 - `src/components/dashboard/AICoaching.tsx` line 351: `color: '#FFFFFF'` in static StyleSheet.
 - **Status:** Not needed — static `StyleSheet.create()` can't reference dynamic theme colors. White text on `colors.primary` button is correct regardless of theme.
