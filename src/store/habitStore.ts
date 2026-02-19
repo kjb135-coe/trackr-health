@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { Habit, HabitCompletion } from '@/src/types';
 import { habitRepository } from '@/src/database/repositories';
-import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { subDays, format } from 'date-fns';
+import { getDateString, getErrorMessage, parseDate } from '@/src/utils/date';
 
 interface HabitState {
   habits: Habit[];
@@ -19,6 +20,7 @@ interface HabitState {
   deleteHabit: (id: string) => Promise<void>;
   toggleCompletion: (habitId: string, date?: string) => Promise<void>;
   getStreak: (habitId: string) => Promise<number>;
+  getWeeklyCompletions: (endDate: string) => Promise<Map<string, Set<string>>>;
   clearError: () => void;
 }
 
@@ -116,6 +118,20 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
   getStreak: async (habitId) => {
     return habitRepository.getStreak(habitId);
+  },
+
+  getWeeklyCompletions: async (endDate) => {
+    const end = parseDate(endDate);
+    const startDate = format(subDays(end, 6), 'yyyy-MM-dd');
+    const completions = await habitRepository.getCompletionsForDateRange(startDate, endDate);
+    const result = new Map<string, Set<string>>();
+    for (const c of completions) {
+      if (c.completed) {
+        if (!result.has(c.habitId)) result.set(c.habitId, new Set());
+        result.get(c.habitId)!.add(c.date);
+      }
+    }
+    return result;
   },
 
   clearError: () => set({ error: null }),

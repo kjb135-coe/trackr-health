@@ -22,6 +22,7 @@ import {
   CreateHabitModal,
   HabitSuggestionsModal,
 } from '@/src/components/habits';
+import { subDays, format, parseISO } from 'date-fns';
 import { getDateString } from '@/src/utils/date';
 import { Habit } from '@/src/types';
 import { hasApiKey } from '@/src/services/claude';
@@ -32,6 +33,7 @@ export default function HabitsScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [suggestionsVisible, setSuggestionsVisible] = useState(false);
   const [streaks, setStreaks] = useState<Map<string, number>>(new Map());
+  const [weeklyCompletions, setWeeklyCompletions] = useState<Map<string, Set<string>>>(new Map());
   const [apiKeyExists, setApiKeyExists] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getDateString());
   const [showCelebration, setShowCelebration] = useState(false);
@@ -46,6 +48,7 @@ export default function HabitsScreen() {
     deleteHabit,
     toggleCompletion,
     getStreak,
+    getWeeklyCompletions,
   } = useHabitStore();
 
   const { habitSuggestions, fetchHabitSuggestions } = useAIInsightsStore();
@@ -69,11 +72,15 @@ export default function HabitsScreen() {
   const loadData = async (date: string) => {
     await loadHabits();
     await loadTodayCompletions(date);
+    const weekly = await getWeeklyCompletions(date);
+    setWeeklyCompletions(weekly);
   };
 
   const handleDateChange = async (date: string) => {
     setSelectedDate(date);
     await loadTodayCompletions(date);
+    const weekly = await getWeeklyCompletions(date);
+    setWeeklyCompletions(weekly);
   };
 
   const loadStreaks = async () => {
@@ -119,6 +126,11 @@ export default function HabitsScreen() {
     }
   };
 
+  const weekDates = React.useMemo(() => {
+    const end = parseISO(selectedDate);
+    return Array.from({ length: 7 }, (_, i) => format(subDays(end, 6 - i), 'yyyy-MM-dd'));
+  }, [selectedDate]);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
@@ -161,19 +173,35 @@ export default function HabitsScreen() {
                   </TouchableOpacity>
 
                   <View style={styles.habitInfo}>
-                    <Text
-                      style={[
-                        styles.habitName,
-                        { color: colors.textPrimary },
-                        isCompleted && {
-                          textDecorationLine: 'line-through',
-                          color: colors.textTertiary,
-                        },
-                      ]}
-                    >
-                      {habit.name}
-                    </Text>
-                    {streak > 0 && <StreakBadge streak={streak} size="sm" />}
+                    <View style={styles.habitNameRow}>
+                      <Text
+                        style={[
+                          styles.habitName,
+                          { color: colors.textPrimary },
+                          isCompleted && {
+                            textDecorationLine: 'line-through',
+                            color: colors.textTertiary,
+                          },
+                        ]}
+                      >
+                        {habit.name}
+                      </Text>
+                      {streak > 0 && <StreakBadge streak={streak} size="sm" />}
+                    </View>
+                    <View style={styles.weekDots}>
+                      {weekDates.map((date) => {
+                        const done = weeklyCompletions.get(habit.id)?.has(date);
+                        return (
+                          <View
+                            key={date}
+                            style={[
+                              styles.dot,
+                              { backgroundColor: done ? habit.color : colors.border },
+                            ]}
+                          />
+                        );
+                      })}
+                    </View>
                   </View>
 
                   <TouchableOpacity
@@ -274,8 +302,22 @@ const styles = StyleSheet.create({
   habitInfo: {
     flex: 1,
   },
+  habitNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   habitName: {
     fontSize: 16,
+  },
+  weekDots: {
+    flexDirection: 'row',
+    marginTop: 4,
+    gap: 4,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   deleteButton: {
     padding: spacing.xs,
