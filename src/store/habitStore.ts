@@ -10,7 +10,7 @@ interface HabitState {
   error: string | null;
 
   loadHabits: () => Promise<void>;
-  loadTodayCompletions: () => Promise<void>;
+  loadTodayCompletions: (date?: string) => Promise<void>;
   createHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Habit>;
   updateHabit: (
     id: string,
@@ -38,10 +38,10 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     }
   },
 
-  loadTodayCompletions: async () => {
+  loadTodayCompletions: async (date) => {
     try {
-      const today = getDateString();
-      const completions = await habitRepository.getCompletionsForDate(today);
+      const dateStr = date || getDateString();
+      const completions = await habitRepository.getCompletionsForDate(dateStr);
       const completionMap = new Map<string, HabitCompletion>();
       completions.forEach((c) => completionMap.set(c.habitId, c));
       set({ todayCompletions: completionMap });
@@ -104,13 +104,11 @@ export const useHabitStore = create<HabitState>((set, get) => ({
     try {
       const completion = await habitRepository.setCompletion(habitId, dateStr, newCompleted);
 
-      if (dateStr === getDateString()) {
-        set((state) => {
-          const newMap = new Map(state.todayCompletions);
-          newMap.set(habitId, completion);
-          return { todayCompletions: newMap };
-        });
-      }
+      set((state) => {
+        const newMap = new Map(state.todayCompletions);
+        newMap.set(habitId, completion);
+        return { todayCompletions: newMap };
+      });
     } catch {
       // Silent fail - UI will show stale state
     }
