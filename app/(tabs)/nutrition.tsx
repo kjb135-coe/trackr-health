@@ -168,16 +168,21 @@ export default function NutritionScreen() {
       totalCarbs = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.carbs || 0), 0);
       totalFat = detectedFoods.reduce((sum, f) => sum + (f.macroEstimates?.fat || 0), 0);
     } else if (manualName && manualCalories) {
+      const parsedCalories = parseInt(manualCalories);
+      if (isNaN(parsedCalories) || parsedCalories <= 0) {
+        Alert.alert('Invalid calories', 'Calories must be a positive number.');
+        return;
+      }
       foods = [
         {
           name: manualName,
           quantity: 1,
           unit: 'serving',
-          calories: parseInt(manualCalories) || 0,
+          calories: parsedCalories,
           isAIGenerated: false,
         },
       ];
-      totalCalories = parseInt(manualCalories) || 0;
+      totalCalories = parsedCalories;
     } else {
       Alert.alert('Missing info', 'Please add food items or take a photo.');
       return;

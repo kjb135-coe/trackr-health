@@ -193,11 +193,14 @@ Do whatever you think is right.
 - ~~Timeout was added to all Claude API calls but no tests verify the timeout logic fires correctly.~~
 - **Status:** Done — 6 tests for `foodRecognition`: success, timeout, non-text response, invalid JSON, schema validation failure, macro mapping.
 
-### 35. Add input validation for numeric form fields
-- Sleep time inputs accept any text (should validate 0-23 hours, 0-59 minutes).
-- Nutrition calories input has no positive number validation.
-- Exercise duration can be zero but UI still allows save.
-- **Effort:** ~1h
+### 35. ~~Add input validation for numeric form fields~~ ✅
+- ~~Sleep time inputs accept any text, nutrition calories has no positive number validation, exercise duration allows zero.~~
+- **Status:** Done — sleep validates hours (0-23) and minutes (0-59), exercise validates duration > 0 and calories > 0, nutrition validates calories > 0. All show Alert on invalid input.
+
+### 36. Refactor large tab screen components (500+ lines)
+- `nutrition.tsx` (680+ lines), `settings.tsx` (673 lines), `sleep.tsx` (657+ lines), `journal.tsx` (623+ lines), `exercise.tsx` (585+ lines), `habits.tsx` (550+ lines) all exceed the 200-line guideline.
+- Extract modal content, form sections, and list items into dedicated components.
+- **Effort:** ~4-6h (all screens)
 
 ---
 
@@ -244,3 +247,4 @@ Do whatever you think is right.
 - [x] Added timeout protection (30s) to all 8 Claude API calls across 3 service files (TODO #33)
 - [x] Replaced 6 hardcoded `claude-sonnet-4-20250514` model strings with `AI_MODEL` constant in healthInsightsAI.ts
 - [x] Added 6 unit tests for foodRecognition service: success, timeout, error handling, schema validation (TODO #34)
+- [x] Added input validation: sleep (0-23h, 0-59m), exercise (duration > 0, calories > 0), nutrition (calories > 0) (TODO #35)

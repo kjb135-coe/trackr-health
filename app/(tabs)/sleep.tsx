@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import {
   Plus,
@@ -96,19 +97,33 @@ export default function SleepScreen() {
   };
 
   const handleCreateEntry = async () => {
+    const bh = parseInt(bedtimeHour);
+    const bm = parseInt(bedtimeMin);
+    const wh = parseInt(wakeHour);
+    const wm = parseInt(wakeMin);
+
+    if (isNaN(bh) || bh < 0 || bh > 23 || isNaN(bm) || bm < 0 || bm > 59) {
+      Alert.alert('Invalid bedtime', 'Hours must be 0-23 and minutes 0-59.');
+      return;
+    }
+    if (isNaN(wh) || wh < 0 || wh > 23 || isNaN(wm) || wm < 0 || wm > 59) {
+      Alert.alert('Invalid wake time', 'Hours must be 0-23 and minutes 0-59.');
+      return;
+    }
+
     const today = getDateString();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     // Construct bedtime (yesterday) and wake time (today)
     const bedtime = new Date(yesterday);
-    bedtime.setHours(parseInt(bedtimeHour), parseInt(bedtimeMin), 0, 0);
+    bedtime.setHours(bh, bm, 0, 0);
 
     const wakeTime = new Date();
-    wakeTime.setHours(parseInt(wakeHour), parseInt(wakeMin), 0, 0);
+    wakeTime.setHours(wh, wm, 0, 0);
 
     // If bedtime hour is less than wake hour, bedtime is same day
-    if (parseInt(bedtimeHour) < parseInt(wakeHour)) {
+    if (bh < wh) {
       bedtime.setDate(bedtime.getDate() + 1);
     }
 

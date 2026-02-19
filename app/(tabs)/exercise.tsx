@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { Plus, Dumbbell, X, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -79,14 +80,23 @@ export default function ExerciseScreen() {
 
   const handleCreateSession = async () => {
     const durationMinutes = parseInt(duration) || 0;
-    if (durationMinutes <= 0) return;
+    if (durationMinutes <= 0) {
+      Alert.alert('Invalid duration', 'Please enter a duration greater than 0 minutes.');
+      return;
+    }
+
+    const parsedCalories = calories ? parseInt(calories) : undefined;
+    if (parsedCalories !== undefined && (isNaN(parsedCalories) || parsedCalories <= 0)) {
+      Alert.alert('Invalid calories', 'Calories must be a positive number.');
+      return;
+    }
 
     await createSession({
       date: getDateString(),
       type: selectedType,
       durationMinutes,
       intensity,
-      caloriesBurned: calories ? parseInt(calories) : undefined,
+      caloriesBurned: parsedCalories,
     });
 
     setDuration('30');
