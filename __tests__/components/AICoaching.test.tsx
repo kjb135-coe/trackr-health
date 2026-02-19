@@ -33,7 +33,7 @@ jest.mock('@/src/store', () => ({
 }));
 
 jest.mock('@/src/services/claude', () => ({
-  hasApiKey: () => Promise.resolve(mockHasKey),
+  useApiKeyExists: () => mockHasKey,
 }));
 
 jest.mock('expo-haptics', () => ({

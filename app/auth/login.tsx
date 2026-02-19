@@ -29,9 +29,10 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (response && 'type' in response && response.type === 'success' && 'params' in response) {
-      const params = response.params as { id_token?: string };
-      if (params.id_token) {
-        signInWithGoogle(params.id_token).catch((err: unknown) => {
+      const idToken =
+        typeof response.params?.['id_token'] === 'string' ? response.params['id_token'] : null;
+      if (idToken) {
+        signInWithGoogle(idToken).catch((err: unknown) => {
           Alert.alert('Error', getAuthErrorMessage(err));
         });
       }

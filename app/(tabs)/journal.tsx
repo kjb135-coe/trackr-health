@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -89,10 +89,15 @@ export default function JournalScreen() {
     return Array.from(tagSet).sort();
   }, [entries]);
 
-  const filteredByTag = selectedTag
-    ? (searchResults ?? entries).filter((e) => e.tags?.includes(selectedTag))
-    : null;
-  const displayedEntries = filteredByTag ?? searchResults ?? entries;
+  const filteredByTag = useMemo(
+    () =>
+      selectedTag ? (searchResults ?? entries).filter((e) => e.tags?.includes(selectedTag)) : null,
+    [selectedTag, searchResults, entries],
+  );
+  const displayedEntries = useMemo(
+    () => filteredByTag ?? searchResults ?? entries,
+    [filteredByTag, searchResults, entries],
+  );
 
   const handleDeleteEntry = (id: string, title: string) => {
     Alert.alert('Delete Entry', `Delete "${title || 'Untitled'}"?`, [

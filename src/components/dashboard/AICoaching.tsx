@@ -17,7 +17,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard } from '@/src/components/ui';
 import { useAIInsightsStore } from '@/src/store';
-import { hasApiKey } from '@/src/services/claude';
+import { useApiKeyExists } from '@/src/services/claude';
 
 interface AICoachingProps {
   onSetupApiKey?: () => void;
@@ -25,22 +25,15 @@ interface AICoachingProps {
 
 export function AICoaching({ onSetupApiKey }: AICoachingProps) {
   const { colors } = useTheme();
-  const [hasKey, setHasKey] = React.useState(false);
+  const hasKey = useApiKeyExists();
 
   const { dailyCoaching, isLoadingCoaching, error, fetchDailyCoaching } = useAIInsightsStore();
 
   useEffect(() => {
-    checkApiKey();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const checkApiKey = async () => {
-    const exists = await hasApiKey();
-    setHasKey(exists);
-    if (exists) {
+    if (hasKey) {
       fetchDailyCoaching();
     }
-  };
+  }, [hasKey, fetchDailyCoaching]);
 
   const handleRefresh = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

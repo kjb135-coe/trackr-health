@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -26,53 +26,56 @@ export default function OnboardingScreen() {
   const flatListRef = useRef<FlatList>(null);
   const { setCompleted } = useOnboardingStore();
 
-  const slides = [
-    {
-      id: '1',
-      title: 'Track Your Habits',
-      description:
-        'Build positive routines with streak tracking and daily reminders. Never miss a day again.',
-      Icon: Target,
-      color: colors.primary,
-    },
-    {
-      id: '2',
-      title: 'Sleep Better',
-      description:
-        'Log your sleep patterns and discover insights to improve your rest and energy levels.',
-      Icon: Moon,
-      color: colors.sleep,
-    },
-    {
-      id: '3',
-      title: 'Stay Active',
-      description: 'Track workouts, monitor your progress, and reach your fitness goals.',
-      Icon: Dumbbell,
-      color: colors.exercise,
-    },
-    {
-      id: '4',
-      title: 'Smart Nutrition',
-      description: 'Take a photo of your food and let AI identify calories and macros instantly.',
-      Icon: UtensilsCrossed,
-      color: colors.nutrition,
-    },
-    {
-      id: '5',
-      title: 'Journal Your Journey',
-      description: 'Write or scan handwritten entries. AI helps digitize your thoughts.',
-      Icon: BookOpen,
-      color: colors.journal,
-    },
-    {
-      id: '6',
-      title: 'Ready to Start?',
-      description:
-        'Your complete health companion is ready. Track everything in one beautiful app.',
-      Icon: Sparkles,
-      color: colors.success,
-    },
-  ];
+  const slides = useMemo(
+    () => [
+      {
+        id: '1',
+        title: 'Track Your Habits',
+        description:
+          'Build positive routines with streak tracking and daily reminders. Never miss a day again.',
+        Icon: Target,
+        color: colors.primary,
+      },
+      {
+        id: '2',
+        title: 'Sleep Better',
+        description:
+          'Log your sleep patterns and discover insights to improve your rest and energy levels.',
+        Icon: Moon,
+        color: colors.sleep,
+      },
+      {
+        id: '3',
+        title: 'Stay Active',
+        description: 'Track workouts, monitor your progress, and reach your fitness goals.',
+        Icon: Dumbbell,
+        color: colors.exercise,
+      },
+      {
+        id: '4',
+        title: 'Smart Nutrition',
+        description: 'Take a photo of your food and let AI identify calories and macros instantly.',
+        Icon: UtensilsCrossed,
+        color: colors.nutrition,
+      },
+      {
+        id: '5',
+        title: 'Journal Your Journey',
+        description: 'Write or scan handwritten entries. AI helps digitize your thoughts.',
+        Icon: BookOpen,
+        color: colors.journal,
+      },
+      {
+        id: '6',
+        title: 'Ready to Start?',
+        description:
+          'Your complete health companion is ready. Track everything in one beautiful app.',
+        Icon: Sparkles,
+        color: colors.success,
+      },
+    ],
+    [colors],
+  );
 
   const handleNext = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
