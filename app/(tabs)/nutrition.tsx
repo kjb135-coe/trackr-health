@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { isToday, parseISO } from 'date-fns';
-import { AnimatedCard, DateNavigator } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { getDateString } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, DEFAULT_CALORIE_GOAL } from '@/src/utils/constants';
@@ -196,13 +196,11 @@ export default function NutritionScreen() {
         )}
       </ScrollView>
 
-      {/* FAB */}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.nutrition }]}
+      <FAB
+        color={colors.nutrition}
         onPress={() => setModalVisible(true)}
-      >
-        <Plus color={colors.white} size={24} />
-      </TouchableOpacity>
+        icon={<Plus color={colors.white} size={24} />}
+      />
 
       <NutritionLogModal
         visible={modalVisible}
@@ -318,20 +316,5 @@ const styles = StyleSheet.create({
   foodItem: {
     fontSize: 14,
     marginTop: 2,
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.md,
-    bottom: spacing.md,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 });

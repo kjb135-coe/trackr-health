@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard } from '@/src/components/ui';
+import { AnimatedCard, FAB, SecondaryFAB, FABGroup } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
 import { getRelativeDateLabel } from '@/src/utils/date';
 import { MOOD_LABELS } from '@/src/utils/constants';
@@ -239,25 +239,20 @@ export default function JournalScreen() {
         )}
       </ScrollView>
 
-      {/* FABs */}
-      <View style={styles.fabContainer}>
-        <TouchableOpacity
-          style={[
-            styles.fab,
-            styles.fabSecondary,
-            { backgroundColor: colors.surface, borderColor: colors.journal },
-          ]}
+      <FABGroup>
+        <SecondaryFAB
           onPress={() => openModal('scan')}
-        >
-          <Camera color={colors.journal} size={20} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.fab, { backgroundColor: colors.journal }]}
+          backgroundColor={colors.surface}
+          borderColor={colors.journal}
+          icon={<Camera color={colors.journal} size={20} />}
+        />
+        <FAB
+          grouped
+          color={colors.journal}
           onPress={() => openModal('text')}
-        >
-          <Plus color={colors.white} size={24} />
-        </TouchableOpacity>
-      </View>
+          icon={<Plus color={colors.white} size={24} />}
+        />
+      </FABGroup>
 
       <JournalEntryModal
         visible={modalVisible}
@@ -387,30 +382,5 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 11,
     fontWeight: '500',
-  },
-  fabContainer: {
-    position: 'absolute',
-    right: spacing.md,
-    bottom: spacing.md,
-    alignItems: 'center',
-  },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  fabSecondary: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 2,
-    marginBottom: spacing.sm,
   },
 });

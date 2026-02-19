@@ -13,7 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, DateNavigator } from '@/src/components/ui';
+import { AnimatedCard, DateNavigator, FAB } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
 import {
   StreakBadge,
@@ -236,13 +236,11 @@ export default function HabitsScreen() {
         )}
       </ScrollView>
 
-      {/* FAB */}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.habits }]}
+      <FAB
+        color={colors.habits}
         onPress={() => setModalVisible(true)}
-      >
-        <Plus color={colors.white} size={24} />
-      </TouchableOpacity>
+        icon={<Plus color={colors.white} size={24} />}
+      />
 
       <CreateHabitModal visible={modalVisible} onClose={() => setModalVisible(false)} />
 
@@ -318,21 +316,6 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: spacing.xs,
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.md,
-    bottom: spacing.md,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   aiSection: {
     flexDirection: 'row',

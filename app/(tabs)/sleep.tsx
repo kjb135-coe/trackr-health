@@ -14,7 +14,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
-import { AnimatedCard, AnimatedButton, DateNavigator } from '@/src/components/ui';
+import { AnimatedCard, AnimatedButton, DateNavigator, FAB } from '@/src/components/ui';
 import { useSleepStore, useAIInsightsStore } from '@/src/store';
 import { formatDuration, formatTime, getRelativeDateLabel, getDateString } from '@/src/utils/date';
 import { subDays, format, parseISO } from 'date-fns';
@@ -303,13 +303,11 @@ export default function SleepScreen() {
         )}
       </ScrollView>
 
-      {/* FAB */}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.sleep }]}
+      <FAB
+        color={colors.sleep}
         onPress={() => setModalVisible(true)}
-      >
-        <Plus color={colors.white} size={24} />
-      </TouchableOpacity>
+        icon={<Plus color={colors.white} size={24} />}
+      />
 
       <SleepLogModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
@@ -399,21 +397,6 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 12,
     marginTop: 2,
-  },
-  fab: {
-    position: 'absolute',
-    right: spacing.md,
-    bottom: spacing.md,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   aiSection: {
     flexDirection: 'row',
