@@ -993,3 +993,19 @@ Yes
 - [x] Added onboarding screen tests (6): slide rendering, Skip/Next, navigation, all 6 slide titles — 624 total (TODO #186)
 - [x] Fixed 3 unawaited async calls: nutrition fetchAdvice, journal fetchMoodAnalysis, habits deleteHabit + added success haptic (TODO #187)
 - [x] Added habits screen tests (8): empty state, habit rendering, error banner, mount loading, skeleton loading, streaks — 632 total (TODO #188)
+
+### 189. Add nutrition screen tests
+- `app/(tabs)/nutrition.tsx` (314 lines) has zero screen-level test coverage. Contains calorie progress bar, daily summary, meal list, AI advice section, date navigation.
+- **Effort:** ~30min
+
+### 190. Add sleep screen tests
+- `app/(tabs)/sleep.tsx` has zero screen-level test coverage. Contains sleep entry display, 7-day summary, AI analysis section, date navigation.
+- **Effort:** ~30min
+
+### 191. Add exercise screen tests
+- `app/(tabs)/exercise.tsx` has zero screen-level test coverage. Contains workout cards, summary stats, AI recommendation section, date navigation.
+- **Effort:** ~30min
+
+### 192. Add journal screen tests
+- `app/(tabs)/journal.tsx` has zero screen-level test coverage. Contains search, tag filtering, entry cards, mood analysis section.
+- **Effort:** ~30min
