@@ -14,7 +14,7 @@ import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
-import { useGoogleAuth } from '@/src/services/auth';
+import { useGoogleAuth, getAuthErrorMessage } from '@/src/services/auth';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function LoginScreen() {
@@ -48,8 +48,7 @@ export default function LoginScreen() {
     try {
       await signIn(email.trim(), password);
     } catch (err: unknown) {
-      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
-      Alert.alert('Login Failed', getErrorMessage(code));
+      Alert.alert('Login Failed', getAuthErrorMessage(err));
     }
   };
 
@@ -153,23 +152,6 @@ export default function LoginScreen() {
       </View>
     </KeyboardAvoidingView>
   );
-}
-
-function getErrorMessage(code: string): string {
-  switch (code) {
-    case 'auth/invalid-email':
-      return 'Invalid email address';
-    case 'auth/user-disabled':
-      return 'This account has been disabled';
-    case 'auth/user-not-found':
-      return 'No account found with this email';
-    case 'auth/wrong-password':
-      return 'Incorrect password';
-    case 'auth/invalid-credential':
-      return 'Invalid email or password';
-    default:
-      return 'An error occurred. Please try again.';
-  }
 }
 
 const createStyles = (colors: ThemeColors) =>

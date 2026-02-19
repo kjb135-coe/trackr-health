@@ -15,6 +15,7 @@ import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
+import { getAuthErrorMessage } from '@/src/services/auth';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function SignUpScreen() {
@@ -58,8 +59,7 @@ export default function SignUpScreen() {
         [{ text: 'OK', onPress: () => router.push('/auth/verify-email') }],
       );
     } catch (err: unknown) {
-      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
-      Alert.alert('Sign Up Failed', getErrorMessage(code));
+      Alert.alert('Sign Up Failed', getAuthErrorMessage(err));
     }
   };
 
@@ -163,19 +163,6 @@ export default function SignUpScreen() {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
-
-function getErrorMessage(code: string): string {
-  switch (code) {
-    case 'auth/email-already-in-use':
-      return 'An account with this email already exists';
-    case 'auth/invalid-email':
-      return 'Invalid email address';
-    case 'auth/weak-password':
-      return 'Password is too weak';
-    default:
-      return 'An error occurred. Please try again.';
-  }
 }
 
 const createStyles = (colors: ThemeColors) =>

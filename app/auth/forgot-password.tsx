@@ -14,6 +14,7 @@ import { ArrowLeft } from 'lucide-react-native';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
 import { useAuthStore } from '@/src/store';
+import { getAuthErrorMessage } from '@/src/services/auth';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
@@ -34,8 +35,7 @@ export default function ForgotPasswordScreen() {
       await sendPasswordReset(email.trim());
       setSent(true);
     } catch (err: unknown) {
-      const code = err && typeof err === 'object' && 'code' in err ? String(err.code) : '';
-      Alert.alert('Error', getErrorMessage(code));
+      Alert.alert('Error', getAuthErrorMessage(err));
     }
   };
 
@@ -101,17 +101,6 @@ export default function ForgotPasswordScreen() {
       </View>
     </KeyboardAvoidingView>
   );
-}
-
-function getErrorMessage(code: string): string {
-  switch (code) {
-    case 'auth/invalid-email':
-      return 'Invalid email address';
-    case 'auth/user-not-found':
-      return 'No account found with this email';
-    default:
-      return 'An error occurred. Please try again.';
-  }
 }
 
 const createStyles = (colors: ThemeColors) =>

@@ -145,6 +145,15 @@ Yes
 - New `src/store/onboardingStore.ts` was added for onboarding state management but has no test coverage.
 - **Status:** Done — 7 tests covering initialize, setCompleted, legacy key migration, error fallback, AsyncStorage persistence. 585 total tests.
 
+### ~~174. Extract duplicate auth error code mapping into shared utility~~ ✅
+- 3 auth screens (login.tsx, signup.tsx, forgot-password.tsx) each define a local `getErrorMessage(code)` function with overlapping Firebase error codes.
+- Also duplicate error code extraction pattern: `err && typeof err === 'object' && 'code' in err ? String(err.code) : ''`.
+- **Status:** Done — created `getAuthErrorMessage(error)` in `src/services/auth/errorMessages.ts`. Consolidates 7 Firebase error codes + handles unknown error extraction. Replaced local functions in all 3 auth screens. 4 tests, 589 total.
+
+### 175. Add entrance animations to forgot-password and verify-email screens
+- `login.tsx` and `signup.tsx` have `FadeInDown` entrance animations on title, subtitle, form, footer. `forgot-password.tsx` and `verify-email.tsx` have no entrance animations — inconsistent with the rest of the auth flow.
+- **Effort:** ~15min
+
 ### 15. No deep linking configuration
 - Expo Router supports it but no scheme is configured.
 - **Effort:** ~30min
