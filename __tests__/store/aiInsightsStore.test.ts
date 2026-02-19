@@ -127,6 +127,17 @@ describe('aiInsightsStore', () => {
 
       expect(useAIInsightsStore.getState().sleepAnalysis).toEqual(mockAnalysis);
     });
+
+    it('sets error on failure', async () => {
+      mockAnalyzeSleepPatterns.mockRejectedValue(new Error('Sleep error'));
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchSleepAnalysis();
+      });
+
+      expect(useAIInsightsStore.getState().error).toBe('Sleep error');
+      expect(useAIInsightsStore.getState().isLoadingSleep).toBe(false);
+    });
   });
 
   describe('fetchExerciseRecommendation', () => {
@@ -146,6 +157,17 @@ describe('aiInsightsStore', () => {
 
       expect(useAIInsightsStore.getState().exerciseRecommendation).toEqual(mockRec);
     });
+
+    it('sets error on failure', async () => {
+      mockGetExerciseRecommendation.mockRejectedValue(new Error('Exercise error'));
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchExerciseRecommendation();
+      });
+
+      expect(useAIInsightsStore.getState().error).toBe('Exercise error');
+      expect(useAIInsightsStore.getState().isLoadingExercise).toBe(false);
+    });
   });
 
   describe('fetchMoodAnalysis', () => {
@@ -162,6 +184,17 @@ describe('aiInsightsStore', () => {
       });
 
       expect(useAIInsightsStore.getState().moodAnalysis).toEqual(mockMood);
+    });
+
+    it('sets error on failure', async () => {
+      mockAnalyzeJournalMood.mockRejectedValue(new Error('Mood error'));
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchMoodAnalysis();
+      });
+
+      expect(useAIInsightsStore.getState().error).toBe('Mood error');
+      expect(useAIInsightsStore.getState().isLoadingMood).toBe(false);
     });
   });
 

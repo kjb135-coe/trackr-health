@@ -570,6 +570,10 @@ Do whatever you think is right.
 - `coverage/` directory not in .gitignore. Hardcoded App Store and support email URLs in settings.tsx. Generic error message in nutrition/camera.tsx.
 - **Status:** Done — added `coverage/` to .gitignore, extracted `APP_LINKS` constant to constants.ts, replaced hardcoded URLs in settings.tsx, replaced generic error with `getErrorMessage()` in camera save handler.
 
+### ~~130. Add aiInsightsStore error path coverage~~ ✅
+- `aiInsightsStore.ts` at 91.66%. Lines 114, 127, 140 are uncovered — error paths for fetchSleepAnalysis, fetchExerciseRecommendation, and fetchMoodAnalysis.
+- **Status:** Done — added 3 error tests. 15 total tests, 505 total tests passing.
+
 ---
 
 ## Completed in This Audit
@@ -711,3 +715,4 @@ Do whatever you think is right.
 - [x] Improved habitRepository coverage from 55% to 90%+ — 7 new tests (update fields, completions, streaks), 21 total — 497 total tests (TODO #127)
 - [x] Improved all 4 repository update field coverage — exercise, sleep, journal, nutrition repos + multi-food grouping test — 502 total tests (TODO #128)
 - [x] Added coverage/ to .gitignore, extracted APP_LINKS constant, fixed generic error in camera save (TODO #129)
+- [x] Added aiInsightsStore error tests for sleep/exercise/mood — 505 total tests (TODO #130)
