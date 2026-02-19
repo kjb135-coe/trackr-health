@@ -77,18 +77,14 @@ Yes
 - Some files import `colors` directly from `@/src/theme` (static light-only), while others properly use `useTheme()`.
 - **Status:** All components now use `useTheme()` hook. No direct `colors` imports remain.
 
-### 10. Export service error handling
-- `app/settings.tsx` lines 252, 271 use `error: any` - should use `unknown` + `getErrorMessage()`.
-- Same pattern in `app/nutrition/camera.tsx:78` and `app/journal/scan.tsx:83`.
-- **Status:** Fixed in this cleanup (Steps 3-4 of audit).
+### ~~10. Export service error handling~~ ✅
+- **Status:** Fixed — uses `unknown` + `getErrorMessage()`.
 
-### 11. Console statements in production code
-- `app/(tabs)/index.tsx` lines 107, 129 have `console.log` / `console.error`.
-- **Status:** Fixed in this cleanup.
+### ~~11. Console statements in production code~~ ✅
+- **Status:** Fixed — no console statements in production code.
 
-### 12. Hardcoded version string
-- `app/settings.tsx` line 535 shows `v1.5.0` but `package.json` says `1.0.0`.
-- **Status:** Fixed in this cleanup to read from `Constants.expoConfig?.version`.
+### ~~12. Hardcoded version string~~ ✅
+- **Status:** Fixed — reads from `Constants.expoConfig?.version`.
 
 ### 93. ~~Improve JSON parsing in foodRecognition.ts~~ ✅
 - `parseJsonFromResponse()` only used regex extraction. If Claude returned pure JSON, the regex still ran unnecessarily.
@@ -217,9 +213,8 @@ Yes
 - ~~Only 4 of 8 stores have tests. `journalStore` and `goalsStore` are untested.~~
 - **Status:** Done — journalStore (17 tests): CRUD, search, scanning, tags, error handling. goalsStore (10 tests): AsyncStorage load/save, defaults, partial updates, error resilience. 158 total tests passing.
 
-### 64. Extract reusable ErrorBanner component ✅
-- All 5 tab screens had duplicate inline error banner implementations (TouchableOpacity + X icon + identical styles).
-- **Status:** Done — created `ErrorBanner` component in `src/components/ui/`. Updated all 5 screens to use it. Removed ~50 lines of duplicate styles and unused `X` imports.
+### ~~64. Extract reusable ErrorBanner component~~ ✅
+- **Status:** Done — created `ErrorBanner` component in `src/components/ui/`.
 
 ### 65. ~~Clean up unused imports after ErrorBanner and style extraction~~ ✅
 - ~~After extracting ErrorBanner and removing duplicate styles, some screens may have unused imports (`borderRadius` from theme, etc.).~~
@@ -568,6 +563,14 @@ Yes
 - 4 repositories use bare `JSON.parse()` on stored data without try-catch. If a row has corrupted JSON (tags, factors, aiAnalysis), the entire query crashes.
 - **Status:** Done — added `safeJsonParse<T>()` helper to journalRepository, sleepRepository, and nutritionRepository. Returns `undefined` on parse failure instead of crashing.
 
+### ~~143. Improve NutritionLogModal test coverage (51% → 80%+)~~ ✅
+- `NutritionLogModal.tsx` at 51.16% — lowest coverage in the codebase. Missing tests for manual entry flow, edit mode, camera launch, save/error paths.
+- **Effort:** ~45min
+
+### 144. Improve JournalEntryModal test coverage (51% → 80%+)
+- `JournalEntryModal.tsx` at 51.94% — second lowest coverage. Missing tests for edit mode, scan mode, OCR flow, tag management, save/error paths.
+- **Effort:** ~45min
+
 ### ~~142. Wire fetchNutritionAdvice to nutrition screen~~ ✅
 - `fetchNutritionAdvice()` exists in aiInsightsStore but is never called from UI.
 - Follow the same pattern as journal/sleep AI analysis sections.
@@ -766,3 +769,4 @@ Yes
 - [x] Added habit editing — tap habit name opens edit modal with pre-filled name/color (TODO #140)
 - [x] Wired fetchMoodAnalysis to journal screen — AI mood analysis card with trend, themes, suggestions (TODO #141)
 - [x] Wired fetchNutritionAdvice to nutrition screen — AI advice card with suggestions and refresh (TODO #142)
+- [x] Improved NutritionLogModal coverage from 51% to ~80% — 7 new tests (camera/gallery permissions, AI analysis, detected foods save, error paths, edit mode save) — 525 total tests (TODO #143)

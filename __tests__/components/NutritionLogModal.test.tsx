@@ -20,15 +20,19 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true })),
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const ImagePicker = require('expo-image-picker');
+
 const mockCreateMeal = jest.fn();
 const mockUpdateMeal = jest.fn();
+const mockAnalyzeImage = jest.fn();
 jest.mock('@/src/store', () => ({
   useNutritionStore: () => ({
     isLoading: false,
     isAnalyzing: false,
     createMeal: mockCreateMeal,
     updateMeal: mockUpdateMeal,
-    analyzeImage: jest.fn(),
+    analyzeImage: mockAnalyzeImage,
   }),
 }));
 
@@ -174,5 +178,193 @@ describe('NutritionLogModal', () => {
     expect(await findByText('Lunch')).toBeTruthy();
     expect(await findByText('Dinner')).toBeTruthy();
     expect(await findByText('Snack')).toBeTruthy();
+  });
+
+  it('shows alert when camera permission is denied', async () => {
+    ImagePicker.requestCameraPermissionsAsync.mockResolvedValueOnce({ granted: false });
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={true} />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Permission needed',
+        'Please grant camera permission to take photos of your food.',
+      );
+    });
+  });
+
+  it('shows alert when library permission is denied', async () => {
+    ImagePicker.requestMediaLibraryPermissionsAsync.mockResolvedValueOnce({ granted: false });
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={true} />,
+    );
+
+    fireEvent.press(await findByText('Gallery'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Permission needed',
+        'Please grant photo library permission.',
+      );
+    });
+  });
+
+  it('analyzes photo and displays detected foods', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://photo.jpg' }],
+    });
+    mockAnalyzeImage.mockResolvedValueOnce({
+      detectedFoods: [
+        {
+          name: 'Pizza',
+          calorieEstimate: 300,
+          confidence: 0.9,
+          portionEstimate: '1 slice',
+          macroEstimates: { protein: 12, carbs: 36, fat: 10 },
+        },
+      ],
+    });
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={true} />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(mockAnalyzeImage).toHaveBeenCalledWith('file://photo.jpg');
+    });
+    expect(await findByText('Pizza')).toBeTruthy();
+    expect(await findByText('300 cal')).toBeTruthy();
+  });
+
+  it('saves detected foods from AI analysis', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://photo.jpg' }],
+    });
+    mockAnalyzeImage.mockResolvedValueOnce({
+      detectedFoods: [
+        {
+          name: 'Salad',
+          calorieEstimate: 150,
+          confidence: 0.85,
+          portionEstimate: '1 bowl',
+          macroEstimates: { protein: 5, carbs: 20, fat: 7 },
+        },
+      ],
+    });
+    mockCreateMeal.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={onClose} apiKeyExists={true} date="2026-02-18" />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+    await waitFor(() => expect(mockAnalyzeImage).toHaveBeenCalled());
+
+    fireEvent.press(await findByText('Save Meal'));
+
+    await waitFor(() => {
+      expect(mockCreateMeal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          date: '2026-02-18',
+          totalCalories: 150,
+          photoUri: 'file://photo.jpg',
+        }),
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'Salad',
+            calories: 150,
+            isAIGenerated: true,
+          }),
+        ]),
+      );
+    });
+  });
+
+  it('shows error alert when save fails', async () => {
+    mockCreateMeal.mockRejectedValueOnce(new Error('DB error'));
+
+    const { findByText, findByPlaceholderText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={false} />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Food name'), 'Rice');
+    fireEvent.changeText(await findByPlaceholderText('Calories'), '200');
+    fireEvent.press(await findByText('Save Meal'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
+    });
+  });
+
+  it('calls updateMeal when saving in edit mode', async () => {
+    mockUpdateMeal.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editMeal = {
+      id: 'meal-1',
+      date: '2026-02-18',
+      mealType: 'breakfast' as const,
+      name: 'Oatmeal',
+      totalCalories: 200,
+      foods: [],
+      createdAt: '2026-02-18T08:00:00.000Z',
+      updatedAt: '2026-02-18T08:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal
+        visible={true}
+        onClose={onClose}
+        apiKeyExists={false}
+        editMeal={editMeal}
+      />,
+    );
+
+    fireEvent.press(await findByText('Update Meal'));
+
+    await waitFor(() => {
+      expect(mockUpdateMeal).toHaveBeenCalledWith(
+        'meal-1',
+        expect.objectContaining({
+          mealType: 'breakfast',
+          totalCalories: 200,
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(onClose).toHaveBeenCalled();
+    });
+  });
+
+  it('shows analysis failed alert when AI analysis throws', async () => {
+    ImagePicker.launchCameraAsync.mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://photo.jpg' }],
+    });
+    mockAnalyzeImage.mockRejectedValueOnce(new Error('AI error'));
+
+    const { findByText } = renderWithTheme(
+      <NutritionLogModal visible={true} onClose={() => {}} apiKeyExists={true} />,
+    );
+
+    fireEvent.press(await findByText('Take Photo'));
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Analysis failed',
+        'Could not analyze the food image. You can add items manually.',
+      );
+    });
   });
 });
