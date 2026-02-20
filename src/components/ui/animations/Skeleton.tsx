@@ -43,7 +43,7 @@ export function Skeleton({
     };
   });
 
-  const baseColor = isDark ? colors.surfaceSecondary : '#E5E7EB';
+  const baseColor = colors.surfaceSecondary;
   const shimmerColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)';
 
   return (

@@ -240,7 +240,7 @@ export default function LogExerciseScreen() {
                   style={[
                     styles.intensityButtonText,
                     { color: colors.textSecondary },
-                    intensity === level && { color: '#FFFFFF' },
+                    intensity === level && { color: colors.white },
                   ]}
                 >
                   {level}

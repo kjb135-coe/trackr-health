@@ -258,6 +258,10 @@ Do whatever you think is right.
 - ~~`src/services/insights/healthInsights.ts` has `getWeeklyStats()`, `getTrendData()`, and `getDailyStreak()` with no test coverage.~~
 - **Status:** Done — 12 tests: getWeeklyStats (7) covering empty data, habits, sleep averages, exercise, calories, days tracked, parallel fetching; getDailyStreak (5) covering empty, consecutive, gaps, multi-source, single-fetch verification. 132 total tests.
 
+### 50. ~~Fix remaining hardcoded hex colors in non-camera screens~~ ✅
+- ~~Skeleton.tsx used hardcoded `#E5E7EB` for light mode base color. exercise/log.tsx used `#FFFFFF` for active intensity button text.~~
+- **Status:** Done — Skeleton now uses `colors.surfaceSecondary` for both themes. Exercise log uses `colors.white`. Camera/scanner screens (#000000/#FFFFFF) left as-is (intentional dark overlay UI). Shadow colors (#000000) in StyleSheet.create() left as-is (shadows are always black).
+
 ---
 
 ## Completed in This Audit
@@ -324,3 +328,5 @@ Do whatever you think is right.
 - [x] Consolidated 3 switch functions into categoryMeta lookup + priorityColors map in AICoaching (TODO #48)
 - [x] Replaced hardcoded #FFFFFF with colors.white in AICoaching setupButtonText
 - [x] Added healthInsights service tests: getWeeklyStats (7), getDailyStreak (5) — 132 total tests (TODO #49)
+- [x] Replaced hardcoded #E5E7EB with colors.surfaceSecondary in Skeleton component (TODO #50)
+- [x] Replaced hardcoded #FFFFFF with colors.white in exercise/log.tsx intensity button (TODO #50)
