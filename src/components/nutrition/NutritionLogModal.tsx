@@ -311,7 +311,7 @@ export function NutritionLogModal({ visible, onClose, apiKeyExists }: NutritionL
             title="Save Meal"
             onPress={handleSaveMeal}
             loading={isLoading}
-            disabled={detectedFoods.length === 0 && (!manualName || !manualCalories)}
+            disabled={isLoading || (detectedFoods.length === 0 && (!manualName || !manualCalories))}
             fullWidth
           />
         </Animated.View>

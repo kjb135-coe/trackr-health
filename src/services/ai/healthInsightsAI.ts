@@ -157,7 +157,7 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 
@@ -223,7 +223,7 @@ Suggest habits that fill gaps in their routine. Be specific and practical.`;
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 
@@ -279,7 +279,7 @@ Be specific and reference their actual data.`;
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 
@@ -327,7 +327,7 @@ Consider their recent activity level and suggest variety. If they're tired (low 
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 
@@ -382,7 +382,7 @@ Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 
@@ -443,7 +443,7 @@ Be practical and encouraging.`;
   );
 
   const content = response.content[0];
-  if (content.type !== 'text') {
+  if (!content || content.type !== 'text') {
     throw new Error('Unexpected response type');
   }
 

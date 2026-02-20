@@ -234,6 +234,32 @@ Do whatever you think is right.
 - ~~`src/services/auth/mockAuthService.ts` line 46 uses `.then()` instead of async/await.~~
 - **Status:** Done — replaced `.then()` callback with async/await IIFE pattern in `onAuthStateChange()`.
 
+### 44. ~~Fix getDailyStreak N-query performance bug~~ ✅
+- ~~`src/services/insights/healthInsights.ts` `getDailyStreak()` called `getAll()` on 3 repositories inside a loop — fetching all records every iteration.~~
+- **Status:** Done — fetch all data once with `Promise.all()`, build a `Set` of active dates, then iterate in memory. Also parallelized `getWeeklyStats()` repository calls.
+
+### 45. ~~Use getErrorMessage() in aiInsightsStore~~ ✅
+- ~~6 catch blocks in `aiInsightsStore.ts` used inline `error instanceof Error ? error.message : '...'` instead of centralized `getErrorMessage()`.~~
+- **Status:** Done — replaced all 6 with `getErrorMessage(error)` import from `@/src/utils/date`.
+
+### 46. ~~Add array bounds checks in healthInsightsAI response parsing~~ ✅
+- ~~6 places in `healthInsightsAI.ts` accessed `response.content[0]` without checking if the array was empty.~~
+- **Status:** Done — added `!content ||` guard to all 6 response content checks.
+
+### 47. ~~Prevent double-submit on NutritionLogModal save button~~ ✅
+- ~~Save Meal button showed loading spinner but wasn't disabled during save, allowing double-submit.~~
+- **Status:** Done — added `isLoading` to disabled condition.
+
+### 48. Consolidate AICoaching category metadata switches
+- `src/components/dashboard/AICoaching.tsx` has 3 identical switch statements (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) that map categories to colors/icons.
+- Could consolidate into a single metadata lookup object.
+- **Effort:** ~30min
+
+### 49. Add healthInsights service tests
+- `src/services/insights/healthInsights.ts` has `getWeeklyStats()`, `getTrendData()`, and `getDailyStreak()` with no test coverage.
+- Recent performance refactor of `getDailyStreak()` should be validated with tests.
+- **Effort:** ~1h
+
 ---
 
 ## Completed in This Audit
@@ -292,3 +318,8 @@ Do whatever you think is right.
 - [x] Fixed ErrorBoundary: dynamic theme colors via Appearance API, wrapped console.error in __DEV__ (TODO #41)
 - [x] Added explicit radix (10) to all 7 parseInt() calls across 3 modal components (TODO #42)
 - [x] Replaced .then() with async/await in mockAuthService.onAuthStateChange() (TODO #43)
+- [x] Fixed getDailyStreak N-query perf bug: fetch once + Set lookup instead of 3 getAll() per loop iteration (TODO #44)
+- [x] Parallelized getWeeklyStats() repository calls with Promise.all() (TODO #44)
+- [x] Replaced 6 inline error ternaries in aiInsightsStore with getErrorMessage() (TODO #45)
+- [x] Added array bounds guard to all 6 response.content[0] accesses in healthInsightsAI (TODO #46)
+- [x] Prevented double-submit on NutritionLogModal save button (TODO #47)
