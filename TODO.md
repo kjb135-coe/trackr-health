@@ -274,6 +274,10 @@ Do whatever you think is right.
 - ~~goalsStore (AsyncStorage-backed) had no test coverage.~~
 - **Status:** Done — 8 tests: initial defaults, loadGoals from storage/null/error, updateGoals with persist/merge/storage error. All 8 Zustand stores now tested. 173 total tests.
 
+### 54. ~~Add handwritingOCR service tests~~ ✅
+- ~~`handwritingOCR.ts` had no tests. Key AI feature for journal scanning.~~
+- **Status:** Done — 7 tests: transcription with high/medium/low confidence, missing confidence marker, no text content error, PNG/JPEG media type detection. Also added `forceExit: true` to jest.config.js to handle timer leaks from Promise.race pattern. 180 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -345,3 +349,5 @@ Do whatever you think is right.
 - [x] Added journalStore tests (19 tests): CRUD, search, scanImage, getAllTags, error handling — 151 total tests (TODO #51)
 - [x] Added aiInsightsStore tests (14 tests): all 6 fetch actions, caching, clearAll — 165 total tests (TODO #52)
 - [x] Added goalsStore tests (8 tests): load/save from AsyncStorage, defaults, error handling — 173 total tests (TODO #53)
+- [x] Added handwritingOCR tests (7 tests): confidence levels, media type detection, error handling — 180 total tests (TODO #54)
+- [x] Added forceExit to jest.config.js for clean exit with Promise.race timer patterns
