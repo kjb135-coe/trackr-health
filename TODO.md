@@ -266,6 +266,10 @@ Do whatever you think is right.
 - ~~journalStore was the only Zustand store without test coverage.~~
 - **Status:** Done — 19 tests covering: initial state (3), loadEntries (2), loadEntriesForRange (2), loadEntriesForDate (1), createEntry with sorting (2), updateEntry (2), deleteEntry (2), search (1), scanImage with OCR mock (2), getAllTags (1), clearError (1). 151 total tests.
 
+### 52. ~~Add aiInsightsStore tests~~ ✅
+- ~~aiInsightsStore had no test coverage. It's the most complex store with caching, 6 fetch actions, and error handling.~~
+- **Status:** Done — 14 tests: initial state, fetchDailyCoaching with cache hit/miss/expired/error, fetchHabitSuggestions, fetchSleepAnalysis, fetchExerciseRecommendation, fetchMoodAnalysis, fetchNutritionAdvice, clearAll. 165 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -335,3 +339,4 @@ Do whatever you think is right.
 - [x] Replaced hardcoded #E5E7EB with colors.surfaceSecondary in Skeleton component (TODO #50)
 - [x] Replaced hardcoded #FFFFFF with colors.white in exercise/log.tsx intensity button (TODO #50)
 - [x] Added journalStore tests (19 tests): CRUD, search, scanImage, getAllTags, error handling — 151 total tests (TODO #51)
+- [x] Added aiInsightsStore tests (14 tests): all 6 fetch actions, caching, clearAll — 165 total tests (TODO #52)
