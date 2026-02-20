@@ -262,6 +262,10 @@ Do whatever you think is right.
 - ~~Skeleton.tsx used hardcoded `#E5E7EB` for light mode base color. exercise/log.tsx used `#FFFFFF` for active intensity button text.~~
 - **Status:** Done — Skeleton now uses `colors.surfaceSecondary` for both themes. Exercise log uses `colors.white`. Camera/scanner screens (#000000/#FFFFFF) left as-is (intentional dark overlay UI). Shadow colors (#000000) in StyleSheet.create() left as-is (shadows are always black).
 
+### 51. ~~Add journalStore tests~~ ✅
+- ~~journalStore was the only Zustand store without test coverage.~~
+- **Status:** Done — 19 tests covering: initial state (3), loadEntries (2), loadEntriesForRange (2), loadEntriesForDate (1), createEntry with sorting (2), updateEntry (2), deleteEntry (2), search (1), scanImage with OCR mock (2), getAllTags (1), clearError (1). 151 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -330,3 +334,4 @@ Do whatever you think is right.
 - [x] Added healthInsights service tests: getWeeklyStats (7), getDailyStreak (5) — 132 total tests (TODO #49)
 - [x] Replaced hardcoded #E5E7EB with colors.surfaceSecondary in Skeleton component (TODO #50)
 - [x] Replaced hardcoded #FFFFFF with colors.white in exercise/log.tsx intensity button (TODO #50)
+- [x] Added journalStore tests (19 tests): CRUD, search, scanImage, getAllTags, error handling — 151 total tests (TODO #51)
