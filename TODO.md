@@ -254,10 +254,9 @@ Do whatever you think is right.
 - ~~`src/components/dashboard/AICoaching.tsx` has 3 identical switch statements (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) that map categories to colors/icons.~~
 - **Status:** Done — replaced 3 switch functions (44 lines) with `categoryMeta` lookup object + `getCategoryMeta()` (12 lines). Also replaced hardcoded `#FFFFFF` with `colors.white` in setup button text.
 
-### 49. Add healthInsights service tests
-- `src/services/insights/healthInsights.ts` has `getWeeklyStats()`, `getTrendData()`, and `getDailyStreak()` with no test coverage.
-- Recent performance refactor of `getDailyStreak()` should be validated with tests.
-- **Effort:** ~1h
+### 49. ~~Add healthInsights service tests~~ ✅
+- ~~`src/services/insights/healthInsights.ts` has `getWeeklyStats()`, `getTrendData()`, and `getDailyStreak()` with no test coverage.~~
+- **Status:** Done — 12 tests: getWeeklyStats (7) covering empty data, habits, sleep averages, exercise, calories, days tracked, parallel fetching; getDailyStreak (5) covering empty, consecutive, gaps, multi-source, single-fetch verification. 132 total tests.
 
 ---
 
@@ -324,3 +323,4 @@ Do whatever you think is right.
 - [x] Prevented double-submit on NutritionLogModal save button (TODO #47)
 - [x] Consolidated 3 switch functions into categoryMeta lookup + priorityColors map in AICoaching (TODO #48)
 - [x] Replaced hardcoded #FFFFFF with colors.white in AICoaching setupButtonText
+- [x] Added healthInsights service tests: getWeeklyStats (7), getDailyStreak (5) — 132 total tests (TODO #49)
