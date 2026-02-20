@@ -270,6 +270,10 @@ Do whatever you think is right.
 - ~~aiInsightsStore had no test coverage. It's the most complex store with caching, 6 fetch actions, and error handling.~~
 - **Status:** Done — 14 tests: initial state, fetchDailyCoaching with cache hit/miss/expired/error, fetchHabitSuggestions, fetchSleepAnalysis, fetchExerciseRecommendation, fetchMoodAnalysis, fetchNutritionAdvice, clearAll. 165 total tests.
 
+### 53. ~~Add goalsStore tests~~ ✅
+- ~~goalsStore (AsyncStorage-backed) had no test coverage.~~
+- **Status:** Done — 8 tests: initial defaults, loadGoals from storage/null/error, updateGoals with persist/merge/storage error. All 8 Zustand stores now tested. 173 total tests.
+
 ---
 
 ## Completed in This Audit
@@ -340,3 +344,4 @@ Do whatever you think is right.
 - [x] Replaced hardcoded #FFFFFF with colors.white in exercise/log.tsx intensity button (TODO #50)
 - [x] Added journalStore tests (19 tests): CRUD, search, scanImage, getAllTags, error handling — 151 total tests (TODO #51)
 - [x] Added aiInsightsStore tests (14 tests): all 6 fetch actions, caching, clearAll — 165 total tests (TODO #52)
+- [x] Added goalsStore tests (8 tests): load/save from AsyncStorage, defaults, error handling — 173 total tests (TODO #53)
