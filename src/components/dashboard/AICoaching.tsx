@@ -49,50 +49,23 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
     await fetchDailyCoaching();
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'habits':
-        return <TrendingUp color={colors.habits} size={16} />;
-      case 'sleep':
-        return <Moon color={colors.sleep} size={16} />;
-      case 'exercise':
-        return <Dumbbell color={colors.exercise} size={16} />;
-      case 'nutrition':
-        return <Apple color={colors.nutrition} size={16} />;
-      case 'journal':
-        return <BookOpen color={colors.journal} size={16} />;
-      default:
-        return <Sparkles color={colors.primary} size={16} />;
-    }
+  const categoryMeta: Record<string, { Icon: typeof Sparkles; color: string }> = {
+    habits: { Icon: TrendingUp, color: colors.habits },
+    sleep: { Icon: Moon, color: colors.sleep },
+    exercise: { Icon: Dumbbell, color: colors.exercise },
+    nutrition: { Icon: Apple, color: colors.nutrition },
+    journal: { Icon: BookOpen, color: colors.journal },
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'habits':
-        return colors.habits;
-      case 'sleep':
-        return colors.sleep;
-      case 'exercise':
-        return colors.exercise;
-      case 'nutrition':
-        return colors.nutrition;
-      case 'journal':
-        return colors.journal;
-      default:
-        return colors.primary;
-    }
+  const getCategoryMeta = (category: string) =>
+    categoryMeta[category] ?? { Icon: Sparkles, color: colors.primary };
+
+  const priorityColors: Record<string, string> = {
+    high: colors.error,
+    medium: colors.warning,
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return colors.error;
-      case 'medium':
-        return colors.warning;
-      default:
-        return colors.textTertiary;
-    }
-  };
+  const getPriorityColor = (priority: string) => priorityColors[priority] ?? colors.textTertiary;
 
   if (!hasKey) {
     return (
@@ -117,7 +90,9 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
                   onSetupApiKey();
                 }}
               >
-                <Text style={styles.setupButtonText}>Set Up API Key</Text>
+                <Text style={[styles.setupButtonText, { color: colors.white }]}>
+                  Set Up API Key
+                </Text>
                 <ChevronRight color={colors.white} size={16} />
               </TouchableOpacity>
             )}
@@ -196,31 +171,31 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
         </Text>
 
         {/* Insights */}
-        {dailyCoaching.insights.slice(0, 3).map((insight, index) => (
-          <View
-            key={index}
-            style={[styles.insightRow, { borderLeftColor: getCategoryColor(insight.category) }]}
-          >
-            <View style={styles.insightHeader}>
-              {getCategoryIcon(insight.category)}
-              <Text style={[styles.insightTitle, { color: colors.textPrimary }]}>
-                {insight.title}
+        {dailyCoaching.insights.slice(0, 3).map((insight, index) => {
+          const { Icon, color: catColor } = getCategoryMeta(insight.category);
+          return (
+            <View key={index} style={[styles.insightRow, { borderLeftColor: catColor }]}>
+              <View style={styles.insightHeader}>
+                <Icon color={catColor} size={16} />
+                <Text style={[styles.insightTitle, { color: colors.textPrimary }]}>
+                  {insight.title}
+                </Text>
+                <View
+                  style={[
+                    styles.priorityDot,
+                    { backgroundColor: getPriorityColor(insight.priority) },
+                  ]}
+                />
+              </View>
+              <Text style={[styles.insightText, { color: colors.textSecondary }]}>
+                {insight.insight}
               </Text>
-              <View
-                style={[
-                  styles.priorityDot,
-                  { backgroundColor: getPriorityColor(insight.priority) },
-                ]}
-              />
+              <Text style={[styles.suggestionText, { color: colors.primary }]}>
+                💡 {insight.suggestion}
+              </Text>
             </View>
-            <Text style={[styles.insightText, { color: colors.textSecondary }]}>
-              {insight.insight}
-            </Text>
-            <Text style={[styles.suggestionText, { color: colors.primary }]}>
-              💡 {insight.suggestion}
-            </Text>
-          </View>
-        ))}
+          );
+        })}
 
         {/* Daily Tip */}
         <View style={[styles.tipContainer, { backgroundColor: colors.primary + '10' }]}>
@@ -360,7 +335,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   },
   setupButtonText: {
-    color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
     marginRight: 4,

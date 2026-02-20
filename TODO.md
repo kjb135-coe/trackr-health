@@ -250,10 +250,9 @@ Do whatever you think is right.
 - ~~Save Meal button showed loading spinner but wasn't disabled during save, allowing double-submit.~~
 - **Status:** Done — added `isLoading` to disabled condition.
 
-### 48. Consolidate AICoaching category metadata switches
-- `src/components/dashboard/AICoaching.tsx` has 3 identical switch statements (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) that map categories to colors/icons.
-- Could consolidate into a single metadata lookup object.
-- **Effort:** ~30min
+### 48. ~~Consolidate AICoaching category metadata switches~~ ✅
+- ~~`src/components/dashboard/AICoaching.tsx` has 3 identical switch statements (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) that map categories to colors/icons.~~
+- **Status:** Done — replaced 3 switch functions (44 lines) with `categoryMeta` lookup object + `getCategoryMeta()` (12 lines). Also replaced hardcoded `#FFFFFF` with `colors.white` in setup button text.
 
 ### 49. Add healthInsights service tests
 - `src/services/insights/healthInsights.ts` has `getWeeklyStats()`, `getTrendData()`, and `getDailyStreak()` with no test coverage.
@@ -323,3 +322,5 @@ Do whatever you think is right.
 - [x] Replaced 6 inline error ternaries in aiInsightsStore with getErrorMessage() (TODO #45)
 - [x] Added array bounds guard to all 6 response.content[0] accesses in healthInsightsAI (TODO #46)
 - [x] Prevented double-submit on NutritionLogModal save button (TODO #47)
+- [x] Consolidated 3 switch functions into categoryMeta lookup + priorityColors map in AICoaching (TODO #48)
+- [x] Replaced hardcoded #FFFFFF with colors.white in AICoaching setupButtonText
