@@ -118,6 +118,10 @@ export default function LogExerciseScreen() {
       Alert.alert('Error', 'Please select an exercise type');
       return;
     }
+    if (duration <= 0) {
+      Alert.alert('Error', 'Duration must be at least 1 minute');
+      return;
+    }
 
     setSaving(true);
     try {

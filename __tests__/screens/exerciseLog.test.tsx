@@ -192,4 +192,21 @@ describe('LogExerciseScreen', () => {
     fireEvent.changeText(input, 'Great run today');
     expect(input.props.value).toBe('Great run today');
   });
+
+  it('shows alert when duration is zero', () => {
+    jest.spyOn(Alert, 'alert');
+    const { getByText, getByTestId } = render(<LogExerciseScreen />);
+
+    // Select a type first so it passes the type check
+    fireEvent.press(getByText('Running'));
+
+    // Set duration to 0 via slider onValueChange
+    const slider = getByTestId('slider');
+    fireEvent(slider, 'onValueChange', 0);
+
+    fireEvent.press(getByText('Save Workout'));
+
+    expect(Alert.alert).toHaveBeenCalledWith('Error', 'Duration must be at least 1 minute');
+    expect(mockCreateSession).not.toHaveBeenCalled();
+  });
 });
