@@ -16,8 +16,15 @@ export function confirmDelete(
       text: buttonText,
       style: 'destructive',
       onPress: async () => {
-        await onConfirm();
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        try {
+          await onConfirm();
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch (error) {
+          Alert.alert(
+            'Error',
+            error instanceof Error ? error.message : 'An unexpected error occurred',
+          );
+        }
       },
     },
   ]);
