@@ -1,17 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 881 tests passing, 0 TS errors, 0 ESLint warnings.
-
----
-
-## P2 - Nice to Have
-
-### 269. Scan title uses non-localizable Date.toLocaleDateString()
-- `app/journal/scan.tsx` line 111: `Scanned Entry - ${new Date().toLocaleDateString()}` uses runtime locale formatting. The title string is not extracted. Minor but inconsistent with how other entries generate titles.
-
-### 270. journal/scan.tsx handlePickImage doesn't use useImagePicker hook
-- Scan screen still has its own `handlePickImage` with manual `ImagePicker.launchImageLibraryAsync` instead of using the shared `useImagePicker` hook extracted in iteration 12. Refactor for consistency.
+> Last updated: 2026-03-04. 882 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
