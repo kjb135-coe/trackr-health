@@ -154,7 +154,7 @@ export default function LogExerciseScreen() {
       </View>
 
       {/* Exercise Type */}
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Exercise Type</Text>
         <View style={styles.typeGrid}>
           {EXERCISE_TYPES.map((type) => (
@@ -174,7 +174,7 @@ export default function LogExerciseScreen() {
       </Animated.View>
 
       {/* Duration */}
-      <Animated.View entering={FadeInDown.duration(400).delay(150)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(150)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Duration</Text>
         <AnimatedCard style={styles.durationCard} delay={50}>
           <View style={styles.durationHeader}>
@@ -202,7 +202,7 @@ export default function LogExerciseScreen() {
       </Animated.View>
 
       {/* Intensity */}
-      <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(200)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Intensity</Text>
         <AnimatedCard style={styles.intensityCard} delay={100}>
           <View style={styles.intensityHeader}>
@@ -242,7 +242,7 @@ export default function LogExerciseScreen() {
 
       {/* Estimated Calories */}
       {selectedType && (
-        <Animated.View entering={FadeInDown.duration(400).delay(250)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(250)}>
           <AnimatedCard
             style={[styles.caloriesCard, { backgroundColor: colors.error + '10' }]}
             delay={150}
@@ -259,7 +259,7 @@ export default function LogExerciseScreen() {
       )}
 
       {/* Notes */}
-      <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(300)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>
         <TextInput
           style={[
@@ -276,7 +276,7 @@ export default function LogExerciseScreen() {
       </Animated.View>
 
       {/* Save Button */}
-      <Animated.View entering={FadeInDown.duration(400).delay(350)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(350)}>
         <AnimatedButton
           title="Save Workout"
           onPress={handleSave}

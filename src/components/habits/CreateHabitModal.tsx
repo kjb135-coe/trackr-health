@@ -18,6 +18,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useHabitStore } from '@/src/store';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
 import { Habit } from '@/src/types';
@@ -125,7 +126,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
         style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
       >
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {

@@ -122,11 +122,14 @@ function RootLayoutNav() {
       shouldNavigate = true;
     } else if (!user && !inAuthGroup && !inOnboarding) {
       // User is not signed in, redirect to login
-      // For now, let's allow unauthenticated access but show login option
-      // router.replace('/auth/login');
+      isNavigating.current = true;
+      router.replace('/auth/login');
+      shouldNavigate = true;
     } else if (user && !user.emailVerified && !inAuthGroup) {
       // User is signed in but email not verified
-      // router.replace('/auth/verify-email');
+      isNavigating.current = true;
+      router.replace('/auth/verify-email');
+      shouldNavigate = true;
     } else if (user && user.emailVerified && inAuthGroup) {
       // User is signed in and verified, redirect to app
       isNavigating.current = true;

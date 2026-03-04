@@ -13,7 +13,7 @@ import { Target, Moon, Dumbbell, UtensilsCrossed, BookOpen, Sparkles } from 'luc
 import * as Haptics from 'expo-haptics';
 import { spacing, typography, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
-import { useOnboardingStore } from '@/src/store';
+import { useAuthStore, useOnboardingStore } from '@/src/store';
 
 const { width } = Dimensions.get('window');
 
@@ -93,7 +93,12 @@ export default function OnboardingScreen() {
 
   const completeOnboarding = async () => {
     await setCompleted();
-    router.replace('/(tabs)');
+    const { user } = useAuthStore.getState();
+    if (user?.emailVerified) {
+      router.replace('/(tabs)');
+    } else {
+      router.replace('/auth/login');
+    }
   };
 
   const renderSlide = ({ item }: { item: (typeof slides)[0] }) => {

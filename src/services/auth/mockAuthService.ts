@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '@/src/utils/constants';
+import { STORAGE_KEYS, DEV_MODE } from '@/src/utils/constants';
 
 export interface AuthUser {
   uid: string;
@@ -41,9 +41,20 @@ export const authService = {
 
   onAuthStateChange(callback: (user: AuthUser | null) => void): () => void {
     authStateCallback = callback;
-    // Load stored user and notify
+    // Load stored user and notify — in dev mode, auto-create a dev user
     const initUser = async () => {
-      const user = await loadStoredUser();
+      let user = await loadStoredUser();
+      if (!user && DEV_MODE) {
+        user = {
+          uid: 'dev_user',
+          email: 'dev@trackr.local',
+          displayName: 'Developer',
+          photoURL: null,
+          emailVerified: true,
+        };
+        await saveUser(user);
+        return; // saveUser already calls the callback
+      }
       callback(user);
     };
     initUser();

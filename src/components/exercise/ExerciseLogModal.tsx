@@ -18,6 +18,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useExerciseStore } from '@/src/store';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { EXERCISE_TYPE_LABELS, INTENSITY_LABELS } from '@/src/utils/constants';
 import { ExerciseType, ExerciseIntensity, ExerciseSession } from '@/src/types';
@@ -141,7 +142,7 @@ export function ExerciseLogModal({
         style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
       >
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {

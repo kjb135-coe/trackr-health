@@ -17,6 +17,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { parseISO } from 'date-fns';
 import { getDateString, getDurationMinutes, getErrorMessage } from '@/src/utils/date';
 import { getQualityColor } from '@/src/utils/constants';
@@ -139,7 +140,7 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
         style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
       >
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {

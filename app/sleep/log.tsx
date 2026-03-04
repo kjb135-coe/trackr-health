@@ -143,7 +143,7 @@ export default function LogSleepScreen() {
         <View style={styles.placeholder} />
       </View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
         <AnimatedCard style={styles.durationCard} delay={0}>
           <Moon color={colors.sleep} size={32} />
           <Text style={[styles.durationText, { color: colors.sleep }]}>
@@ -153,7 +153,10 @@ export default function LogSleepScreen() {
         </AnimatedCard>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(150)} style={styles.timeSection}>
+      <Animated.View
+        entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(150)}
+        style={styles.timeSection}
+      >
         <View style={styles.timeBlock}>
           <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>Bedtime</Text>
           <DateTimePicker
@@ -178,7 +181,7 @@ export default function LogSleepScreen() {
         </View>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(200)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Sleep Quality</Text>
         <AnimatedCard style={styles.qualityCard} delay={100}>
           <View style={styles.qualityStars}>
@@ -208,7 +211,7 @@ export default function LogSleepScreen() {
         </AnimatedCard>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(250)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(250)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           Factors Affecting Sleep
         </Text>
@@ -225,7 +228,7 @@ export default function LogSleepScreen() {
         </View>
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(300)}>
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Notes</Text>
         <TextInput
           style={[
@@ -241,7 +244,7 @@ export default function LogSleepScreen() {
         />
       </Animated.View>
 
-      <Animated.View entering={FadeInDown.duration(400).delay(350)}>
+      <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(350)}>
         <AnimatedButton
           title="Save Sleep Entry"
           onPress={handleSave}

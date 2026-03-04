@@ -167,7 +167,7 @@ export default function NewJournalEntryScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Title */}
-        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(100)}>
           <TextInput
             style={[styles.titleInput, { color: colors.textPrimary }]}
             value={title}
@@ -178,7 +178,7 @@ export default function NewJournalEntryScreen() {
         </Animated.View>
 
         {/* Content */}
-        <Animated.View entering={FadeInDown.duration(400).delay(150)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(150)}>
           <TextInput
             style={[styles.contentInput, { color: colors.textPrimary }]}
             value={content}
@@ -192,7 +192,7 @@ export default function NewJournalEntryScreen() {
         </Animated.View>
 
         {/* Mood Selector */}
-        <Animated.View entering={FadeInDown.duration(400).delay(200)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(200)}>
           <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>
             How are you feeling?
           </Text>
@@ -233,7 +233,7 @@ export default function NewJournalEntryScreen() {
         </Animated.View>
 
         {/* Tags */}
-        <Animated.View entering={FadeInDown.duration(400).delay(250)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(250)}>
           <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Tags</Text>
           <View style={styles.tagsContainer}>
             {QUICK_TAGS.map((tag) => (
@@ -249,7 +249,7 @@ export default function NewJournalEntryScreen() {
         </Animated.View>
 
         {/* Save Button */}
-        <Animated.View entering={FadeInDown.duration(400).delay(300)}>
+        <Animated.View entering={FadeInDown.duration(ANIMATION_DURATION.screenEntrance).delay(300)}>
           <AnimatedButton
             title="Save Entry"
             onPress={handleSave}

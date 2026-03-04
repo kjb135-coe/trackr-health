@@ -15,6 +15,7 @@ import {
   authService as mockAuthService,
   useGoogleAuth as useMockGoogleAuth,
 } from './mockAuthService';
+import { DEV_MODE } from '@/src/utils/constants';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -105,8 +106,8 @@ const firebaseAuthService = {
   },
 };
 
-// Use real Firebase auth when configured, otherwise fall back to mock
-export const authService = isConfigured ? firebaseAuthService : mockAuthService;
+// Use mock auth in dev mode, real Firebase when configured, otherwise mock fallback
+export const authService = DEV_MODE || !isConfigured ? mockAuthService : firebaseAuthService;
 
 // Google Sign-In hook — real when configured, mock otherwise
 const useFirebaseGoogleAuth = () => {
@@ -118,4 +119,4 @@ const useFirebaseGoogleAuth = () => {
   return { request, response, promptAsync };
 };
 
-export const useGoogleAuth = isConfigured ? useFirebaseGoogleAuth : useMockGoogleAuth;
+export const useGoogleAuth = DEV_MODE || !isConfigured ? useMockGoogleAuth : useFirebaseGoogleAuth;
