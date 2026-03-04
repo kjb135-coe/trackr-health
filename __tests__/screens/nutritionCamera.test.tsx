@@ -57,8 +57,10 @@ jest.mock('expo-camera', () => {
 });
 
 const mockLaunchImageLibraryAsync = jest.fn();
+const mockRequestMediaLibraryPermissionsAsync = jest.fn().mockResolvedValue({ granted: true });
 jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: (...args: unknown[]) => mockLaunchImageLibraryAsync(...args),
+  requestMediaLibraryPermissionsAsync: () => mockRequestMediaLibraryPermissionsAsync(),
 }));
 
 const mockAnalyzeFoodImage = jest.fn();
@@ -312,6 +314,25 @@ describe('NutritionCameraScreen', () => {
       },
       { timeout: 5000 },
     );
+  });
+
+  it('shows alert when gallery permission is denied', async () => {
+    jest.spyOn(Alert, 'alert');
+    mockRequestMediaLibraryPermissionsAsync.mockResolvedValueOnce({ granted: false });
+
+    const { getByTestId } = render(<NutritionCameraScreen />);
+    fireEvent.press(getByTestId('image-icon'));
+
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Permission needed',
+          expect.stringContaining('photo library'),
+        );
+      },
+      { timeout: 5000 },
+    );
+    expect(mockLaunchImageLibraryAsync).not.toHaveBeenCalled();
   });
 
   it('does nothing when gallery picker is canceled', async () => {

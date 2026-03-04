@@ -1,3 +1,4 @@
+import { renderHook, waitFor } from '@testing-library/react-native';
 import {
   getApiKey,
   setApiKey,
@@ -5,6 +6,7 @@ import {
   hasApiKey,
   resetClient,
   getClaudeClient,
+  useApiKeyExists,
 } from '@/src/services/claude/client';
 
 const mockGetItemAsync = jest.fn();
@@ -15,6 +17,16 @@ jest.mock('expo-secure-store', () => ({
   getItemAsync: (...args: unknown[]) => mockGetItemAsync(...args),
   setItemAsync: (...args: unknown[]) => mockSetItemAsync(...args),
   deleteItemAsync: (...args: unknown[]) => mockDeleteItemAsync(...args),
+}));
+
+jest.mock('@react-navigation/native', () => ({
+  useFocusEffect: (callback: () => (() => void) | void) => {
+    const { useEffect } = require('react');
+    useEffect(() => {
+      const cleanup = callback();
+      return typeof cleanup === 'function' ? cleanup : undefined;
+    }, [callback]);
+  },
 }));
 
 jest.mock('@anthropic-ai/sdk', () => {
@@ -102,6 +114,37 @@ describe('claudeClient', () => {
       const result = await hasApiKey();
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('useApiKeyExists', () => {
+    it('returns true when API key exists in SecureStore', async () => {
+      mockGetItemAsync.mockResolvedValue('sk-test');
+      const { result } = renderHook(() => useApiKeyExists());
+      await waitFor(
+        () => {
+          expect(result.current).toBe(true);
+        },
+        { timeout: 5000 },
+      );
+    });
+
+    it('returns false when no API key', async () => {
+      mockGetItemAsync.mockResolvedValue(null);
+      const { result } = renderHook(() => useApiKeyExists());
+      expect(result.current).toBe(false);
+    });
+
+    it('handles SecureStore rejection gracefully', async () => {
+      mockGetItemAsync.mockRejectedValue(new Error('SecureStore unavailable'));
+      const { result } = renderHook(() => useApiKeyExists());
+      // Should catch the error and keep returning false (not crash)
+      await waitFor(
+        () => {
+          expect(result.current).toBe(false);
+        },
+        { timeout: 5000 },
+      );
     });
   });
 
