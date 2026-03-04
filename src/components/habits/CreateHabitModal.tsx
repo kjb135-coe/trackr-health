@@ -113,7 +113,15 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
       setReminderMinute('00');
       onClose();
     } catch (error) {
-      Alert.alert('Save failed', getErrorMessage(error));
+      const message = getErrorMessage(error);
+      if (message.includes('UNIQUE constraint')) {
+        Alert.alert(
+          'Duplicate Name',
+          'A habit with this name already exists. Please choose a different name.',
+        );
+      } else {
+        Alert.alert('Save failed', message);
+      }
     } finally {
       setSaving(false);
     }
@@ -147,6 +155,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
             value={newHabitName}
             onChangeText={setNewHabitName}
             placeholderTextColor={colors.textTertiary}
+            maxLength={50}
             autoFocus
           />
 
