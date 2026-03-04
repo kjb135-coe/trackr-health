@@ -27,6 +27,32 @@ jest.mock('expo-constants', () => ({
   expoConfig: { version: '1.6.0' },
 }));
 
+jest.mock('lucide-react-native', () => {
+  const { View } = require('react-native');
+  const icon =
+    (name: string) =>
+    // eslint-disable-next-line react/display-name
+    (props: Record<string, unknown>) => <View testID={`icon-${name}`} {...props} />;
+  return {
+    __esModule: true,
+    User: icon('user'),
+    Key: icon('key'),
+    Bell: icon('bell'),
+    Moon: icon('moon'),
+    Sun: icon('sun'),
+    Smartphone: icon('smartphone'),
+    LogOut: icon('logout'),
+    ChevronRight: icon('chevron-right'),
+    Shield: icon('shield'),
+    Trash2: icon('trash2'),
+    Star: icon('star'),
+    Share2: icon('share2'),
+    Mail: icon('mail'),
+    Target: icon('target'),
+    Download: icon('download'),
+  };
+});
+
 const mockHasApiKey = jest.fn();
 const mockSetApiKey = jest.fn();
 const mockDeleteApiKey = jest.fn();
@@ -256,5 +282,64 @@ describe('SettingsScreen', () => {
       'Privacy Policy',
       expect.stringContaining('stored locally'),
     );
+  });
+
+  it('shows delete API key confirmation when trash icon is pressed', async () => {
+    mockHasApiKey.mockResolvedValue(true);
+    const { findByText, getAllByTestId } = renderWithTheme();
+
+    await findByText('API key configured');
+    // First trash icon is the API key delete, second is Clear All Data
+    const trashIcons = getAllByTestId('icon-trash2');
+    fireEvent.press(trashIcons[0]);
+
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Remove API Key',
+      expect.stringContaining('remove your Claude API key'),
+      expect.any(Array),
+    );
+  });
+
+  it('deletes API key when confirmed', async () => {
+    mockHasApiKey.mockResolvedValue(true);
+    mockDeleteApiKey.mockResolvedValue(undefined);
+    const { findByText, getAllByTestId } = renderWithTheme();
+
+    await findByText('API key configured');
+    const trashIcons = getAllByTestId('icon-trash2');
+    fireEvent.press(trashIcons[0]);
+
+    const alertCall = (Alert.alert as jest.Mock).mock.calls.find(
+      (call) => call[0] === 'Remove API Key',
+    );
+    const removeButton = alertCall[2].find((btn: { text: string }) => btn.text === 'Remove');
+    await removeButton.onPress();
+
+    expect(mockDeleteApiKey).toHaveBeenCalled();
+  });
+
+  it('calls shareCSVExport when CSV export type is selected', async () => {
+    mockShareCSVExport.mockResolvedValue(undefined);
+    const { findByText } = renderWithTheme();
+
+    fireEvent.press(await findByText('Export as CSV'));
+
+    const alertCall = (Alert.alert as jest.Mock).mock.calls.find(
+      (call) => call[0] === 'Export CSV',
+    );
+    const habitsButton = alertCall[2].find((btn: { text: string }) => btn.text === 'Habits');
+    await habitsButton.onPress();
+
+    await waitFor(
+      () => {
+        expect(mockShareCSVExport).toHaveBeenCalledWith('habits');
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('renders notification toggle', async () => {
+    const { findByText } = renderWithTheme();
+    await findByText('Notifications');
   });
 });
