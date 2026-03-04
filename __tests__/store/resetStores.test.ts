@@ -11,6 +11,11 @@ jest.mock('@/src/database/repositories', () => ({}));
 jest.mock('@/src/services/ai', () => ({}));
 jest.mock('@/src/services/claude', () => ({}));
 
+const mockClearAllImages = jest.fn().mockResolvedValue(undefined);
+jest.mock('@/src/utils/imagePersist', () => ({
+  clearAllImages: () => mockClearAllImages(),
+}));
+
 describe('resetAllStores', () => {
   it('resets all feature stores to initial state', () => {
     // Simulate dirty state
@@ -43,5 +48,11 @@ describe('resetAllStores', () => {
     expect(useAIInsightsStore.getState().isLoadingCoaching).toBe(false);
     expect(useAIInsightsStore.getState().error).toBeNull();
     expect(useGoalsStore.getState().goals.sleepHours).toBe(DEFAULT_GOALS.sleepHours);
+  });
+
+  it('cleans up persisted images', () => {
+    resetAllStores();
+
+    expect(mockClearAllImages).toHaveBeenCalled();
   });
 });

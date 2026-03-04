@@ -5,6 +5,7 @@ import { useNutritionStore } from './nutritionStore';
 import { useJournalStore } from './journalStore';
 import { useAIInsightsStore } from './aiInsightsStore';
 import { useGoalsStore, DEFAULT_GOALS } from './goalsStore';
+import { clearAllImages } from '@/src/utils/imagePersist';
 
 /** Reset all feature stores to their initial state. Called on sign-out to prevent data leakage. */
 export function resetAllStores(): void {
@@ -41,4 +42,5 @@ export function resetAllStores(): void {
     error: null,
   });
   useGoalsStore.setState({ goals: { ...DEFAULT_GOALS }, isLoading: false });
+  clearAllImages();
 }

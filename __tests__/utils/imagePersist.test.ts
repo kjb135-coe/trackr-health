@@ -1,4 +1,4 @@
-import { persistImage, deleteImage } from '@/src/utils/imagePersist';
+import { persistImage, deleteImage, clearAllImages } from '@/src/utils/imagePersist';
 
 const mockGetInfoAsync = jest.fn();
 const mockMakeDirectoryAsync = jest.fn();
@@ -88,5 +88,21 @@ describe('deleteImage', () => {
     await deleteImage('');
 
     expect(mockDeleteAsync).not.toHaveBeenCalled();
+  });
+});
+
+describe('clearAllImages', () => {
+  it('deletes the entire images directory', async () => {
+    mockDeleteAsync.mockResolvedValue(undefined);
+
+    await clearAllImages();
+
+    expect(mockDeleteAsync).toHaveBeenCalledWith('file:///docs/images/', { idempotent: true });
+  });
+
+  it('silently handles errors', async () => {
+    mockDeleteAsync.mockRejectedValue(new Error('Dir not found'));
+
+    await expect(clearAllImages()).resolves.toBeUndefined();
   });
 });

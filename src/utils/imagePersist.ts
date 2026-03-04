@@ -15,6 +15,17 @@ export async function deleteImage(uri: string | undefined): Promise<void> {
 }
 
 /**
+ * Deletes the entire persisted images directory. Called on sign-out.
+ */
+export async function clearAllImages(): Promise<void> {
+  try {
+    await FileSystem.deleteAsync(IMAGE_DIR, { idempotent: true });
+  } catch {
+    // Silent fail — cleanup is best-effort
+  }
+}
+
+/**
  * Copies an image from a temporary URI to a permanent app directory.
  * Returns the persisted URI, or the original if persistence fails.
  */
