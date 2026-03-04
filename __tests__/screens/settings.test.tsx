@@ -86,6 +86,11 @@ jest.mock('@/src/store', () => ({
   }),
 }));
 
+const mockClearAllImages = jest.fn().mockResolvedValue(undefined);
+jest.mock('@/src/utils/imagePersist', () => ({
+  clearAllImages: () => mockClearAllImages(),
+}));
+
 jest.spyOn(Alert, 'alert');
 
 function renderWithTheme() {
@@ -265,6 +270,24 @@ describe('SettingsScreen', () => {
 
     expect(mockExecAsync).toHaveBeenCalled();
     expect(Alert.alert).toHaveBeenCalledWith('Done', 'All data has been cleared.');
+  });
+
+  it('clears persisted images when Clear All Data is confirmed', async () => {
+    const mockExecAsync = jest.fn();
+    mockGetDatabase.mockResolvedValue({ execAsync: mockExecAsync });
+
+    const { findByText } = renderWithTheme();
+    fireEvent.press(await findByText('Clear All Data'));
+
+    const alertCall = (Alert.alert as jest.Mock).mock.calls.find(
+      (call) => call[0] === 'Clear All Data',
+    );
+    const deleteButton = alertCall[2].find(
+      (btn: { text: string }) => btn.text === 'Delete Everything',
+    );
+    await deleteButton.onPress();
+
+    expect(mockClearAllImages).toHaveBeenCalled();
   });
 
   it('renders theme picker with Light, Dark, Auto options', async () => {

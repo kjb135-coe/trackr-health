@@ -40,6 +40,7 @@ import { APP_LINKS } from '@/src/utils/constants';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
+import { clearAllImages } from '@/src/utils/imagePersist';
 import { confirmDelete } from '@/src/utils/alerts';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
@@ -162,6 +163,7 @@ export default function SettingsScreen() {
                 DELETE FROM meals;
                 DELETE FROM journal_entries;
               `);
+          await clearAllImages();
           Alert.alert('Done', 'All data has been cleared.');
         } catch (error: unknown) {
           Alert.alert('Error', getErrorMessage(error));
