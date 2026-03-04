@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 930 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 931 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -9,6 +9,15 @@
 
 ### 294. nutritionStore concurrent loadDailyTotals race condition
 - `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins. Practically harmless — user actions are seconds apart.
+
+### 301. nutritionStore.analyzeImage setAnalyzing not in finally block
+- `analyzeImage` sets `isAnalyzing: true` at start but only sets `isAnalyzing: false` in the success path and the catch block separately. If the store is unmounted or an unexpected error shape is thrown, `isAnalyzing` could stay true. Should use try/finally.
+
+### 302. Sleep log duplicate-date gives raw SQLite constraint error
+- `sleepStore.saveEntry` doesn't guard against saving two entries for the same date. The UNIQUE constraint on `sleep_entries.date` throws a raw SQLite error surfaced to the user. Should show a friendly "entry already exists" message.
+
+### 303. Notification toggle not persisted across app restarts
+- `settings.tsx` stores `notificationsEnabled` in component state only (`useState(true)`). Toggling off and reopening the app resets it to true. Should persist to AsyncStorage or SQLite.
 
 ---
 
