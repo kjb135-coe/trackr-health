@@ -55,6 +55,23 @@ describe('confirmDelete', () => {
     expect(cancelButton.onPress).toBeUndefined();
   });
 
+  it('shows error alert and skips haptic when onConfirm throws', async () => {
+    jest.spyOn(Alert, 'alert');
+    const onConfirm = jest.fn().mockRejectedValue(new Error('Delete failed'));
+
+    confirmDelete('Delete', 'Sure?', onConfirm);
+
+    const alertCall = (Alert.alert as jest.Mock).mock.calls[0];
+    const deleteButton = alertCall[2][1];
+    await deleteButton.onPress();
+
+    expect(Haptics.notificationAsync).not.toHaveBeenCalled();
+    // Should show error alert
+    const errorCall = (Alert.alert as jest.Mock).mock.calls.find((call) => call[0] === 'Error');
+    expect(errorCall).toBeDefined();
+    expect(errorCall[1]).toBe('Delete failed');
+  });
+
   it('uses custom buttonText when provided', () => {
     jest.spyOn(Alert, 'alert');
     const onConfirm = jest.fn();
