@@ -137,6 +137,70 @@ afterEach(() => {
   jest.useRealTimers();
 });
 
+describe('gatherHealthData', () => {
+  it('calls all repositories with 7-day date range and maps completions per habit', async () => {
+    const {
+      habitRepository,
+      sleepRepository,
+      exerciseRepository,
+      nutritionRepository,
+      journalRepository,
+    } = require('@/src/database/repositories');
+
+    // Override getAll to return two habits so we can test filtering
+    habitRepository.getAll.mockResolvedValueOnce([
+      { id: 'h1', name: 'Exercise', frequency: 'daily' },
+      { id: 'h2', name: 'Read', frequency: 'daily' },
+    ]);
+    habitRepository.getCompletionsForDateRange.mockResolvedValueOnce([
+      { habitId: 'h1', date: '2026-03-03', completed: true },
+      { habitId: 'h2', date: '2026-03-03', completed: false },
+      { habitId: 'h1', date: '2026-03-02', completed: true },
+    ]);
+
+    const result = await gatherHealthData();
+
+    // Verify repos called with date range params
+    expect(habitRepository.getAll).toHaveBeenCalled();
+    expect(sleepRepository.getByDateRange).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+    );
+    expect(exerciseRepository.getByDateRange).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+    );
+    expect(nutritionRepository.getMealsByDateRange).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+    );
+    expect(journalRepository.getByDateRange).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+    );
+    expect(habitRepository.getCompletionsForDateRange).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+    );
+
+    // Verify return shape
+    expect(result).toHaveProperty('habits');
+    expect(result).toHaveProperty('sleep');
+    expect(result).toHaveProperty('exercise');
+    expect(result).toHaveProperty('meals');
+    expect(result).toHaveProperty('journal');
+
+    // Verify completion filtering — h1 gets 2, h2 gets 1
+    expect(result.habits).toHaveLength(2);
+    expect(result.habits[0].recentCompletions).toHaveLength(2);
+    expect(
+      result.habits[0].recentCompletions.every((c: { habitId: string }) => c.habitId === 'h1'),
+    ).toBe(true);
+    expect(result.habits[1].recentCompletions).toHaveLength(1);
+    expect(result.habits[1].recentCompletions[0].habitId).toBe('h2');
+  });
+});
+
 describe('healthInsightsAI', () => {
   describe('generateDailyCoaching', () => {
     it('returns parsed coaching data on success', async () => {
