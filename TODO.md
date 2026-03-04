@@ -130,9 +130,9 @@ Yes
 - `app/journal/new.tsx` (348 lines) — standalone form screen with zero test coverage.
 - **Status:** Done — 11 tests: title, placeholders, 5 mood options, 12 tags, empty validation, save with content/title, error handling, close nav, scan redirect. 791 total tests.
 
-### 221. Add nutrition camera screen tests
+### ~~221. Add nutrition camera screen tests~~ ✅
 - `app/nutrition/camera.tsx` (530 lines) — complex screen with camera capture, gallery picker, AI food analysis, meal type selector, and save flow. Zero test coverage.
-- **Effort:** ~45min (requires CameraView + ImagePicker mocking)
+- **Status:** Done — 14 tests: permission states (null/denied/granted), camera view, gallery picker, AI analyzing state, results card with food items, macro breakdown, meal type selector, save success/error, API key check, analysis failure, canceled gallery. Also added missing `FadeInUp` to shared reanimated mock. 805 total tests.
 
 ### 222. Add journal scan screen tests
 - `app/journal/scan.tsx` (450+ lines) — camera-based OCR screen with capture, gallery picker, handwriting transcription, and save. Zero test coverage.
