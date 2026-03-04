@@ -241,4 +241,32 @@ describe('ExerciseLogModal', () => {
       { timeout: 5000 },
     );
   });
+
+  it('shows error alert when update fails in edit mode', async () => {
+    mockUpdateSession.mockRejectedValueOnce(new Error('Update failed'));
+
+    const editSession = {
+      id: 'session-1',
+      date: '2026-02-18',
+      type: 'running' as const,
+      durationMinutes: 30,
+      intensity: 'moderate' as const,
+      caloriesBurned: 250,
+      createdAt: '2026-02-18T08:00:00.000Z',
+      updatedAt: '2026-02-18T08:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <ExerciseLogModal visible={true} onClose={() => {}} editSession={editSession} />,
+    );
+
+    fireEvent.press(await findByText('Update Workout'));
+
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Update failed');
+      },
+      { timeout: 5000 },
+    );
+  });
 });

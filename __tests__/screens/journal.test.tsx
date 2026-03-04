@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import JournalScreen from '@/app/(tabs)/journal';
 import { JournalEntry } from '@/src/types';
@@ -155,5 +155,45 @@ describe('JournalScreen', () => {
     mockEntries = [makeEntry({ isScanned: true })];
     const { findByText } = renderWithTheme();
     await findByText('Scanned');
+  });
+
+  it('displays search results when user types a query', async () => {
+    mockEntries = [makeEntry({ id: 'j1', title: 'Morning Thoughts', content: 'good morning' })];
+    const searchResult = makeEntry({ id: 'j2', title: 'Evening Run', content: 'went for a run' });
+    mockSearch.mockResolvedValue([searchResult]);
+
+    const { findByPlaceholderText, findByText } = renderWithTheme();
+
+    const searchInput = await findByPlaceholderText('Search entries...');
+    fireEvent.changeText(searchInput, 'run');
+
+    await waitFor(
+      () => {
+        expect(mockSearch).toHaveBeenCalledWith('run');
+      },
+      { timeout: 5000 },
+    );
+
+    await findByText('Evening Run');
+    await findByText('went for a run');
+  });
+
+  it('shows empty state when search has no results', async () => {
+    mockEntries = [makeEntry()];
+    mockSearch.mockResolvedValue([]);
+
+    const { findByPlaceholderText, findByText } = renderWithTheme();
+
+    const searchInput = await findByPlaceholderText('Search entries...');
+    fireEvent.changeText(searchInput, 'nonexistent');
+
+    await waitFor(
+      () => {
+        expect(mockSearch).toHaveBeenCalledWith('nonexistent');
+      },
+      { timeout: 5000 },
+    );
+
+    await findByText('No matching entries');
   });
 });
