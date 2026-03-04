@@ -79,6 +79,17 @@ export const useSleepStore = create<SleepState>((set, get) => ({
   updateEntry: async (id, updates) => {
     set({ isLoading: true, error: null });
     try {
+      if (updates.date) {
+        const currentEntry = get().entries.find((e) => e.id === id);
+        if (currentEntry && updates.date !== currentEntry.date) {
+          const existing = await sleepRepository.getByDate(updates.date);
+          if (existing) {
+            const msg = 'A sleep entry already exists for this date';
+            set({ error: msg, isLoading: false });
+            throw new Error(msg);
+          }
+        }
+      }
       await sleepRepository.update(id, updates);
       set((state) => ({
         entries: state.entries.map((e) =>
