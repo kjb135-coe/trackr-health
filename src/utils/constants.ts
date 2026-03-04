@@ -48,7 +48,7 @@ export function getQualityColor(quality: number, colors: ThemeColors): string {
     case 4:
       return colors.success;
     case 5:
-      return colors.sleep;
+      return colors.primary;
     default:
       return colors.textTertiary;
   }
@@ -100,6 +100,11 @@ const BASE_CALORIES_PER_MINUTE: Record<string, number> = {
   other: 6,
 };
 
+/**
+ * Estimate calories burned using: base × duration × intensity multiplier.
+ * Intensity (1-5) maps to a multiplier range of 0.76–1.40:
+ *   multiplier = 0.6 + (intensity / 5) × 0.8
+ */
 export function estimateCalories(type: string, durationMinutes: number, intensity: number): number {
   const base = BASE_CALORIES_PER_MINUTE[type] || 6;
   const intensityMultiplier = 0.6 + (intensity / 5) * 0.8;

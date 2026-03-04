@@ -68,7 +68,9 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   lastCoachingFetch: null,
 
   fetchDailyCoaching: async () => {
-    const { lastCoachingFetch, dailyCoaching } = get();
+    const { lastCoachingFetch, dailyCoaching, isLoadingCoaching } = get();
+
+    if (isLoadingCoaching) return;
 
     // Use cache if fresh
     if (

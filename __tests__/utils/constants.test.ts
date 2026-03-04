@@ -27,6 +27,7 @@ const mockColors = {
   info: '#0088FF',
   success: '#00CC00',
   sleep: '#8B5CF6',
+  primary: '#6366F1',
   textTertiary: '#999999',
 };
 
@@ -47,8 +48,8 @@ describe('getQualityColor', () => {
     expect(getQualityColor(4, mockColors as never)).toBe('#00CC00');
   });
 
-  it('returns sleep color for quality 5', () => {
-    expect(getQualityColor(5, mockColors as never)).toBe('#8B5CF6');
+  it('returns primary color for quality 5', () => {
+    expect(getQualityColor(5, mockColors as never)).toBe('#6366F1');
   });
 
   it('returns textTertiary for out-of-range quality', () => {

@@ -74,7 +74,7 @@ export function AnimatedCard({
       case 'elevated':
         return {
           backgroundColor: colors.surface,
-          shadowColor: '#000',
+          shadowColor: colors.black,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: isDark ? 0.3 : 0.1,
           shadowRadius: 8,

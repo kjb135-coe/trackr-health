@@ -88,6 +88,32 @@ describe('aiInsightsStore', () => {
   });
 
   describe('loading guards', () => {
+    it('skips fetchDailyCoaching when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockGenerateDailyCoaching.mockReturnValueOnce(firstCall);
+
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchDailyCoaching();
+      });
+
+      expect(useAIInsightsStore.getState().isLoadingCoaching).toBe(true);
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchDailyCoaching();
+      });
+
+      expect(mockGenerateDailyCoaching).toHaveBeenCalledTimes(1);
+
+      resolveFirst!({ greeting: 'Hi' });
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
+
     it('skips fetchHabitSuggestions when already loading', async () => {
       let resolveFirst: (v: unknown) => void;
       const firstCall = new Promise((r) => {
