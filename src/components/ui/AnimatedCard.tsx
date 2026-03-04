@@ -127,7 +127,12 @@ export function AnimatedCard({
   }
 
   return (
-    <Animated.View entering={entering} exiting={exiting} style={[cardStyle, animatedStyle, style]}>
+    <Animated.View
+      entering={entering}
+      exiting={exiting}
+      style={[cardStyle, animatedStyle, style]}
+      accessibilityLabel={accessibilityLabel}
+    >
       {children}
     </Animated.View>
   );

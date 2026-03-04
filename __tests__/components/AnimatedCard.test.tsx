@@ -110,4 +110,13 @@ describe('AnimatedCard', () => {
     );
     await findByText('Static card');
   });
+
+  it('passes accessibilityLabel to static card', async () => {
+    const { findByLabelText } = renderWithTheme(
+      <AnimatedCard accessibilityLabel="Sleep summary">
+        <Text>Static content</Text>
+      </AnimatedCard>,
+    );
+    await findByLabelText('Sleep summary');
+  });
 });

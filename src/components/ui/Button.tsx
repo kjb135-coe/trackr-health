@@ -1,8 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
 import { spacing, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
+import { getButtonVariantStyle, getButtonTextColor, type ButtonVariant } from './buttonStyles';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps {
@@ -41,7 +41,7 @@ export function Button({
       accessibilityState={{ disabled: isDisabled }}
       style={[
         styles.base,
-        styles[variant],
+        getButtonVariantStyle(variant, colors),
         styles[`size_${size}`],
         isDisabled && styles.disabled,
         fullWidth && styles.fullWidth,
@@ -50,17 +50,14 @@ export function Button({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'primary' || variant === 'danger' ? colors.white : colors.primary}
-          size="small"
-        />
+        <ActivityIndicator color={getButtonTextColor(variant, colors)} size="small" />
       ) : (
         <>
           {icon}
           <Text
             style={[
               styles.text,
-              styles[`text_${variant}`],
+              { color: getButtonTextColor(variant, colors) },
               styles[`text_${size}`],
               icon ? { marginLeft: spacing.xs } : undefined,
             ]}
@@ -80,20 +77,6 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: borderRadius.lg,
-    },
-    primary: {
-      backgroundColor: colors.primary,
-    },
-    secondary: {
-      backgroundColor: colors.surfaceSecondary,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    ghost: {
-      backgroundColor: 'transparent',
-    },
-    danger: {
-      backgroundColor: colors.error,
     },
     size_sm: {
       paddingVertical: spacing.xs,
@@ -118,18 +101,6 @@ const createStyles = (colors: ThemeColors) =>
     },
     text: {
       fontWeight: '600',
-    },
-    text_primary: {
-      color: colors.white,
-    },
-    text_secondary: {
-      color: colors.textPrimary,
-    },
-    text_ghost: {
-      color: colors.primary,
-    },
-    text_danger: {
-      color: colors.white,
     },
     text_sm: {
       fontSize: 14,

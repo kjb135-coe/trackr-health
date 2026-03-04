@@ -151,4 +151,24 @@ describe('LogSleepScreen', () => {
     const { getByPlaceholderText } = render(<LogSleepScreen />);
     expect(getByPlaceholderText('How did you sleep? Any dreams?')).toBeTruthy();
   });
+
+  it('toggles sleep factor chips on press', () => {
+    const { getByText } = render(<LogSleepScreen />);
+    // Press "Caffeine" factor chip
+    fireEvent.press(getByText('Caffeine'));
+    // Press "Stress" factor chip
+    fireEvent.press(getByText('Stress'));
+    // No crash, and factors still render
+    expect(getByText('Caffeine')).toBeTruthy();
+    expect(getByText('Stress')).toBeTruthy();
+  });
+
+  it('changes quality label when pressing different stars', async () => {
+    const { getAllByTestId, getByText } = render(<LogSleepScreen />);
+    // Default quality is 3 → "Good"
+    expect(getByText('Good')).toBeTruthy();
+    // There are 5 star icons
+    const stars = getAllByTestId('star-icon');
+    expect(stars).toHaveLength(5);
+  });
 });

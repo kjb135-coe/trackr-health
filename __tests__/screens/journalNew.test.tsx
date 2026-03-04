@@ -185,4 +185,59 @@ describe('NewJournalEntryScreen', () => {
     const { getByText } = render(<NewJournalEntryScreen />);
     expect(getByText('Save Entry')).toBeTruthy();
   });
+
+  it('toggles tag selection on press', () => {
+    const { getByText } = render(<NewJournalEntryScreen />);
+    // Press "Work" tag
+    fireEvent.press(getByText('Work'));
+    // Press "Health" tag
+    fireEvent.press(getByText('Health'));
+    // Tags still render (no crash)
+    expect(getByText('Work')).toBeTruthy();
+    expect(getByText('Health')).toBeTruthy();
+  });
+
+  it('saves entry with selected tags', async () => {
+    mockCreateEntry.mockResolvedValueOnce(undefined);
+    const { getByText, getByPlaceholderText } = render(<NewJournalEntryScreen />);
+
+    fireEvent.changeText(getByPlaceholderText("What's on your mind today?"), 'Tagged entry');
+    fireEvent.press(getByText('Work'));
+    fireEvent.press(getByText('Health'));
+    fireEvent.press(getByText('Save Entry'));
+
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            content: 'Tagged entry',
+            tags: ['Work', 'Health'],
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('saves entry with selected mood', async () => {
+    mockCreateEntry.mockResolvedValueOnce(undefined);
+    const { getByText, getByPlaceholderText } = render(<NewJournalEntryScreen />);
+
+    fireEvent.changeText(getByPlaceholderText("What's on your mind today?"), 'Happy day');
+    // Select "Great" mood (value 5)
+    fireEvent.press(getByText('Great'));
+    fireEvent.press(getByText('Save Entry'));
+
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            content: 'Happy day',
+            mood: 5,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
+  });
 });

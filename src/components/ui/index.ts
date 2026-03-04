@@ -12,5 +12,9 @@ export { FAB, SecondaryFAB, FABGroup } from './FAB';
 export { AnimatedCard } from './AnimatedCard';
 export { AnimatedButton } from './AnimatedButton';
 
+// Shared button utilities
+export { getButtonVariantStyle, getButtonTextColor } from './buttonStyles';
+export type { ButtonVariant } from './buttonStyles';
+
 // Loading & animation utilities
 export { Skeleton, SkeletonCard } from './animations';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, ActivityIndicator, ViewStyle, Pressable, StyleProp, StyleSheet } from 'react-native';
+import { Text, ActivityIndicator, Pressable, StyleProp, ViewStyle, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -10,8 +10,8 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { SPRING_CONFIG, SCALE } from '@/src/utils/animations';
+import { getButtonVariantStyle, getButtonTextColor, type ButtonVariant } from './buttonStyles';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface AnimatedButtonProps {
@@ -75,39 +75,6 @@ export function AnimatedButton({
     transform: [{ scale: scale.value }],
   }));
 
-  const getVariantStyle = (): ViewStyle => {
-    switch (variant) {
-      case 'primary':
-        return { backgroundColor: colors.primary };
-      case 'secondary':
-        return {
-          backgroundColor: colors.surfaceSecondary,
-          borderWidth: 1,
-          borderColor: colors.border,
-        };
-      case 'ghost':
-        return { backgroundColor: 'transparent' };
-      case 'danger':
-        return { backgroundColor: colors.error };
-      default:
-        return {};
-    }
-  };
-
-  const getTextColor = () => {
-    switch (variant) {
-      case 'primary':
-      case 'danger':
-        return colors.white;
-      case 'secondary':
-        return colors.textPrimary;
-      case 'ghost':
-        return colors.primary;
-      default:
-        return colors.textPrimary;
-    }
-  };
-
   return (
     <AnimatedPressable
       onPress={handlePress}
@@ -120,7 +87,7 @@ export function AnimatedButton({
       style={[
         styles.base,
         styles[size],
-        getVariantStyle(),
+        getButtonVariantStyle(variant, colors),
         isDisabled && styles.disabled,
         fullWidth && styles.fullWidth,
         animatedStyle,
@@ -128,17 +95,14 @@ export function AnimatedButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'primary' || variant === 'danger' ? colors.white : colors.primary}
-          size="small"
-        />
+        <ActivityIndicator color={getButtonTextColor(variant, colors)} size="small" />
       ) : (
         <>
           {icon}
           <Text
             style={[
               styles.text,
-              { color: getTextColor(), fontSize: textSizes[size] },
+              { color: getButtonTextColor(variant, colors), fontSize: textSizes[size] },
               icon ? styles.textWithIcon : undefined,
             ]}
           >

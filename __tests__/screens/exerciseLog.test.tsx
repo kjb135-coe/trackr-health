@@ -173,4 +173,23 @@ describe('LogExerciseScreen', () => {
     const { getByPlaceholderText } = render(<LogExerciseScreen />);
     expect(getByPlaceholderText('How was your workout?')).toBeTruthy();
   });
+
+  it('changes intensity label when pressing intensity buttons', () => {
+    const { getByText } = render(<LogExerciseScreen />);
+    // Default is 3 → "Intense"
+    expect(getByText('Intense')).toBeTruthy();
+    // Press level 1 → "Light"
+    fireEvent.press(getByText('1'));
+    expect(getByText('Light')).toBeTruthy();
+    // Press level 5 → "Maximum"
+    fireEvent.press(getByText('5'));
+    expect(getByText('Maximum')).toBeTruthy();
+  });
+
+  it('allows entering notes text', () => {
+    const { getByPlaceholderText } = render(<LogExerciseScreen />);
+    const input = getByPlaceholderText('How was your workout?');
+    fireEvent.changeText(input, 'Great run today');
+    expect(input.props.value).toBe('Great run today');
+  });
 });
