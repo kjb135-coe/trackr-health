@@ -256,6 +256,14 @@ describe('journalStore', () => {
       expect(journalRepository.search).toHaveBeenCalledWith('great day');
       expect(results).toEqual([mockEntry]);
     });
+
+    it('returns empty array on repository error', async () => {
+      journalRepository.search.mockRejectedValue(new Error('DB not ready'));
+
+      const results = await useJournalStore.getState().search('test');
+
+      expect(results).toEqual([]);
+    });
   });
 
   describe('scanImage', () => {
@@ -289,6 +297,14 @@ describe('journalStore', () => {
       const tags = await useJournalStore.getState().getAllTags();
 
       expect(tags).toEqual(['personal', 'work']);
+    });
+
+    it('returns empty array on repository error', async () => {
+      journalRepository.getAllTags.mockRejectedValue(new Error('DB not ready'));
+
+      const tags = await useJournalStore.getState().getAllTags();
+
+      expect(tags).toEqual([]);
     });
   });
 

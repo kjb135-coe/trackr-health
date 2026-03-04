@@ -181,6 +181,17 @@ describe('habitRepository', () => {
 
       expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM habits WHERE id = ?', 'h1');
     });
+
+    it('deletes orphaned completions before deleting the habit', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+
+      await habitRepository.delete('h1');
+
+      const calls = mockDb.runAsync.mock.calls;
+      expect(calls).toHaveLength(2);
+      expect(calls[0]).toEqual(['DELETE FROM habit_completions WHERE habit_id = ?', 'h1']);
+      expect(calls[1]).toEqual(['DELETE FROM habits WHERE id = ?', 'h1']);
+    });
   });
 
   describe('getCompletionsForDate', () => {
