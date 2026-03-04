@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 961 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 963 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -12,6 +12,9 @@
 
 ### 322. Goals screen doesn't show error state inline
 - The goals screen now shows Alert.alert on save failure (via try/catch), but doesn't display the store's `error` field inline. For a more polished UX, could show an error banner when `goalsStore.error` is set. Low priority since Alert already works.
+
+### 324. CreateHabitModal should show visual indicator when notifications are disabled
+- When a user enables the reminder toggle in CreateHabitModal but notifications are globally disabled, there's no visual feedback. The reminder toggle appears to work but scheduling is silently skipped. Could show an inline warning or auto-disable the toggle.
 
 ---
 
