@@ -5,6 +5,18 @@
 
 ---
 
+## P2 - Nice to Have
+
+### 267. Extract hardcoded scan defaults to constants
+- `app/journal/scan.tsx` lines 113-117: `mood: 3`, `ocrConfidence: 0.85`, `tags: ['Scanned']` are magic values.
+- Move to `src/utils/constants.ts` as named constants for consistency and discoverability.
+
+### 268. Add missing ForgotPasswordScreen flow tests
+- `auth.test.tsx` has 4 tests for ForgotPassword but missing: back button navigation, "Back to Login" success nav, "Try again" resend flow.
+- 3 new tests to close the gap.
+
+---
+
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
