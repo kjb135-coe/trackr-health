@@ -68,12 +68,19 @@ const mockJournalStore = {
   clearError: mockClearJournalError,
 };
 
+const mockLoadGoals = jest.fn().mockResolvedValue(undefined);
+
+const mockGoalsStore = {
+  loadGoals: mockLoadGoals,
+};
+
 jest.mock('@/src/store', () => ({
   useHabitStore: () => mockHabitStore,
   useSleepStore: () => mockSleepStore,
   useExerciseStore: () => mockExerciseStore,
   useNutritionStore: () => mockNutritionStore,
   useJournalStore: () => mockJournalStore,
+  useGoalsStore: () => mockGoalsStore,
 }));
 
 jest.mock('@/src/database', () => ({
@@ -189,7 +196,7 @@ describe('DashboardScreen', () => {
     await findByText('No entries yet');
   });
 
-  it('loads all data on mount', async () => {
+  it('loads all data on mount including goals', async () => {
     await renderDashboard();
 
     expect(mockLoadHabits).toHaveBeenCalled();
@@ -198,6 +205,7 @@ describe('DashboardScreen', () => {
     expect(mockLoadExercise).toHaveBeenCalled();
     expect(mockLoadDailyTotals).toHaveBeenCalled();
     expect(mockLoadJournal).toHaveBeenCalled();
+    expect(mockLoadGoals).toHaveBeenCalled();
   });
 
   it('shows nutrition calories when available', async () => {

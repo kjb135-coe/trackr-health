@@ -107,6 +107,12 @@ export default function LogSleepScreen() {
   };
 
   const handleSave = async () => {
+    const durationMinutes = calculateDuration();
+    if (durationMinutes <= 0) {
+      Alert.alert('Invalid duration', 'Wake time must be after bedtime.');
+      return;
+    }
+
     setSaving(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     try {
@@ -114,7 +120,7 @@ export default function LogSleepScreen() {
         date: getDateString(),
         bedtime: bedtime.toISOString(),
         wakeTime: wakeTime.toISOString(),
-        durationMinutes: calculateDuration(),
+        durationMinutes,
         quality: quality as 1 | 2 | 3 | 4 | 5,
         notes: notes.trim() || undefined,
         factors: selectedFactors,

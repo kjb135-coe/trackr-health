@@ -171,4 +171,29 @@ describe('LogSleepScreen', () => {
     const stars = getAllByTestId('star-icon');
     expect(stars).toHaveLength(5);
   });
+
+  it('shows alert when duration is zero (equal bedtime and wake time)', async () => {
+    jest.spyOn(Alert, 'alert');
+    const { getAllByTestId, getByText } = render(<LogSleepScreen />);
+
+    // Set wake time to same as bedtime (22:00) via DateTimePicker onChange
+    const pickers = getAllByTestId('date-time-picker');
+    // Second picker is wake time
+    const wakePicker = pickers[1];
+    const sameAsBedtime = new Date(new Date().setHours(22, 0, 0, 0));
+    fireEvent(wakePicker, 'onChange', { nativeEvent: {} }, sameAsBedtime);
+
+    fireEvent.press(getByText('Save Sleep Entry'));
+
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Invalid duration',
+          'Wake time must be after bedtime.',
+        );
+      },
+      { timeout: 5000 },
+    );
+    expect(mockCreateEntry).not.toHaveBeenCalled();
+  });
 });

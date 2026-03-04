@@ -22,6 +22,7 @@ import {
   useExerciseStore,
   useNutritionStore,
   useJournalStore,
+  useGoalsStore,
 } from '@/src/store';
 import { getDateString, formatDuration, getRelativeDateLabel } from '@/src/utils/date';
 import { getDatabase } from '@/src/database';
@@ -118,6 +119,7 @@ export default function DashboardScreen() {
     error: journalError,
     clearError: clearJournalError,
   } = useJournalStore();
+  const { loadGoals } = useGoalsStore();
 
   const today = getDateString();
 
@@ -140,6 +142,7 @@ export default function DashboardScreen() {
       loadExercise(),
       loadDailyTotals(currentDate),
       loadJournal(),
+      loadGoals(),
     ]);
     try {
       const [trends, streak] = await Promise.all([getTrendData(), getDailyStreak()]);
