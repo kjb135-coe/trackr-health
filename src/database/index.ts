@@ -12,6 +12,7 @@ export function getDatabase(): Promise<SQLite.SQLiteDatabase> {
 async function openAndMigrate(): Promise<SQLite.SQLiteDatabase> {
   try {
     const database = await SQLite.openDatabaseAsync('trackr.db');
+    await database.execAsync('PRAGMA foreign_keys = ON');
     await runMigrations(database);
     return database;
   } catch (error) {

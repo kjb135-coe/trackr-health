@@ -31,11 +31,17 @@ beforeEach(() => {
 });
 
 describe('database init', () => {
+  it('enables foreign keys before running migrations', async () => {
+    await getDatabase();
+
+    expect(mockExecAsync.mock.calls[0][0]).toBe('PRAGMA foreign_keys = ON');
+  });
+
   it('opens database and runs migrations on first call', async () => {
     const db = await getDatabase();
 
     expect(db).toBe(mockDatabase);
-    expect(mockExecAsync).toHaveBeenCalledTimes(2); // migrations table + schema
+    expect(mockExecAsync).toHaveBeenCalledTimes(3); // PRAGMA + migrations table + schema
     expect(mockRunAsync).toHaveBeenCalledWith(
       'INSERT INTO migrations (name) VALUES (?)',
       '001_initial_schema',
@@ -68,7 +74,7 @@ describe('database init', () => {
 
     expect(mockWithTransactionAsync).toHaveBeenCalledTimes(1);
     // Verify the transaction contained both the schema exec and the migration record insert
-    expect(mockExecAsync).toHaveBeenCalledTimes(2); // migrations table + schema
+    expect(mockExecAsync).toHaveBeenCalledTimes(3); // PRAGMA + migrations table + schema
     expect(mockRunAsync).toHaveBeenCalledWith(
       'INSERT INTO migrations (name) VALUES (?)',
       '001_initial_schema',
@@ -81,7 +87,7 @@ describe('database init', () => {
     await getDatabase();
 
     // Should create migrations table but NOT run schema migration
-    expect(mockExecAsync).toHaveBeenCalledTimes(1); // Only migrations table
+    expect(mockExecAsync).toHaveBeenCalledTimes(2); // PRAGMA + migrations table
     expect(mockRunAsync).not.toHaveBeenCalled();
   });
 
