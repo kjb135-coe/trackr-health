@@ -138,17 +138,29 @@ Yes
 - `app/journal/scan.tsx` (450+ lines) — camera-based OCR screen with capture, gallery picker, handwriting transcription, and save. Zero test coverage.
 - **Status:** 13 tests covering permission states, camera view, OCR flow, transcription display, save/error, API key check, gallery cancellation.
 
-### 223. Add `{ timeout: 5000 }` to all waitFor calls
-- CLAUDE.md requires `{ timeout: 5000 }` on all `waitFor()` calls to prevent CI flakiness. ~100+ calls across 24 test files are missing it. Only `Dashboard.test.tsx` correctly includes the timeout.
-- **Effort:** ~20min (systematic find-and-replace)
+### ~~223. Add `{ timeout: 5000 }` to all waitFor calls~~ ✅
+- CLAUDE.md requires `{ timeout: 5000 }` on all `waitFor()` calls to prevent CI flakiness. ~116 calls across 24 test files were missing it.
+- **Status:** All 116 waitFor calls updated across 24 test files.
 
-### 224. Use `TAB_CONTENT_PADDING_BOTTOM` in Dashboard
-- `app/(tabs)/index.tsx:416` has `height: 100` hardcoded. All other tab screens use `TAB_CONTENT_PADDING_BOTTOM` (which equals 100). Dashboard is the only inconsistency.
+### ~~224. Use `TAB_CONTENT_PADDING_BOTTOM` in Dashboard~~ ✅
+- `app/(tabs)/index.tsx` had `height: 100` hardcoded. All other tab screens use `TAB_CONTENT_PADDING_BOTTOM`.
+- **Status:** Replaced with `TAB_CONTENT_PADDING_BOTTOM` constant.
+
+### ~~225. Extract animation constants for Skeleton shimmer and StreakCelebration wobble~~ ✅
+- `Skeleton.tsx` used `duration: 1200`. `StreakCelebration.tsx` used three `duration: 1000` values. Both hardcoded.
+- **Status:** Added `ANIMATION_DURATION.shimmer` (1200) and `ANIMATION_DURATION.celebrationWobble` (1000). Also used `spacing.md` for SkeletonCard padding.
+
+### 226. Fix `+not-found.tsx` to use theme tokens and add tests
+- `app/+not-found.tsx` uses hardcoded `padding: 20`, `fontSize: 20`, `marginTop: 15`, etc. despite importing `useTheme`. Also has zero test coverage.
+- **Effort:** 15min
+
+### 227. Export `AI_TIMEOUT_MS` from constants.ts
+- `src/utils/constants.ts:118` has `const AI_TIMEOUT_MS = 30000` (unexported). Should be `export const` for testability and reuse.
+- **Effort:** 1min
+
+### 228. Fix stagger delay magic number in HabitSuggestionsModal
+- `src/components/habits/HabitSuggestionsModal.tsx:74` uses `.delay(index * 100)` — hardcoded 100ms instead of using `STAGGER_DELAY`.
 - **Effort:** 2min
-
-### 225. Extract animation constants for Skeleton shimmer and StreakCelebration wobble
-- `Skeleton.tsx:33` uses `duration: 1200` (no constant). `StreakCelebration.tsx:38-40` uses three `duration: 1000` values. These should be in `ANIMATION_DURATION`.
-- **Effort:** 10min
 
 ---
 
