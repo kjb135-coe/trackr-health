@@ -5,16 +5,6 @@
 
 ---
 
-## P2 - Nice to Have
-
-### 271. Remove unused TRANSLATE constant from animations.ts
-- Exported but never imported in any source file. Only used in its own test. Dead code.
-
-### 272. Fix withTimeout setTimeout leak
-- `withTimeout()` in constants.ts creates a setTimeout that is never cleared when the wrapped promise resolves first. Add `.finally(() => clearTimeout(timeoutId))` to prevent the dangling timer.
-
----
-
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
