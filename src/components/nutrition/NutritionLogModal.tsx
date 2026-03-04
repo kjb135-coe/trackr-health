@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { Camera } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -23,8 +22,9 @@ import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
 import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
-import { MEAL_TYPE_LABELS, IMAGE_QUALITY } from '@/src/utils/constants';
+import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
 import { Meal, MealType, FoodItem, DetectedFood } from '@/src/types';
+import { useImagePicker } from '@/src/hooks/useImagePicker';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -52,6 +52,7 @@ export function NutritionLogModal({
   const [detectedFoods, setDetectedFoods] = useState<DetectedFood[]>([]);
 
   const { isLoading, isAnalyzing, createMeal, updateMeal, analyzeImage } = useNutritionStore();
+  const { takePhoto, pickImage } = useImagePicker();
 
   const today = date || getDateString();
 
@@ -63,69 +64,34 @@ export function NutritionLogModal({
     }
   }, [editMeal]);
 
-  const handleTakePhoto = async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert(
-        'Permission needed',
-        'Please grant camera permission to take photos of your food.',
-      );
-      return;
-    }
+  const foodPickerOptions = { allowsEditing: true, aspect: [4, 3] as [number, number] };
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ['images'],
-      quality: IMAGE_QUALITY,
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setCapturedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const analysis = await analyzeImage(result.assets[0].uri);
-          setDetectedFoods(analysis.detectedFoods);
-        } catch {
-          Alert.alert(
-            'Analysis failed',
-            'Could not analyze the food image. You can add items manually.',
-          );
-        }
+  const processImage = async (uri: string) => {
+    setCapturedImage(uri);
+    if (apiKeyExists) {
+      try {
+        const analysis = await analyzeImage(uri);
+        setDetectedFoods(analysis.detectedFoods);
+      } catch {
+        Alert.alert(
+          'Analysis failed',
+          'Could not analyze the food image. You can add items manually.',
+        );
       }
     }
   };
 
-  const handlePickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant photo library permission.');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: IMAGE_QUALITY,
-      allowsEditing: true,
-      aspect: [4, 3],
+  const handleTakePhoto = async () => {
+    const uri = await takePhoto({
+      permissionMessage: 'Please grant camera permission to take photos of your food.',
+      ...foodPickerOptions,
     });
+    if (uri) await processImage(uri);
+  };
 
-    if (!result.canceled && result.assets[0]) {
-      setCapturedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const analysis = await analyzeImage(result.assets[0].uri);
-          setDetectedFoods(analysis.detectedFoods);
-        } catch {
-          Alert.alert(
-            'Analysis failed',
-            'Could not analyze the food image. You can add items manually.',
-          );
-        }
-      }
-    }
+  const handlePickImage = async () => {
+    const uri = await pickImage(foodPickerOptions);
+    if (uri) await processImage(uri);
   };
 
   const handleSaveMeal = async () => {

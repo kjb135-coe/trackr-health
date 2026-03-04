@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { Camera, Edit3 } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -24,7 +23,7 @@ import { useJournalStore } from '@/src/store';
 import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { JournalEntry } from '@/src/types';
-import { IMAGE_QUALITY } from '@/src/utils/constants';
+import { useImagePicker } from '@/src/hooks/useImagePicker';
 
 interface JournalEntryModalProps {
   visible: boolean;
@@ -69,6 +68,7 @@ export function JournalEntryModal({
   const [scannedImage, setScannedImage] = useState<string | null>(null);
 
   const { isLoading, isScanning, createEntry, updateEntry, scanImage } = useJournalStore();
+  const { takePhoto, pickImage } = useImagePicker();
 
   // Sync mode when modal opens with a different initialMode
   useEffect(() => {
@@ -85,72 +85,36 @@ export function JournalEntryModal({
     }
   }, [editEntry]);
 
-  const handleTakePhoto = async () => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant camera permission to scan your journal.');
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ['images'],
-      quality: IMAGE_QUALITY,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setScannedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const ocrResult = await scanImage(result.assets[0].uri);
-          setContent(ocrResult.text);
-        } catch {
-          Alert.alert(
-            'Scan failed',
-            'Could not read the handwriting. Please try again or type manually.',
-          );
-        }
-      } else {
+  const processImage = async (uri: string) => {
+    setScannedImage(uri);
+    if (apiKeyExists) {
+      try {
+        const ocrResult = await scanImage(uri);
+        setContent(ocrResult.text);
+      } catch {
         Alert.alert(
-          'API key needed',
-          'Add your Claude API key in settings to enable handwriting recognition.',
+          'Scan failed',
+          'Could not read the handwriting. Please try again or type manually.',
         );
       }
+    } else {
+      Alert.alert(
+        'API key needed',
+        'Add your Claude API key in settings to enable handwriting recognition.',
+      );
     }
   };
 
-  const handlePickImage = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Permission needed', 'Please grant photo library permission.');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: IMAGE_QUALITY,
+  const handleTakePhoto = async () => {
+    const uri = await takePhoto({
+      permissionMessage: 'Please grant camera permission to scan your journal.',
     });
+    if (uri) await processImage(uri);
+  };
 
-    if (!result.canceled && result.assets[0]) {
-      setScannedImage(result.assets[0].uri);
-
-      if (apiKeyExists) {
-        try {
-          const ocrResult = await scanImage(result.assets[0].uri);
-          setContent(ocrResult.text);
-        } catch {
-          Alert.alert(
-            'Scan failed',
-            'Could not read the handwriting. Please try again or type manually.',
-          );
-        }
-      } else {
-        Alert.alert(
-          'API key needed',
-          'Add your Claude API key in settings to enable handwriting recognition.',
-        );
-      }
-    }
+  const handlePickImage = async () => {
+    const uri = await pickImage();
+    if (uri) await processImage(uri);
   };
 
   const handleSaveEntry = async () => {
