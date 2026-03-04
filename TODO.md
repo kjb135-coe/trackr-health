@@ -1,20 +1,17 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 922 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 930 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
-### 289. No cleanup of persisted images on meal/journal deletion
-- `persistImage` copies images to app's document directory. When meals or journal entries are deleted, persisted images are never cleaned up, accumulating indefinitely.
-
 ### 294. nutritionStore concurrent loadDailyTotals race condition
 - `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` as a fire-and-forget after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins. Practically harmless — user actions are seconds apart.
 
-### 298. journalRepository.update skips empty-update early return for tag-only updates
-- Empty update object returns early (shipped in iteration 34), but if `tags` is the only field and is `undefined`, the early return triggers correctly. However, there's no test verifying that a tags-only update (e.g., `{tags: ['a']}`) actually runs. Edge case — low priority.
+### 299. resetAllStores should also call deleteImage for orphaned images
+- `resetAllStores()` (sign-out) clears all store state but doesn't clean up persisted images from the document directory. After sign-out + sign-in as new user, old images remain on disk. Low priority since sign-out is infrequent.
 
 ---
 
