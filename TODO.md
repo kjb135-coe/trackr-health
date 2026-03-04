@@ -19,6 +19,12 @@
 ### 260. Settings confirmDelete for "Clear All Data"
 - Settings screen still uses inline `Alert.alert` for "Clear All Data" and "Sign Out" confirmations. The "Clear All Data" could use a variant of `confirmDelete` or a similar utility, though it has custom button text ("Delete Everything") and post-action logic.
 
+### 261. Extract useImagePicker hook (~70 lines duplicated)
+- `JournalEntryModal.tsx` and `NutritionLogModal.tsx` both implement identical camera/gallery permission and image selection logic (handleTakePhoto, handlePickImage). Extract to `src/hooks/useImagePicker.ts`.
+
+### 262. Add HabitSuggestionsModal test coverage
+- `src/components/habits/HabitSuggestionsModal.tsx` (194 lines) has no test file. It renders AI-generated habit suggestions and handles adding them.
+
 ---
 
 ## P3 - Future / Backlog
