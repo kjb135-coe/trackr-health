@@ -179,8 +179,15 @@ export const habitRepository = {
       notes ?? null,
     );
 
+    // Read back actual row ID (may differ from generated id on upsert conflict)
+    const row = await db.getFirstAsync<{ id: string }>(
+      'SELECT id FROM habit_completions WHERE habit_id = ? AND date = ?',
+      habitId,
+      date,
+    );
+
     return {
-      id,
+      id: row?.id ?? id,
       habitId,
       date,
       completed,

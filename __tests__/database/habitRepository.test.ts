@@ -226,6 +226,7 @@ describe('habitRepository', () => {
   describe('setCompletion', () => {
     it('upserts completion record', async () => {
       mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.getFirstAsync.mockResolvedValue({ id: 'test-id' });
 
       const result = await habitRepository.setCompletion('h1', '2026-02-18', true);
 
@@ -239,11 +240,26 @@ describe('habitRepository', () => {
 
     it('sets completedAt to null when marking incomplete', async () => {
       mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.getFirstAsync.mockResolvedValue({ id: 'test-id' });
 
       const result = await habitRepository.setCompletion('h1', '2026-02-18', false);
 
       expect(result.completed).toBe(false);
       expect(result.completedAt).toBeUndefined();
+    });
+
+    it('returns actual DB row id after upsert, not the generated id', async () => {
+      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.getFirstAsync.mockResolvedValue({ id: 'original-db-id' });
+
+      const result = await habitRepository.setCompletion('h1', '2026-02-18', true);
+
+      expect(result.id).toBe('original-db-id');
+      expect(mockDb.getFirstAsync).toHaveBeenCalledWith(
+        expect.stringContaining('habit_completions'),
+        'h1',
+        '2026-02-18',
+      );
     });
   });
 
