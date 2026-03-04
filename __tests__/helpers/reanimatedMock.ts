@@ -53,6 +53,7 @@ export const reanimatedMock = {
   withSequence: (...args: number[]) => args[0],
   withRepeat: (v: number) => v,
   FadeInDown: layoutAnimationMock(),
+  FadeInUp: layoutAnimationMock(),
   FadeIn: layoutAnimationMock(),
   FadeOut: layoutAnimationMock(),
   interpolate: () => 0,
