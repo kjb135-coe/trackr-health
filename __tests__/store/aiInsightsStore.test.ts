@@ -166,6 +166,78 @@ describe('aiInsightsStore', () => {
         await firstPromise!;
       });
     });
+
+    it('skips fetchExerciseRecommendation when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockGetExerciseRecommendation.mockReturnValueOnce(firstCall);
+
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchExerciseRecommendation();
+      });
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchExerciseRecommendation();
+      });
+
+      expect(mockGetExerciseRecommendation).toHaveBeenCalledTimes(1);
+
+      resolveFirst!({});
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
+
+    it('skips fetchMoodAnalysis when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockAnalyzeJournalMood.mockReturnValueOnce(firstCall);
+
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchMoodAnalysis();
+      });
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchMoodAnalysis();
+      });
+
+      expect(mockAnalyzeJournalMood).toHaveBeenCalledTimes(1);
+
+      resolveFirst!({});
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
+
+    it('skips fetchNutritionAdvice when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockGetNutritionAdvice.mockReturnValueOnce(firstCall);
+
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchNutritionAdvice();
+      });
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchNutritionAdvice();
+      });
+
+      expect(mockGetNutritionAdvice).toHaveBeenCalledTimes(1);
+
+      resolveFirst!({});
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
   });
 
   describe('fetchHabitSuggestions', () => {

@@ -114,4 +114,10 @@ describe('AnimatedButton', () => {
     );
     await findByText('Large');
   });
+
+  it('has accessibility role and label', async () => {
+    const { findByRole } = renderWithTheme(<AnimatedButton title="Save" onPress={jest.fn()} />);
+    const button = await findByRole('button', { name: 'Save' });
+    expect(button).toBeTruthy();
+  });
 });

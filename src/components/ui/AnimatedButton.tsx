@@ -114,6 +114,9 @@ export function AnimatedButton({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={isDisabled}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityState={{ disabled: isDisabled }}
       style={[
         styles.base,
         styles[size],
