@@ -5,6 +5,15 @@
 
 ---
 
+## P2 - Nice to Have
+
+### 273. Reset all stores on sign-out to prevent data leakage
+- When user signs out, only authStore clears its state. All other stores (habits, sleep, exercise, nutrition, journal, AI insights, goals) retain cached data from the previous session.
+- If User A signs out and User B signs in without an app restart, User B sees User A's data in Zustand state.
+- aiInsightsStore.clearAll() exists but is never called on sign-out.
+
+---
+
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
