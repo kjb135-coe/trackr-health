@@ -1,23 +1,23 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 831 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 847 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
-### 249. Add AnimatedCard accessibility attributes
-- `AnimatedCard` has `accessibilityRole` and `accessibilityLabel` when `onPress` is set, but not when it's a static card.
-
-### 250. Add tests for standalone log screens
-- `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` have screen tests but routing/initialization code may not be fully covered.
-
-### 252. Deduplicate `getVariantStyle` and `getTextColor` in Button/AnimatedButton
-- Both components have identical switch statements for variant styles and text colors. Could extract a shared `getButtonVariantStyles(variant, colors)` utility.
-
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
-- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls (e.g., when dashboard loads coaching + habit suggestions).
+- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls. However, currently only `fetchDailyCoaching` is called from the dashboard. Lower priority until multiple AI calls happen simultaneously.
+
+### 254. Extract common log screen patterns
+- `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` share common patterns: header with X close button + title, section title style, save button at bottom. Could extract `LogScreenHeader` and `SectionTitle` components.
+
+### 255. AnimatedCard variant styles could use StyleSheet.create
+- AnimatedCard's `getVariantStyle()` returns dynamic ViewStyle objects on every render. Could follow the Button pattern and use `StyleSheet.create` for the static portions (borderWidth, shadowOffset, shadowRadius, elevation).
+
+### 256. Button `fullWidth` style cast
+- Both Button and AnimatedButton use `width: '100%' as unknown as number` which is a type hack. React Native types accept string widths — investigate if the cast is needed or if `width: '100%' as DimensionValue` is cleaner.
 
 ---
 
