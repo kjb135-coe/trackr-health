@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 887 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 889 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
