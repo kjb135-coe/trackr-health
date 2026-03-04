@@ -13,6 +13,8 @@ import {
   AI_MAX_TOKENS_BRIEF,
   withTimeout,
 } from '@/src/utils/constants';
+import { subDays } from 'date-fns';
+import { getDateString } from '@/src/utils/date';
 import { z } from 'zod';
 
 export interface AIInsight {
@@ -166,9 +168,8 @@ const NutritionAdviceSchema = z.object({
 // Gather recent data for AI analysis
 async function gatherHealthData() {
   const today = new Date();
-  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const todayStr = today.toISOString().split('T')[0];
-  const weekAgoStr = weekAgo.toISOString().split('T')[0];
+  const todayStr = getDateString(today);
+  const weekAgoStr = getDateString(subDays(today, 7));
 
   const [habits, recentSleep, recentExercise, recentMeals, recentJournal] = await Promise.all([
     habitRepository.getAll(),

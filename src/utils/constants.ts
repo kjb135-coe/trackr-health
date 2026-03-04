@@ -116,6 +116,7 @@ export const AI_MAX_TOKENS_MEDIUM = 512;
 export const AI_MAX_TOKENS_BRIEF = 256;
 export const AI_OCR_MAX_TOKENS = 4096;
 export const AI_TIMEOUT_MS = 30000;
+export const AI_CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
 
 // Camera / Image
 export const IMAGE_QUALITY = 0.8;

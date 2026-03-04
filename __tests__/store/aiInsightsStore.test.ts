@@ -87,6 +87,61 @@ describe('aiInsightsStore', () => {
     });
   });
 
+  describe('loading guards', () => {
+    it('skips fetchHabitSuggestions when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockGenerateHabitSuggestions.mockReturnValueOnce(firstCall);
+
+      // Start first fetch (will hang until resolved)
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchHabitSuggestions();
+      });
+
+      expect(useAIInsightsStore.getState().isLoadingHabits).toBe(true);
+
+      // Second fetch while first is loading — should be skipped
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchHabitSuggestions();
+      });
+
+      expect(mockGenerateHabitSuggestions).toHaveBeenCalledTimes(1);
+
+      // Clean up
+      resolveFirst!([]);
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
+
+    it('skips fetchSleepAnalysis when already loading', async () => {
+      let resolveFirst: (v: unknown) => void;
+      const firstCall = new Promise((r) => {
+        resolveFirst = r;
+      });
+      mockAnalyzeSleepPatterns.mockReturnValueOnce(firstCall);
+
+      let firstPromise: Promise<void>;
+      act(() => {
+        firstPromise = useAIInsightsStore.getState().fetchSleepAnalysis();
+      });
+
+      await act(async () => {
+        await useAIInsightsStore.getState().fetchSleepAnalysis();
+      });
+
+      expect(mockAnalyzeSleepPatterns).toHaveBeenCalledTimes(1);
+
+      resolveFirst!({});
+      await act(async () => {
+        await firstPromise!;
+      });
+    });
+  });
+
   describe('fetchHabitSuggestions', () => {
     it('fetches suggestions and stores result', async () => {
       const mockSuggestions = [{ name: 'Meditate', reason: 'Reduce stress', frequency: 'daily' }];

@@ -13,6 +13,7 @@ import {
   MoodAnalysis,
 } from '@/src/services/ai';
 import { getErrorMessage } from '@/src/utils/date';
+import { AI_CACHE_DURATION_MS } from '@/src/utils/constants';
 
 interface AIInsightsState {
   // Data
@@ -47,9 +48,6 @@ interface AIInsightsState {
   clearAll: () => void;
 }
 
-// Cache duration: 1 hour
-const CACHE_DURATION = 60 * 60 * 1000;
-
 export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   // Initial state
   dailyCoaching: null,
@@ -73,7 +71,11 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
     const { lastCoachingFetch, dailyCoaching } = get();
 
     // Use cache if fresh
-    if (dailyCoaching && lastCoachingFetch && Date.now() - lastCoachingFetch < CACHE_DURATION) {
+    if (
+      dailyCoaching &&
+      lastCoachingFetch &&
+      Date.now() - lastCoachingFetch < AI_CACHE_DURATION_MS
+    ) {
       return;
     }
 
@@ -94,6 +96,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   },
 
   fetchHabitSuggestions: async () => {
+    if (get().isLoadingHabits) return;
     set({ isLoadingHabits: true, error: null });
     try {
       const suggestions = await generateHabitSuggestions();
@@ -107,6 +110,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   },
 
   fetchSleepAnalysis: async () => {
+    if (get().isLoadingSleep) return;
     set({ isLoadingSleep: true, error: null });
     try {
       const analysis = await analyzeSleepPatterns();
@@ -120,6 +124,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   },
 
   fetchExerciseRecommendation: async () => {
+    if (get().isLoadingExercise) return;
     set({ isLoadingExercise: true, error: null });
     try {
       const recommendation = await getExerciseRecommendation();
@@ -133,6 +138,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   },
 
   fetchMoodAnalysis: async () => {
+    if (get().isLoadingMood) return;
     set({ isLoadingMood: true, error: null });
     try {
       const analysis = await analyzeJournalMood();
@@ -146,6 +152,7 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
   },
 
   fetchNutritionAdvice: async () => {
+    if (get().isLoadingNutrition) return;
     set({ isLoadingNutrition: true, error: null });
     try {
       const advice = await getNutritionAdvice();
