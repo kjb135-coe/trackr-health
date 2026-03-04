@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 960 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 961 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -10,11 +10,8 @@
 ### 294. nutritionStore concurrent loadDailyTotals race condition
 - `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins. Practically harmless — user actions are seconds apart.
 
-### 319. Goals screen doesn't display goalsStore.error to users
-- `goalsStore.updateGoals` now sets `error` state on persistence failure (#315), but the goals settings screen doesn't read or display this error. Users still get no visual feedback. Should show an error banner or toast when `error` is set.
-
-### 321. Notification toggle doesn't handle schedule failures gracefully
-- When toggling notifications ON, if `scheduleHabitReminder` fails for one habit, the loop stops and remaining habits don't get scheduled. Should catch per-habit errors and continue scheduling.
+### 322. Goals screen doesn't show error state inline
+- The goals screen now shows Alert.alert on save failure (via try/catch), but doesn't display the store's `error` field inline. For a more polished UX, could show an error banner when `goalsStore.error` is set. Low priority since Alert already works.
 
 ---
 
