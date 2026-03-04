@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 932 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 935 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -13,11 +13,14 @@
 ### 303. Notification toggle not persisted across app restarts
 - `settings.tsx` stores `notificationsEnabled` in component state only (`useState(true)`). Toggling off and reopening the app resets it to true. Should persist to AsyncStorage or SQLite.
 
-### 304. exerciseStore.createSession missing duplicate-date guard
-- Unlike sleep (which now guards), exerciseStore.createSession has no check for existing sessions on the same date. Exercise allows multiple sessions per day by design, so this may be intentional — but there's no per-day duplicate-prevention if needed.
+### 306. habitStore loadTodayCompletions with explicit date param untested
+- All tests call `loadTodayCompletions()` with no argument. The `date` parameter branch used by DateNavigator is never exercised.
 
-### 305. journal/new router.replace loses navigation back stack
-- `journal/new.tsx` uses `router.replace` after save, which replaces the current route and prevents the user from navigating back to the form. Should use `router.back()` to preserve stack.
+### 307. habits.tsx screen has zero fireEvent interaction tests
+- All 8 tests in habits.test.tsx are render-only. No `fireEvent.press` for toggle completion, delete, or edit modal. The modal component tests cover these paths, but the screen-level wiring is untested.
+
+### 308. journalRepository.search doesn't escape LIKE wildcard characters
+- Searching for `50%` matches every entry because `%` is a LIKE wildcard. Not a SQL injection risk, but a correctness bug. Should escape `%` and `_` in the query.
 
 ---
 
