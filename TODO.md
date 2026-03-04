@@ -1,16 +1,14 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 882 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 883 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
-### 273. Reset all stores on sign-out to prevent data leakage
-- When user signs out, only authStore clears its state. All other stores (habits, sleep, exercise, nutrition, journal, AI insights, goals) retain cached data from the previous session.
-- If User A signs out and User B signs in without an app restart, User B sees User A's data in Zustand state.
-- aiInsightsStore.clearAll() exists but is never called on sign-out.
+### 274. FactorChip in sleep/log.tsx has uncleared setTimeout
+- `app/sleep/log.tsx` FactorChip component uses `setTimeout(() => { scale.value = ... }, ANIMATION_DURATION.pressRelease)` inside an onPress handler without cleanup. If user navigates away during the animation delay, the timer fires on an unmounted component.
 
 ---
 
