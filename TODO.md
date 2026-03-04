@@ -1,23 +1,23 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 847 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 850 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
-- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls. However, currently only `fetchDailyCoaching` is called from the dashboard. Lower priority until multiple AI calls happen simultaneously.
+- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls. Currently only `fetchDailyCoaching` is called from the dashboard — lower priority until multiple AI calls happen simultaneously.
 
 ### 254. Extract common log screen patterns
 - `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` share common patterns: header with X close button + title, section title style, save button at bottom. Could extract `LogScreenHeader` and `SectionTitle` components.
 
-### 255. AnimatedCard variant styles could use StyleSheet.create
-- AnimatedCard's `getVariantStyle()` returns dynamic ViewStyle objects on every render. Could follow the Button pattern and use `StyleSheet.create` for the static portions (borderWidth, shadowOffset, shadowRadius, elevation).
+### 258. Break down settings.tsx (716 lines)
+- Settings screen has too many features in one file. Could extract: ApiKeySection, ThemeSection, GoalsSection, DangerZoneSection, AboutSection into separate components.
 
-### 256. Button `fullWidth` style cast
-- Both Button and AnimatedButton use `width: '100%' as unknown as number` which is a type hack. React Native types accept string widths — investigate if the cast is needed or if `width: '100%' as DimensionValue` is cleaner.
+### 259. Add settings screen test coverage
+- `app/settings.tsx` is the largest screen (716 lines) but `__tests__/screens/settings.test.tsx` may not cover all interactive flows (API key entry, goal editing, theme toggling, data clearing).
 
 ---
 
