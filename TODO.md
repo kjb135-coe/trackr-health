@@ -5,6 +5,15 @@
 
 ---
 
+## P2 - Nice to Have
+
+### 277. Camera photos sent to Claude API at full resolution
+- `takePictureAsync()` in nutrition/camera.tsx and journal/scan.tsx passes no quality option. Full-resolution photos are base64-encoded (5-11MB) and sent to Claude API.
+- Gallery picks use `IMAGE_QUALITY` (0.8) but camera captures do not.
+- Fix: Pass `{ quality: IMAGE_QUALITY }` to `takePictureAsync()` for consistency and faster API calls.
+
+---
+
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
