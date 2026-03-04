@@ -149,6 +149,20 @@ describe('journalRepository', () => {
       );
       expect(result).toHaveLength(1);
     });
+
+    it('returns empty array for empty query without DB call', async () => {
+      const result = await journalRepository.search('');
+
+      expect(result).toEqual([]);
+      expect(mockDb.getAllAsync).not.toHaveBeenCalled();
+    });
+
+    it('returns empty array for whitespace-only query without DB call', async () => {
+      const result = await journalRepository.search('   ');
+
+      expect(result).toEqual([]);
+      expect(mockDb.getAllAsync).not.toHaveBeenCalled();
+    });
   });
 
   describe('create', () => {

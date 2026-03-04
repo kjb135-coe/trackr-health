@@ -103,11 +103,19 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
   },
 
   getTotalDuration: async (startDate, endDate) => {
-    return exerciseRepository.getTotalDuration(startDate, endDate);
+    try {
+      return await exerciseRepository.getTotalDuration(startDate, endDate);
+    } catch {
+      return 0;
+    }
   },
 
   getTotalCalories: async (startDate, endDate) => {
-    return exerciseRepository.getTotalCalories(startDate, endDate);
+    try {
+      return await exerciseRepository.getTotalCalories(startDate, endDate);
+    } catch {
+      return 0;
+    }
   },
 
   clearError: () => set({ error: null }),

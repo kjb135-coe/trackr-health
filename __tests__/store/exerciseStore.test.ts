@@ -217,6 +217,14 @@ describe('exerciseStore', () => {
 
       expect(result).toBe(120);
     });
+
+    it('returns 0 on repository error', async () => {
+      exerciseRepository.getTotalDuration.mockRejectedValue(new Error('DB error'));
+
+      const result = await useExerciseStore.getState().getTotalDuration('2026-02-01', '2026-02-28');
+
+      expect(result).toBe(0);
+    });
   });
 
   describe('getTotalCalories', () => {
@@ -226,6 +234,14 @@ describe('exerciseStore', () => {
       const result = await useExerciseStore.getState().getTotalCalories('2026-02-01', '2026-02-28');
 
       expect(result).toBe(800);
+    });
+
+    it('returns 0 on repository error', async () => {
+      exerciseRepository.getTotalCalories.mockRejectedValue(new Error('DB error'));
+
+      const result = await useExerciseStore.getState().getTotalCalories('2026-02-01', '2026-02-28');
+
+      expect(result).toBe(0);
     });
   });
 

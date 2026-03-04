@@ -55,6 +55,7 @@ export const journalRepository = {
   },
 
   async search(query: string): Promise<JournalEntry[]> {
+    if (!query.trim()) return [];
     const db = await getDatabase();
     const rows = await db.getAllAsync<JournalEntryRow>(
       `SELECT * FROM journal_entries
