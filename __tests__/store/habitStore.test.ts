@@ -210,6 +210,14 @@ describe('habitStore', () => {
       expect(useHabitStore.getState().todayCompletions.size).toBe(0);
       expect(useHabitStore.getState().error).toBe('fail');
     });
+
+    it('uses explicit date when provided', async () => {
+      habitRepository.getCompletionsForDate.mockResolvedValue([mockCompletion]);
+
+      await useHabitStore.getState().loadTodayCompletions('2026-02-20');
+
+      expect(habitRepository.getCompletionsForDate).toHaveBeenCalledWith('2026-02-20');
+    });
   });
 
   describe('toggleCompletion', () => {
