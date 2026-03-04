@@ -111,6 +111,7 @@ export const habitRepository = {
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
+    await db.runAsync('DELETE FROM habit_completions WHERE habit_id = ?', id);
     await db.runAsync('DELETE FROM habits WHERE id = ?', id);
   },
 

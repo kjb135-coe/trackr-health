@@ -112,7 +112,11 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 
   search: async (query) => {
-    return journalRepository.search(query);
+    try {
+      return await journalRepository.search(query);
+    } catch {
+      return [];
+    }
   },
 
   scanImage: async (imageUri) => {
@@ -128,7 +132,11 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 
   getAllTags: async () => {
-    return journalRepository.getAllTags();
+    try {
+      return await journalRepository.getAllTags();
+    } catch {
+      return [];
+    }
   },
 
   clearError: () => set({ error: null }),
