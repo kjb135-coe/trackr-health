@@ -5,6 +5,7 @@ import {
   getExerciseRecommendation,
   analyzeJournalMood,
   getNutritionAdvice,
+  gatherHealthData,
 } from '@/src/services/ai/healthInsightsAI';
 
 const mockCreate = jest.fn();
@@ -194,6 +195,36 @@ describe('healthInsightsAI', () => {
       jest.runAllTimers();
 
       await expect(resultPromise).rejects.toThrow('Unexpected response type');
+    });
+
+    it('uses pre-fetched data when provided', async () => {
+      const coaching = {
+        greeting: 'Hello!',
+        insights: [
+          {
+            category: 'habits',
+            title: 'Nice',
+            insight: 'Good',
+            suggestion: 'Keep',
+            priority: 'low',
+          },
+        ],
+        dailyTip: 'Drink water',
+        motivationalMessage: 'Great!',
+      };
+      mockCreate.mockResolvedValue(makeTextResponse(JSON.stringify(coaching)));
+
+      const preData = await gatherHealthData();
+      jest.clearAllMocks();
+
+      const resultPromise = generateDailyCoaching(preData);
+      jest.runAllTimers();
+      const result = await resultPromise;
+
+      expect(result.greeting).toBe('Hello!');
+      // Repositories should NOT be called again since we passed pre-fetched data
+      const { habitRepository } = require('@/src/database/repositories');
+      expect(habitRepository.getAll).not.toHaveBeenCalled();
     });
   });
 

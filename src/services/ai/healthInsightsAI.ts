@@ -166,8 +166,10 @@ const NutritionAdviceSchema = z.object({
   suggestions: z.array(z.string()),
 });
 
+export type HealthData = Awaited<ReturnType<typeof gatherHealthData>>;
+
 // Gather recent data for AI analysis
-async function gatherHealthData() {
+export async function gatherHealthData() {
   const today = new Date();
   const todayStr = getDateString(today);
   const weekAgoStr = getDateString(subDays(today, 7));
@@ -196,9 +198,9 @@ async function gatherHealthData() {
   };
 }
 
-export async function generateDailyCoaching(): Promise<DailyAICoaching> {
+export async function generateDailyCoaching(preData?: HealthData): Promise<DailyAICoaching> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   const prompt = `You are a supportive health coach AI for the Trackr app. Analyze the user's health data from the past week and provide personalized coaching.
 
@@ -263,9 +265,9 @@ Generate 3-5 insights focusing on the most important patterns. Be supportive but
   }
 }
 
-export async function generateHabitSuggestions(): Promise<HabitSuggestion[]> {
+export async function generateHabitSuggestions(preData?: HealthData): Promise<HabitSuggestion[]> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   const prompt = `Based on this user's current habits and health patterns, suggest 3 new habits that would complement their routine.
 
@@ -314,9 +316,9 @@ Suggest habits that fill gaps in their routine. Be specific and practical.`;
   }
 }
 
-export async function analyzeSleepPatterns(): Promise<SleepAnalysis> {
+export async function analyzeSleepPatterns(preData?: HealthData): Promise<SleepAnalysis> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   if (data.sleep.length < 3) {
     return {
@@ -363,9 +365,11 @@ Be specific and reference their actual data.`;
   }
 }
 
-export async function getExerciseRecommendation(): Promise<ExerciseRecommendation> {
+export async function getExerciseRecommendation(
+  preData?: HealthData,
+): Promise<ExerciseRecommendation> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   const prompt = `Based on this user's recent exercise history, suggest their next workout.
 
@@ -406,9 +410,9 @@ Consider their recent activity level and suggest variety. If they're tired (low 
   }
 }
 
-export async function analyzeJournalMood(): Promise<MoodAnalysis> {
+export async function analyzeJournalMood(preData?: HealthData): Promise<MoodAnalysis> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   if (data.journal.length < 2) {
     return {
@@ -455,9 +459,11 @@ Be supportive and non-judgmental. Focus on patterns, not individual entries.`;
   }
 }
 
-export async function getNutritionAdvice(): Promise<{ advice: string; suggestions: string[] }> {
+export async function getNutritionAdvice(
+  preData?: HealthData,
+): Promise<{ advice: string; suggestions: string[] }> {
   const client = await getClaudeClient();
-  const data = await gatherHealthData();
+  const data = preData ?? (await gatherHealthData());
 
   if (data.meals.length < 3) {
     return {

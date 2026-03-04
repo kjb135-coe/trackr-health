@@ -5,6 +5,7 @@ export {
   getExerciseRecommendation,
   analyzeJournalMood,
   getNutritionAdvice,
+  gatherHealthData,
 } from './healthInsightsAI';
 
 export type {
@@ -14,4 +15,5 @@ export type {
   SleepAnalysis,
   ExerciseRecommendation,
   MoodAnalysis,
+  HealthData,
 } from './healthInsightsAI';
