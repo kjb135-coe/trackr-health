@@ -123,6 +123,24 @@ describe('sleepStore', () => {
         }),
       ).rejects.toThrow('Create failed');
     });
+
+    it('throws friendly error when entry already exists for date', async () => {
+      sleepRepository.getByDate.mockResolvedValue(mockEntry);
+
+      await expect(
+        useSleepStore.getState().createEntry({
+          date: '2026-02-18',
+          bedtime: '2026-02-17T23:00:00.000Z',
+          wakeTime: '2026-02-18T07:00:00.000Z',
+          durationMinutes: 480,
+          quality: 4,
+        }),
+      ).rejects.toThrow('A sleep entry already exists for this date');
+
+      expect(useSleepStore.getState().error).toBe('A sleep entry already exists for this date');
+      expect(useSleepStore.getState().isLoading).toBe(false);
+      expect(sleepRepository.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('updateEntry', () => {
