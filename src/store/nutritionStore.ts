@@ -3,6 +3,7 @@ import { Meal, FoodItem, AIFoodAnalysis } from '@/src/types';
 import { nutritionRepository } from '@/src/database/repositories';
 import { analyzeFoodImage } from '@/src/services/claude';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
+import { deleteImage } from '@/src/utils/imagePersist';
 
 interface NutritionState {
   meals: Meal[];
@@ -113,6 +114,9 @@ export const useNutritionStore = create<NutritionState>((set, get) => ({
         isLoading: false,
       }));
       if (meal) {
+        if (meal.photoUri) {
+          deleteImage(meal.photoUri);
+        }
         await get().loadDailyTotals(meal.date);
       }
     } catch (error) {

@@ -18,6 +18,11 @@ jest.mock('@/src/services/claude', () => ({
   scanHandwrittenJournal: jest.fn(),
 }));
 
+const mockDeleteImage = jest.fn();
+jest.mock('@/src/utils/imagePersist', () => ({
+  deleteImage: (...args: unknown[]) => mockDeleteImage(...args),
+}));
+
 const { journalRepository } = jest.requireMock('@/src/database/repositories');
 const { scanHandwrittenJournal } = jest.requireMock('@/src/services/claude');
 
@@ -208,6 +213,30 @@ describe('journalStore', () => {
 
       expect(useJournalStore.getState().entries).toHaveLength(1);
       expect(useJournalStore.getState().entries[0].id).toBe('j2');
+    });
+
+    it('deletes persisted image when entry has originalImageUri', async () => {
+      const scannedEntry = {
+        ...mockEntry,
+        isScanned: true,
+        originalImageUri: 'file:///docs/images/scan.jpg',
+      };
+      useJournalStore.setState({ entries: [scannedEntry] });
+      journalRepository.delete.mockResolvedValue(undefined);
+      mockDeleteImage.mockResolvedValue(undefined);
+
+      await useJournalStore.getState().deleteEntry('j1');
+
+      expect(mockDeleteImage).toHaveBeenCalledWith('file:///docs/images/scan.jpg');
+    });
+
+    it('does not call deleteImage when entry has no originalImageUri', async () => {
+      useJournalStore.setState({ entries: [mockEntry] });
+      journalRepository.delete.mockResolvedValue(undefined);
+
+      await useJournalStore.getState().deleteEntry('j1');
+
+      expect(mockDeleteImage).not.toHaveBeenCalled();
     });
 
     it('sets error on failure', async () => {

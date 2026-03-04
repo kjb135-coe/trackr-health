@@ -3,6 +3,7 @@ import { JournalEntry, OCRResult } from '@/src/types';
 import { journalRepository } from '@/src/database/repositories';
 import { scanHandwrittenJournal } from '@/src/services/claude';
 import { getErrorMessage } from '@/src/utils/date';
+import { deleteImage } from '@/src/utils/imagePersist';
 
 interface JournalState {
   entries: JournalEntry[];
@@ -93,6 +94,7 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 
   deleteEntry: async (id) => {
+    const entry = get().entries.find((e) => e.id === id);
     set({ isLoading: true, error: null });
     try {
       await journalRepository.delete(id);
@@ -100,6 +102,9 @@ export const useJournalStore = create<JournalState>((set, get) => ({
         entries: state.entries.filter((e) => e.id !== id),
         isLoading: false,
       }));
+      if (entry?.originalImageUri) {
+        deleteImage(entry.originalImageUri);
+      }
     } catch (error) {
       set({ error: getErrorMessage(error), isLoading: false });
       throw error;

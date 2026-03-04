@@ -18,6 +18,11 @@ jest.mock('@/src/services/claude', () => ({
   analyzeFoodImage: jest.fn(),
 }));
 
+const mockDeleteImage = jest.fn();
+jest.mock('@/src/utils/imagePersist', () => ({
+  deleteImage: (...args: unknown[]) => mockDeleteImage(...args),
+}));
+
 jest.mock('@/src/utils/date', () => ({
   getDateString: jest.fn(() => '2026-02-18'),
   getErrorMessage: jest.fn((error: unknown) =>
@@ -288,6 +293,38 @@ describe('nutritionStore', () => {
 
       expect(useNutritionStore.getState().meals).toEqual([]);
       expect(nutritionRepository.getDailyTotals).toHaveBeenCalledWith('2026-02-18');
+    });
+
+    it('deletes persisted image when meal has photoUri', async () => {
+      const mealWithPhoto = { ...mockMeal, photoUri: 'file:///docs/images/meal.jpg' };
+      useNutritionStore.setState({ meals: [mealWithPhoto] });
+      nutritionRepository.deleteMeal.mockResolvedValue(undefined);
+      nutritionRepository.getDailyTotals.mockResolvedValue({
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      });
+      mockDeleteImage.mockResolvedValue(undefined);
+
+      await useNutritionStore.getState().deleteMeal('m1');
+
+      expect(mockDeleteImage).toHaveBeenCalledWith('file:///docs/images/meal.jpg');
+    });
+
+    it('does not call deleteImage when meal has no photoUri', async () => {
+      useNutritionStore.setState({ meals: [mockMeal] });
+      nutritionRepository.deleteMeal.mockResolvedValue(undefined);
+      nutritionRepository.getDailyTotals.mockResolvedValue({
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      });
+
+      await useNutritionStore.getState().deleteMeal('m1');
+
+      expect(mockDeleteImage).not.toHaveBeenCalled();
     });
 
     it('skips daily totals reload when meal not in state', async () => {
