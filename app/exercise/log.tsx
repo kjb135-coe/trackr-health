@@ -276,6 +276,7 @@ export default function LogExerciseScreen() {
           placeholderTextColor={colors.textTertiary}
           multiline
           numberOfLines={3}
+          maxLength={500}
         />
       </Animated.View>
 

@@ -189,6 +189,7 @@ export default function NewJournalEntryScreen() {
             multiline
             textAlignVertical="top"
             autoFocus
+            maxLength={5000}
           />
         </Animated.View>
 

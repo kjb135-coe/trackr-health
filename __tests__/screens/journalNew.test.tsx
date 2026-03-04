@@ -98,6 +98,12 @@ describe('NewJournalEntryScreen', () => {
     expect(titleInput.props.maxLength).toBe(100);
   });
 
+  it('enforces max length on content input', () => {
+    const { getByPlaceholderText } = render(<NewJournalEntryScreen />);
+    const contentInput = getByPlaceholderText("What's on your mind today?");
+    expect(contentInput.props.maxLength).toBe(5000);
+  });
+
   it('shows validation error when saving with empty content', () => {
     jest.spyOn(Alert, 'alert');
     const { getByText } = render(<NewJournalEntryScreen />);

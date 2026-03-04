@@ -152,6 +152,12 @@ describe('LogSleepScreen', () => {
     expect(getByPlaceholderText('How did you sleep? Any dreams?')).toBeTruthy();
   });
 
+  it('enforces max length on notes input', () => {
+    const { getByPlaceholderText } = render(<LogSleepScreen />);
+    const input = getByPlaceholderText('How did you sleep? Any dreams?');
+    expect(input.props.maxLength).toBe(500);
+  });
+
   it('toggles sleep factor chips on press', () => {
     const { getByText } = render(<LogSleepScreen />);
     // Press "Caffeine" factor chip

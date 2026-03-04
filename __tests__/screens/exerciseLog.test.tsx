@@ -193,6 +193,12 @@ describe('LogExerciseScreen', () => {
     expect(input.props.value).toBe('Great run today');
   });
 
+  it('enforces max length on notes input', () => {
+    const { getByPlaceholderText } = render(<LogExerciseScreen />);
+    const input = getByPlaceholderText('How was your workout?');
+    expect(input.props.maxLength).toBe(500);
+  });
+
   it('shows alert when duration is zero', () => {
     jest.spyOn(Alert, 'alert');
     const { getByText, getByTestId } = render(<LogExerciseScreen />);

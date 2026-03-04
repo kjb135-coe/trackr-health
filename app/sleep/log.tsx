@@ -247,6 +247,7 @@ export default function LogSleepScreen() {
           placeholderTextColor={colors.textTertiary}
           multiline
           numberOfLines={3}
+          maxLength={500}
         />
       </Animated.View>
 
