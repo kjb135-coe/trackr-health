@@ -1,5 +1,13 @@
 import React from 'react';
-import { Text, ActivityIndicator, Pressable, StyleProp, ViewStyle, StyleSheet } from 'react-native';
+import {
+  Text,
+  ActivityIndicator,
+  Pressable,
+  StyleProp,
+  ViewStyle,
+  StyleSheet,
+  DimensionValue,
+} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -147,7 +155,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   fullWidth: {
-    width: '100%' as unknown as number,
+    width: '100%' as DimensionValue,
   },
   text: {
     fontWeight: '600',

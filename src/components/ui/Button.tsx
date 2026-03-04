@@ -1,5 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ViewStyle,
+  DimensionValue,
+} from 'react-native';
 import { spacing, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { getButtonVariantStyle, getButtonTextColor, type ButtonVariant } from './buttonStyles';
 
@@ -97,7 +104,7 @@ const createStyles = (colors: ThemeColors) =>
       opacity: 0.5,
     },
     fullWidth: {
-      width: '100%' as unknown as number,
+      width: '100%' as DimensionValue,
     },
     text: {
       fontWeight: '600',

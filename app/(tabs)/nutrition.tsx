@@ -5,11 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Alert,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { Plus, UtensilsCrossed, Sparkles } from 'lucide-react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useTheme } from '@/src/theme/ThemeContext';
@@ -31,6 +29,7 @@ import { useApiKeyExists } from '@/src/services/claude';
 import { NutritionLogModal } from '@/src/components/nutrition';
 import { Meal } from '@/src/types';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { confirmDelete } from '@/src/utils/alerts';
 
 export default function NutritionScreen() {
   const { colors } = useTheme();
@@ -81,18 +80,10 @@ export default function NutritionScreen() {
   };
 
   const handleDeleteMeal = (id: string, name: string) => {
-    Alert.alert('Delete Meal', `Delete ${name}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteMeal(id);
-          await loadDailyTotals(selectedDate);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        },
-      },
-    ]);
+    confirmDelete('Delete Meal', `Delete ${name}?`, async () => {
+      await deleteMeal(id);
+      await loadDailyTotals(selectedDate);
+    });
   };
 
   const handleGetNutritionAdvice = async () => {

@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Plus, Check, Trash2, Sparkles, ChevronRight } from 'lucide-react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -35,6 +27,7 @@ import { Habit } from '@/src/types';
 import { TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 import { useApiKeyExists } from '@/src/services/claude';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { confirmDelete } from '@/src/utils/alerts';
 import { cancelHabitReminder } from '@/src/services/notifications';
 
 export default function HabitsScreen() {
@@ -107,18 +100,10 @@ export default function HabitsScreen() {
   };
 
   const handleDeleteHabit = (habit: Habit) => {
-    Alert.alert('Delete Habit', `Are you sure you want to delete "${habit.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await cancelHabitReminder(habit.id);
-          await deleteHabit(habit.id);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        },
-      },
-    ]);
+    confirmDelete('Delete Habit', `Are you sure you want to delete "${habit.name}"?`, async () => {
+      await cancelHabitReminder(habit.id);
+      await deleteHabit(habit.id);
+    });
   };
 
   const handleToggle = async (habitId: string) => {

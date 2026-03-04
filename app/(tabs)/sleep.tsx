@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Plus, Moon, Sparkles, TrendingUp, TrendingDown, Minus, Clock } from 'lucide-react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
@@ -31,6 +30,7 @@ import { useApiKeyExists } from '@/src/services/claude';
 import { SleepLogModal } from '@/src/components/sleep';
 import { SleepEntry } from '@/src/types';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { confirmDelete } from '@/src/utils/alerts';
 
 export default function SleepScreen() {
   const { colors } = useTheme();
@@ -62,17 +62,7 @@ export default function SleepScreen() {
   };
 
   const handleDeleteEntry = (id: string, date: string) => {
-    Alert.alert('Delete Sleep Entry', `Delete sleep entry from ${date}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteEntry(id);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        },
-      },
-    ]);
+    confirmDelete('Delete Sleep Entry', `Delete sleep entry from ${date}?`, () => deleteEntry(id));
   };
 
   const handleDateChange = useCallback((date: string) => {

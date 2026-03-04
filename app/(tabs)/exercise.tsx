@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import { Plus, Dumbbell, Sparkles, Flame, Clock, Zap } from 'lucide-react-native';
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
@@ -35,6 +34,7 @@ import { ExerciseIntensity, ExerciseSession } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { ExerciseLogModal, type ExercisePreFill } from '@/src/components/exercise';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { confirmDelete } from '@/src/utils/alerts';
 
 export default function ExerciseScreen() {
   const { colors } = useTheme();
@@ -69,17 +69,7 @@ export default function ExerciseScreen() {
   };
 
   const handleDeleteSession = (id: string, type: string) => {
-    Alert.alert('Delete Workout', `Delete this ${type} session?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteSession(id);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        },
-      },
-    ]);
+    confirmDelete('Delete Workout', `Delete this ${type} session?`, () => deleteSession(id));
   };
 
   const openModal = (preFill?: ExercisePreFill) => {

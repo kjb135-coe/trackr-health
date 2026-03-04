@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   RefreshControl,
   TextInput,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -42,6 +41,7 @@ import { JournalEntry } from '@/src/types';
 import { useApiKeyExists } from '@/src/services/claude';
 import { JournalEntryModal } from '@/src/components/journal';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { confirmDelete } from '@/src/utils/alerts';
 
 export default function JournalScreen() {
   const { colors } = useTheme();
@@ -100,17 +100,7 @@ export default function JournalScreen() {
   );
 
   const handleDeleteEntry = (id: string, title: string) => {
-    Alert.alert('Delete Entry', `Delete "${title || 'Untitled'}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteEntry(id);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        },
-      },
-    ]);
+    confirmDelete('Delete Entry', `Delete "${title || 'Untitled'}"?`, () => deleteEntry(id));
   };
 
   const openModal = (mode: 'text' | 'scan') => {
