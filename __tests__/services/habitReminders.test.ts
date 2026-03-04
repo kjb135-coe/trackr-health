@@ -133,6 +133,29 @@ describe('habitReminders', () => {
         },
       });
     });
+
+    it('cancels existing reminders before scheduling a new one', async () => {
+      (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
+        status: 'granted',
+      });
+      (Notifications.getAllScheduledNotificationsAsync as jest.Mock).mockResolvedValue([
+        { identifier: 'old-notif', content: { data: { habitId: 'habit-1' } } },
+      ]);
+      (Notifications.scheduleNotificationAsync as jest.Mock).mockResolvedValue('new-notif');
+
+      await scheduleHabitReminder({
+        id: 'habit-1',
+        name: 'Meditate',
+        color: '#FF0000',
+        frequency: 'daily',
+        reminderTime: '08:00',
+        createdAt: '2026-02-18T00:00:00.000Z',
+        updatedAt: '2026-02-18T00:00:00.000Z',
+      });
+
+      expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith('old-notif');
+      expect(Notifications.scheduleNotificationAsync).toHaveBeenCalled();
+    });
   });
 
   describe('cancelHabitReminder', () => {
@@ -146,6 +169,16 @@ describe('habitReminders', () => {
 
       expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledTimes(1);
       expect(Notifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith('notif-1');
+    });
+
+    it('does nothing when no notifications match the habit ID', async () => {
+      (Notifications.getAllScheduledNotificationsAsync as jest.Mock).mockResolvedValue([
+        { identifier: 'notif-2', content: { data: { habitId: 'habit-2' } } },
+      ]);
+
+      await cancelHabitReminder('habit-99');
+
+      expect(Notifications.cancelScheduledNotificationAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -199,6 +232,34 @@ describe('habitReminders', () => {
 
       expect(mockRemoveReceived).toHaveBeenCalled();
       expect(mockRemoveResponse).toHaveBeenCalled();
+    });
+
+    it('calls provided callbacks when notifications are received', () => {
+      const onReceived = jest.fn();
+      const onResponse = jest.fn();
+      let capturedReceivedHandler: (n: unknown) => void = () => {};
+      let capturedResponseHandler: (r: unknown) => void = () => {};
+
+      (Notifications.addNotificationReceivedListener as jest.Mock).mockImplementation((handler) => {
+        capturedReceivedHandler = handler;
+        return { remove: jest.fn() };
+      });
+      (Notifications.addNotificationResponseReceivedListener as jest.Mock).mockImplementation(
+        (handler) => {
+          capturedResponseHandler = handler;
+          return { remove: jest.fn() };
+        },
+      );
+
+      setupNotificationListeners(onReceived, onResponse);
+
+      const fakeNotification = { request: { content: { title: 'Test' } } };
+      capturedReceivedHandler(fakeNotification);
+      expect(onReceived).toHaveBeenCalledWith(fakeNotification);
+
+      const fakeResponse = { notification: fakeNotification };
+      capturedResponseHandler(fakeResponse);
+      expect(onResponse).toHaveBeenCalledWith(fakeResponse);
     });
   });
 });
