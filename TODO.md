@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 925 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 927 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -12,9 +12,6 @@
 
 ### 299. resetAllStores should also clean up persisted images
 - `resetAllStores()` (sign-out) clears all store state but doesn't clean up persisted images from the document directory. After sign-out + sign-in as new user, old images remain on disk. Low priority since sign-out is infrequent.
-
-### 300. Dashboard missing navigation tests for exercise and nutrition cards
-- Tests verify habits/sleep/journal navigation but not exercise/nutrition card presses. Screen renders are tested but interaction coverage is incomplete.
 
 ---
 
