@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 943 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 946 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -16,8 +16,8 @@
 ### 314. Notification toggle doesn't cancel/reschedule habit reminders
 - `handleNotificationToggle(false)` now persists the preference to AsyncStorage but does NOT cancel any scheduled expo-notifications. Habit reminders keep firing. Should iterate all habits and call `cancelHabitReminder` when toggled off, and `scheduleHabitReminder` for each when toggled back on.
 
-### 297. Text inputs on log screens lack maxLength
-- Notes fields in exercise/log.tsx, sleep/log.tsx, and journal/new.tsx have no maxLength. Users could create very large entries. Low priority since it's self-limiting in practice.
+### 315. goalsStore updateGoals silently swallows AsyncStorage errors
+- `updateGoals` optimistically updates state then writes to AsyncStorage with a silent catch. If persistence fails, users lose goal changes on app restart without any feedback. Should at minimum log the error or set an error state.
 
 ---
 
