@@ -2,12 +2,14 @@ const mockExecAsync = jest.fn();
 const mockRunAsync = jest.fn();
 const mockGetAllAsync = jest.fn();
 const mockCloseAsync = jest.fn();
+const mockWithTransactionAsync = jest.fn((task: () => Promise<void>) => task());
 
 const mockDatabase = {
   execAsync: mockExecAsync,
   runAsync: mockRunAsync,
   getAllAsync: mockGetAllAsync,
   closeAsync: mockCloseAsync,
+  withTransactionAsync: mockWithTransactionAsync,
 };
 
 jest.mock('expo-sqlite', () => ({
@@ -49,6 +51,28 @@ describe('database init', () => {
 
     const SQLite = require('expo-sqlite');
     expect(SQLite.openDatabaseAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('returns same instance for concurrent calls (no race condition)', async () => {
+    const [db1, db2, db3] = await Promise.all([getDatabase(), getDatabase(), getDatabase()]);
+
+    expect(db1).toBe(db2);
+    expect(db2).toBe(db3);
+
+    const SQLite = require('expo-sqlite');
+    expect(SQLite.openDatabaseAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('wraps each pending migration in a transaction', async () => {
+    await getDatabase();
+
+    expect(mockWithTransactionAsync).toHaveBeenCalledTimes(1);
+    // Verify the transaction contained both the schema exec and the migration record insert
+    expect(mockExecAsync).toHaveBeenCalledTimes(2); // migrations table + schema
+    expect(mockRunAsync).toHaveBeenCalledWith(
+      'INSERT INTO migrations (name) VALUES (?)',
+      '001_initial_schema',
+    );
   });
 
   it('skips already-applied migrations', async () => {

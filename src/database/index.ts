@@ -1,14 +1,24 @@
 import * as SQLite from 'expo-sqlite';
 
-let db: SQLite.SQLiteDatabase | null = null;
+let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
-export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (db) return db;
+export function getDatabase(): Promise<SQLite.SQLiteDatabase> {
+  if (!dbPromise) {
+    dbPromise = openAndMigrate();
+  }
+  return dbPromise;
+}
 
-  const database = await SQLite.openDatabaseAsync('trackr.db');
-  await runMigrations(database);
-  db = database;
-  return db;
+async function openAndMigrate(): Promise<SQLite.SQLiteDatabase> {
+  try {
+    const database = await SQLite.openDatabaseAsync('trackr.db');
+    await runMigrations(database);
+    return database;
+  } catch (error) {
+    // Allow retry on failure — don't cache a failed promise
+    dbPromise = null;
+    throw error;
+  }
 }
 
 async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
@@ -27,11 +37,13 @@ async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
   );
   const appliedSet = new Set(appliedMigrations.map((m) => m.name));
 
-  // Run pending migrations
+  // Run pending migrations atomically
   for (const migration of migrations) {
     if (!appliedSet.has(migration.name)) {
-      await database.execAsync(migration.sql);
-      await database.runAsync('INSERT INTO migrations (name) VALUES (?)', migration.name);
+      await database.withTransactionAsync(async () => {
+        await database.execAsync(migration.sql);
+        await database.runAsync('INSERT INTO migrations (name) VALUES (?)', migration.name);
+      });
     }
   }
 }
@@ -163,8 +175,9 @@ const migrations: Migration[] = [
 ];
 
 export async function closeDatabase(): Promise<void> {
-  if (db) {
-    await db.closeAsync();
-    db = null;
+  if (dbPromise) {
+    const database = await dbPromise;
+    await database.closeAsync();
+    dbPromise = null;
   }
 }
