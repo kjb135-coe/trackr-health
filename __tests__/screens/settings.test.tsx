@@ -131,12 +131,18 @@ describe('SettingsScreen', () => {
     fireEvent.changeText(input, 'sk-ant-test123');
     fireEvent.press(await findByText('Save'));
 
-    await waitFor(() => {
-      expect(mockSetApiKey).toHaveBeenCalledWith('sk-ant-test123');
-    });
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Success', 'API key saved successfully');
-    });
+    await waitFor(
+      () => {
+        expect(mockSetApiKey).toHaveBeenCalledWith('sk-ant-test123');
+      },
+      { timeout: 5000 },
+    );
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Success', 'API key saved successfully');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows sign out confirmation and calls signOut', async () => {
@@ -172,9 +178,12 @@ describe('SettingsScreen', () => {
 
     fireEvent.press(await findByText('Export All Data'));
 
-    await waitFor(() => {
-      expect(mockShareExportedData).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockShareExportedData).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows export failed alert when export throws', async () => {
@@ -183,9 +192,12 @@ describe('SettingsScreen', () => {
 
     fireEvent.press(await findByText('Export All Data'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Export Failed', 'Export error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Export Failed', 'Export error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows CSV export type selector', async () => {

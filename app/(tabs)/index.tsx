@@ -28,6 +28,7 @@ import { getDatabase } from '@/src/database';
 import { populateDemoData } from '@/src/utils/demoData';
 import { getTrendData, getDailyStreak, type TrendData } from '@/src/services/insights';
 import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
+import { TAB_CONTENT_PADDING_BOTTOM } from '@/src/utils/constants';
 
 interface DashboardCardProps {
   title: string;
@@ -413,7 +414,7 @@ export default function DashboardScreen() {
       )}
 
       {/* Bottom padding for tab bar */}
-      <View style={{ height: 100 }} />
+      <View style={{ height: TAB_CONTENT_PADDING_BOTTOM }} />
     </ScrollView>
   );
 }

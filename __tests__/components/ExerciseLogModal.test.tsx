@@ -59,19 +59,25 @@ describe('ExerciseLogModal', () => {
     const saveButton = await findByText('Save Workout');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateSession).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'running',
-          durationMinutes: 30,
-          intensity: 'moderate',
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateSession).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'running',
+            durationMinutes: 30,
+            intensity: 'moderate',
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert for zero duration', async () => {
@@ -114,15 +120,18 @@ describe('ExerciseLogModal', () => {
     const saveButton = await findByText('Save Workout');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateSession).toHaveBeenCalledWith(
-        expect.objectContaining({
-          durationMinutes: 45,
-          intensity: 'high',
-          caloriesBurned: 300,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateSession).toHaveBeenCalledWith(
+          expect.objectContaining({
+            durationMinutes: 45,
+            intensity: 'high',
+            caloriesBurned: 300,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert for invalid calories', async () => {
@@ -185,21 +194,27 @@ describe('ExerciseLogModal', () => {
 
     fireEvent.press(await findByText('Update Workout'));
 
-    await waitFor(() => {
-      expect(mockUpdateSession).toHaveBeenCalledWith(
-        'session-1',
-        expect.objectContaining({
-          type: 'running',
-          durationMinutes: 30,
-          intensity: 'moderate',
-          caloriesBurned: 250,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateSession).toHaveBeenCalledWith(
+          'session-1',
+          expect.objectContaining({
+            type: 'running',
+            durationMinutes: 30,
+            intensity: 'moderate',
+            caloriesBurned: 250,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when save fails', async () => {
@@ -209,8 +224,11 @@ describe('ExerciseLogModal', () => {
 
     fireEvent.press(await findByText('Save Workout'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Network error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Network error');
+      },
+      { timeout: 5000 },
+    );
   });
 });

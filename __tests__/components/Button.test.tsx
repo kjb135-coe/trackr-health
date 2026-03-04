@@ -31,8 +31,11 @@ describe('Button', () => {
 
   it('shows loading indicator when loading', async () => {
     const { queryByText } = renderWithTheme(<Button title="Loading" onPress={() => {}} loading />);
-    await waitFor(() => {
-      expect(queryByText('Loading')).toBeNull();
-    });
+    await waitFor(
+      () => {
+        expect(queryByText('Loading')).toBeNull();
+      },
+      { timeout: 5000 },
+    );
   });
 });

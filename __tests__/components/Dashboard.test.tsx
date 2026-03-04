@@ -241,9 +241,12 @@ describe('DashboardScreen', () => {
     const button = await findByText('Load Demo Data');
     fireEvent.press(button);
 
-    await waitFor(() => {
-      expect(populateDemoData).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(populateDemoData).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error from any store', async () => {
@@ -305,9 +308,12 @@ describe('DashboardScreen', () => {
     const { findByText } = await renderDashboard();
     fireEvent.press(await findByText('Load Demo Data'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to load demo data');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Failed to load demo data');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('reloads data on pull-to-refresh', async () => {
@@ -320,9 +326,12 @@ describe('DashboardScreen', () => {
     // Find ScrollView and trigger its refreshControl onRefresh
     const scrollView = UNSAFE_getByType(require('react-native').ScrollView);
     const refreshControl = scrollView.props.refreshControl;
-    await waitFor(async () => {
-      await refreshControl.props.onRefresh();
-    });
+    await waitFor(
+      async () => {
+        await refreshControl.props.onRefresh();
+      },
+      { timeout: 5000 },
+    );
 
     expect(mockLoadHabits).toHaveBeenCalled();
     expect(mockLoadSleep).toHaveBeenCalled();

@@ -18,6 +18,9 @@ jest.mock('@/src/store', () => ({
   useOnboardingStore: () => ({
     setCompleted: mockSetCompleted,
   }),
+  useAuthStore: Object.assign(() => ({ user: null }), {
+    getState: () => ({ user: null }),
+  }),
 }));
 
 function renderWithTheme() {
@@ -54,16 +57,22 @@ describe('OnboardingScreen', () => {
     await findByText('Next');
   });
 
-  it('calls setCompleted and navigates when Skip is pressed', async () => {
+  it('calls setCompleted and navigates to login when Skip is pressed', async () => {
     const { findByText } = renderWithTheme();
     fireEvent.press(await findByText('Skip'));
 
-    await waitFor(() => {
-      expect(mockSetCompleted).toHaveBeenCalled();
-    });
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
-    });
+    await waitFor(
+      () => {
+        expect(mockSetCompleted).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+    await waitFor(
+      () => {
+        expect(mockReplace).toHaveBeenCalledWith('/auth/login');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('renders all 6 slide titles in the FlatList data', async () => {

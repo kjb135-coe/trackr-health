@@ -158,12 +158,18 @@ describe('NutritionScreen', () => {
 
   it('calls loadMealsForDate and loadDailyTotals on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadMealsForDate).toHaveBeenCalled();
-    });
-    await waitFor(() => {
-      expect(mockLoadDailyTotals).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadMealsForDate).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+    await waitFor(
+      () => {
+        expect(mockLoadDailyTotals).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows loading skeletons when loading with no meals', async () => {

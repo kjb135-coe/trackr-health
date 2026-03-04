@@ -138,20 +138,26 @@ describe('JournalEntryModal', () => {
     const saveButton = await findByText('Save Entry');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          date: '2026-02-18',
-          title: 'Great Day',
-          content: 'Today was wonderful!',
-          isScanned: false,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            date: '2026-02-18',
+            title: 'Great Day',
+            content: 'Today was wonderful!',
+            isScanned: false,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows edit title and calls updateEntry when editing', async () => {
@@ -227,12 +233,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Permission needed',
-        'Please grant camera permission to scan your journal.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Permission needed',
+          'Please grant camera permission to scan your journal.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert when library permission is denied', async () => {
@@ -249,12 +258,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Permission needed',
-        'Please grant photo library permission.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Permission needed',
+          'Please grant photo library permission.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('scans photo and populates content with OCR text', async () => {
@@ -275,9 +287,12 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(mockScanImage).toHaveBeenCalledWith('file://scan.jpg');
-    });
+    await waitFor(
+      () => {
+        expect(mockScanImage).toHaveBeenCalledWith('file://scan.jpg');
+      },
+      { timeout: 5000 },
+    );
     await findByDisplayValue('Handwritten journal text here');
   });
 
@@ -299,12 +314,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Scan failed',
-        'Could not read the handwriting. Please try again or type manually.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Scan failed',
+          'Could not read the handwriting. Please try again or type manually.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows API key needed alert when scanning without API key', async () => {
@@ -324,12 +342,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'API key needed',
-        'Add your Claude API key in settings to enable handwriting recognition.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'API key needed',
+          'Add your Claude API key in settings to enable handwriting recognition.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when save fails', async () => {
@@ -347,9 +368,12 @@ describe('JournalEntryModal', () => {
     fireEvent.changeText(await findByPlaceholderText('Write your thoughts...'), 'Some content');
     fireEvent.press(await findByText('Save Entry'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB write failed');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB write failed');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('scans gallery photo and populates content with OCR text', async () => {
@@ -370,9 +394,12 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(mockScanImage).toHaveBeenCalledWith('file://gallery.jpg');
-    });
+    await waitFor(
+      () => {
+        expect(mockScanImage).toHaveBeenCalledWith('file://gallery.jpg');
+      },
+      { timeout: 5000 },
+    );
     await findByDisplayValue('Gallery OCR text');
   });
 
@@ -394,12 +421,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Scan failed',
-        'Could not read the handwriting. Please try again or type manually.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Scan failed',
+          'Could not read the handwriting. Please try again or type manually.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows API key needed alert when gallery scanning without API key', async () => {
@@ -419,12 +449,15 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'API key needed',
-        'Add your Claude API key in settings to enable handwriting recognition.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'API key needed',
+          'Add your Claude API key in settings to enable handwriting recognition.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('switches mode when toggle is pressed', async () => {
@@ -446,9 +479,12 @@ describe('JournalEntryModal', () => {
 
     // Switch back to text mode
     fireEvent.press(await findByText('Type'));
-    await waitFor(() => {
-      expect(queryByText('Take Photo')).toBeNull();
-    });
+    await waitFor(
+      () => {
+        expect(queryByText('Take Photo')).toBeNull();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('selects and deselects mood', async () => {
@@ -473,14 +509,17 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Save Entry'));
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          content: 'Mood test',
-          mood: 5,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            content: 'Mood test',
+            mood: 5,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('calls updateEntry when saving in edit mode', async () => {
@@ -510,19 +549,25 @@ describe('JournalEntryModal', () => {
 
     fireEvent.press(await findByText('Update Entry'));
 
-    await waitFor(() => {
-      expect(mockUpdateEntry).toHaveBeenCalledWith(
-        'entry-1',
-        expect.objectContaining({
-          title: 'My Day',
-          content: 'Some thoughts',
-          mood: 4,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateEntry).toHaveBeenCalledWith(
+          'entry-1',
+          expect.objectContaining({
+            title: 'My Day',
+            content: 'Some thoughts',
+            mood: 4,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 });

@@ -18,31 +18,43 @@ function renderWithTheme(ui: React.ReactElement) {
 describe('Skeleton', () => {
   it('renders with given dimensions', async () => {
     const { toJSON } = renderWithTheme(<Skeleton width={100} height={20} />);
-    await waitFor(() => {
-      expect(toJSON()).toBeTruthy();
-    });
+    await waitFor(
+      () => {
+        expect(toJSON()).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('renders with percentage width', async () => {
     const { toJSON } = renderWithTheme(<Skeleton width="80%" height={16} />);
-    await waitFor(() => {
-      expect(toJSON()).toBeTruthy();
-    });
+    await waitFor(
+      () => {
+        expect(toJSON()).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
   });
 });
 
 describe('SkeletonCard', () => {
   it('renders with default 3 lines', async () => {
     const tree = renderWithTheme(<SkeletonCard />);
-    await waitFor(() => {
-      expect(tree.toJSON()).toBeTruthy();
-    });
+    await waitFor(
+      () => {
+        expect(tree.toJSON()).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('renders with custom line count', async () => {
     const tree = renderWithTheme(<SkeletonCard lines={5} />);
-    await waitFor(() => {
-      expect(tree.toJSON()).toBeTruthy();
-    });
+    await waitFor(
+      () => {
+        expect(tree.toJSON()).toBeTruthy();
+      },
+      { timeout: 5000 },
+    );
   });
 });

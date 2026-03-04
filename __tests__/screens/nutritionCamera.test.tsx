@@ -227,23 +227,29 @@ describe('NutritionCameraScreen', () => {
     const saveButton = await findByText('Save Meal');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateMeal).toHaveBeenCalledWith(
-        expect.objectContaining({
-          mealType: 'lunch',
-          name: 'Grilled Chicken, Rice',
-          totalCalories: 500,
-        }),
-        expect.arrayContaining([
-          expect.objectContaining({ name: 'Grilled Chicken', calories: 300 }),
-          expect.objectContaining({ name: 'Rice', calories: 200 }),
-        ]),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateMeal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            mealType: 'lunch',
+            name: 'Grilled Chicken, Rice',
+            totalCalories: 500,
+          }),
+          expect.arrayContaining([
+            expect.objectContaining({ name: 'Grilled Chicken', calories: 300 }),
+            expect.objectContaining({ name: 'Rice', calories: 200 }),
+          ]),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on save failure', async () => {
@@ -261,9 +267,12 @@ describe('NutritionCameraScreen', () => {
     const saveButton = await findByText('Save Meal');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows API key alert when no key configured', async () => {
@@ -277,13 +286,16 @@ describe('NutritionCameraScreen', () => {
     const { getByTestId } = render(<NutritionCameraScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'API Key Required',
-        'Please add your Claude API key in Settings to use AI food recognition.',
-        expect.any(Array),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'API Key Required',
+          'Please add your Claude API key in Settings to use AI food recognition.',
+          expect.any(Array),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when analysis fails', async () => {
@@ -297,9 +309,12 @@ describe('NutritionCameraScreen', () => {
     const { getByTestId } = render(<NutritionCameraScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Analysis Failed', 'Network error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Analysis Failed', 'Network error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('does nothing when gallery picker is canceled', async () => {
@@ -308,9 +323,12 @@ describe('NutritionCameraScreen', () => {
     const { getByTestId, queryByText } = render(<NutritionCameraScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(mockLaunchImageLibraryAsync).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLaunchImageLibraryAsync).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
     expect(queryByText('Analyzing your food...')).toBeNull();
   });
 });

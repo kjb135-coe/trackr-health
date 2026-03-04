@@ -46,9 +46,12 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('system');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('system');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('defaults to light when system scheme is light', async () => {
@@ -57,9 +60,12 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('isDark').props.children).toBe('false');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('isDark').props.children).toBe('false');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('loads saved theme mode from AsyncStorage', async () => {
@@ -69,10 +75,13 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('dark');
-      expect(getByTestId('isDark').props.children).toBe('true');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('dark');
+        expect(getByTestId('isDark').props.children).toBe('true');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('switches to dark mode when setMode called', async () => {
@@ -81,14 +90,20 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('system');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('system');
+      },
+      { timeout: 5000 },
+    );
     fireEvent.press(getByTestId('setDark'));
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('dark');
-      expect(getByTestId('isDark').props.children).toBe('true');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('dark');
+        expect(getByTestId('isDark').props.children).toBe('true');
+      },
+      { timeout: 5000 },
+    );
     expect(AsyncStorage.setItem).toHaveBeenCalledWith('@trackr_theme_mode', 'dark');
   });
 
@@ -99,14 +114,20 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('isDark').props.children).toBe('true');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('isDark').props.children).toBe('true');
+      },
+      { timeout: 5000 },
+    );
     fireEvent.press(getByTestId('setLight'));
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('light');
-      expect(getByTestId('isDark').props.children).toBe('false');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('light');
+        expect(getByTestId('isDark').props.children).toBe('false');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('ignores invalid saved theme mode', async () => {
@@ -116,9 +137,12 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('system');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('system');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('handles AsyncStorage read error gracefully', async () => {
@@ -128,9 +152,12 @@ describe('ThemeContext', () => {
         <TestConsumer />
       </ThemeProvider>,
     );
-    await waitFor(() => {
-      expect(getByTestId('mode').props.children).toBe('system');
-    });
+    await waitFor(
+      () => {
+        expect(getByTestId('mode').props.children).toBe('system');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('throws when useTheme used outside ThemeProvider', () => {

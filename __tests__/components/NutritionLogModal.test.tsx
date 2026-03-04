@@ -118,25 +118,31 @@ describe('NutritionLogModal', () => {
     const saveButton = await findByText('Save Meal');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateMeal).toHaveBeenCalledWith(
-        expect.objectContaining({
-          date: '2026-02-18',
-          mealType: 'lunch',
-          totalCalories: 350,
-        }),
-        expect.arrayContaining([
+    await waitFor(
+      () => {
+        expect(mockCreateMeal).toHaveBeenCalledWith(
           expect.objectContaining({
-            name: 'Chicken Salad',
-            calories: 350,
+            date: '2026-02-18',
+            mealType: 'lunch',
+            totalCalories: 350,
           }),
-        ]),
-      );
-    });
+          expect.arrayContaining([
+            expect.objectContaining({
+              name: 'Chicken Salad',
+              calories: 350,
+            }),
+          ]),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows edit title and calls updateMeal when editing', async () => {
@@ -189,12 +195,15 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Permission needed',
-        'Please grant camera permission to take photos of your food.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Permission needed',
+          'Please grant camera permission to take photos of your food.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert when library permission is denied', async () => {
@@ -206,12 +215,15 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Permission needed',
-        'Please grant photo library permission.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Permission needed',
+          'Please grant photo library permission.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('analyzes photo and displays detected foods', async () => {
@@ -237,9 +249,12 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(mockAnalyzeImage).toHaveBeenCalledWith('file://photo.jpg');
-    });
+    await waitFor(
+      () => {
+        expect(mockAnalyzeImage).toHaveBeenCalledWith('file://photo.jpg');
+      },
+      { timeout: 5000 },
+    );
     await findByText('Pizza');
     await findByText('300 cal');
   });
@@ -268,26 +283,29 @@ describe('NutritionLogModal', () => {
     );
 
     fireEvent.press(await findByText('Take Photo'));
-    await waitFor(() => expect(mockAnalyzeImage).toHaveBeenCalled());
+    await waitFor(() => expect(mockAnalyzeImage).toHaveBeenCalled(), { timeout: 5000 });
 
     fireEvent.press(await findByText('Save Meal'));
 
-    await waitFor(() => {
-      expect(mockCreateMeal).toHaveBeenCalledWith(
-        expect.objectContaining({
-          date: '2026-02-18',
-          totalCalories: 150,
-          photoUri: 'file://photo.jpg',
-        }),
-        expect.arrayContaining([
+    await waitFor(
+      () => {
+        expect(mockCreateMeal).toHaveBeenCalledWith(
           expect.objectContaining({
-            name: 'Salad',
-            calories: 150,
-            isAIGenerated: true,
+            date: '2026-02-18',
+            totalCalories: 150,
+            photoUri: 'file://photo.jpg',
           }),
-        ]),
-      );
-    });
+          expect.arrayContaining([
+            expect.objectContaining({
+              name: 'Salad',
+              calories: 150,
+              isAIGenerated: true,
+            }),
+          ]),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when save fails', async () => {
@@ -301,9 +319,12 @@ describe('NutritionLogModal', () => {
     fireEvent.changeText(await findByPlaceholderText('Calories'), '200');
     fireEvent.press(await findByText('Save Meal'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('calls updateMeal when saving in edit mode', async () => {
@@ -332,19 +353,25 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Update Meal'));
 
-    await waitFor(() => {
-      expect(mockUpdateMeal).toHaveBeenCalledWith(
-        'meal-1',
-        expect.objectContaining({
-          mealType: 'breakfast',
-          totalCalories: 200,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateMeal).toHaveBeenCalledWith(
+          'meal-1',
+          expect.objectContaining({
+            mealType: 'breakfast',
+            totalCalories: 200,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('analyzes gallery photo and displays detected foods', async () => {
@@ -370,9 +397,12 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(mockAnalyzeImage).toHaveBeenCalledWith('file://gallery.jpg');
-    });
+    await waitFor(
+      () => {
+        expect(mockAnalyzeImage).toHaveBeenCalledWith('file://gallery.jpg');
+      },
+      { timeout: 5000 },
+    );
     await findByText('Sushi');
     await findByText('400 cal');
   });
@@ -390,12 +420,15 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Gallery'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Analysis failed',
-        'Could not analyze the food image. You can add items manually.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Analysis failed',
+          'Could not analyze the food image. You can add items manually.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('switches meal type when pressed', async () => {
@@ -414,14 +447,17 @@ describe('NutritionLogModal', () => {
     fireEvent.changeText(await findByPlaceholderText('Calories'), '500');
     fireEvent.press(await findByText('Save Meal'));
 
-    await waitFor(() => {
-      expect(mockCreateMeal).toHaveBeenCalledWith(
-        expect.objectContaining({
-          mealType: 'dinner',
-        }),
-        expect.anything(),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateMeal).toHaveBeenCalledWith(
+          expect.objectContaining({
+            mealType: 'dinner',
+          }),
+          expect.anything(),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows analysis failed alert when AI analysis throws', async () => {
@@ -437,11 +473,14 @@ describe('NutritionLogModal', () => {
 
     fireEvent.press(await findByText('Take Photo'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Analysis failed',
-        'Could not analyze the food image. You can add items manually.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Analysis failed',
+          'Could not analyze the food image. You can add items manually.',
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 });

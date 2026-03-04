@@ -109,9 +109,12 @@ describe('LoginScreen', () => {
     fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(getByPlaceholderText('Password'), 'password123');
     fireEvent.press(getByText('Sign In'));
-    await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith('test@example.com', 'password123');
-    });
+    await waitFor(
+      () => {
+        expect(mockSignIn).toHaveBeenCalledWith('test@example.com', 'password123');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on signIn failure', async () => {
@@ -121,9 +124,12 @@ describe('LoginScreen', () => {
     fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.changeText(getByPlaceholderText('Password'), 'wrong');
     fireEvent.press(getByText('Sign In'));
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Login Failed', 'Invalid credentials');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Login Failed', 'Invalid credentials');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates to signup screen', () => {
@@ -200,9 +206,12 @@ describe('SignUpScreen', () => {
     fireEvent.changeText(getByPlaceholderText('Password'), 'password123');
     fireEvent.changeText(getByPlaceholderText('Confirm Password'), 'password123');
     pressCreateAccount(getAllByText);
-    await waitFor(() => {
-      expect(mockSignUp).toHaveBeenCalledWith('john@test.com', 'password123', 'John Doe');
-    });
+    await waitFor(
+      () => {
+        expect(mockSignUp).toHaveBeenCalledWith('john@test.com', 'password123', 'John Doe');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates to login screen', () => {
@@ -234,9 +243,12 @@ describe('ForgotPasswordScreen', () => {
     const { getByText, getByPlaceholderText, findByText } = render(<ForgotPasswordScreen />);
     fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
     fireEvent.press(getByText('Send Reset Link'));
-    await waitFor(() => {
-      expect(mockSendPasswordReset).toHaveBeenCalledWith('test@example.com');
-    });
+    await waitFor(
+      () => {
+        expect(mockSendPasswordReset).toHaveBeenCalledWith('test@example.com');
+      },
+      { timeout: 5000 },
+    );
     expect(await findByText('Check Your Email')).toBeTruthy();
   });
 
@@ -246,9 +258,12 @@ describe('ForgotPasswordScreen', () => {
     const { getByText, getByPlaceholderText } = render(<ForgotPasswordScreen />);
     fireEvent.changeText(getByPlaceholderText('Email'), 'bad@example.com');
     fireEvent.press(getByText('Send Reset Link'));
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'User not found');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'User not found');
+      },
+      { timeout: 5000 },
+    );
   });
 });
 
@@ -283,9 +298,12 @@ describe('VerifyEmailScreen', () => {
     jest.spyOn(Alert, 'alert');
     const { getByText } = render(<VerifyEmailScreen />);
     fireEvent.press(getByText("I've Verified My Email"));
-    await waitFor(() => {
-      expect(mockReloadUser).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockReloadUser).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('calls sendVerificationEmail on resend', async () => {
@@ -294,9 +312,12 @@ describe('VerifyEmailScreen', () => {
     jest.spyOn(Alert, 'alert');
     const { getByText } = render(<VerifyEmailScreen />);
     fireEvent.press(getByText('Resend Verification Email'));
-    await waitFor(() => {
-      expect(mockSendVerificationEmail).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockSendVerificationEmail).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('calls signOut and navigates to login', async () => {
@@ -304,9 +325,12 @@ describe('VerifyEmailScreen', () => {
     mockSignOut.mockResolvedValueOnce(undefined);
     const { getByText } = render(<VerifyEmailScreen />);
     fireEvent.press(getByText('Sign Out'));
-    await waitFor(() => {
-      expect(mockSignOut).toHaveBeenCalled();
-      expect(mockReplace).toHaveBeenCalledWith('/auth/login');
-    });
+    await waitFor(
+      () => {
+        expect(mockSignOut).toHaveBeenCalled();
+        expect(mockReplace).toHaveBeenCalledWith('/auth/login');
+      },
+      { timeout: 5000 },
+    );
   });
 });

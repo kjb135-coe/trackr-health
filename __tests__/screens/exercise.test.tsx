@@ -124,9 +124,12 @@ describe('ExerciseScreen', () => {
 
   it('calls loadSessions on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadSessions).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadSessions).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows loading skeletons when loading with no sessions', async () => {

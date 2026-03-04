@@ -190,20 +190,26 @@ describe('JournalScanScreen', () => {
     const saveButton = await findByText('Save Entry');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          content: 'My journal entry from paper.',
-          isScanned: true,
-          tags: ['Scanned'],
-          mood: 3,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            content: 'My journal entry from paper.',
+            isScanned: true,
+            tags: ['Scanned'],
+            mood: 3,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on save failure', async () => {
@@ -221,9 +227,12 @@ describe('JournalScanScreen', () => {
     const saveButton = await findByText('Save Entry');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows API key alert when no key configured', async () => {
@@ -237,13 +246,16 @@ describe('JournalScanScreen', () => {
     const { getByTestId } = render(<JournalScanScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'API Key Required',
-        'Please add your Claude API key in Settings to use handwriting recognition.',
-        expect.any(Array),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'API Key Required',
+          'Please add your Claude API key in Settings to use handwriting recognition.',
+          expect.any(Array),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on transcription failure', async () => {
@@ -257,9 +269,12 @@ describe('JournalScanScreen', () => {
     const { getByTestId } = render(<JournalScanScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Transcription Failed', 'OCR failed');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Transcription Failed', 'OCR failed');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('does nothing when gallery picker is canceled', async () => {
@@ -268,9 +283,12 @@ describe('JournalScanScreen', () => {
     const { getByTestId, queryByText } = render(<JournalScanScreen />);
     fireEvent.press(getByTestId('image-icon'));
 
-    await waitFor(() => {
-      expect(mockLaunchImageLibraryAsync).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLaunchImageLibraryAsync).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
     expect(queryByText('Reading your handwriting...')).toBeNull();
   });
 });

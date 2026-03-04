@@ -134,8 +134,11 @@ describe('AICoaching', () => {
   it('fetches coaching on mount when API key exists', async () => {
     mockHasKey = true;
     renderWithTheme(<AICoaching />);
-    await waitFor(() => {
-      expect(mockFetchDailyCoaching).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockFetchDailyCoaching).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 });

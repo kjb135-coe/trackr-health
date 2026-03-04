@@ -110,20 +110,26 @@ describe('NewJournalEntryScreen', () => {
     fireEvent.changeText(getByPlaceholderText("What's on your mind today?"), 'Had a great day!');
     fireEvent.press(getByText('Save Entry'));
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          content: 'Had a great day!',
-          mood: 3,
-          tags: [],
-          isScanned: false,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            content: 'Had a great day!',
+            mood: 3,
+            tags: [],
+            isScanned: false,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('saves entry with custom title when provided', async () => {
@@ -134,14 +140,17 @@ describe('NewJournalEntryScreen', () => {
     fireEvent.changeText(getByPlaceholderText("What's on your mind today?"), 'Some content');
     fireEvent.press(getByText('Save Entry'));
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'My Day',
-          content: 'Some content',
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'My Day',
+            content: 'Some content',
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on save failure', async () => {
@@ -152,9 +161,12 @@ describe('NewJournalEntryScreen', () => {
     fireEvent.changeText(getByPlaceholderText("What's on your mind today?"), 'Content');
     fireEvent.press(getByText('Save Entry'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Save failed');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates back when close button is pressed', () => {

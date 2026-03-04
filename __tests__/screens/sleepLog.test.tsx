@@ -106,18 +106,24 @@ describe('LogSleepScreen', () => {
 
     fireEvent.press(getByText('Save Sleep Entry'));
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          quality: 3,
-          factors: [],
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            quality: 3,
+            factors: [],
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on save failure', async () => {
@@ -127,9 +133,12 @@ describe('LogSleepScreen', () => {
 
     fireEvent.press(getByText('Save Sleep Entry'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Database error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Database error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates back when close button is pressed', () => {

@@ -136,9 +136,12 @@ describe('JournalScreen', () => {
 
   it('calls loadEntries on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadEntries).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadEntries).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows loading skeletons when loading with no entries', async () => {

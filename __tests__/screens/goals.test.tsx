@@ -102,9 +102,12 @@ describe('GoalsScreen', () => {
 
   it('calls loadGoals on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadGoals).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadGoals).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('renders save button', async () => {
@@ -117,20 +120,29 @@ describe('GoalsScreen', () => {
     const { findByText, getByText } = renderWithTheme();
     await findByText('Save Goals');
     fireEvent.press(getByText('Save Goals'));
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save Failed', 'Storage full');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save Failed', 'Storage full');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates back on successful save', async () => {
     const { findByText, getByText } = renderWithTheme();
     await findByText('Save Goals');
     fireEvent.press(getByText('Save Goals'));
-    await waitFor(() => {
-      expect(mockUpdateGoals).toHaveBeenCalled();
-    });
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateGoals).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 });

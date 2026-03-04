@@ -21,6 +21,10 @@ export const ANIMATION_DURATION = {
   fadeTransition: 250,
   /** Delay before releasing press-in scale back to 1 */
   pressRelease: 100,
+  /** Skeleton shimmer cycle */
+  shimmer: 1200,
+  /** Streak celebration wobble cycle (per segment) */
+  celebrationWobble: 1000,
 } as const;
 
 /** Stagger delay values in milliseconds */

@@ -10,7 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/src/theme/ThemeContext';
-import { borderRadius } from '@/src/theme';
+import { borderRadius, spacing } from '@/src/theme';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 
 interface SkeletonProps {
   width: DimensionValue;
@@ -30,7 +31,7 @@ export function Skeleton({
 
   useEffect(() => {
     shimmerProgress.value = withRepeat(
-      withTiming(1, { duration: 1200, easing: Easing.inOut(Easing.ease) }),
+      withTiming(1, { duration: ANIMATION_DURATION.shimmer, easing: Easing.inOut(Easing.ease) }),
       -1,
       false,
     );
@@ -85,7 +86,7 @@ export function SkeletonCard({ lines = 3, style }: SkeletonCardProps) {
         {
           backgroundColor: colors.surface,
           borderRadius: borderRadius.lg,
-          padding: 16,
+          padding: spacing.md,
           gap: 12,
         },
         style,

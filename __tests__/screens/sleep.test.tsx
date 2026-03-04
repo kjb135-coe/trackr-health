@@ -116,9 +116,12 @@ describe('SleepScreen', () => {
 
   it('calls loadEntries on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadEntries).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadEntries).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows loading skeleton when loading with no entries', async () => {

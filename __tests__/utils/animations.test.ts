@@ -17,6 +17,8 @@ describe('ANIMATION_DURATION', () => {
         modalTransition: expect.any(Number),
         fadeTransition: expect.any(Number),
         pressRelease: expect.any(Number),
+        shimmer: expect.any(Number),
+        celebrationWobble: expect.any(Number),
       }),
     );
   });

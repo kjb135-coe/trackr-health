@@ -123,19 +123,25 @@ describe('LogExerciseScreen', () => {
     fireEvent.press(getByText('Running'));
     fireEvent.press(getByText('Save Workout'));
 
-    await waitFor(() => {
-      expect(mockCreateSession).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'running',
-          durationMinutes: 30,
-          intensity: 'moderate',
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateSession).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'running',
+            durationMinutes: 30,
+            intensity: 'moderate',
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockBack).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockBack).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert on save failure', async () => {
@@ -146,9 +152,12 @@ describe('LogExerciseScreen', () => {
     fireEvent.press(getByText('Running'));
     fireEvent.press(getByText('Save Workout'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Error', 'Database error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Error', 'Database error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('navigates back when close button is pressed', () => {

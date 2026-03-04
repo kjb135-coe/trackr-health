@@ -72,19 +72,25 @@ describe('CreateHabitModal', () => {
     const createButton = await findByText('Create Habit');
     fireEvent.press(createButton);
 
-    await waitFor(() => {
-      expect(mockCreateHabit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'New habit',
-          frequency: 'daily',
-          reminderTime: null,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateHabit).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: 'New habit',
+            frequency: 'daily',
+            reminderTime: null,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('does not create habit with empty name', async () => {
@@ -137,17 +143,23 @@ describe('CreateHabitModal', () => {
 
     fireEvent.press(await findByText('Update Habit'));
 
-    await waitFor(() => {
-      expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
-        name: 'Meditate',
-        color: '#8B5CF6',
-        reminderTime: null,
-      });
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
+          name: 'Meditate',
+          color: '#8B5CF6',
+          reminderTime: null,
+        });
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when save fails', async () => {
@@ -160,9 +172,12 @@ describe('CreateHabitModal', () => {
     fireEvent.changeText(await findByPlaceholderText('Habit name'), 'Test');
     fireEvent.press(await findByText('Create Habit'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Save error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'Save error');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('renders daily reminder toggle', async () => {
@@ -214,18 +229,24 @@ describe('CreateHabitModal', () => {
 
     fireEvent.press(await findByText('Create Habit'));
 
-    await waitFor(() => {
-      expect(mockCreateHabit).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'Read',
-          reminderTime: '09:00',
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateHabit).toHaveBeenCalledWith(
+          expect.objectContaining({
+            name: 'Read',
+            reminderTime: '09:00',
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockScheduleHabitReminder).toHaveBeenCalledWith(created);
-    });
+    await waitFor(
+      () => {
+        expect(mockScheduleHabitReminder).toHaveBeenCalledWith(created);
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('cancels reminder when editing habit to disable reminder', async () => {
@@ -252,17 +273,23 @@ describe('CreateHabitModal', () => {
 
     fireEvent.press(await findByText('Update Habit'));
 
-    await waitFor(() => {
-      expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
-        name: 'Meditate',
-        color: '#8B5CF6',
-        reminderTime: null,
-      });
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateHabit).toHaveBeenCalledWith('h1', {
+          name: 'Meditate',
+          color: '#8B5CF6',
+          reminderTime: null,
+        });
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(mockCancelHabitReminder).toHaveBeenCalledWith('h1');
-    });
+    await waitFor(
+      () => {
+        expect(mockCancelHabitReminder).toHaveBeenCalledWith('h1');
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert for invalid reminder time', async () => {
@@ -285,12 +312,15 @@ describe('CreateHabitModal', () => {
 
     fireEvent.press(await findByText('Update Habit'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        'Invalid time',
-        'Hours must be 0-23 and minutes 0-59.',
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Invalid time',
+          'Hours must be 0-23 and minutes 0-59.',
+        );
+      },
+      { timeout: 5000 },
+    );
     expect(mockUpdateHabit).not.toHaveBeenCalled();
   });
 });

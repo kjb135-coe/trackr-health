@@ -12,7 +12,7 @@ import ReanimatedAnimated, {
 import * as Haptics from 'expo-haptics';
 import { spacing, typography, borderRadius, useTheme, type ThemeColors } from '@/src/theme';
 import { Button } from '@/src/components/ui';
-import { SPRING_CONFIG } from '@/src/utils/animations';
+import { SPRING_CONFIG, ANIMATION_DURATION } from '@/src/utils/animations';
 
 interface StreakCelebrationProps {
   visible: boolean;
@@ -35,9 +35,9 @@ export function StreakCelebration({ visible, streak, habitName, onClose }: Strea
       scaleValue.value = withSpring(1, SPRING_CONFIG.celebration);
       rotateValue.value = withRepeat(
         withSequence(
-          withTiming(5, { duration: 1000 }),
-          withTiming(-5, { duration: 1000 }),
-          withTiming(0, { duration: 1000 }),
+          withTiming(5, { duration: ANIMATION_DURATION.celebrationWobble }),
+          withTiming(-5, { duration: ANIMATION_DURATION.celebrationWobble }),
+          withTiming(0, { duration: ANIMATION_DURATION.celebrationWobble }),
         ),
         -1,
       );

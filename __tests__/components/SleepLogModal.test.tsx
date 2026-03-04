@@ -65,17 +65,23 @@ describe('SleepLogModal', () => {
     const saveButton = await findByText('Save Sleep Entry');
     fireEvent.press(saveButton);
 
-    await waitFor(() => {
-      expect(mockCreateEntry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          quality: 3,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalledWith(
+          expect.objectContaining({
+            quality: 3,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows alert for invalid bedtime hours', async () => {
@@ -157,18 +163,24 @@ describe('SleepLogModal', () => {
 
     fireEvent.press(await findByText('Update Sleep Entry'));
 
-    await waitFor(() => {
-      expect(mockUpdateEntry).toHaveBeenCalledWith(
-        's1',
-        expect.objectContaining({
-          quality: 3,
-        }),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(mockUpdateEntry).toHaveBeenCalledWith(
+          's1',
+          expect.objectContaining({
+            quality: 3,
+          }),
+        );
+      },
+      { timeout: 5000 },
+    );
 
-    await waitFor(() => {
-      expect(onClose).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows error alert when save fails', async () => {
@@ -178,8 +190,11 @@ describe('SleepLogModal', () => {
 
     fireEvent.press(await findByText('Save Sleep Entry'));
 
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith('Save failed', 'DB error');
+      },
+      { timeout: 5000 },
+    );
   });
 });

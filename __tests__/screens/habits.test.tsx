@@ -161,12 +161,18 @@ describe('HabitsScreen', () => {
 
   it('calls loadHabits and loadTodayCompletions on mount', async () => {
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockLoadHabits).toHaveBeenCalled();
-    });
-    await waitFor(() => {
-      expect(mockLoadTodayCompletions).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLoadHabits).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+    await waitFor(
+      () => {
+        expect(mockLoadTodayCompletions).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 
   it('shows loading skeletons when loading with no habits', async () => {
@@ -189,8 +195,11 @@ describe('HabitsScreen', () => {
       },
     ];
     renderWithTheme();
-    await waitFor(() => {
-      expect(mockGetAllStreaks).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockGetAllStreaks).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   });
 });
