@@ -58,6 +58,12 @@ export const useSleepStore = create<SleepState>((set, get) => ({
   createEntry: async (entryData) => {
     set({ isLoading: true, error: null });
     try {
+      const existing = await sleepRepository.getByDate(entryData.date);
+      if (existing) {
+        const msg = 'A sleep entry already exists for this date';
+        set({ error: msg, isLoading: false });
+        throw new Error(msg);
+      }
       const entry = await sleepRepository.create(entryData);
       set((state) => ({
         entries: [entry, ...state.entries].sort((a, b) => b.date.localeCompare(a.date)),
