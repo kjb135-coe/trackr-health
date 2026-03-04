@@ -1,17 +1,4 @@
-import {
-  format,
-  parseISO,
-  startOfDay,
-  endOfDay,
-  differenceInMinutes,
-  isToday,
-  isYesterday,
-} from 'date-fns';
-
-export function formatDate(date: Date | string, formatStr: string = 'yyyy-MM-dd'): string {
-  const d = typeof date === 'string' ? parseISO(date) : date;
-  return format(d, formatStr);
-}
+import { format, parseISO, differenceInMinutes, isToday, isYesterday } from 'date-fns';
 
 export function getDateString(date: Date = new Date()): string {
   return format(date, 'yyyy-MM-dd');
@@ -19,14 +6,6 @@ export function getDateString(date: Date = new Date()): string {
 
 export function parseDate(dateString: string): Date {
   return parseISO(dateString);
-}
-
-export function getStartOfDay(date: Date = new Date()): Date {
-  return startOfDay(date);
-}
-
-export function getEndOfDay(date: Date = new Date()): Date {
-  return endOfDay(date);
 }
 
 export function getDurationMinutes(start: Date | string, end: Date | string): number {

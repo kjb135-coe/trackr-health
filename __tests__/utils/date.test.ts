@@ -1,9 +1,6 @@
 import {
   getDateString,
-  formatDate,
   parseDate,
-  getStartOfDay,
-  getEndOfDay,
   getDurationMinutes,
   formatDuration,
   formatTime,
@@ -60,44 +57,12 @@ describe('getErrorMessage', () => {
   });
 });
 
-describe('formatDate', () => {
-  it('formats Date object with default format', () => {
-    expect(formatDate(new Date(2024, 5, 15))).toBe('2024-06-15');
-  });
-
-  it('formats ISO string input', () => {
-    expect(formatDate('2024-03-20')).toBe('2024-03-20');
-  });
-
-  it('accepts custom format string', () => {
-    expect(formatDate(new Date(2024, 0, 1), 'MMM d, yyyy')).toBe('Jan 1, 2024');
-  });
-});
-
 describe('parseDate', () => {
   it('parses ISO date string to Date', () => {
     const result = parseDate('2024-06-15');
     expect(result.getFullYear()).toBe(2024);
     expect(result.getMonth()).toBe(5); // 0-indexed
     expect(result.getDate()).toBe(15);
-  });
-});
-
-describe('getStartOfDay', () => {
-  it('returns start of day (midnight)', () => {
-    const result = getStartOfDay(new Date(2024, 5, 15, 14, 30));
-    expect(result.getHours()).toBe(0);
-    expect(result.getMinutes()).toBe(0);
-    expect(result.getSeconds()).toBe(0);
-  });
-});
-
-describe('getEndOfDay', () => {
-  it('returns end of day (23:59:59)', () => {
-    const result = getEndOfDay(new Date(2024, 5, 15, 14, 30));
-    expect(result.getHours()).toBe(23);
-    expect(result.getMinutes()).toBe(59);
-    expect(result.getSeconds()).toBe(59);
   });
 });
 
