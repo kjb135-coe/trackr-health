@@ -1,15 +1,11 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 830 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 831 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
-
-### 240. Move gatherHealthData to shared-once pattern
-- 6 AI functions each call `gatherHealthData()` independently (5 DB queries each).
-- **Fix:** Export `gatherHealthData` and its return type. Add optional `data` param to each AI function. Let `aiInsightsStore` call once and pass.
 
 ### 249. Add AnimatedCard accessibility attributes
 - `AnimatedCard` has `accessibilityRole` and `accessibilityLabel` when `onPress` is set, but not when it's a static card.
@@ -19,6 +15,9 @@
 
 ### 252. Deduplicate `getVariantStyle` and `getTextColor` in Button/AnimatedButton
 - Both components have identical switch statements for variant styles and text colors. Could extract a shared `getButtonVariantStyles(variant, colors)` utility.
+
+### 253. Wire gatherHealthData sharing into aiInsightsStore
+- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls (e.g., when dashboard loads coaching + habit suggestions).
 
 ---
 
