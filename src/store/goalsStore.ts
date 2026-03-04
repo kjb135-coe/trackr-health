@@ -55,6 +55,7 @@ export const useGoalsStore = create<GoalsState>((set, get) => ({
       await AsyncStorage.setItem(STORAGE_KEYS.GOALS, JSON.stringify(newGoals));
     } catch {
       set({ goals: previousGoals, error: 'Failed to save goals' });
+      throw new Error('Failed to save goals');
     }
   },
 }));
