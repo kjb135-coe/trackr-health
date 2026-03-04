@@ -57,12 +57,13 @@ export const journalRepository = {
   async search(query: string): Promise<JournalEntry[]> {
     if (!query.trim()) return [];
     const db = await getDatabase();
+    const escaped = query.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_');
     const rows = await db.getAllAsync<JournalEntryRow>(
       `SELECT * FROM journal_entries
-       WHERE content LIKE ? OR title LIKE ?
+       WHERE content LIKE ? ESCAPE '\\' OR title LIKE ? ESCAPE '\\'
        ORDER BY date DESC, created_at DESC`,
-      `%${query}%`,
-      `%${query}%`,
+      `%${escaped}%`,
+      `%${escaped}%`,
     );
     return rows.map(mapRowToEntry);
   },

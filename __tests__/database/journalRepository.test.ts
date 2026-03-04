@@ -143,7 +143,7 @@ describe('journalRepository', () => {
       const result = await journalRepository.search('great');
 
       expect(mockDb.getAllAsync).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE content LIKE ? OR title LIKE ?'),
+        expect.stringContaining("WHERE content LIKE ? ESCAPE '\\' OR title LIKE ? ESCAPE '\\'"),
         '%great%',
         '%great%',
       );
@@ -162,6 +162,26 @@ describe('journalRepository', () => {
 
       expect(result).toEqual([]);
       expect(mockDb.getAllAsync).not.toHaveBeenCalled();
+    });
+
+    it('escapes LIKE wildcard characters in query', async () => {
+      mockDb.getAllAsync.mockResolvedValue([]);
+
+      await journalRepository.search('50%');
+
+      const args = mockDb.getAllAsync.mock.calls[0];
+      expect(args[1]).toBe('%50\\%%');
+      expect(args[2]).toBe('%50\\%%');
+    });
+
+    it('escapes underscore wildcard in query', async () => {
+      mockDb.getAllAsync.mockResolvedValue([]);
+
+      await journalRepository.search('a_b');
+
+      const args = mockDb.getAllAsync.mock.calls[0];
+      expect(args[1]).toBe('%a\\_b%');
+      expect(args[2]).toBe('%a\\_b%');
     });
   });
 
