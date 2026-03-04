@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
 import { X, Camera, RotateCcw, Image as ImageIcon, Utensils } from 'lucide-react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -24,6 +23,7 @@ import { AIFoodAnalysis, MealType } from '@/src/types';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { MEAL_TYPE_LABELS, IMAGE_QUALITY } from '@/src/utils/constants';
 import { persistImage } from '@/src/utils/imagePersist';
+import { useImagePicker } from '@/src/hooks/useImagePicker';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
@@ -39,6 +39,7 @@ export default function NutritionCameraScreen() {
   const [analysisResult, setAnalysisResult] = useState<AIFoodAnalysis | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<MealType>('lunch');
   const { createMeal } = useNutritionStore();
+  const { pickImage } = useImagePicker();
 
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
@@ -50,16 +51,10 @@ export default function NutritionCameraScreen() {
   };
 
   const handlePickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: IMAGE_QUALITY,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setCapturedPhoto(result.assets[0].uri);
-      analyzePhoto(result.assets[0].uri);
+    const uri = await pickImage({ allowsEditing: true, aspect: [4, 3] });
+    if (uri) {
+      setCapturedPhoto(uri);
+      analyzePhoto(uri);
     }
   };
 

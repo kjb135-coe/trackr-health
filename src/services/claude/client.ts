@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import Anthropic from '@anthropic-ai/sdk';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_KEYS } from '@/src/utils/constants';
@@ -49,8 +50,20 @@ export function resetClient(): void {
 
 export function useApiKeyExists(): boolean {
   const [exists, setExists] = useState(false);
-  useEffect(() => {
-    hasApiKey().then(setExists);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      hasApiKey()
+        .then((result) => {
+          if (!cancelled) setExists(result);
+        })
+        .catch(() => {
+          if (!cancelled) setExists(false);
+        });
+      return () => {
+        cancelled = true;
+      };
+    }, []),
+  );
   return exists;
 }
