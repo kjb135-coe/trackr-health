@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 854 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 855 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -16,14 +16,11 @@
 ### 258. Break down settings.tsx (716 lines)
 - Settings screen has too many features in one file. Could extract: ApiKeySection, ThemeSection, GoalsSection, DangerZoneSection, AboutSection into separate components.
 
-### 260. Settings confirmDelete for "Clear All Data"
-- Settings screen still uses inline `Alert.alert` for "Clear All Data" and "Sign Out" confirmations. The "Clear All Data" could use a variant of `confirmDelete` or a similar utility, though it has custom button text ("Delete Everything") and post-action logic.
-
 ### 261. Extract useImagePicker hook (~70 lines duplicated)
 - `JournalEntryModal.tsx` and `NutritionLogModal.tsx` both implement identical camera/gallery permission and image selection logic (handleTakePhoto, handlePickImage). Extract to `src/hooks/useImagePicker.ts`.
 
-### 262. Add HabitSuggestionsModal test coverage
-- `src/components/habits/HabitSuggestionsModal.tsx` (194 lines) has no test file. It renders AI-generated habit suggestions and handles adding them.
+### 263. Settings handleSignOut could use a confirmAction utility
+- `handleSignOut` uses inline `Alert.alert` with "Sign Out" destructive button. Could use `confirmDelete` with custom buttonText ("Sign Out"), though semantically it's not a "delete" action. Consider renaming `confirmDelete` to `confirmDestructive` or adding a `confirmAction` helper.
 
 ---
 
