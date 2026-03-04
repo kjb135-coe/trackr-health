@@ -49,7 +49,7 @@ export default function JournalScanScreen() {
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const photo = await cameraRef.current.takePictureAsync();
+      const photo = await cameraRef.current.takePictureAsync({ quality: IMAGE_QUALITY });
       setCapturedPhoto(photo.uri);
       analyzePhoto(photo.uri);
     }
