@@ -24,6 +24,21 @@ export function resetAllStores(): void {
     error: null,
   });
   useJournalStore.setState({ entries: [], isLoading: false, isScanning: false, error: null });
-  useAIInsightsStore.getState().clearAll();
+  useAIInsightsStore.setState({
+    dailyCoaching: null,
+    habitSuggestions: [],
+    sleepAnalysis: null,
+    exerciseRecommendation: null,
+    moodAnalysis: null,
+    nutritionAdvice: null,
+    isLoadingCoaching: false,
+    isLoadingHabits: false,
+    isLoadingSleep: false,
+    isLoadingExercise: false,
+    isLoadingMood: false,
+    isLoadingNutrition: false,
+    lastCoachingFetch: null,
+    error: null,
+  });
   useGoalsStore.setState({ goals: { ...DEFAULT_GOALS }, isLoading: false });
 }
