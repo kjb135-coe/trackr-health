@@ -38,4 +38,9 @@ describe('Button', () => {
       { timeout: 5000 },
     );
   });
+
+  it('accepts fullWidth prop', async () => {
+    const { findByRole } = renderWithTheme(<Button title="Full" onPress={() => {}} fullWidth />);
+    await findByRole('button');
+  });
 });

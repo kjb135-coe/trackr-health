@@ -14,6 +14,7 @@ interface ButtonProps {
   disabled?: boolean;
   icon?: React.ReactNode;
   style?: ViewStyle;
+  fullWidth?: boolean;
 }
 
 export function Button({
@@ -25,6 +26,7 @@ export function Button({
   disabled = false,
   icon,
   style,
+  fullWidth = false,
 }: ButtonProps) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
@@ -42,13 +44,14 @@ export function Button({
         styles[variant],
         styles[`size_${size}`],
         isDisabled && styles.disabled,
+        fullWidth && styles.fullWidth,
         style,
       ]}
       activeOpacity={0.7}
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' ? colors.white : colors.primary}
+          color={variant === 'primary' || variant === 'danger' ? colors.white : colors.primary}
           size="small"
         />
       ) : (
@@ -84,7 +87,7 @@ const createStyles = (colors: ThemeColors) =>
     secondary: {
       backgroundColor: colors.surfaceSecondary,
       borderWidth: 1,
-      borderColor: colors.borderLight,
+      borderColor: colors.border,
     },
     ghost: {
       backgroundColor: 'transparent',
@@ -95,12 +98,12 @@ const createStyles = (colors: ThemeColors) =>
     size_sm: {
       paddingVertical: spacing.xs,
       paddingHorizontal: spacing.md,
-      minHeight: 32,
+      minHeight: 36,
     },
     size_md: {
       paddingVertical: spacing.sm,
       paddingHorizontal: spacing.lg,
-      minHeight: 44,
+      minHeight: 48,
     },
     size_lg: {
       paddingVertical: spacing.md,
@@ -109,6 +112,9 @@ const createStyles = (colors: ThemeColors) =>
     },
     disabled: {
       opacity: 0.5,
+    },
+    fullWidth: {
+      width: '100%' as unknown as number,
     },
     text: {
       fontWeight: '600',

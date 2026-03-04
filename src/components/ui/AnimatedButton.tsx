@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, ActivityIndicator, ViewStyle, Pressable, StyleProp } from 'react-native';
+import { Text, ActivityIndicator, ViewStyle, Pressable, StyleProp, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -78,9 +78,7 @@ export function AnimatedButton({
   const getVariantStyle = (): ViewStyle => {
     switch (variant) {
       case 'primary':
-        return {
-          backgroundColor: colors.primary,
-        };
+        return { backgroundColor: colors.primary };
       case 'secondary':
         return {
           backgroundColor: colors.surfaceSecondary,
@@ -88,13 +86,9 @@ export function AnimatedButton({
           borderColor: colors.border,
         };
       case 'ghost':
-        return {
-          backgroundColor: 'transparent',
-        };
+        return { backgroundColor: 'transparent' };
       case 'danger':
-        return {
-          backgroundColor: colors.error,
-        };
+        return { backgroundColor: colors.error };
       default:
         return {};
     }
@@ -114,48 +108,21 @@ export function AnimatedButton({
     }
   };
 
-  const sizeStyles: Record<ButtonSize, ViewStyle> = {
-    sm: {
-      paddingVertical: spacing.xs,
-      paddingHorizontal: spacing.md,
-      minHeight: 36,
-    },
-    md: {
-      paddingVertical: spacing.sm,
-      paddingHorizontal: spacing.lg,
-      minHeight: 48,
-    },
-    lg: {
-      paddingVertical: spacing.md,
-      paddingHorizontal: spacing.xl,
-      minHeight: 56,
-    },
-  };
-
-  const textSizes: Record<ButtonSize, number> = {
-    sm: 14,
-    md: 16,
-    lg: 18,
-  };
-
-  const buttonStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: borderRadius.lg,
-    ...sizeStyles[size],
-    ...getVariantStyle(),
-    opacity: isDisabled ? 0.5 : 1,
-    ...(fullWidth && { width: '100%' }),
-  };
-
   return (
     <AnimatedPressable
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={isDisabled}
-      style={[buttonStyle, animatedStyle, style]}
+      style={[
+        styles.base,
+        styles[size],
+        getVariantStyle(),
+        isDisabled && styles.disabled,
+        fullWidth && styles.fullWidth,
+        animatedStyle,
+        style,
+      ]}
     >
       {loading ? (
         <ActivityIndicator
@@ -166,12 +133,11 @@ export function AnimatedButton({
         <>
           {icon}
           <Text
-            style={{
-              color: getTextColor(),
-              fontSize: textSizes[size],
-              fontWeight: '600',
-              marginLeft: icon ? spacing.xs : 0,
-            }}
+            style={[
+              styles.text,
+              { color: getTextColor(), fontSize: textSizes[size] },
+              icon ? styles.textWithIcon : undefined,
+            ]}
           >
             {title}
           </Text>
@@ -180,3 +146,46 @@ export function AnimatedButton({
     </AnimatedPressable>
   );
 }
+
+const textSizes: Record<ButtonSize, number> = {
+  sm: 14,
+  md: 16,
+  lg: 18,
+};
+
+const styles = StyleSheet.create({
+  base: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+  },
+  sm: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    minHeight: 36,
+  },
+  md: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    minHeight: 48,
+  },
+  lg: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    minHeight: 56,
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+  fullWidth: {
+    width: '100%' as unknown as number,
+  },
+  text: {
+    fontWeight: '600',
+  },
+  textWithIcon: {
+    marginLeft: spacing.xs,
+  },
+});
