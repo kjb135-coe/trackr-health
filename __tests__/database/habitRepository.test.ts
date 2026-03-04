@@ -136,7 +136,7 @@ describe('habitRepository', () => {
 
   describe('update', () => {
     it('builds update query with provided fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await habitRepository.update('h1', { name: 'New Name', color: '#000' });
 
@@ -154,7 +154,7 @@ describe('habitRepository', () => {
     });
 
     it('updates all optional fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await habitRepository.update('h1', {
         description: 'New desc',
@@ -170,6 +170,14 @@ describe('habitRepository', () => {
       expect(sql).toContain('frequency = ?');
       expect(sql).toContain('target_days_per_week = ?');
       expect(sql).toContain('reminder_time = ?');
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(habitRepository.update('nonexistent', { name: 'Test' })).rejects.toThrow(
+        'Entry not found',
+      );
     });
   });
 

@@ -112,7 +112,11 @@ export const sleepRepository = {
     values.push(now);
     values.push(id);
 
-    await db.runAsync(`UPDATE sleep_entries SET ${fields.join(', ')} WHERE id = ?`, ...values);
+    const result = await db.runAsync(
+      `UPDATE sleep_entries SET ${fields.join(', ')} WHERE id = ?`,
+      ...values,
+    );
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async delete(id: string): Promise<void> {

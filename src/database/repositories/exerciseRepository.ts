@@ -147,7 +147,11 @@ export const exerciseRepository = {
     values.push(now);
     values.push(id);
 
-    await db.runAsync(`UPDATE exercise_sessions SET ${fields.join(', ')} WHERE id = ?`, ...values);
+    const result = await db.runAsync(
+      `UPDATE exercise_sessions SET ${fields.join(', ')} WHERE id = ?`,
+      ...values,
+    );
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async delete(id: string): Promise<void> {

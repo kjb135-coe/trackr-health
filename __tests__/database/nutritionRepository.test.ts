@@ -281,6 +281,14 @@ describe('nutritionRepository', () => {
       const args = mockDb.runAsync.mock.calls[0];
       expect(args).toContain(JSON.stringify(analysis));
     });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(nutritionRepository.updateMeal('nonexistent', { name: 'Test' })).rejects.toThrow(
+        'Entry not found',
+      );
+    });
   });
 
   describe('deleteMeal', () => {
