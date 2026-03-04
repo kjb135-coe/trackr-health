@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 863 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 872 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -15,9 +15,6 @@
 
 ### 264. JournalEntryModal and NutritionLogModal share modal structure pattern
 - Both modals use identical structure: ModalHeader + form body + save button + resetAndClose. The `processImage` callback patterns are similar. Could extract a shared `ImageCaptureSection` component for the camera/gallery UI portion.
-
-### 265. SettingRow and ThemePicker could use unit tests
-- Newly extracted `src/components/settings/SettingRow.tsx` and `ThemePicker.tsx` are tested indirectly through the settings screen tests but have no dedicated unit tests. Lower priority since 21 integration tests cover their behavior.
 
 ---
 
