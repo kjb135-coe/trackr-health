@@ -1,17 +1,20 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 907 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 908 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
-### 287. resetAllStores uses clearAll() but other stores use setState directly
-- `resetAllStores` calls `useAIInsightsStore.getState().clearAll()` but resets all other stores with `setState()`. If any other store adds a `clearAll()` method, the pattern is inconsistent. Consider standardizing to either all `clearAll()` or all `setState()`.
+### 290. Repository update methods accept empty updates object
+- All 5 repository `update()` methods (habit, sleep, exercise, journal, nutrition) silently execute `UPDATE SET updated_at = ? WHERE id = ?` when called with `{}`. This bumps `updatedAt` without any actual changes. Add an early return when no fields are provided.
 
-### 288. goalsStore.loadGoals() not called from central init
-- After sign-out/sign-in, goals show defaults until the Goals screen is opened. `loadGoals()` should be called during app init or sign-in.
+### 291. habitStore getStreak/getAllStreaks/getWeeklyCompletions lack error handling
+- These store methods call repository methods without try/catch. Database errors propagate as unhandled rejections. Add try/catch with error state or silent fallback.
+
+### 287. resetAllStores uses clearAll() but other stores use setState directly
+- `resetAllStores` calls `useAIInsightsStore.getState().clearAll()` but resets all other stores with `setState()`. Consider standardizing the pattern.
 
 ### 289. No cleanup of persisted images on meal/journal deletion
 - `persistImage` copies images to app's document directory. When meals or journal entries are deleted, persisted images are never cleaned up, accumulating indefinitely.
