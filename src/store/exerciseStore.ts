@@ -50,7 +50,11 @@ export const useExerciseStore = create<ExerciseState>((set, get) => ({
   },
 
   loadSessionsForDate: async (date) => {
-    return exerciseRepository.getByDate(date);
+    try {
+      return await exerciseRepository.getByDate(date);
+    } catch {
+      return [];
+    }
   },
 
   createSession: async (sessionData) => {

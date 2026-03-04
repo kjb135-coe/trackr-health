@@ -48,7 +48,11 @@ export const useSleepStore = create<SleepState>((set, get) => ({
   },
 
   getEntryByDate: async (date) => {
-    return sleepRepository.getByDate(date);
+    try {
+      return await sleepRepository.getByDate(date);
+    } catch {
+      return null;
+    }
   },
 
   createEntry: async (entryData) => {
@@ -97,11 +101,19 @@ export const useSleepStore = create<SleepState>((set, get) => ({
   },
 
   getAverageQuality: async (startDate, endDate) => {
-    return sleepRepository.getAverageQuality(startDate, endDate);
+    try {
+      return await sleepRepository.getAverageQuality(startDate, endDate);
+    } catch {
+      return null;
+    }
   },
 
   getAverageDuration: async (startDate, endDate) => {
-    return sleepRepository.getAverageDuration(startDate, endDate);
+    try {
+      return await sleepRepository.getAverageDuration(startDate, endDate);
+    } catch {
+      return null;
+    }
   },
 
   clearError: () => set({ error: null }),

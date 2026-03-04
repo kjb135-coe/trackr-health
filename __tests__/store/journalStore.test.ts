@@ -127,6 +127,14 @@ describe('journalStore', () => {
       expect(result).toEqual([mockEntry]);
       expect(journalRepository.getByDate).toHaveBeenCalledWith('2026-02-19');
     });
+
+    it('returns empty array on repository error', async () => {
+      journalRepository.getByDate.mockRejectedValue(new Error('DB error'));
+
+      const result = await useJournalStore.getState().loadEntriesForDate('2026-02-19');
+
+      expect(result).toEqual([]);
+    });
   });
 
   describe('createEntry', () => {

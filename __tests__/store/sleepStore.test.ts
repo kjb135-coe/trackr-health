@@ -181,6 +181,14 @@ describe('sleepStore', () => {
 
       expect(result).toEqual(mockEntry);
     });
+
+    it('returns null on repository error', async () => {
+      sleepRepository.getByDate.mockRejectedValue(new Error('DB error'));
+
+      const result = await useSleepStore.getState().getEntryByDate('2026-02-18');
+
+      expect(result).toBeNull();
+    });
   });
 
   describe('getAverageQuality', () => {

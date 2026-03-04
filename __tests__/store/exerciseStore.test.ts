@@ -98,6 +98,14 @@ describe('exerciseStore', () => {
 
       expect(result).toEqual([mockSession]);
     });
+
+    it('returns empty array on repository error', async () => {
+      exerciseRepository.getByDate.mockRejectedValue(new Error('DB error'));
+
+      const result = await useExerciseStore.getState().loadSessionsForDate('2026-02-18');
+
+      expect(result).toEqual([]);
+    });
   });
 
   describe('createSession', () => {

@@ -54,7 +54,11 @@ export const useJournalStore = create<JournalState>((set, get) => ({
   },
 
   loadEntriesForDate: async (date) => {
-    return journalRepository.getByDate(date);
+    try {
+      return await journalRepository.getByDate(date);
+    } catch {
+      return [];
+    }
   },
 
   createEntry: async (entryData) => {
