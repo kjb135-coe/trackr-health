@@ -16,7 +16,7 @@ export default function GoalsScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const styles = createStyles(colors);
-  const { goals, loadGoals, updateGoals, isLoading } = useGoalsStore();
+  const { goals, loadGoals, updateGoals, isLoading, error } = useGoalsStore();
   const [localGoals, setLocalGoals] = useState(goals);
 
   useEffect(() => {
@@ -61,6 +61,12 @@ export default function GoalsScreen() {
         <Text style={styles.description}>
           Set personalized targets for each area of your health journey.
         </Text>
+
+        {error && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
       </Animated.View>
 
       {/* Sleep Goal */}
@@ -313,6 +319,16 @@ const createStyles = (colors: ThemeColors) =>
     sliderLabel: {
       ...typography.caption,
       color: colors.textTertiary,
+    },
+    errorBanner: {
+      backgroundColor: colors.error + '15',
+      borderRadius: borderRadius.md,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+    },
+    errorText: {
+      ...typography.body,
+      color: colors.error,
     },
     saveButton: {
       marginTop: spacing.lg,
