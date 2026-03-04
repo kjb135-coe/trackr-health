@@ -1,6 +1,30 @@
 import { useAuthStore } from '@/src/store/authStore';
+import { useHabitStore } from '@/src/store/habitStore';
+import { useSleepStore } from '@/src/store/sleepStore';
+import { useExerciseStore } from '@/src/store/exerciseStore';
+import { useNutritionStore } from '@/src/store/nutritionStore';
+import { useJournalStore } from '@/src/store/journalStore';
+import { useAIInsightsStore } from '@/src/store/aiInsightsStore';
+import { useGoalsStore } from '@/src/store/goalsStore';
 import { authService } from '@/src/services/auth';
 import { act } from '@testing-library/react-native';
+
+jest.mock('@/src/database/repositories', () => ({
+  habitRepository: {},
+  sleepRepository: {},
+  exerciseRepository: {},
+  nutritionRepository: {},
+  journalRepository: {},
+}));
+
+jest.mock('@/src/services/claude', () => ({
+  hasApiKey: jest.fn(),
+}));
+
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+}));
 
 jest.mock('@/src/services/auth', () => ({
   authService: {
@@ -135,6 +159,34 @@ describe('authStore', () => {
     expect(authService.signOut).toHaveBeenCalled();
     expect(useAuthStore.getState().user).toBeNull();
     expect(useAuthStore.getState().isLoading).toBe(false);
+  });
+
+  it('signOut resets all feature stores', async () => {
+    (authService.signOut as jest.Mock).mockResolvedValue(undefined);
+    act(() => useAuthStore.setState({ user: mockUser }));
+
+    // Pollute all stores with stale data
+    act(() => {
+      useHabitStore.setState({ habits: [{ id: 'h1' }] as never[], error: 'old' });
+      useSleepStore.setState({ entries: [{ id: 's1' }] as never[], error: 'old' });
+      useExerciseStore.setState({ sessions: [{ id: 'e1' }] as never[], error: 'old' });
+      useNutritionStore.setState({ meals: [{ id: 'n1' }] as never[], error: 'old' });
+      useJournalStore.setState({ entries: [{ id: 'j1' }] as never[], error: 'old' });
+      useAIInsightsStore.setState({ dailyCoaching: 'stale' as never });
+      useGoalsStore.setState({ goals: { sleep: 99 } as never });
+    });
+
+    await useAuthStore.getState().signOut();
+
+    // All stores should be reset
+    expect(useHabitStore.getState().habits).toEqual([]);
+    expect(useHabitStore.getState().error).toBeNull();
+    expect(useSleepStore.getState().entries).toEqual([]);
+    expect(useExerciseStore.getState().sessions).toEqual([]);
+    expect(useNutritionStore.getState().meals).toEqual([]);
+    expect(useJournalStore.getState().entries).toEqual([]);
+    expect(useAIInsightsStore.getState().dailyCoaching).toBeNull();
+    expect(useGoalsStore.getState().goals).not.toEqual({ sleep: 99 });
   });
 
   it('signOut sets error on failure', async () => {

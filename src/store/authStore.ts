@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { authService, AuthUser } from '@/src/services/auth';
 import { getErrorMessage } from '@/src/utils/date';
+import { resetAllStores } from './resetStores';
 
 interface AuthState {
   user: AuthUser | null;
@@ -69,6 +70,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       await authService.signOut();
+      resetAllStores();
       set({ user: null, isLoading: false });
     } catch (error) {
       set({ error: getErrorMessage(error), isLoading: false });
