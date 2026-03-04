@@ -183,6 +183,33 @@ describe('SleepLogModal', () => {
     );
   });
 
+  it('stores bedtime and wake time with correct hours', async () => {
+    mockCreateEntry.mockResolvedValue(undefined);
+
+    const { findByText } = renderWithTheme(<SleepLogModal visible={true} onClose={() => {}} />);
+
+    fireEvent.press(await findByText('Save Sleep Entry'));
+
+    await waitFor(
+      () => {
+        expect(mockCreateEntry).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    const call = mockCreateEntry.mock.calls[0][0];
+    const bedtime = new Date(call.bedtime);
+    const wakeTime = new Date(call.wakeTime);
+
+    // Default: bedtime 22:00, wake 07:00
+    expect(bedtime.getHours()).toBe(22);
+    expect(bedtime.getMinutes()).toBe(0);
+    expect(wakeTime.getHours()).toBe(7);
+    expect(wakeTime.getMinutes()).toBe(0);
+    // Wake time should be after bedtime
+    expect(wakeTime.getTime()).toBeGreaterThan(bedtime.getTime());
+  });
+
   it('shows alert when bedtime and wake time are equal', async () => {
     const onClose = jest.fn();
 

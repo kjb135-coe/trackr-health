@@ -18,7 +18,6 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useSleepStore } from '@/src/store';
 import { ANIMATION_DURATION } from '@/src/utils/animations';
-import { parseISO } from 'date-fns';
 import { getDateString, getDurationMinutes, getErrorMessage } from '@/src/utils/date';
 import { getQualityColor } from '@/src/utils/constants';
 import { SleepEntry } from '@/src/types';
@@ -87,8 +86,10 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
 
     const entryDate = date || getDateString();
 
-    // Use the entry's date when editing, selected date when creating, otherwise today
-    const wakeDate = editEntry ? parseISO(editEntry.date) : parseISO(entryDate);
+    // Parse date as local midnight (not UTC) to avoid timezone date shift
+    const dateStr = editEntry ? editEntry.date : entryDate;
+    const [y, mo, d] = dateStr.split('-').map(Number);
+    const wakeDate = new Date(y, mo - 1, d);
     const prevDay = new Date(wakeDate);
     prevDay.setDate(prevDay.getDate() - 1);
 
