@@ -209,9 +209,9 @@ export default function NutritionCameraScreen() {
               </View>
 
               <View style={styles.foodList}>
-                {analysisResult.detectedFoods.map((food) => (
+                {analysisResult.detectedFoods.map((food, index) => (
                   <View
-                    key={food.name}
+                    key={`${food.name}-${index}`}
                     style={[styles.foodItem, { borderBottomColor: colors.border }]}
                   >
                     <Text style={[styles.foodName, { color: colors.textPrimary }]}>
