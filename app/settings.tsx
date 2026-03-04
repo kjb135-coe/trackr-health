@@ -9,7 +9,6 @@ import {
   Alert,
   Switch,
   Linking,
-  Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
@@ -18,8 +17,6 @@ import {
   Key,
   Bell,
   Moon,
-  Sun,
-  Smartphone,
   LogOut,
   ChevronRight,
   Shield,
@@ -30,17 +27,12 @@ import {
   Target,
   Download,
 } from 'lucide-react-native';
-import Animated, {
-  FadeInDown,
-  FadeOut,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useTheme, type ThemeMode } from '@/src/theme/ThemeContext';
+import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
+import { SettingRow, ThemePicker } from '@/src/components/settings';
 import { useAuthStore } from '@/src/store';
 import { hasApiKey, setApiKey, deleteApiKey } from '@/src/services/claude';
 import { shareExportedData, shareCSVExport } from '@/src/services/export';
@@ -49,121 +41,7 @@ import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
 import { confirmDelete } from '@/src/utils/alerts';
-import { ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
-
-interface SettingRowProps {
-  icon: React.ReactNode;
-  iconBg: string;
-  title: string;
-  subtitle?: string;
-  onPress?: () => void;
-  rightElement?: React.ReactNode;
-  showChevron?: boolean;
-  danger?: boolean;
-}
-
-function SettingRow({
-  icon,
-  iconBg,
-  title,
-  subtitle,
-  onPress,
-  rightElement,
-  showChevron = true,
-  danger = false,
-}: SettingRowProps) {
-  const { colors } = useTheme();
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    if (onPress) {
-      scale.value = withSpring(SCALE.settingRow, SPRING_CONFIG.pressIn);
-    }
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, SPRING_CONFIG.pressOut);
-  };
-
-  return (
-    <Pressable
-      onPress={() => {
-        if (onPress) {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          onPress();
-        }
-      }}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      disabled={!onPress && !rightElement}
-    >
-      <Animated.View style={[styles.settingRow, animatedStyle]}>
-        <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>{icon}</View>
-        <View style={styles.settingInfo}>
-          <Text
-            style={[styles.settingTitle, { color: danger ? colors.error : colors.textPrimary }]}
-          >
-            {title}
-          </Text>
-          {subtitle && (
-            <Text style={[styles.settingSubtitle, { color: colors.textTertiary }]}>{subtitle}</Text>
-          )}
-        </View>
-        {rightElement ||
-          (showChevron && onPress && <ChevronRight color={colors.textTertiary} size={20} />)}
-      </Animated.View>
-    </Pressable>
-  );
-}
-
-function ThemePicker() {
-  const { colors, mode, setMode } = useTheme();
-
-  const options: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
-    { value: 'light', label: 'Light', icon: Sun },
-    { value: 'dark', label: 'Dark', icon: Moon },
-    { value: 'system', label: 'Auto', icon: Smartphone },
-  ];
-
-  return (
-    <View style={styles.themePicker}>
-      {options.map((option) => {
-        const isSelected = mode === option.value;
-        const Icon = option.icon;
-        return (
-          <Pressable
-            key={option.value}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setMode(option.value);
-            }}
-            style={[
-              styles.themeOption,
-              {
-                backgroundColor: isSelected ? colors.primary : colors.surfaceSecondary,
-                borderColor: isSelected ? colors.primary : colors.border,
-              },
-            ]}
-          >
-            <Icon size={18} color={isSelected ? colors.white : colors.textSecondary} />
-            <Text
-              style={[
-                styles.themeLabel,
-                { color: isSelected ? colors.white : colors.textSecondary },
-              ]}
-            >
-              {option.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -397,17 +275,13 @@ export default function SettingsScreen() {
       >
         <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Appearance</Text>
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
-          <View style={styles.settingRow}>
-            <View style={[styles.iconContainer, { backgroundColor: colors.sleep + '20' }]}>
-              <Moon color={colors.sleep} size={20} />
-            </View>
-            <View style={styles.settingInfo}>
-              <Text style={[styles.settingTitle, { color: colors.textPrimary }]}>Theme</Text>
-              <Text style={[styles.settingSubtitle, { color: colors.textTertiary }]}>
-                {isDark ? 'Dark mode enabled' : 'Light mode enabled'}
-              </Text>
-            </View>
-          </View>
+          <SettingRow
+            icon={<Moon color={colors.sleep} size={20} />}
+            iconBg={colors.sleep + '20'}
+            title="Theme"
+            subtitle={isDark ? 'Dark mode enabled' : 'Light mode enabled'}
+            showChevron={false}
+          />
           <ThemePicker />
         </View>
       </Animated.View>
@@ -623,30 +497,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-  },
-  iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  settingInfo: {
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    marginTop: 2,
-  },
   divider: {
     height: StyleSheet.hairlineWidth,
     marginLeft: spacing.md + 36 + spacing.md,
@@ -669,26 +519,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingHorizontal: spacing.md,
     paddingBottom: spacing.md,
-  },
-  themePicker: {
-    flexDirection: 'row',
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.md,
-    gap: spacing.sm,
-  },
-  themeOption: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    gap: spacing.xs,
-  },
-  themeLabel: {
-    fontSize: 14,
-    fontWeight: '500',
   },
   signOutSection: {
     marginTop: spacing.lg,
