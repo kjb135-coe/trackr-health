@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 951 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 957 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -13,14 +13,11 @@
 ### 314. Notification toggle doesn't cancel/reschedule habit reminders
 - `handleNotificationToggle(false)` now persists the preference to AsyncStorage but does NOT cancel any scheduled expo-notifications. Habit reminders keep firing. Should iterate all habits and call `cancelHabitReminder` when toggled off, and `scheduleHabitReminder` for each when toggled back on.
 
-### 315. goalsStore updateGoals silently swallows AsyncStorage errors
-- `updateGoals` optimistically updates state then writes to AsyncStorage with a silent catch. If persistence fails, users lose goal changes on app restart without any feedback. Should at minimum log the error or set an error state.
+### 318. SQLite foreign keys not enabled (PRAGMA foreign_keys = ON)
+- Schema defines `ON DELETE CASCADE` for `habit_completions` and `food_items`, but `PRAGMA foreign_keys` is never set. SQLite defaults to OFF, so cascade constraints are dead. `habitRepository.delete()` manually cascades (safe), but `nutritionRepository.deleteMeal()` relies on the (unenforced) cascade for `food_items` cleanup. Should add `PRAGMA foreign_keys = ON` after opening the database.
 
-### 316. Repository delete methods don't verify row existed
-- Same pattern as #310 (now fixed for update). All `delete()` methods run DELETE...WHERE id=? and return void. A delete on a non-existent ID silently succeeds. Store optimistic removals proceed. Apply the same `result.changes === 0` check.
-
-### 317. Repository delete methods should also verify row for confirmDelete flows
-- `habitRepository.delete()` cascades (deletes completions then habit). If the habit ID doesn't exist, completions delete is a no-op and habit delete silently succeeds. The confirmDelete UI shows success toast even though nothing was deleted.
+### 319. Goals screen doesn't display goalsStore.error to users
+- `goalsStore.updateGoals` now sets `error` state on persistence failure (#315), but the goals settings screen doesn't read or display this error. Users still get no visual feedback. Should show an error banner or toast when `error` is set.
 
 ---
 
