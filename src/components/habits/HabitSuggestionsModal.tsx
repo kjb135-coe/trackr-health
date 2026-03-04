@@ -17,6 +17,7 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard, AnimatedButton } from '@/src/components/ui';
 import { useHabitStore, useAIInsightsStore } from '@/src/store';
+import { ANIMATION_DURATION, STAGGER_DELAY } from '@/src/utils/animations';
 import { HABIT_COLORS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
 
@@ -35,7 +36,7 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
     <Modal visible={visible} animationType="slide" transparent>
       <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {
@@ -73,7 +74,9 @@ export function HabitSuggestionsModal({ visible, onClose }: HabitSuggestionsModa
               {habitSuggestions.map((suggestion, index) => (
                 <Animated.View
                   key={suggestion.name}
-                  entering={FadeInDown.duration(300).delay(index * 100)}
+                  entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition).delay(
+                    index * STAGGER_DELAY.listItem * 2,
+                  )}
                 >
                   <AnimatedCard style={styles.suggestionCard} delay={index * 50}>
                     <Text style={[styles.suggestionName, { color: colors.textPrimary }]}>
