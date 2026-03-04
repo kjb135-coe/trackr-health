@@ -1,7 +1,20 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 890 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 892 tests passing, 0 TS errors, 0 ESLint warnings.
+
+---
+
+## P2 - Nice to Have
+
+### 284. Extract duplicate `getMediaType()` into shared utility
+- Identical function in `src/services/claude/foodRecognition.ts:41` and `handwritingOCR.ts:6`. Extract to `src/services/claude/imageUtils.ts`.
+
+### 285. Add `maxLength` to journal title and exercise numeric inputs
+- `app/journal/new.tsx` title input has no `maxLength` (saved to DB). Exercise duration and calories inputs in `ExerciseLogModal.tsx` have no `maxLength` — user can enter arbitrarily large numbers.
+
+### 286. Add delete-failure error tests across all 5 feature screens
+- Habits, sleep, exercise, nutrition, journal screens all handle delete failures but none have tests for `mockDelete*.mockRejectedValue()`.
 
 ---
 
