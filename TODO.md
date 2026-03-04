@@ -1,17 +1,17 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 909 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 912 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
-### 291. habitStore getStreak/getAllStreaks/getWeeklyCompletions lack error handling
-- These store methods call repository methods without try/catch. Database errors propagate as unhandled rejections. Add try/catch with error state or silent fallback.
-
 ### 292. exercise/log.tsx missing duration > 0 guard
 - The standalone exercise log screen (`app/exercise/log.tsx`) uses a Slider with min 5, but `handleSave` doesn't validate `duration > 0` before saving. If state is ever set to 0 programmatically, a zero-duration session can be saved.
+
+### 293. Store passthrough read methods lack error handling
+- `exerciseStore.loadSessionsForDate`, `sleepStore.getEntryByDate`, and `journalStore.loadEntriesForDate` are read-only passthroughs without try/catch. DB errors propagate as unhandled rejections.
 
 ### 287. resetAllStores uses clearAll() but other stores use setState directly
 - `resetAllStores` calls `useAIInsightsStore.getState().clearAll()` but resets all other stores with `setState()`. Consider standardizing the pattern.
