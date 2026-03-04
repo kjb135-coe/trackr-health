@@ -100,6 +100,8 @@ export const habitRepository = {
       values.push(updates.reminderTime);
     }
 
+    if (fields.length === 0) return;
+
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);

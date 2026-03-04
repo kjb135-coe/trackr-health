@@ -202,6 +202,8 @@ export const nutritionRepository = {
       values.push(JSON.stringify(updates.aiAnalysis));
     }
 
+    if (fields.length === 0) return;
+
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);

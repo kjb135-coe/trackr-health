@@ -141,6 +141,8 @@ export const exerciseRepository = {
       values.push(updates.distanceUnit);
     }
 
+    if (fields.length === 0) return;
+
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);

@@ -147,6 +147,12 @@ describe('habitRepository', () => {
       expect(sql).toContain('updated_at = ?');
     });
 
+    it('skips DB call when updates object is empty', async () => {
+      await habitRepository.update('h1', {});
+
+      expect(mockDb.runAsync).not.toHaveBeenCalled();
+    });
+
     it('updates all optional fields', async () => {
       mockDb.runAsync.mockResolvedValue(undefined);
 

@@ -106,6 +106,8 @@ export const sleepRepository = {
       values.push(JSON.stringify(updates.factors));
     }
 
+    if (fields.length === 0) return;
+
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);

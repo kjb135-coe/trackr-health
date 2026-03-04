@@ -133,6 +133,8 @@ export const journalRepository = {
       values.push(updates.ocrConfidence);
     }
 
+    if (fields.length === 0) return;
+
     fields.push('updated_at = ?');
     values.push(now);
     values.push(id);
