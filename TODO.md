@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 930 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 925 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -10,8 +10,11 @@
 ### 294. nutritionStore concurrent loadDailyTotals race condition
 - `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` as a fire-and-forget after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins. Practically harmless — user actions are seconds apart.
 
-### 299. resetAllStores should also call deleteImage for orphaned images
+### 299. resetAllStores should also clean up persisted images
 - `resetAllStores()` (sign-out) clears all store state but doesn't clean up persisted images from the document directory. After sign-out + sign-in as new user, old images remain on disk. Low priority since sign-out is infrequent.
+
+### 300. Dashboard missing navigation tests for exercise and nutrition cards
+- Tests verify habits/sleep/journal navigation but not exercise/nutrition card presses. Screen renders are tested but interaction coverage is incomplete.
 
 ---
 
@@ -19,9 +22,6 @@
 
 ### 297. Text inputs on log screens lack maxLength
 - Notes fields in exercise/log.tsx, sleep/log.tsx, and journal/new.tsx have no maxLength. Users could create very large entries. Low priority since it's self-limiting in practice.
-
-### 286. Add delete-failure ErrorBanner rendering tests to screens
-- All 5 feature screens use store error state + ErrorBanner for delete failures. Store-level delete error tests exist, but screen-level ErrorBanner rendering on delete failure is untested.
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
 - Deferred — only `fetchDailyCoaching` is called from the dashboard. No concurrent AI calls exist yet.
