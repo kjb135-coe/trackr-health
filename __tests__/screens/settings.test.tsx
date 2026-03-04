@@ -69,13 +69,24 @@ jest.mock('@/src/services/export', () => ({
   shareCSVExport: (...args: unknown[]) => mockShareCSVExport(...args),
 }));
 
+const mockCancelAllHabitReminders = jest.fn().mockResolvedValue(undefined);
+const mockScheduleHabitReminder = jest.fn().mockResolvedValue('notif-id');
 jest.mock('@/src/services/notifications', () => ({
   requestNotificationPermissions: jest.fn(() => Promise.resolve(true)),
+  cancelAllHabitReminders: (...args: unknown[]) => mockCancelAllHabitReminders(...args),
+  scheduleHabitReminder: (...args: unknown[]) => mockScheduleHabitReminder(...args),
 }));
 
 const mockGetDatabase = jest.fn();
 jest.mock('@/src/database', () => ({
   getDatabase: () => mockGetDatabase(),
+}));
+
+const mockGetAllHabits = jest.fn().mockResolvedValue([]);
+jest.mock('@/src/database/repositories', () => ({
+  habitRepository: {
+    getAll: () => mockGetAllHabits(),
+  },
 }));
 
 const mockSignOut = jest.fn();
@@ -391,6 +402,44 @@ describe('SettingsScreen', () => {
     await waitFor(
       () => {
         expect(AsyncStorage.setItem).toHaveBeenCalledWith('@trackr_notifications_enabled', 'false');
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('cancels all habit reminders when notifications toggled off', async () => {
+    const { getByTestId, findByText } = renderWithTheme();
+    await findByText('Notifications');
+
+    const notifSwitch = getByTestId('notification-toggle');
+    fireEvent(notifSwitch, 'valueChange', false);
+
+    await waitFor(
+      () => {
+        expect(mockCancelAllHabitReminders).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('reschedules reminders for habits with reminderTime when toggled on', async () => {
+    mockGetAllHabits.mockResolvedValue([
+      { id: 'h1', name: 'Meditate', reminderTime: '09:00', color: '#FF0000', frequency: 'daily' },
+      { id: 'h2', name: 'Read', color: '#00FF00', frequency: 'daily' },
+    ]);
+
+    const { getByTestId, findByText } = renderWithTheme();
+    await findByText('Notifications');
+
+    const notifSwitch = getByTestId('notification-toggle');
+    fireEvent(notifSwitch, 'valueChange', true);
+
+    await waitFor(
+      () => {
+        expect(mockScheduleHabitReminder).toHaveBeenCalledTimes(1);
+        expect(mockScheduleHabitReminder).toHaveBeenCalledWith(
+          expect.objectContaining({ id: 'h1', reminderTime: '09:00' }),
+        );
       },
       { timeout: 5000 },
     );

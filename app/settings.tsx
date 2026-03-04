@@ -38,7 +38,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { hasApiKey, setApiKey, deleteApiKey } from '@/src/services/claude';
 import { shareExportedData, shareCSVExport } from '@/src/services/export';
 import { APP_LINKS, STORAGE_KEYS } from '@/src/utils/constants';
-import { requestNotificationPermissions } from '@/src/services/notifications';
+import {
+  requestNotificationPermissions,
+  cancelAllHabitReminders,
+  scheduleHabitReminder,
+} from '@/src/services/notifications';
+import { habitRepository } from '@/src/database/repositories';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
 import { clearAllImages } from '@/src/utils/imagePersist';
@@ -127,6 +132,14 @@ export default function SettingsScreen() {
         );
         return;
       }
+      const habits = await habitRepository.getAll();
+      for (const habit of habits) {
+        if (habit.reminderTime) {
+          await scheduleHabitReminder(habit);
+        }
+      }
+    } else {
+      await cancelAllHabitReminders();
     }
     setNotificationsEnabled(enabled);
     try {
