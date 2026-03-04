@@ -110,6 +110,26 @@ Yes
 - Three helper functions (`getCategoryIcon`, `getCategoryColor`, `getPriorityColor`) recreated on every render in `AICoaching.tsx`.
 - **Status:** Done — replaced with `useMemo` lookup objects. Icons and colors now cached between renders.
 
+### ~~216. Extract IMAGE_QUALITY constant~~ ✅
+- `quality: 0.8` hardcoded in 6 places across 4 files (nutrition camera, journal scan, NutritionLogModal, JournalEntryModal).
+- **Status:** Done — extracted `IMAGE_QUALITY` constant to `src/utils/constants.ts`. All 6 occurrences replaced.
+
+### ~~217. Add standalone exercise log screen tests~~ ✅
+- `app/exercise/log.tsx` (280+ lines) — complex form screen with zero test coverage. Handles type selection, duration/intensity input, calorie estimation, and save/navigation.
+- **Status:** Done — 11 tests covering rendering, type buttons, intensity, calorie estimate, validation, save success/error, navigation, notes. 770 total tests.
+
+### ~~218. Fix timezone-related test failures in 4 suites~~ ✅
+- 10 tests across nutrition, sleep, exercise, and dashboard suites failed because mock data used `new Date().toISOString().split('T')[0]` (UTC) while components used `getDateString()` (local time).
+- **Status:** Done — replaced UTC date generation with `getDateString()` in 4 test files. 770/770 tests passing.
+
+### 219. Add standalone sleep log screen tests
+- `app/sleep/log.tsx` (280+ lines) — standalone form screen with zero test coverage. Handles bedtime/wakeTime pickers, quality stars, sleep factors, and save/navigation.
+- **Effort:** ~30min
+
+### 220. Add standalone journal new entry screen tests
+- `app/journal/new.tsx` (290+ lines) — standalone form screen with zero test coverage. Handles title/content input, mood selection, tag toggling, and save/navigation.
+- **Effort:** ~30min
+
 ---
 
 ## P3 - Future / Low Priority
