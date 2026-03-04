@@ -122,10 +122,12 @@ describe('goalsStore', () => {
       );
     });
 
-    it('reverts state and sets error when storage fails', async () => {
+    it('reverts state, sets error, and re-throws when storage fails', async () => {
       mockedStorage.setItem.mockRejectedValue(new Error('Storage error'));
 
-      await useGoalsStore.getState().updateGoals({ sleepHours: 6 });
+      await expect(useGoalsStore.getState().updateGoals({ sleepHours: 6 })).rejects.toThrow(
+        'Failed to save goals',
+      );
 
       // State reverted to previous value
       expect(useGoalsStore.getState().goals.sleepHours).toBe(8);

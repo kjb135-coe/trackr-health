@@ -135,7 +135,11 @@ export default function SettingsScreen() {
       const habits = await habitRepository.getAll();
       for (const habit of habits) {
         if (habit.reminderTime) {
-          await scheduleHabitReminder(habit);
+          try {
+            await scheduleHabitReminder(habit);
+          } catch {
+            // Continue scheduling remaining habits
+          }
         }
       }
     } else {

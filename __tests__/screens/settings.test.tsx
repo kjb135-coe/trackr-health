@@ -444,4 +444,28 @@ describe('SettingsScreen', () => {
       { timeout: 5000 },
     );
   });
+
+  it('continues scheduling remaining habits if one fails', async () => {
+    mockScheduleHabitReminder
+      .mockRejectedValueOnce(new Error('Schedule failed'))
+      .mockResolvedValueOnce('notif-id');
+
+    mockGetAllHabits.mockResolvedValue([
+      { id: 'h1', name: 'Meditate', reminderTime: '09:00', color: '#FF0000', frequency: 'daily' },
+      { id: 'h2', name: 'Exercise', reminderTime: '18:00', color: '#00FF00', frequency: 'daily' },
+    ]);
+
+    const { getByTestId, findByText } = renderWithTheme();
+    await findByText('Notifications');
+
+    const notifSwitch = getByTestId('notification-toggle');
+    fireEvent(notifSwitch, 'valueChange', true);
+
+    await waitFor(
+      () => {
+        expect(mockScheduleHabitReminder).toHaveBeenCalledTimes(2);
+      },
+      { timeout: 5000 },
+    );
+  });
 });
