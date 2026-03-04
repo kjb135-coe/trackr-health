@@ -137,9 +137,10 @@ function RootLayoutNav() {
     }
 
     if (shouldNavigate) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         isNavigating.current = false;
       }, ANIMATION_DURATION.screenTransition + 50);
+      return () => clearTimeout(timeoutId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, segments, hasCompletedOnboarding]);
