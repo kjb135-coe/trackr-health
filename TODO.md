@@ -7,18 +7,21 @@
 
 ## P2 - Nice to Have
 
-### 253. Wire gatherHealthData sharing into aiInsightsStore
-- Now that all AI functions accept optional `preData`, the store could call `gatherHealthData()` once and pass it to multiple consecutive AI calls. Currently only `fetchDailyCoaching` is called from the dashboard — lower priority until multiple AI calls happen simultaneously.
-
-### 254. Extract common log screen patterns
-- `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` share common patterns: header with X close button + title, section title style, save button at bottom. Could extract `LogScreenHeader` and `SectionTitle` components.
-
-### 264. JournalEntryModal and NutritionLogModal share modal structure pattern
-- Both modals use identical structure: ModalHeader + form body + save button + resetAndClose. The `processImage` callback patterns are similar. Could extract a shared `ImageCaptureSection` component for the camera/gallery UI portion.
+### 266. Notification service error handling tests
+- `__tests__/services/habitReminders.test.ts` tests permission requests but not scheduling/cancellation failure paths. Add tests for `scheduleHabitReminder` and `cancelHabitReminder` when the underlying notification API throws.
 
 ---
 
 ## P3 - Future / Backlog
+
+### 253. Wire gatherHealthData sharing into aiInsightsStore
+- Deferred — only `fetchDailyCoaching` is called from the dashboard. No concurrent AI calls exist yet.
+
+### 254. Extract common log screen patterns
+- Log screens share header/section title/save button patterns but content differs significantly. Payoff is ~10 lines per screen. Low priority.
+
+### 264. JournalEntryModal and NutritionLogModal share modal structure
+- Camera/gallery UI duplication reduced via `useImagePicker` hook. Remaining shared structure is minimal.
 
 ### 3. Firebase dependency is dead weight (~1MB)
 - User decision: Don't touch auth or hosting right now.
