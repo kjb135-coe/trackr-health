@@ -292,6 +292,20 @@ describe('DashboardScreen', () => {
     expect(mockPush).toHaveBeenCalledWith('/(tabs)/journal');
   });
 
+  it('navigates to exercise screen when exercise card is pressed', async () => {
+    const { findByText } = await renderDashboard();
+    const exerciseCard = await findByText('Exercise');
+    fireEvent.press(exerciseCard);
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/exercise');
+  });
+
+  it('navigates to nutrition screen when nutrition card is pressed', async () => {
+    const { findByText } = await renderDashboard();
+    const nutritionCard = await findByText('Nutrition');
+    fireEvent.press(nutritionCard);
+    expect(mockPush).toHaveBeenCalledWith('/(tabs)/nutrition');
+  });
+
   it('dismisses error banner and clears all errors', async () => {
     mockHabitStore.error = 'Habit error';
     mockSleepStore.error = 'Sleep error';
