@@ -122,6 +122,8 @@ export const AI_MAX_TOKENS_BRIEF = 256;
 export const AI_OCR_MAX_TOKENS = 4096;
 export const AI_TIMEOUT_MS = 30000;
 export const AI_CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+export const AI_PROMPT_MAX_MEALS = 10; // Max meals to include in AI prompts
+export const DASHBOARD_MAX_INSIGHTS = 3; // Max insights shown on dashboard
 
 // Camera / Image
 export const IMAGE_QUALITY = 0.8;

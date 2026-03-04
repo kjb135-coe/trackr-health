@@ -61,6 +61,25 @@ describe('ErrorBoundary', () => {
     expect(queryByText('Something went wrong')).toBeNull();
   });
 
+  it('recovers after retry when error is fixed', () => {
+    let shouldThrow = true;
+    function ConditionalThrower() {
+      if (shouldThrow) throw new Error('oops');
+      return <Text>Recovered</Text>;
+    }
+
+    const { getByText } = render(
+      <ErrorBoundary>
+        <ConditionalThrower />
+      </ErrorBoundary>,
+    );
+    expect(getByText('Something went wrong')).toBeTruthy();
+
+    shouldThrow = false;
+    fireEvent.press(getByText('Try Again'));
+    expect(getByText('Recovered')).toBeTruthy();
+  });
+
   it('shows default message when error has no message', () => {
     function ThrowNull(): React.ReactNode {
       throw new Error('');

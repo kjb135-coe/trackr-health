@@ -11,6 +11,7 @@ import {
   AI_MAX_TOKENS,
   AI_MAX_TOKENS_MEDIUM,
   AI_MAX_TOKENS_BRIEF,
+  AI_PROMPT_MAX_MEALS,
   withTimeout,
 } from '@/src/utils/constants';
 import { subDays } from 'date-fns';
@@ -215,7 +216,7 @@ ${data.exercise.map((e) => `- ${e.date}: ${e.type}, ${e.durationMinutes} min, ${
 NUTRITION (${data.meals.length} meals logged):
 ${
   data.meals
-    .slice(0, 10)
+    .slice(0, AI_PROMPT_MAX_MEALS)
     .map((m) => `- ${m.date} ${m.mealType}: ${m.totalCalories} cal`)
     .join('\n') || 'No nutrition data'
 }
@@ -472,7 +473,7 @@ export async function getNutritionAdvice(): Promise<{ advice: string; suggestion
 
 Recent Meals:
 ${data.meals
-  .slice(0, 10)
+  .slice(0, AI_PROMPT_MAX_MEALS)
   .map(
     (m) =>
       `- ${m.date} ${m.mealType}: ${m.name || 'Unnamed'}, ${m.totalCalories} cal, P:${m.totalProtein || 0}g C:${m.totalCarbs || 0}g F:${m.totalFat || 0}g`,

@@ -15,6 +15,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '@/src/theme/ThemeContext';
 import { ANIMATION_DURATION } from '@/src/utils/animations';
+import { DASHBOARD_MAX_INSIGHTS } from '@/src/utils/constants';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedCard } from '@/src/components/ui';
 import { useAIInsightsStore } from '@/src/store';
@@ -175,7 +176,7 @@ export function AICoaching({ onSetupApiKey }: AICoachingProps) {
         </Text>
 
         {/* Insights */}
-        {dailyCoaching.insights.slice(0, 3).map((insight) => (
+        {dailyCoaching.insights.slice(0, DASHBOARD_MAX_INSIGHTS).map((insight) => (
           <View
             key={`${insight.category}-${insight.title}`}
             style={[
