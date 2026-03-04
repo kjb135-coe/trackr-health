@@ -155,6 +155,7 @@ export const STORAGE_KEYS = {
   GOALS: 'trackr_goals',
   AUTH_USER: 'trackr_auth_user',
   ONBOARDING_COMPLETE: '@trackr_onboarding_complete',
+  NOTIFICATIONS_ENABLED: '@trackr_notifications_enabled',
 } as const;
 
 // OCR confidence thresholds

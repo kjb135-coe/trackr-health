@@ -34,9 +34,10 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton } from '@/src/components/ui';
 import { SettingRow, ThemePicker } from '@/src/components/settings';
 import { useAuthStore } from '@/src/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { hasApiKey, setApiKey, deleteApiKey } from '@/src/services/claude';
 import { shareExportedData, shareCSVExport } from '@/src/services/export';
-import { APP_LINKS } from '@/src/utils/constants';
+import { APP_LINKS, STORAGE_KEYS } from '@/src/utils/constants';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
@@ -55,7 +56,19 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     checkApiKey();
+    loadNotificationPref();
   }, []);
+
+  const loadNotificationPref = async () => {
+    try {
+      const value = await AsyncStorage.getItem(STORAGE_KEYS.NOTIFICATIONS_ENABLED);
+      if (value !== null) {
+        setNotificationsEnabled(value === 'true');
+      }
+    } catch {
+      // Silent fail — use default
+    }
+  };
 
   const checkApiKey = async () => {
     const exists = await hasApiKey();
@@ -116,6 +129,11 @@ export default function SettingsScreen() {
       }
     }
     setNotificationsEnabled(enabled);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATIONS_ENABLED, String(enabled));
+    } catch {
+      // Silent fail — toggle applied but not persisted
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
@@ -317,6 +335,7 @@ export default function SettingsScreen() {
             showChevron={false}
             rightElement={
               <Switch
+                testID="notification-toggle"
                 value={notificationsEnabled}
                 onValueChange={handleNotificationToggle}
                 trackColor={{ false: colors.surfaceSecondary, true: colors.primary }}

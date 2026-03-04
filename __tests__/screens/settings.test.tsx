@@ -365,4 +365,34 @@ describe('SettingsScreen', () => {
     const { findByText } = renderWithTheme();
     await findByText('Notifications');
   });
+
+  it('loads persisted notification preference on mount', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+
+    renderWithTheme();
+
+    await waitFor(
+      () => {
+        expect(AsyncStorage.getItem).toHaveBeenCalledWith('@trackr_notifications_enabled');
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('persists notification toggle to AsyncStorage when changed', async () => {
+    const AsyncStorage = require('@react-native-async-storage/async-storage');
+    const { getByTestId, findByText } = renderWithTheme();
+
+    await findByText('Notifications');
+
+    const notifSwitch = getByTestId('notification-toggle');
+    fireEvent(notifSwitch, 'valueChange', false);
+
+    await waitFor(
+      () => {
+        expect(AsyncStorage.setItem).toHaveBeenCalledWith('@trackr_notifications_enabled', 'false');
+      },
+      { timeout: 5000 },
+    );
+  });
 });
