@@ -19,10 +19,11 @@ import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useHabitStore } from '@/src/store';
 import { ANIMATION_DURATION } from '@/src/utils/animations';
-import { HABIT_COLORS } from '@/src/utils/constants';
+import { HABIT_COLORS, STORAGE_KEYS } from '@/src/utils/constants';
 import { getErrorMessage } from '@/src/utils/date';
 import { Habit } from '@/src/types';
 import { scheduleHabitReminder, cancelHabitReminder } from '@/src/services/notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CreateHabitModalProps {
   visible: boolean;
@@ -81,6 +82,9 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
 
     setSaving(true);
     try {
+      const notifPref = await AsyncStorage.getItem(STORAGE_KEYS.NOTIFICATIONS_ENABLED);
+      const notificationsEnabled = notifPref !== 'false';
+
       if (editHabit) {
         await updateHabit(editHabit.id, {
           name: newHabitName.trim(),
@@ -88,9 +92,9 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
           reminderTime,
         });
         // Update notification schedule
-        if (reminderTime) {
+        if (reminderTime && notificationsEnabled) {
           await scheduleHabitReminder({ ...editHabit, name: newHabitName.trim(), reminderTime });
-        } else {
+        } else if (!reminderTime) {
           await cancelHabitReminder(editHabit.id);
         }
       } else {
@@ -101,7 +105,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
           reminderTime,
         });
         // Schedule notification for new habit
-        if (reminderTime && created) {
+        if (reminderTime && created && notificationsEnabled) {
           await scheduleHabitReminder(created);
         }
       }
