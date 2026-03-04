@@ -292,6 +292,36 @@ describe('CreateHabitModal', () => {
     );
   });
 
+  it('shows friendly error for duplicate habit name', async () => {
+    mockCreateHabit.mockRejectedValueOnce(new Error('UNIQUE constraint failed: habits.name'));
+
+    const { findByPlaceholderText, findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Habit name'), 'Existing Habit');
+    fireEvent.press(await findByText('Create Habit'));
+
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Duplicate Name',
+          'A habit with this name already exists. Please choose a different name.',
+        );
+      },
+      { timeout: 5000 },
+    );
+  });
+
+  it('enforces max length on habit name input', async () => {
+    const { findByPlaceholderText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} />,
+    );
+
+    const input = await findByPlaceholderText('Habit name');
+    expect(input.props.maxLength).toBe(50);
+  });
+
   it('shows alert for invalid reminder time', async () => {
     const editHabit = {
       id: 'h1',
