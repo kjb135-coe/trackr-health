@@ -134,9 +134,21 @@ Yes
 - `app/nutrition/camera.tsx` (530 lines) — complex screen with camera capture, gallery picker, AI food analysis, meal type selector, and save flow. Zero test coverage.
 - **Status:** Done — 14 tests: permission states (null/denied/granted), camera view, gallery picker, AI analyzing state, results card with food items, macro breakdown, meal type selector, save success/error, API key check, analysis failure, canceled gallery. Also added missing `FadeInUp` to shared reanimated mock. 805 total tests.
 
-### 222. Add journal scan screen tests
+### ~~222. Add journal scan screen tests~~ ✅
 - `app/journal/scan.tsx` (450+ lines) — camera-based OCR screen with capture, gallery picker, handwriting transcription, and save. Zero test coverage.
-- **Effort:** ~45min (requires CameraView + ImagePicker mocking)
+- **Status:** 13 tests covering permission states, camera view, OCR flow, transcription display, save/error, API key check, gallery cancellation.
+
+### 223. Add `{ timeout: 5000 }` to all waitFor calls
+- CLAUDE.md requires `{ timeout: 5000 }` on all `waitFor()` calls to prevent CI flakiness. ~100+ calls across 24 test files are missing it. Only `Dashboard.test.tsx` correctly includes the timeout.
+- **Effort:** ~20min (systematic find-and-replace)
+
+### 224. Use `TAB_CONTENT_PADDING_BOTTOM` in Dashboard
+- `app/(tabs)/index.tsx:416` has `height: 100` hardcoded. All other tab screens use `TAB_CONTENT_PADDING_BOTTOM` (which equals 100). Dashboard is the only inconsistency.
+- **Effort:** 2min
+
+### 225. Extract animation constants for Skeleton shimmer and StreakCelebration wobble
+- `Skeleton.tsx:33` uses `duration: 1200` (no constant). `StreakCelebration.tsx:38-40` uses three `duration: 1000` values. These should be in `ANIMATION_DURATION`.
+- **Effort:** 10min
 
 ---
 
