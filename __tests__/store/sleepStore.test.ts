@@ -168,6 +168,28 @@ describe('sleepStore', () => {
       expect(useSleepStore.getState().error).toBe('Update failed');
       expect(useSleepStore.getState().isLoading).toBe(false);
     });
+
+    it('throws friendly error when changing date to one that already has an entry', async () => {
+      const existingEntry = { ...mockEntry, id: 's2', date: '2026-02-20' };
+      useSleepStore.setState({ entries: [mockEntry, existingEntry] });
+      sleepRepository.getByDate.mockResolvedValue(existingEntry);
+
+      await expect(
+        useSleepStore.getState().updateEntry('s1', { date: '2026-02-20' }),
+      ).rejects.toThrow('A sleep entry already exists for this date');
+
+      expect(useSleepStore.getState().error).toBe('A sleep entry already exists for this date');
+      expect(sleepRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('allows update when date is unchanged', async () => {
+      useSleepStore.setState({ entries: [mockEntry] });
+      sleepRepository.update.mockResolvedValue(undefined);
+
+      await useSleepStore.getState().updateEntry('s1', { date: '2026-02-18', quality: 5 });
+
+      expect(sleepRepository.update).toHaveBeenCalled();
+    });
   });
 
   describe('deleteEntry', () => {
