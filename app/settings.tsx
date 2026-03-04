@@ -48,6 +48,7 @@ import { APP_LINKS } from '@/src/utils/constants';
 import { requestNotificationPermissions } from '@/src/services/notifications';
 import { getDatabase } from '@/src/database';
 import { getErrorMessage } from '@/src/utils/date';
+import { confirmDelete } from '@/src/utils/alerts';
 import { ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 interface SettingRowProps {
@@ -201,21 +202,14 @@ export default function SettingsScreen() {
   };
 
   const handleDeleteApiKey = () => {
-    Alert.alert(
+    confirmDelete(
       'Remove API Key',
       'Are you sure you want to remove your Claude API key? AI features will be disabled.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            await deleteApiKey();
-            setHasKey(false);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          },
-        },
-      ],
+      async () => {
+        await deleteApiKey();
+        setHasKey(false);
+      },
+      'Remove',
     );
   };
 
@@ -277,18 +271,13 @@ export default function SettingsScreen() {
   };
 
   const handleClearData = () => {
-    Alert.alert(
+    confirmDelete(
       'Clear All Data',
       'This will permanently delete all your health data. This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Everything',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const db = await getDatabase();
-              await db.execAsync(`
+      async () => {
+        try {
+          const db = await getDatabase();
+          await db.execAsync(`
                 DELETE FROM habit_completions;
                 DELETE FROM habits;
                 DELETE FROM sleep_entries;
@@ -297,14 +286,12 @@ export default function SettingsScreen() {
                 DELETE FROM meals;
                 DELETE FROM journal_entries;
               `);
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-              Alert.alert('Done', 'All data has been cleared.');
-            } catch (error: unknown) {
-              Alert.alert('Error', getErrorMessage(error));
-            }
-          },
-        },
-      ],
+          Alert.alert('Done', 'All data has been cleared.');
+        } catch (error: unknown) {
+          Alert.alert('Error', getErrorMessage(error));
+        }
+      },
+      'Delete Everything',
     );
   };
 

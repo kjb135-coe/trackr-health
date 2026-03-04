@@ -54,4 +54,21 @@ describe('confirmDelete', () => {
     expect(cancelButton.style).toBe('cancel');
     expect(cancelButton.onPress).toBeUndefined();
   });
+
+  it('uses custom buttonText when provided', () => {
+    jest.spyOn(Alert, 'alert');
+    const onConfirm = jest.fn();
+
+    confirmDelete(
+      'Clear All Data',
+      'This will permanently delete everything.',
+      onConfirm,
+      'Delete Everything',
+    );
+
+    const alertCall = (Alert.alert as jest.Mock).mock.calls[0];
+    const deleteButton = alertCall[2][1];
+    expect(deleteButton.text).toBe('Delete Everything');
+    expect(deleteButton.style).toBe('destructive');
+  });
 });
