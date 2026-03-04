@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 850 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 854 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -16,8 +16,8 @@
 ### 258. Break down settings.tsx (716 lines)
 - Settings screen has too many features in one file. Could extract: ApiKeySection, ThemeSection, GoalsSection, DangerZoneSection, AboutSection into separate components.
 
-### 259. Add settings screen test coverage
-- `app/settings.tsx` is the largest screen (716 lines) but `__tests__/screens/settings.test.tsx` may not cover all interactive flows (API key entry, goal editing, theme toggling, data clearing).
+### 260. Settings confirmDelete for "Clear All Data"
+- Settings screen still uses inline `Alert.alert` for "Clear All Data" and "Sign Out" confirmations. The "Clear All Data" could use a variant of `confirmDelete` or a similar utility, though it has custom button text ("Delete Everything") and post-action logic.
 
 ---
 
