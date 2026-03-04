@@ -437,4 +437,38 @@ describe('CreateHabitModal', () => {
 
     expect(mockScheduleHabitReminder).not.toHaveBeenCalled();
   });
+
+  it('shows warning when reminder enabled but notifications disabled', async () => {
+    mockAsyncStorageGetItem.mockResolvedValue('false');
+
+    const { findByTestId, findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} />,
+    );
+
+    const toggle = await findByTestId('reminder-toggle');
+    fireEvent(toggle, 'valueChange', true);
+
+    await findByText('Notifications are disabled in settings');
+  });
+
+  it('does not show notification warning when notifications are enabled', async () => {
+    mockAsyncStorageGetItem.mockResolvedValue(null);
+
+    const { findByTestId, queryByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={() => {}} />,
+    );
+
+    const toggle = await findByTestId('reminder-toggle');
+    fireEvent(toggle, 'valueChange', true);
+
+    // Wait a tick for the async check to complete
+    await waitFor(
+      () => {
+        expect(mockAsyncStorageGetItem).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    expect(queryByText('Notifications are disabled in settings')).toBeNull();
+  });
 });

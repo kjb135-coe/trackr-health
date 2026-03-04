@@ -40,6 +40,7 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
   const [reminderHour, setReminderHour] = useState('09');
   const [reminderMinute, setReminderMinute] = useState('00');
   const [saving, setSaving] = useState(false);
+  const [notificationsOff, setNotificationsOff] = useState(false);
 
   const { createHabit, updateHabit } = useHabitStore();
 
@@ -65,6 +66,16 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
       setReminderMinute('00');
     }
   }, [editHabit]);
+
+  const handleReminderToggle = async (enabled: boolean) => {
+    setReminderEnabled(enabled);
+    if (enabled) {
+      const pref = await AsyncStorage.getItem(STORAGE_KEYS.NOTIFICATIONS_ENABLED);
+      setNotificationsOff(pref === 'false');
+    } else {
+      setNotificationsOff(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!newHabitName.trim()) return;
@@ -188,42 +199,49 @@ export function CreateHabitModal({ visible, onClose, editHabit }: CreateHabitMod
             <Switch
               testID="reminder-toggle"
               value={reminderEnabled}
-              onValueChange={setReminderEnabled}
+              onValueChange={handleReminderToggle}
               trackColor={{ false: colors.borderLight, true: colors.primary + '80' }}
               thumbColor={reminderEnabled ? colors.primary : colors.textTertiary}
             />
           </View>
 
           {reminderEnabled && (
-            <View style={styles.timeRow}>
-              <TextInput
-                accessibilityLabel="Reminder hour"
-                style={[
-                  styles.timeInput,
-                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
-                ]}
-                value={reminderHour}
-                onChangeText={setReminderHour}
-                keyboardType="number-pad"
-                maxLength={2}
-                placeholder="HH"
-                placeholderTextColor={colors.textTertiary}
-              />
-              <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
-              <TextInput
-                accessibilityLabel="Reminder minute"
-                style={[
-                  styles.timeInput,
-                  { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
-                ]}
-                value={reminderMinute}
-                onChangeText={setReminderMinute}
-                keyboardType="number-pad"
-                maxLength={2}
-                placeholder="MM"
-                placeholderTextColor={colors.textTertiary}
-              />
-            </View>
+            <>
+              <View style={styles.timeRow}>
+                <TextInput
+                  accessibilityLabel="Reminder hour"
+                  style={[
+                    styles.timeInput,
+                    { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                  ]}
+                  value={reminderHour}
+                  onChangeText={setReminderHour}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="HH"
+                  placeholderTextColor={colors.textTertiary}
+                />
+                <Text style={[styles.timeSeparator, { color: colors.textPrimary }]}>:</Text>
+                <TextInput
+                  accessibilityLabel="Reminder minute"
+                  style={[
+                    styles.timeInput,
+                    { backgroundColor: colors.surfaceSecondary, color: colors.textPrimary },
+                  ]}
+                  value={reminderMinute}
+                  onChangeText={setReminderMinute}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="MM"
+                  placeholderTextColor={colors.textTertiary}
+                />
+              </View>
+              {notificationsOff && (
+                <Text style={[styles.warningText, { color: colors.warning }]}>
+                  Notifications are disabled in settings
+                </Text>
+              )}
+            </>
           )}
 
           <AnimatedButton
@@ -294,5 +312,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginHorizontal: spacing.xs,
+  },
+  warningText: {
+    fontSize: 12,
+    marginBottom: spacing.sm,
   },
 });
