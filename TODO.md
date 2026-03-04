@@ -5,6 +5,13 @@
 
 ---
 
+## P2 - Nice to Have
+
+### 276. Settings ScrollView missing keyboard handling
+- `app/settings.tsx` has a TextInput for the API key but the ScrollView lacks `keyboardDismissMode` and `keyboardShouldPersistTaps`. Keyboard doesn't dismiss on scroll. Other form screens (auth, journal/new) properly use KeyboardAvoidingView.
+
+---
+
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
