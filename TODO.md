@@ -1,21 +1,30 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 917 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 918 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P2 - Nice to Have
 
+### 295. exerciseStore getTotalDuration/getTotalCalories lack error handling
+- Passthrough methods with no try/catch. sleepStore equivalents (`getAverageQuality`, `getAverageDuration`) were fixed in iteration 36, but these two were missed.
+
+### 296. journalRepository.search() missing empty/long query guard
+- `search("")` runs `LIKE '%%'` returning all entries. No length limit either. Add `if (!query.trim()) return []` early return.
+
 ### 289. No cleanup of persisted images on meal/journal deletion
 - `persistImage` copies images to app's document directory. When meals or journal entries are deleted, persisted images are never cleaned up, accumulating indefinitely.
 
 ### 294. nutritionStore concurrent loadDailyTotals race condition
-- `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` as a fire-and-forget after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins.
+- `createMeal`, `deleteMeal`, `addFoodItem`, and `deleteFoodItem` each call `loadDailyTotals` as a fire-and-forget after their main operation. Two rapid actions race on `dailyTotals`, and whichever resolves last wins. Practically harmless — user actions are seconds apart.
 
 ---
 
 ## P3 - Future / Backlog
+
+### 297. Text inputs on log screens lack maxLength
+- Notes fields in exercise/log.tsx, sleep/log.tsx, and journal/new.tsx have no maxLength. Users could create very large entries. Low priority since it's self-limiting in practice.
 
 ### 286. Add delete-failure ErrorBanner rendering tests to screens
 - All 5 feature screens use store error state + ErrorBanner for delete failures. Store-level delete error tests exist, but screen-level ErrorBanner rendering on delete failure is untested.
