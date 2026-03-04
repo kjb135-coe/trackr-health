@@ -19,7 +19,6 @@ jest.mock('@/src/theme/ThemeContext', () => {
 
 jest.mock('expo-router', () => ({
   Link: ({ children, ...props }: Record<string, unknown>) => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { View } = require('react-native');
     return <View {...props}>{children as React.ReactNode}</View>;
   },

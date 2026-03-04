@@ -3,7 +3,6 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import JournalScanScreen from '@/app/journal/scan';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
 jest.mock('@/src/theme/ThemeContext', () => {
@@ -43,9 +42,8 @@ const mockRequestPermission = jest.fn();
 let mockPermission: { granted: boolean } | null = { granted: true };
 
 jest.mock('expo-camera', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require('react');
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+
   const { View } = require('react-native');
   const MockCameraView = React.forwardRef((props: Record<string, unknown>, _ref: unknown) => (
     <View testID="camera-view" {...props} />
@@ -75,7 +73,6 @@ jest.mock('@/src/utils/imagePersist', () => ({
 }));
 
 jest.mock('lucide-react-native', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
   return {
     X: (props: Record<string, unknown>) => <View testID="x-icon" {...props} />,

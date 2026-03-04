@@ -21,5 +21,8 @@ module.exports = [
         afterAll: 'readonly',
       },
     },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
   },
 ];

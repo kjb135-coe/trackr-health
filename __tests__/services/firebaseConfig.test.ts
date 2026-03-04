@@ -36,21 +36,20 @@ afterAll(() => {
 describe('firebase/config', () => {
   describe('isConfigured', () => {
     it('is false when no env vars are set', () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { isConfigured } = require('@/src/services/firebase/config');
       expect(isConfigured).toBe(false);
     });
 
     it('is false when only apiKey is set', () => {
       process.env.EXPO_PUBLIC_FIREBASE_API_KEY = 'test-key';
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const { isConfigured } = require('@/src/services/firebase/config');
       expect(isConfigured).toBe(false);
     });
 
     it('is true when all required env vars are set', () => {
       setFirebaseEnv('test-key', 'test-project', 'test-app');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const { isConfigured } = require('@/src/services/firebase/config');
       expect(isConfigured).toBe(true);
     });
@@ -58,16 +57,14 @@ describe('firebase/config', () => {
 
   describe('when not configured', () => {
     it('exports null app and auth', () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { app, auth } = require('@/src/services/firebase/config');
       expect(app).toBeNull();
       expect(auth).toBeNull();
     });
 
     it('does not call initializeApp', () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { initializeApp } = require('firebase/app');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       require('@/src/services/firebase/config');
       expect(initializeApp).not.toHaveBeenCalled();
     });
@@ -77,9 +74,8 @@ describe('firebase/config', () => {
     it('initializes app when no existing apps', () => {
       setFirebaseEnv('test-key', 'test-project', 'test-app');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getApps, initializeApp } = require('firebase/app');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const { initializeAuth, getReactNativePersistence } = require('firebase/auth');
 
       const fakeApp = { name: 'new-app' };
@@ -89,7 +85,6 @@ describe('firebase/config', () => {
       (initializeAuth as jest.Mock).mockReturnValue(fakeAuth);
       (getReactNativePersistence as jest.Mock).mockReturnValue('persistence');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const config = require('@/src/services/firebase/config');
 
       expect(config.app).toBe(fakeApp);
@@ -101,9 +96,8 @@ describe('firebase/config', () => {
     it('reuses existing app when already initialized', () => {
       setFirebaseEnv('test-key', 'test-project', 'test-app');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getApps, getApp, initializeApp } = require('firebase/app');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const { initializeAuth, getReactNativePersistence } = require('firebase/auth');
 
       const existingApp = { name: 'existing' };
@@ -112,7 +106,6 @@ describe('firebase/config', () => {
       (initializeAuth as jest.Mock).mockReturnValue({ type: 'auth' });
       (getReactNativePersistence as jest.Mock).mockReturnValue('persistence');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const config = require('@/src/services/firebase/config');
 
       expect(config.app).toBe(existingApp);
@@ -123,9 +116,8 @@ describe('firebase/config', () => {
     it('falls back to getAuth on hot-reload when initializeAuth throws', () => {
       setFirebaseEnv('test-key', 'test-project', 'test-app');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getApps, initializeApp } = require('firebase/app');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const { initializeAuth, getAuth, getReactNativePersistence } = require('firebase/auth');
 
       const fakeApp = { name: 'test-app' };
@@ -138,7 +130,6 @@ describe('firebase/config', () => {
       (getAuth as jest.Mock).mockReturnValue(existingAuth);
       (getReactNativePersistence as jest.Mock).mockReturnValue('persistence');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const config = require('@/src/services/firebase/config');
 
       expect(config.auth).toBe(existingAuth);

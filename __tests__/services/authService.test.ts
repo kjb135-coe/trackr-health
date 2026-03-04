@@ -57,7 +57,7 @@ jest.mock('@/src/services/firebase/config', () => ({
 }));
 
 // Import AFTER all jest.mock calls so the mock is in place
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const { authService } = require('@/src/services/auth/authService');
 
 const fakeFirebaseUser = {

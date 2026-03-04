@@ -134,7 +134,7 @@ describe('SleepLogModal', () => {
       updatedAt: '2026-02-18T00:00:00.000Z',
     };
 
-    const { findByText, findByDisplayValue } = renderWithTheme(
+    const { findByText } = renderWithTheme(
       <SleepLogModal visible={true} onClose={() => {}} editEntry={editEntry} />,
     );
 

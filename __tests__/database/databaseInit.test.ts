@@ -21,7 +21,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   // Re-import to reset the module-level `db` variable
   jest.resetModules();
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
+
   const mod = require('@/src/database/index');
   getDatabase = mod.getDatabase;
   closeDatabase = mod.closeDatabase;
@@ -46,7 +46,7 @@ describe('database init', () => {
 
     expect(db1).toBe(db2);
     // Should only open once
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+
     const SQLite = require('expo-sqlite');
     expect(SQLite.openDatabaseAsync).toHaveBeenCalledTimes(1);
   });
@@ -83,7 +83,7 @@ describe('database init', () => {
       expect(mockCloseAsync).toHaveBeenCalledTimes(1);
 
       // Next call should re-open
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       const SQLite = require('expo-sqlite');
       SQLite.openDatabaseAsync.mockClear();
       mockExecAsync.mockResolvedValue(undefined);

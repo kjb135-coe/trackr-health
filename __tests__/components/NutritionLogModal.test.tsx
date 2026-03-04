@@ -20,7 +20,6 @@ jest.mock('expo-image-picker', () => ({
   launchImageLibraryAsync: jest.fn(() => Promise.resolve({ canceled: true })),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const ImagePicker = require('expo-image-picker');
 
 const mockCreateMeal = jest.fn();

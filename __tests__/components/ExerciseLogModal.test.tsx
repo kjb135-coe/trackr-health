@@ -135,7 +135,7 @@ describe('ExerciseLogModal', () => {
   });
 
   it('shows alert for invalid calories', async () => {
-    const { findByText, findByDisplayValue, findByPlaceholderText } = renderWithTheme(
+    const { findByText, findByPlaceholderText } = renderWithTheme(
       <ExerciseLogModal visible={true} onClose={() => {}} />,
     );
 

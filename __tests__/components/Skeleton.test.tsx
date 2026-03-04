@@ -6,7 +6,6 @@ import { Skeleton, SkeletonCard } from '@/src/components/ui';
 jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
 jest.mock('expo-linear-gradient', () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { View } = require('react-native');
   return { LinearGradient: View };
 });

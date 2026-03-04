@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import * as SecureStore from 'expo-secure-store';
-
-const API_KEY_STORAGE_KEY = 'CLAUDE_API_KEY';
+import { STORAGE_KEYS } from '@/src/utils/constants';
 
 let clientInstance: Anthropic | null = null;
 
@@ -23,25 +22,19 @@ export async function getClaudeClient(): Promise<Anthropic> {
 
 export async function getApiKey(): Promise<string | null> {
   try {
-    // First check environment variable (for development)
-    const envKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY;
-    if (envKey && envKey.length > 0 && envKey !== 'your_claude_api_key_here') {
-      return envKey;
-    }
-    // Fall back to secure storage (user-entered key)
-    return await SecureStore.getItemAsync(API_KEY_STORAGE_KEY);
+    return await SecureStore.getItemAsync(STORAGE_KEYS.CLAUDE_API_KEY);
   } catch {
     return null;
   }
 }
 
 export async function setApiKey(key: string): Promise<void> {
-  await SecureStore.setItemAsync(API_KEY_STORAGE_KEY, key);
+  await SecureStore.setItemAsync(STORAGE_KEYS.CLAUDE_API_KEY, key);
   clientInstance = null; // Reset to use new key
 }
 
 export async function deleteApiKey(): Promise<void> {
-  await SecureStore.deleteItemAsync(API_KEY_STORAGE_KEY);
+  await SecureStore.deleteItemAsync(STORAGE_KEYS.CLAUDE_API_KEY);
   clientInstance = null;
 }
 

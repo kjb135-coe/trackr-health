@@ -317,7 +317,7 @@ describe('DashboardScreen', () => {
   });
 
   it('reloads data on pull-to-refresh', async () => {
-    const { getByTestId, UNSAFE_getByType } = await renderDashboard();
+    const { UNSAFE_getByType } = await renderDashboard();
 
     jest.clearAllMocks();
     mockGetTrendData.mockResolvedValue(null);

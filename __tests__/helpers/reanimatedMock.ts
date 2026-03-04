@@ -11,9 +11,8 @@
  *   }));
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { View, Text, ScrollView, Image, Pressable } = require('react-native');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const React = require('react');
 
 /** Strips reanimated-specific props (entering/exiting) before passing to RN components */

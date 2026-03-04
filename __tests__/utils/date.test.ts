@@ -155,6 +155,11 @@ describe('generateId', () => {
     const id2 = generateId();
     expect(id1).not.toBe(id2);
   });
+
+  it('follows timestamp-alphanumeric format', () => {
+    const id = generateId();
+    expect(id).toMatch(/^\d+-[a-z0-9]+$/);
+  });
 });
 
 describe('safeJsonParse', () => {

@@ -235,7 +235,6 @@ describe('healthInsightsAI', () => {
 
   describe('analyzeSleepPatterns', () => {
     it('returns early when insufficient sleep data', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { sleepRepository } = require('@/src/database/repositories');
       sleepRepository.getByDateRange.mockResolvedValueOnce([
         { id: 's1', date: '2026-02-18', durationMinutes: 480, quality: 4 },
@@ -328,7 +327,6 @@ describe('healthInsightsAI', () => {
 
   describe('analyzeJournalMood', () => {
     it('returns early when insufficient journal data', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { journalRepository } = require('@/src/database/repositories');
       journalRepository.getByDateRange.mockResolvedValueOnce([
         { id: 'j1', date: '2026-02-18', title: 'Only one', mood: 4 },
@@ -381,7 +379,6 @@ describe('healthInsightsAI', () => {
 
   describe('getNutritionAdvice', () => {
     it('returns early when insufficient meal data', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { nutritionRepository } = require('@/src/database/repositories');
       nutritionRepository.getMealsByDateRange.mockResolvedValueOnce([
         { id: 'm1', date: '2026-02-18', totalCalories: 400 },
