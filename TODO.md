@@ -13,11 +13,11 @@
 ### 254. Extract common log screen patterns
 - `app/exercise/log.tsx`, `app/sleep/log.tsx`, `app/journal/new.tsx` share common patterns: header with X close button + title, section title style, save button at bottom. Could extract `LogScreenHeader` and `SectionTitle` components.
 
-### 258. Break down settings.tsx (716 lines)
-- Settings screen has too many features in one file. Could extract: ApiKeySection, ThemeSection, GoalsSection, DangerZoneSection, AboutSection into separate components.
-
 ### 264. JournalEntryModal and NutritionLogModal share modal structure pattern
 - Both modals use identical structure: ModalHeader + form body + save button + resetAndClose. The `processImage` callback patterns are similar. Could extract a shared `ImageCaptureSection` component for the camera/gallery UI portion.
+
+### 265. SettingRow and ThemePicker could use unit tests
+- Newly extracted `src/components/settings/SettingRow.tsx` and `ThemePicker.tsx` are tested indirectly through the settings screen tests but have no dedicated unit tests. Lower priority since 21 integration tests cover their behavior.
 
 ---
 
