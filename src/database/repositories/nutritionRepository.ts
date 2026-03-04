@@ -208,7 +208,11 @@ export const nutritionRepository = {
     values.push(now);
     values.push(id);
 
-    await db.runAsync(`UPDATE meals SET ${fields.join(', ')} WHERE id = ?`, ...values);
+    const result = await db.runAsync(
+      `UPDATE meals SET ${fields.join(', ')} WHERE id = ?`,
+      ...values,
+    );
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async deleteMeal(id: string): Promise<void> {

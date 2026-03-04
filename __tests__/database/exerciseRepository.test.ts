@@ -163,7 +163,7 @@ describe('exerciseRepository', () => {
 
   describe('update', () => {
     it('builds update query with provided fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await exerciseRepository.update('e1', { durationMinutes: 90, intensity: 'high' });
 
@@ -174,7 +174,7 @@ describe('exerciseRepository', () => {
     });
 
     it('updates all optional fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await exerciseRepository.update('e1', {
         date: '2026-02-19',
@@ -198,6 +198,14 @@ describe('exerciseRepository', () => {
       expect(sql).toContain('heart_rate_max = ?');
       expect(sql).toContain('distance = ?');
       expect(sql).toContain('distance_unit = ?');
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(
+        exerciseRepository.update('nonexistent', { durationMinutes: 90 }),
+      ).rejects.toThrow('Entry not found');
     });
   });
 

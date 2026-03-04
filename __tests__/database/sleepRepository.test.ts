@@ -155,7 +155,7 @@ describe('sleepRepository', () => {
 
   describe('update', () => {
     it('builds update query with provided fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await sleepRepository.update('s1', { quality: 5 as 1 | 2 | 3 | 4 | 5, notes: 'Great' });
 
@@ -167,7 +167,7 @@ describe('sleepRepository', () => {
     });
 
     it('updates all optional fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await sleepRepository.update('s1', {
         date: '2026-02-19',
@@ -184,12 +184,20 @@ describe('sleepRepository', () => {
     });
 
     it('serializes factors in update', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await sleepRepository.update('s1', { factors: ['late_meal'] });
 
       const args = mockDb.runAsync.mock.calls[0];
       expect(args).toContain('["late_meal"]');
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(
+        sleepRepository.update('nonexistent', { quality: 3 as 1 | 2 | 3 | 4 | 5 }),
+      ).rejects.toThrow('Entry not found');
     });
   });
 

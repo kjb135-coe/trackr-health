@@ -219,7 +219,7 @@ describe('journalRepository', () => {
 
   describe('update', () => {
     it('builds update query with provided fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await journalRepository.update('j1', { content: 'Updated', mood: 5 });
 
@@ -230,7 +230,7 @@ describe('journalRepository', () => {
     });
 
     it('updates all optional fields', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await journalRepository.update('j1', {
         date: '2026-02-19',
@@ -249,12 +249,20 @@ describe('journalRepository', () => {
     });
 
     it('serializes tags in update', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await journalRepository.update('j1', { tags: ['new-tag'] });
 
       const args = mockDb.runAsync.mock.calls[0];
       expect(args).toContain('["new-tag"]');
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(journalRepository.update('nonexistent', { content: 'Test' })).rejects.toThrow(
+        'Entry not found',
+      );
     });
   });
 
