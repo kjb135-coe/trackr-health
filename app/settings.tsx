@@ -176,6 +176,8 @@ export default function SettingsScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps="handled"
     >
       {/* Profile Section */}
       <Animated.View
