@@ -5,13 +5,6 @@
 
 ---
 
-## P2 - Nice to Have
-
-### 274. FactorChip in sleep/log.tsx has uncleared setTimeout
-- `app/sleep/log.tsx` FactorChip component uses `setTimeout(() => { scale.value = ... }, ANIMATION_DURATION.pressRelease)` inside an onPress handler without cleanup. If user navigates away during the animation delay, the timer fires on an unmounted component.
-
----
-
 ## P3 - Future / Backlog
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
