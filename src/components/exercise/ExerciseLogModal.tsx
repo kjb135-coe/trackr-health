@@ -195,6 +195,7 @@ export function ExerciseLogModal({
             keyboardType="number-pad"
             placeholder="30"
             placeholderTextColor={colors.textTertiary}
+            maxLength={4}
           />
 
           <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Intensity</Text>
@@ -239,6 +240,7 @@ export function ExerciseLogModal({
             keyboardType="number-pad"
             placeholder="200"
             placeholderTextColor={colors.textTertiary}
+            maxLength={5}
           />
 
           <AnimatedButton

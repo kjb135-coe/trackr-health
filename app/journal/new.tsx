@@ -174,6 +174,7 @@ export default function NewJournalEntryScreen() {
             onChangeText={setTitle}
             placeholder="Title (optional)"
             placeholderTextColor={colors.textTertiary}
+            maxLength={100}
           />
         </Animated.View>
 

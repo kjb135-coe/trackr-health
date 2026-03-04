@@ -92,6 +92,12 @@ describe('NewJournalEntryScreen', () => {
     expect(getByText('Ideas')).toBeTruthy();
   });
 
+  it('enforces max length on title input', () => {
+    const { getByPlaceholderText } = render(<NewJournalEntryScreen />);
+    const titleInput = getByPlaceholderText('Title (optional)');
+    expect(titleInput.props.maxLength).toBe(100);
+  });
+
   it('shows validation error when saving with empty content', () => {
     jest.spyOn(Alert, 'alert');
     const { getByText } = render(<NewJournalEntryScreen />);

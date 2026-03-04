@@ -3,6 +3,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { DetectedFood, AIFoodAnalysis } from '@/src/types';
 import { z } from 'zod';
 import { AI_MODEL, AI_MAX_TOKENS, withTimeout } from '@/src/utils/constants';
+import { getMediaType } from './imageUtils';
 
 const FoodAnalysisSchema = z.object({
   foods: z.array(
@@ -36,10 +37,6 @@ function parseJsonFromResponse(text: string): unknown {
   } catch {
     throw new Error('Invalid JSON in response');
   }
-}
-
-function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
-  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
 }
 
 export async function analyzeFoodImage(imageUri: string): Promise<AIFoodAnalysis> {

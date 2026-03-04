@@ -2,10 +2,7 @@ import { getClaudeClient } from './client';
 import * as FileSystem from 'expo-file-system/legacy';
 import { OCRResult } from '@/src/types';
 import { AI_MODEL, AI_OCR_MAX_TOKENS, OCR_CONFIDENCE, withTimeout } from '@/src/utils/constants';
-
-function getMediaType(uri: string): 'image/png' | 'image/jpeg' {
-  return uri.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg';
-}
+import { getMediaType } from './imageUtils';
 
 function parseConfidenceLevel(level: string): number {
   switch (level.toLowerCase()) {

@@ -80,6 +80,16 @@ describe('ExerciseLogModal', () => {
     );
   });
 
+  it('enforces max length on duration and calories inputs', async () => {
+    const { findByLabelText } = renderWithTheme(
+      <ExerciseLogModal visible={true} onClose={() => {}} />,
+    );
+    const durationInput = await findByLabelText('Duration in minutes');
+    expect(durationInput.props.maxLength).toBe(4);
+    const caloriesInput = await findByLabelText('Calories burned');
+    expect(caloriesInput.props.maxLength).toBe(5);
+  });
+
   it('shows alert for zero duration', async () => {
     const onClose = jest.fn();
 
