@@ -29,6 +29,12 @@ jest.mock('@/src/services/notifications', () => ({
   cancelHabitReminder: (...args: unknown[]) => mockCancelHabitReminder(...args),
 }));
 
+const mockAsyncStorageGetItem = jest.fn().mockResolvedValue(null);
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: (...args: unknown[]) => mockAsyncStorageGetItem(...args),
+  setItem: jest.fn(),
+}));
+
 jest.spyOn(Alert, 'alert');
 
 function renderWithTheme(ui: React.ReactElement) {
@@ -352,5 +358,83 @@ describe('CreateHabitModal', () => {
       { timeout: 5000 },
     );
     expect(mockUpdateHabit).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule reminder when notifications are disabled (create)', async () => {
+    mockAsyncStorageGetItem.mockResolvedValue('false');
+    const created = {
+      id: 'h-new',
+      name: 'Read',
+      color: '#10B981',
+      frequency: 'daily',
+      reminderTime: '09:00',
+      createdAt: '2026-02-19T00:00:00.000Z',
+      updatedAt: '2026-02-19T00:00:00.000Z',
+    };
+    mockCreateHabit.mockResolvedValue(created);
+    const onClose = jest.fn();
+
+    const { findByPlaceholderText, findByText, findByTestId } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={onClose} />,
+    );
+
+    fireEvent.changeText(await findByPlaceholderText('Habit name'), 'Read');
+    const toggle = await findByTestId('reminder-toggle');
+    fireEvent(toggle, 'valueChange', true);
+    fireEvent.press(await findByText('Create Habit'));
+
+    await waitFor(
+      () => {
+        expect(mockCreateHabit).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    expect(mockScheduleHabitReminder).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule reminder when notifications are disabled (edit)', async () => {
+    mockAsyncStorageGetItem.mockResolvedValue('false');
+    mockUpdateHabit.mockResolvedValue(undefined);
+    const onClose = jest.fn();
+
+    const editHabit = {
+      id: 'h1',
+      name: 'Meditate',
+      color: '#8B5CF6',
+      frequency: 'daily' as const,
+      reminderTime: '09:30',
+      createdAt: '2026-02-18T00:00:00.000Z',
+      updatedAt: '2026-02-18T00:00:00.000Z',
+    };
+
+    const { findByText } = renderWithTheme(
+      <CreateHabitModal visible={true} onClose={onClose} editHabit={editHabit} />,
+    );
+
+    fireEvent.press(await findByText('Update Habit'));
+
+    await waitFor(
+      () => {
+        expect(mockUpdateHabit).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
+
+    expect(mockScheduleHabitReminder).not.toHaveBeenCalled();
   });
 });
