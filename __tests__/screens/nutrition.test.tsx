@@ -3,6 +3,7 @@ import { render, waitFor } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import NutritionScreen from '@/app/(tabs)/nutrition';
 import { Meal } from '@/src/types';
+import { getDateString } from '@/src/utils/date';
 
 jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
@@ -94,7 +95,7 @@ describe('NutritionScreen', () => {
   });
 
   it('renders a meal card', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getDateString();
     mockMeals = [
       {
         id: 'm1',
@@ -123,7 +124,7 @@ describe('NutritionScreen', () => {
   });
 
   it('renders multiple meals', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getDateString();
     mockMeals = [
       {
         id: 'm1',

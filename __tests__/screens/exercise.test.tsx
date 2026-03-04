@@ -3,6 +3,7 @@ import { render, waitFor } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import ExerciseScreen from '@/app/(tabs)/exercise';
 import { ExerciseSession } from '@/src/types';
+import { getDateString } from '@/src/utils/date';
 
 jest.mock('react-native-reanimated', () => require('../helpers/reanimatedMock').reanimatedMock);
 
@@ -57,7 +58,7 @@ function renderWithTheme() {
   );
 }
 
-const today = new Date().toISOString().split('T')[0];
+const today = getDateString();
 
 function makeSession(overrides: Partial<ExerciseSession> = {}): ExerciseSession {
   return {

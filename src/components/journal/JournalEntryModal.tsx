@@ -21,8 +21,10 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useJournalStore } from '@/src/store';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { JournalEntry } from '@/src/types';
+import { IMAGE_QUALITY } from '@/src/utils/constants';
 
 interface JournalEntryModalProps {
   visible: boolean;
@@ -92,7 +94,7 @@ export function JournalEntryModal({
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
     });
 
     if (!result.canceled && result.assets[0]) {
@@ -126,7 +128,7 @@ export function JournalEntryModal({
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
     });
 
     if (!result.canceled && result.assets[0]) {
@@ -197,7 +199,7 @@ export function JournalEntryModal({
         style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
       >
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {

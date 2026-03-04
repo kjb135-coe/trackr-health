@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { ThemeProvider } from '@/src/theme/ThemeContext';
 import DashboardScreen from '@/app/(tabs)/index';
+import { getDateString } from '@/src/utils/date';
 
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
@@ -211,7 +212,7 @@ describe('DashboardScreen', () => {
     mockExerciseStore.sessions = [
       {
         id: 'e1',
-        date: new Date().toISOString().split('T')[0],
+        date: getDateString(),
         durationMinutes: 45,
         type: 'running',
       },
@@ -222,7 +223,7 @@ describe('DashboardScreen', () => {
   });
 
   it('shows journal entry count when entries exist', async () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getDateString();
     mockJournalStore.entries = [
       { id: 'j1', date: today, content: 'Test', title: 'Entry 1' },
       { id: 'j2', date: today, content: 'Test2', title: 'Entry 2' },

@@ -106,6 +106,9 @@ export function estimateCalories(type: string, durationMinutes: number, intensit
   return Math.round(base * durationMinutes * intensityMultiplier);
 }
 
+// Developer mode — bypasses Firebase auth and auto-signs in a dev user
+export const DEV_MODE = process.env.EXPO_PUBLIC_DEV_MODE === 'true';
+
 // AI Configuration
 export const AI_MODEL = 'claude-sonnet-4-20250514';
 export const AI_MAX_TOKENS = 1024;
@@ -113,6 +116,9 @@ export const AI_MAX_TOKENS_MEDIUM = 512;
 export const AI_MAX_TOKENS_BRIEF = 256;
 export const AI_OCR_MAX_TOKENS = 4096;
 const AI_TIMEOUT_MS = 30000;
+
+// Camera / Image
+export const IMAGE_QUALITY = 0.8;
 
 // Layout
 export const TAB_CONTENT_PADDING_BOTTOM = 100;

@@ -24,6 +24,7 @@ import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { persistImage } from '@/src/utils/imagePersist';
+import { IMAGE_QUALITY } from '@/src/utils/constants';
 
 export default function JournalScanScreen() {
   const router = useRouter();
@@ -52,7 +53,7 @@ export default function JournalScanScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
     });
 
     if (!result.canceled && result.assets[0]) {

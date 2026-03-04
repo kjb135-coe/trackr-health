@@ -21,8 +21,9 @@ import { useTheme } from '@/src/theme/ThemeContext';
 import { spacing, borderRadius } from '@/src/theme';
 import { AnimatedButton, ModalHeader } from '@/src/components/ui';
 import { useNutritionStore } from '@/src/store';
+import { ANIMATION_DURATION } from '@/src/utils/animations';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
-import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
+import { MEAL_TYPE_LABELS, IMAGE_QUALITY } from '@/src/utils/constants';
 import { Meal, MealType, FoodItem, DetectedFood } from '@/src/types';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -74,7 +75,7 @@ export function NutritionLogModal({
 
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
       allowsEditing: true,
       aspect: [4, 3],
     });
@@ -105,7 +106,7 @@ export function NutritionLogModal({
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
       allowsEditing: true,
       aspect: [4, 3],
     });
@@ -219,7 +220,7 @@ export function NutritionLogModal({
         style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
       >
         <Animated.View
-          entering={FadeInDown.duration(300)}
+          entering={FadeInDown.duration(ANIMATION_DURATION.screenTransition)}
           style={[
             styles.modalContent,
             {

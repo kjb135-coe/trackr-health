@@ -22,7 +22,7 @@ import { analyzeFoodImage, hasApiKey } from '@/src/services/claude';
 import { useNutritionStore } from '@/src/store';
 import { AIFoodAnalysis, MealType } from '@/src/types';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
-import { MEAL_TYPE_LABELS } from '@/src/utils/constants';
+import { MEAL_TYPE_LABELS, IMAGE_QUALITY } from '@/src/utils/constants';
 import { persistImage } from '@/src/utils/imagePersist';
 
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
@@ -54,7 +54,7 @@ export default function NutritionCameraScreen() {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.8,
+      quality: IMAGE_QUALITY,
     });
 
     if (!result.canceled && result.assets[0]) {
