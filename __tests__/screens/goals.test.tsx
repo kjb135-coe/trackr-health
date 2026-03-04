@@ -30,6 +30,7 @@ jest.mock('expo-router', () => ({
 const mockLoadGoals = jest.fn();
 const mockUpdateGoals = jest.fn();
 let mockIsLoading = false;
+let mockError: string | null = null;
 let mockGoals = {
   sleepHours: 8,
   exerciseMinutesPerWeek: 150,
@@ -45,6 +46,7 @@ jest.mock('@/src/store', () => ({
     loadGoals: mockLoadGoals,
     updateGoals: mockUpdateGoals,
     isLoading: mockIsLoading,
+    error: mockError,
   }),
 }));
 
@@ -62,6 +64,7 @@ describe('GoalsScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsLoading = false;
+    mockError = null;
     mockGoals = {
       sleepHours: 8,
       exerciseMinutesPerWeek: 150,
@@ -126,6 +129,19 @@ describe('GoalsScreen', () => {
       },
       { timeout: 5000 },
     );
+  });
+
+  it('shows inline error banner when store has error', async () => {
+    mockError = 'Failed to save goals';
+    const { findByText } = renderWithTheme();
+    await findByText('Failed to save goals');
+  });
+
+  it('does not show error banner when error is null', async () => {
+    mockError = null;
+    const { findByText, queryByText } = renderWithTheme();
+    await findByText('Your Goals');
+    expect(queryByText('Failed to save goals')).toBeNull();
   });
 
   it('navigates back on successful save', async () => {
