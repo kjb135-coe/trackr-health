@@ -121,7 +121,8 @@ export const sleepRepository = {
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
-    await db.runAsync('DELETE FROM sleep_entries WHERE id = ?', id);
+    const result = await db.runAsync('DELETE FROM sleep_entries WHERE id = ?', id);
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async getAverageQuality(startDate: string, endDate: string): Promise<number | null> {

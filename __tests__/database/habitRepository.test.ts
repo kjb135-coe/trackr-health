@@ -183,7 +183,7 @@ describe('habitRepository', () => {
 
   describe('delete', () => {
     it('deletes habit by id', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await habitRepository.delete('h1');
 
@@ -191,7 +191,7 @@ describe('habitRepository', () => {
     });
 
     it('deletes orphaned completions before deleting the habit', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await habitRepository.delete('h1');
 
@@ -199,6 +199,14 @@ describe('habitRepository', () => {
       expect(calls).toHaveLength(2);
       expect(calls[0]).toEqual(['DELETE FROM habit_completions WHERE habit_id = ?', 'h1']);
       expect(calls[1]).toEqual(['DELETE FROM habits WHERE id = ?', 'h1']);
+    });
+
+    it('throws when habit not found', async () => {
+      mockDb.runAsync
+        .mockResolvedValueOnce({ changes: 0 }) // completions delete (0 is OK)
+        .mockResolvedValueOnce({ changes: 0 }); // habit delete (0 = not found)
+
+      await expect(habitRepository.delete('nonexistent')).rejects.toThrow('Entry not found');
     });
   });
 

@@ -217,7 +217,8 @@ export const nutritionRepository = {
 
   async deleteMeal(id: string): Promise<void> {
     const db = await getDatabase();
-    await db.runAsync('DELETE FROM meals WHERE id = ?', id);
+    const result = await db.runAsync('DELETE FROM meals WHERE id = ?', id);
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async addFoodItem(mealId: string, food: Omit<FoodItem, 'id' | 'mealId'>): Promise<FoodItem> {

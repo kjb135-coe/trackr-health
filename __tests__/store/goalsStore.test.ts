@@ -21,6 +21,7 @@ function resetStore() {
   useGoalsStore.setState({
     goals: { ...DEFAULT_GOALS },
     isLoading: false,
+    error: null,
   });
 }
 
@@ -121,13 +122,23 @@ describe('goalsStore', () => {
       );
     });
 
-    it('updates state even if storage fails', async () => {
+    it('reverts state and sets error when storage fails', async () => {
       mockedStorage.setItem.mockRejectedValue(new Error('Storage error'));
 
       await useGoalsStore.getState().updateGoals({ sleepHours: 6 });
 
-      // State updated even though persist failed
-      expect(useGoalsStore.getState().goals.sleepHours).toBe(6);
+      // State reverted to previous value
+      expect(useGoalsStore.getState().goals.sleepHours).toBe(8);
+      expect(useGoalsStore.getState().error).toBe('Failed to save goals');
+    });
+
+    it('clears error on successful update', async () => {
+      useGoalsStore.setState({ error: 'Previous error' });
+      mockedStorage.setItem.mockResolvedValue(undefined);
+
+      await useGoalsStore.getState().updateGoals({ sleepHours: 9 });
+
+      expect(useGoalsStore.getState().error).toBeNull();
     });
 
     it('merges partial updates', async () => {

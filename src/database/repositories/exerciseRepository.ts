@@ -156,7 +156,8 @@ export const exerciseRepository = {
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
-    await db.runAsync('DELETE FROM exercise_sessions WHERE id = ?', id);
+    const result = await db.runAsync('DELETE FROM exercise_sessions WHERE id = ?', id);
+    if (result.changes === 0) throw new Error('Entry not found');
   },
 
   async getTotalDuration(startDate: string, endDate: string): Promise<number> {

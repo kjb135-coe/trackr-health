@@ -14,6 +14,7 @@ export interface Goals {
 interface GoalsState {
   goals: Goals;
   isLoading: boolean;
+  error: string | null;
   loadGoals: () => Promise<void>;
   updateGoals: (goals: Partial<Goals>) => Promise<void>;
 }
@@ -30,6 +31,7 @@ export const DEFAULT_GOALS: Goals = {
 export const useGoalsStore = create<GoalsState>((set, get) => ({
   goals: DEFAULT_GOALS,
   isLoading: false,
+  error: null,
 
   loadGoals: async () => {
     set({ isLoading: true });
@@ -46,12 +48,13 @@ export const useGoalsStore = create<GoalsState>((set, get) => ({
   },
 
   updateGoals: async (updates) => {
-    const newGoals = { ...get().goals, ...updates };
-    set({ goals: newGoals });
+    const previousGoals = get().goals;
+    const newGoals = { ...previousGoals, ...updates };
+    set({ goals: newGoals, error: null });
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.GOALS, JSON.stringify(newGoals));
     } catch {
-      // Silent fail - goals saved in memory, not persisted
+      set({ goals: previousGoals, error: 'Failed to save goals' });
     }
   },
 }));
