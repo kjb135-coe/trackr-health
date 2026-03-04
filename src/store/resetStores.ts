@@ -4,7 +4,7 @@ import { useExerciseStore } from './exerciseStore';
 import { useNutritionStore } from './nutritionStore';
 import { useJournalStore } from './journalStore';
 import { useAIInsightsStore } from './aiInsightsStore';
-import { useGoalsStore } from './goalsStore';
+import { useGoalsStore, DEFAULT_GOALS } from './goalsStore';
 
 /** Reset all feature stores to their initial state. Called on sign-out to prevent data leakage. */
 export function resetAllStores(): void {
@@ -25,15 +25,5 @@ export function resetAllStores(): void {
   });
   useJournalStore.setState({ entries: [], isLoading: false, isScanning: false, error: null });
   useAIInsightsStore.getState().clearAll();
-  useGoalsStore.setState({
-    goals: {
-      sleepHours: 8,
-      exerciseMinutesPerWeek: 150,
-      dailyCalories: 2000,
-      dailyProtein: 50,
-      habitsPerDay: 5,
-      journalEntriesPerWeek: 3,
-    },
-    isLoading: false,
-  });
+  useGoalsStore.setState({ goals: { ...DEFAULT_GOALS }, isLoading: false });
 }

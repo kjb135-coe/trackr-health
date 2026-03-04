@@ -18,7 +18,7 @@ interface GoalsState {
   updateGoals: (goals: Partial<Goals>) => Promise<void>;
 }
 
-const DEFAULT_GOALS: Goals = {
+export const DEFAULT_GOALS: Goals = {
   sleepHours: 8,
   exerciseMinutesPerWeek: 150,
   dailyCalories: 2000,
