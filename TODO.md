@@ -122,13 +122,21 @@ Yes
 - 10 tests across nutrition, sleep, exercise, and dashboard suites failed because mock data used `new Date().toISOString().split('T')[0]` (UTC) while components used `getDateString()` (local time).
 - **Status:** Done — replaced UTC date generation with `getDateString()` in 4 test files. 770/770 tests passing.
 
-### 219. Add standalone sleep log screen tests
-- `app/sleep/log.tsx` (280+ lines) — standalone form screen with zero test coverage. Handles bedtime/wakeTime pickers, quality stars, sleep factors, and save/navigation.
-- **Effort:** ~30min
+### ~~219. Add standalone sleep log screen tests~~ ✅
+- `app/sleep/log.tsx` (360 lines) — standalone form screen with zero test coverage.
+- **Status:** Done — 10 tests: title, sections, default duration (9h 0m), quality label, 6 factor chips, save success/error, close nav, notes placeholder. 791 total tests.
 
-### 220. Add standalone journal new entry screen tests
-- `app/journal/new.tsx` (290+ lines) — standalone form screen with zero test coverage. Handles title/content input, mood selection, tag toggling, and save/navigation.
-- **Effort:** ~30min
+### ~~220. Add standalone journal new entry screen tests~~ ✅
+- `app/journal/new.tsx` (348 lines) — standalone form screen with zero test coverage.
+- **Status:** Done — 11 tests: title, placeholders, 5 mood options, 12 tags, empty validation, save with content/title, error handling, close nav, scan redirect. 791 total tests.
+
+### 221. Add nutrition camera screen tests
+- `app/nutrition/camera.tsx` (530 lines) — complex screen with camera capture, gallery picker, AI food analysis, meal type selector, and save flow. Zero test coverage.
+- **Effort:** ~45min (requires CameraView + ImagePicker mocking)
+
+### 222. Add journal scan screen tests
+- `app/journal/scan.tsx` (450+ lines) — camera-based OCR screen with capture, gallery picker, handwriting transcription, and save. Zero test coverage.
+- **Effort:** ~45min (requires CameraView + ImagePicker mocking)
 
 ---
 
