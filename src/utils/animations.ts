@@ -72,9 +72,3 @@ export const SCALE = {
   /** Tab icon unfocused */
   tabIconUnfocused: 1,
 } as const;
-
-/** Translate values in pixels */
-export const TRANSLATE = {
-  /** Card entrance translateY (reduced from 20 to minimize visual chaos during transitions) */
-  cardEntranceY: 12,
-} as const;

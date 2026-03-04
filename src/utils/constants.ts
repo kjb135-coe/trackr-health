@@ -141,10 +141,11 @@ export const EMAIL_VERIFICATION_POLL_MS = 5000;
 
 /** Race a promise against a timeout. Rejects with the given message if the timeout fires first. */
 export function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error(message)), AI_TIMEOUT_MS),
-  );
-  return Promise.race([promise, timeout]);
+  let timeoutId: ReturnType<typeof setTimeout>;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), AI_TIMEOUT_MS);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
 // Storage keys

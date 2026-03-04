@@ -113,6 +113,12 @@ describe('withTimeout', () => {
     const failing = Promise.reject(new Error('API error'));
     await expect(withTimeout(failing, 'timed out')).rejects.toThrow('API error');
   });
+
+  it('clears the timeout timer when promise resolves first', async () => {
+    jest.spyOn(global, 'clearTimeout');
+    await withTimeout(Promise.resolve('fast'), 'timed out');
+    expect(clearTimeout).toHaveBeenCalled();
+  });
 });
 
 describe('EXERCISE_TYPE_LABELS', () => {

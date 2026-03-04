@@ -1,10 +1,4 @@
-import {
-  ANIMATION_DURATION,
-  STAGGER_DELAY,
-  SPRING_CONFIG,
-  SCALE,
-  TRANSLATE,
-} from '@/src/utils/animations';
+import { ANIMATION_DURATION, STAGGER_DELAY, SPRING_CONFIG, SCALE } from '@/src/utils/animations';
 
 describe('ANIMATION_DURATION', () => {
   it('has all expected duration keys', () => {
@@ -75,11 +69,5 @@ describe('SCALE', () => {
 
   it('tabIconFocused is larger than tabIconUnfocused', () => {
     expect(SCALE.tabIconFocused).toBeGreaterThan(SCALE.tabIconUnfocused);
-  });
-});
-
-describe('TRANSLATE', () => {
-  it('cardEntranceY is a positive number', () => {
-    expect(TRANSLATE.cardEntranceY).toBeGreaterThan(0);
   });
 });
