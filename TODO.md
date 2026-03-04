@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 940 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 941 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -13,14 +13,14 @@
 ### 303. Notification toggle not persisted across app restarts
 - `settings.tsx` stores `notificationsEnabled` in component state only (`useState(true)`). Toggling off and reopening the app resets it to true. Should persist to AsyncStorage or SQLite.
 
-### 307. habits.tsx screen has zero fireEvent interaction tests
-- All 8 tests in habits.test.tsx are render-only. No `fireEvent.press` for toggle completion, delete, or edit modal. Adding lucide mock breaks ThemeProvider rendering — needs investigation.
+### 312. Modal forms don't reset saving state on dismiss
+- ExerciseLogModal, SleepLogModal, and CreateHabitModal use local `saving` state. If modal is dismissed during save, `saving` stays true. Next open shows disabled save button. Should reset in a cleanup effect or onClose.
+
+### 313. ExerciseLogModal resets form before confirming save succeeded
+- The form clears fields and calls onClose() in the try block before the catch. If the store throws, the user sees an error alert but the form is already closed and reset. Should only reset on success.
 
 ### 310. Repository update methods don't verify row existed
 - All repository `update()` methods run UPDATE...WHERE id=? and return void. An update on a non-existent ID silently succeeds. Store optimistic state updates proceed even though nothing was written to disk.
-
-### 311. nutritionRepository.deleteFoodItem doesn't validate mealId matches
-- `deleteFoodItem(id, mealId)` deletes by food item `id` alone. If `id` belongs to a different meal than `mealId`, the wrong meal's totals get recalculated while the food item is removed from its actual meal.
 
 ---
 
