@@ -64,6 +64,15 @@ describe('goalsStore', () => {
       expect(useGoalsStore.getState().goals).toEqual(DEFAULT_GOALS);
     });
 
+    it('uses defaults when stored data is corrupted JSON', async () => {
+      mockedStorage.getItem.mockResolvedValue('not valid json{{{');
+
+      await useGoalsStore.getState().loadGoals();
+
+      expect(useGoalsStore.getState().goals).toEqual(DEFAULT_GOALS);
+      expect(useGoalsStore.getState().isLoading).toBe(false);
+    });
+
     it('uses defaults on storage error', async () => {
       mockedStorage.getItem.mockRejectedValue(new Error('Storage error'));
 

@@ -183,6 +183,32 @@ describe('SleepLogModal', () => {
     );
   });
 
+  it('shows alert when bedtime and wake time are equal', async () => {
+    const onClose = jest.fn();
+
+    const { findByLabelText, findByText } = renderWithTheme(
+      <SleepLogModal visible={true} onClose={onClose} />,
+    );
+
+    // Set bedtime to 07:00 (same as default wake time 07:00)
+    const bedtimeHour = await findByLabelText('Bedtime hour');
+    fireEvent.changeText(bedtimeHour, '07');
+
+    fireEvent.press(await findByText('Save Sleep Entry'));
+
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          'Invalid times',
+          'Wake time must be after bedtime.',
+        );
+      },
+      { timeout: 5000 },
+    );
+    expect(mockCreateEntry).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it('shows error alert when save fails', async () => {
     mockCreateEntry.mockRejectedValueOnce(new Error('DB error'));
 

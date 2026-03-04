@@ -99,12 +99,18 @@ export function SleepLogModal({ visible, onClose, editEntry, date }: SleepLogMod
     const wakeTime = new Date(wakeDate);
     wakeTime.setHours(wh, wm, 0, 0);
 
-    // If bedtime hour is less than wake hour, bedtime is same day as wake
-    if (bh < wh) {
+    // If bedtime is earlier in the day than wake time, bedtime is same day as wake
+    // (e.g., 2:00 AM bedtime → 7:00 AM wake = 5h sleep)
+    if (bh < wh || (bh === wh && bm <= wm)) {
       bedtime.setDate(bedtime.getDate() + 1);
     }
 
     const durationMinutes = getDurationMinutes(bedtime, wakeTime);
+
+    if (durationMinutes <= 0) {
+      Alert.alert('Invalid times', 'Wake time must be after bedtime.');
+      return;
+    }
 
     setSaving(true);
     try {
