@@ -95,9 +95,9 @@ export async function populateDemoData(): Promise<void> {
       mealType: 'breakfast',
       name: 'Oatmeal with berries',
       totalCalories: 350,
-      totalProtein: 12,
-      totalCarbs: 55,
-      totalFat: 8,
+      totalProtein: 7,
+      totalCarbs: 71,
+      totalFat: 5.5,
     },
     [
       {
@@ -160,9 +160,9 @@ export async function populateDemoData(): Promise<void> {
       mealType: 'lunch',
       name: 'Grilled chicken salad',
       totalCalories: 520,
-      totalProtein: 42,
-      totalCarbs: 25,
-      totalFat: 28,
+      totalProtein: 39,
+      totalCarbs: 13,
+      totalFat: 25,
     },
     [
       {

@@ -95,6 +95,24 @@ describe('populateDemoData', () => {
     );
   });
 
+  it('meal macro totals match sum of food items', async () => {
+    await populateDemoData();
+    for (const call of mockCreateMeal.mock.calls) {
+      const [meal, foods] = call as [
+        { totalCalories: number; totalProtein: number; totalCarbs: number; totalFat: number },
+        { calories: number; protein: number; carbs: number; fat: number }[],
+      ];
+      const sumCalories = foods.reduce((s, f) => s + f.calories, 0);
+      const sumProtein = foods.reduce((s, f) => s + f.protein, 0);
+      const sumCarbs = foods.reduce((s, f) => s + f.carbs, 0);
+      const sumFat = foods.reduce((s, f) => s + f.fat, 0);
+      expect(meal.totalCalories).toBe(sumCalories);
+      expect(meal.totalProtein).toBe(sumProtein);
+      expect(meal.totalCarbs).toBe(sumCarbs);
+      expect(meal.totalFat).toBe(sumFat);
+    }
+  });
+
   it('creates 3 journal entries', async () => {
     await populateDemoData();
     expect(mockJournalCreate).toHaveBeenCalledTimes(3);
