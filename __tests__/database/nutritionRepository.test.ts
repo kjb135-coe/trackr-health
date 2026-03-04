@@ -299,6 +299,14 @@ describe('nutritionRepository', () => {
 
       expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM meals WHERE id = ?', 'm1');
     });
+
+    it('throws when meal not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(nutritionRepository.deleteMeal('nonexistent')).rejects.toThrow(
+        'Entry not found',
+      );
+    });
   });
 
   describe('getDailyTotals', () => {

@@ -211,7 +211,7 @@ describe('exerciseRepository', () => {
 
   describe('delete', () => {
     it('deletes session by id', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await exerciseRepository.delete('e1');
 
@@ -219,6 +219,12 @@ describe('exerciseRepository', () => {
         'DELETE FROM exercise_sessions WHERE id = ?',
         'e1',
       );
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(exerciseRepository.delete('nonexistent')).rejects.toThrow('Entry not found');
     });
   });
 

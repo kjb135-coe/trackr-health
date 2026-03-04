@@ -268,7 +268,7 @@ describe('journalRepository', () => {
 
   describe('delete', () => {
     it('deletes entry by id', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await journalRepository.delete('j1');
 
@@ -276,6 +276,12 @@ describe('journalRepository', () => {
         'DELETE FROM journal_entries WHERE id = ?',
         'j1',
       );
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(journalRepository.delete('nonexistent')).rejects.toThrow('Entry not found');
     });
   });
 

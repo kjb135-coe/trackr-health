@@ -203,11 +203,17 @@ describe('sleepRepository', () => {
 
   describe('delete', () => {
     it('deletes entry by id', async () => {
-      mockDb.runAsync.mockResolvedValue(undefined);
+      mockDb.runAsync.mockResolvedValue({ changes: 1 });
 
       await sleepRepository.delete('s1');
 
       expect(mockDb.runAsync).toHaveBeenCalledWith('DELETE FROM sleep_entries WHERE id = ?', 's1');
+    });
+
+    it('throws when entry not found', async () => {
+      mockDb.runAsync.mockResolvedValue({ changes: 0 });
+
+      await expect(sleepRepository.delete('nonexistent')).rejects.toThrow('Entry not found');
     });
   });
 
