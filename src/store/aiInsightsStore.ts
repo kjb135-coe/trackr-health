@@ -175,6 +175,12 @@ export const useAIInsightsStore = create<AIInsightsState>((set, get) => ({
       exerciseRecommendation: null,
       moodAnalysis: null,
       nutritionAdvice: null,
+      isLoadingCoaching: false,
+      isLoadingHabits: false,
+      isLoadingSleep: false,
+      isLoadingExercise: false,
+      isLoadingMood: false,
+      isLoadingNutrition: false,
       lastCoachingFetch: null,
       error: null,
     });

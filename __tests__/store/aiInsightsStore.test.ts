@@ -403,5 +403,29 @@ describe('aiInsightsStore', () => {
       expect(state.lastCoachingFetch).toBeNull();
       expect(state.error).toBeNull();
     });
+
+    it('resets all loading flags so fetches are not permanently blocked', () => {
+      // Simulate in-flight fetches by setting loading flags directly
+      useAIInsightsStore.setState({
+        isLoadingCoaching: true,
+        isLoadingHabits: true,
+        isLoadingSleep: true,
+        isLoadingExercise: true,
+        isLoadingMood: true,
+        isLoadingNutrition: true,
+      });
+
+      act(() => {
+        useAIInsightsStore.getState().clearAll();
+      });
+
+      const state = useAIInsightsStore.getState();
+      expect(state.isLoadingCoaching).toBe(false);
+      expect(state.isLoadingHabits).toBe(false);
+      expect(state.isLoadingSleep).toBe(false);
+      expect(state.isLoadingExercise).toBe(false);
+      expect(state.isLoadingMood).toBe(false);
+      expect(state.isLoadingNutrition).toBe(false);
+    });
   });
 });
