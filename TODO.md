@@ -1,14 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 905 tests passing, 0 TS errors, 0 ESLint warnings.
-
----
-
-## P2 - Nice to Have
-
-### 292. parseISO timezone mismatch in SleepLogModal date construction
-- `parseISO('yyyy-MM-dd')` returns UTC midnight. In western timezones, `getDate()` returns previous day's date. Stored bedtime ISO string has wrong calendar date (time is correct). No visible bug currently but breaks if ISO date is ever parsed for display.
+> Last updated: 2026-03-04. 906 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
