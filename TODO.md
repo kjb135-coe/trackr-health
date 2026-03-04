@@ -1,20 +1,19 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 824 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-03. 825 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P1 - Should Fix Soon
 
-### 238. Reconcile Button and AnimatedButton inconsistencies
-- `Button.tsx`: sm minHeight 32, secondary uses `colors.borderLight`, no `fullWidth` prop
-- `AnimatedButton.tsx`: sm minHeight 36, secondary uses `colors.border`, has `fullWidth` prop
-- Auth screens use `Button`, everything else uses `AnimatedButton`. Swapping gives different sizes.
+### 247. Add loading guard tests for remaining 3 AI fetch methods
+- `fetchExerciseRecommendation`, `fetchMoodAnalysis`, `fetchNutritionAdvice` have loading guards but no tests.
+- **Fix:** Add 3 tests matching the pattern used for coaching/habits/sleep guards.
 
-### 246. AnimatedButton uses inline styles instead of StyleSheet.create
-- `AnimatedButton.tsx` builds `buttonStyle` as a plain `ViewStyle` object on every render. CLAUDE.md says "Always use `StyleSheet.create()` for styles". `Button.tsx` uses StyleSheet correctly.
-- **Fix:** Move static parts (flexDirection, alignItems, justifyContent, borderRadius, overflow) to StyleSheet. Keep dynamic (backgroundColor, borderColor, opacity, width) as inline overrides.
+### 248. Add AnimatedButton accessibility attributes
+- `AnimatedButton` has no `accessibilityRole`, `accessibilityLabel`, or `accessibilityState`. `Button` has all three. Inconsistent accessibility support.
+- **Fix:** Add `accessibilityRole="button"`, `accessibilityLabel={title}`, `accessibilityState={{ disabled: isDisabled }}` to AnimatedPressable.
 
 ---
 
@@ -28,8 +27,8 @@
 - `healthInsightsAI.ts`: `.slice(0, 10)` limits AI prompt data (2 places)
 - `AICoaching.tsx`: `.slice(0, 3)` limits displayed insights
 
-### 247. Add loading guard tests for remaining 3 AI fetch methods
-- `fetchExerciseRecommendation`, `fetchMoodAnalysis`, `fetchNutritionAdvice` have loading guards but no tests proving they work (unlike habits/sleep/coaching which are tested).
+### 249. Add AnimatedCard accessibility attributes
+- `AnimatedCard` has `accessibilityRole` and `accessibilityLabel` when `onPress` is set, but not when it's a static card. Screen readers may not describe the card content properly.
 
 ---
 
