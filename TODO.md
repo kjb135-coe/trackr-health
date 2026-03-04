@@ -1,7 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 935 tests passing, 0 TS errors, 0 ESLint warnings.
+> Last updated: 2026-03-04. 938 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
@@ -13,14 +13,14 @@
 ### 303. Notification toggle not persisted across app restarts
 - `settings.tsx` stores `notificationsEnabled` in component state only (`useState(true)`). Toggling off and reopening the app resets it to true. Should persist to AsyncStorage or SQLite.
 
-### 306. habitStore loadTodayCompletions with explicit date param untested
-- All tests call `loadTodayCompletions()` with no argument. The `date` parameter branch used by DateNavigator is never exercised.
-
 ### 307. habits.tsx screen has zero fireEvent interaction tests
 - All 8 tests in habits.test.tsx are render-only. No `fireEvent.press` for toggle completion, delete, or edit modal. The modal component tests cover these paths, but the screen-level wiring is untested.
 
-### 308. journalRepository.search doesn't escape LIKE wildcard characters
-- Searching for `50%` matches every entry because `%` is a LIKE wildcard. Not a SQL injection risk, but a correctness bug. Should escape `%` and `_` in the query.
+### 309. sleepStore.updateEntry allows creating duplicate-date entries
+- `createEntry` guards against duplicate dates, but `updateEntry` doesn't check if the new date already has an entry. Editing a sleep entry's date to one that exists creates a conflict.
+
+### 310. Repository update methods don't verify row existed
+- All repository `update()` methods run UPDATE...WHERE id=? and return void. An update on a non-existent ID silently succeeds. Store optimistic state updates proceed even though nothing was written to disk.
 
 ---
 
