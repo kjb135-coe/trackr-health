@@ -1,14 +1,7 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-03. 872 tests passing, 0 TS errors, 0 ESLint warnings.
-
----
-
-## P2 - Nice to Have
-
-### 266. Notification service error handling tests
-- `__tests__/services/habitReminders.test.ts` tests permission requests but not scheduling/cancellation failure paths. Add tests for `scheduleHabitReminder` and `cancelHabitReminder` when the underlying notification API throws.
+> Last updated: 2026-03-03. 875 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
