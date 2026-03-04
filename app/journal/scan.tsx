@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import * as ImagePicker from 'expo-image-picker';
 import { X, Camera, RotateCcw, Image as ImageIcon, Edit3, FileText } from 'lucide-react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -24,6 +23,7 @@ import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { persistImage } from '@/src/utils/imagePersist';
+import { useImagePicker } from '@/src/hooks/useImagePicker';
 import {
   IMAGE_QUALITY,
   DEFAULT_SCANNED_MOOD,
@@ -44,6 +44,7 @@ export default function JournalScanScreen() {
   const [editedText, setEditedText] = useState('');
   const [saving, setSaving] = useState(false);
   const { createEntry } = useJournalStore();
+  const { pickImage } = useImagePicker();
 
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
@@ -55,15 +56,10 @@ export default function JournalScanScreen() {
   };
 
   const handlePickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: IMAGE_QUALITY,
-    });
-
-    if (!result.canceled && result.assets[0]) {
-      setCapturedPhoto(result.assets[0].uri);
-      analyzePhoto(result.assets[0].uri);
+    const uri = await pickImage({ allowsEditing: true });
+    if (uri) {
+      setCapturedPhoto(uri);
+      analyzePhoto(uri);
     }
   };
 
