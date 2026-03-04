@@ -252,6 +252,14 @@ describe('habitStore', () => {
       expect(streak).toBe(7);
       expect(habitRepository.getStreak).toHaveBeenCalledWith('1');
     });
+
+    it('returns 0 on repository error', async () => {
+      habitRepository.getStreak.mockRejectedValue(new Error('DB error'));
+
+      const streak = await useHabitStore.getState().getStreak('1');
+
+      expect(streak).toBe(0);
+    });
   });
 
   describe('getAllStreaks', () => {
@@ -264,6 +272,15 @@ describe('habitStore', () => {
 
       expect(result).toEqual(streakMap);
       expect(habitRepository.getAllStreaks).toHaveBeenCalledWith(['1']);
+    });
+
+    it('returns empty map on repository error', async () => {
+      useHabitStore.setState({ habits: [mockHabit] });
+      habitRepository.getAllStreaks.mockRejectedValue(new Error('DB error'));
+
+      const result = await useHabitStore.getState().getAllStreaks();
+
+      expect(result).toEqual(new Map());
     });
   });
 
@@ -285,6 +302,14 @@ describe('habitStore', () => {
         '2026-02-12',
         '2026-02-18',
       );
+    });
+
+    it('returns empty map on repository error', async () => {
+      habitRepository.getCompletionsForDateRange.mockRejectedValue(new Error('DB error'));
+
+      const result = await useHabitStore.getState().getWeeklyCompletions('2026-02-18');
+
+      expect(result).toEqual(new Map());
     });
   });
 

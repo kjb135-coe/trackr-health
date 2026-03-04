@@ -118,27 +118,39 @@ export const useHabitStore = create<HabitState>((set, get) => ({
   },
 
   getStreak: async (habitId) => {
-    return habitRepository.getStreak(habitId);
+    try {
+      return await habitRepository.getStreak(habitId);
+    } catch {
+      return 0;
+    }
   },
 
   getAllStreaks: async () => {
     const { habits } = get();
     const habitIds = habits.map((h) => h.id);
-    return habitRepository.getAllStreaks(habitIds);
+    try {
+      return await habitRepository.getAllStreaks(habitIds);
+    } catch {
+      return new Map();
+    }
   },
 
   getWeeklyCompletions: async (endDate) => {
-    const end = parseDate(endDate);
-    const startDate = format(subDays(end, 6), 'yyyy-MM-dd');
-    const completions = await habitRepository.getCompletionsForDateRange(startDate, endDate);
-    const result = new Map<string, Set<string>>();
-    for (const c of completions) {
-      if (c.completed) {
-        if (!result.has(c.habitId)) result.set(c.habitId, new Set());
-        result.get(c.habitId)!.add(c.date);
+    try {
+      const end = parseDate(endDate);
+      const startDate = format(subDays(end, 6), 'yyyy-MM-dd');
+      const completions = await habitRepository.getCompletionsForDateRange(startDate, endDate);
+      const result = new Map<string, Set<string>>();
+      for (const c of completions) {
+        if (c.completed) {
+          if (!result.has(c.habitId)) result.set(c.habitId, new Set());
+          result.get(c.habitId)!.add(c.date);
+        }
       }
+      return result;
+    } catch {
+      return new Map();
     }
-    return result;
   },
 
   clearError: () => set({ error: null }),
