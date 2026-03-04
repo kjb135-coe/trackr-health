@@ -1,24 +1,14 @@
 # Trackr - TODO
 
 > Priority: **P0** = blocking/broken, **P1** = should fix soon, **P2** = nice to have, **P3** = future
-> Last updated: 2026-03-04. 899 tests passing, 0 TS errors, 0 ESLint warnings.
-
----
-
-## P2 - Nice to Have
-
-### 286. Add delete-failure error tests across all 5 feature screens
-- Habits, sleep, exercise, nutrition, journal screens all handle delete failures but none have tests for `mockDelete*.mockRejectedValue()`.
-
-### 287. Add `updateSession` failure test for ExerciseLogModal
-- Edit mode error alert path untested at component level.
-
-### 288. Add journal search interaction test
-- JournalScreen search bar renders but no test verifies filtered result display via `mockSearch.mockResolvedValue([matchingEntry])`.
+> Last updated: 2026-03-04. 902 tests passing, 0 TS errors, 0 ESLint warnings.
 
 ---
 
 ## P3 - Future / Backlog
+
+### 286. Add delete-failure ErrorBanner rendering tests to screens
+- All 5 feature screens use store error state + ErrorBanner for delete failures. Store-level delete error tests exist, but screen-level ErrorBanner rendering on delete failure is untested.
 
 ### 253. Wire gatherHealthData sharing into aiInsightsStore
 - Deferred — only `fetchDailyCoaching` is called from the dashboard. No concurrent AI calls exist yet.
