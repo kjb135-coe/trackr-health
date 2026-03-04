@@ -19,6 +19,9 @@ import {
   STORAGE_KEYS,
   OCR_CONFIDENCE,
   APP_LINKS,
+  DEFAULT_SCANNED_MOOD,
+  DEFAULT_OCR_CONFIDENCE,
+  SCANNED_ENTRY_TAG,
 } from '@/src/utils/constants';
 
 const mockColors = {
@@ -246,6 +249,23 @@ describe('APP_LINKS', () => {
   it('has valid URL formats', () => {
     expect(APP_LINKS.APP_STORE).toMatch(/^https:\/\//);
     expect(APP_LINKS.SUPPORT_EMAIL).toMatch(/^mailto:/);
+  });
+});
+
+describe('scan defaults', () => {
+  it('DEFAULT_SCANNED_MOOD is a valid mood value (1-5)', () => {
+    expect(DEFAULT_SCANNED_MOOD).toBeGreaterThanOrEqual(1);
+    expect(DEFAULT_SCANNED_MOOD).toBeLessThanOrEqual(5);
+  });
+
+  it('DEFAULT_OCR_CONFIDENCE is in valid range (0, 1]', () => {
+    expect(DEFAULT_OCR_CONFIDENCE).toBeGreaterThan(0);
+    expect(DEFAULT_OCR_CONFIDENCE).toBeLessThanOrEqual(1);
+  });
+
+  it('SCANNED_ENTRY_TAG is a non-empty string', () => {
+    expect(typeof SCANNED_ENTRY_TAG).toBe('string');
+    expect(SCANNED_ENTRY_TAG.length).toBeGreaterThan(0);
   });
 });
 

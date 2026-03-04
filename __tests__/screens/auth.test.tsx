@@ -252,6 +252,32 @@ describe('ForgotPasswordScreen', () => {
     expect(await findByText('Check Your Email')).toBeTruthy();
   });
 
+  it('navigates back when back button pressed', () => {
+    const { getByTestId } = render(<ForgotPasswordScreen />);
+    fireEvent.press(getByTestId('arrow-left'));
+    expect(mockBack).toHaveBeenCalled();
+  });
+
+  it('navigates to login from success view', async () => {
+    mockSendPasswordReset.mockResolvedValueOnce(undefined);
+    const { getByText, getByPlaceholderText, findByText } = render(<ForgotPasswordScreen />);
+    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
+    fireEvent.press(getByText('Send Reset Link'));
+    const backToLogin = await findByText('Back to Login', {}, { timeout: 5000 });
+    fireEvent.press(backToLogin);
+    expect(mockPush).toHaveBeenCalledWith('/auth/login');
+  });
+
+  it('resets to form view when "Try again" pressed', async () => {
+    mockSendPasswordReset.mockResolvedValueOnce(undefined);
+    const { getByText, getByPlaceholderText, findByText } = render(<ForgotPasswordScreen />);
+    fireEvent.changeText(getByPlaceholderText('Email'), 'test@example.com');
+    fireEvent.press(getByText('Send Reset Link'));
+    const tryAgain = await findByText("Didn't receive the email? Try again", {}, { timeout: 5000 });
+    fireEvent.press(tryAgain);
+    await findByText('Send Reset Link', {}, { timeout: 5000 });
+  });
+
   it('shows error on reset failure', async () => {
     jest.spyOn(Alert, 'alert');
     mockSendPasswordReset.mockRejectedValueOnce(new Error('User not found'));

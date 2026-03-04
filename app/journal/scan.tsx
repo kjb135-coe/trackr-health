@@ -24,7 +24,12 @@ import { scanHandwrittenJournal, hasApiKey } from '@/src/services/claude';
 import { useJournalStore } from '@/src/store';
 import { getDateString, getErrorMessage } from '@/src/utils/date';
 import { persistImage } from '@/src/utils/imagePersist';
-import { IMAGE_QUALITY } from '@/src/utils/constants';
+import {
+  IMAGE_QUALITY,
+  DEFAULT_SCANNED_MOOD,
+  DEFAULT_OCR_CONFIDENCE,
+  SCANNED_ENTRY_TAG,
+} from '@/src/utils/constants';
 
 export default function JournalScanScreen() {
   const router = useRouter();
@@ -110,11 +115,11 @@ export default function JournalScanScreen() {
         date: getDateString(),
         title: `Scanned Entry - ${new Date().toLocaleDateString()}`,
         content: textToSave.trim(),
-        mood: 3 as 1 | 2 | 3 | 4 | 5,
-        tags: ['Scanned'],
+        mood: DEFAULT_SCANNED_MOOD,
+        tags: [SCANNED_ENTRY_TAG],
         isScanned: true,
         originalImageUri: persistedUri,
-        ocrConfidence: 0.85,
+        ocrConfidence: DEFAULT_OCR_CONFIDENCE,
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();

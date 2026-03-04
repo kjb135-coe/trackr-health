@@ -125,6 +125,11 @@ export const AI_CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
 export const AI_PROMPT_MAX_MEALS = 10; // Max meals to include in AI prompts
 export const DASHBOARD_MAX_INSIGHTS = 3; // Max insights shown on dashboard
 
+// Journal scan defaults
+export const DEFAULT_SCANNED_MOOD: 1 | 2 | 3 | 4 | 5 = 3;
+export const DEFAULT_OCR_CONFIDENCE = 0.85;
+export const SCANNED_ENTRY_TAG = 'Scanned';
+
 // Camera / Image
 export const IMAGE_QUALITY = 0.8;
 
